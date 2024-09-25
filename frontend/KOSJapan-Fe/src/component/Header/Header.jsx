@@ -1,4 +1,4 @@
 const Header = () => {
-  return <header>header</header>;
+  return <header>Welcom to KOS Japan</header>;
 };
 export default Header;

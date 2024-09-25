@@ -1,4 +1,4 @@
 const Footer = () => {
-  return <footer>footer</footer>;
+  return <footer>&copy; 2024 KOS Japan</footer>;
 };
 export default Footer;
