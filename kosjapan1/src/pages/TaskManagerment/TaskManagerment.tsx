@@ -95,7 +95,7 @@ function TaskManagerment() {
             label={"Tour"}
             rules={[
               {
-                require: true,
+                required: true,
                 message: "Hãy điền thông tin tour",
               },
             ]}
