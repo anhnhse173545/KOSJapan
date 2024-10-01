@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class Variety {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @JsonBackReference
     @ManyToMany
     @JoinTable(
             name = "farm_varieties",

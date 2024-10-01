@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +12,11 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "trips")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Trip {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id", nullable = false)
     private String id;
 
     @Column(name = "start_date")
@@ -22,23 +25,25 @@ public class Trip {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(name = "departure_airport", length = 3)
+    @Column(name = "departure_airport")
     private String departureAirport;
 
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "status", length = 50)
+    @Column(name = "status")
     private String status;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
+    @JsonBackReference
     @OneToOne(mappedBy = "trip")
     private Booking booking;
 
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "trip_destinations",
             joinColumns = @JoinColumn(name = "trip_id"),

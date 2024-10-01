@@ -13,14 +13,13 @@ import java.time.Instant;
 @Table(name = "trip_payments")
 public class TripPayment {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at")
     private Instant createAt;
 

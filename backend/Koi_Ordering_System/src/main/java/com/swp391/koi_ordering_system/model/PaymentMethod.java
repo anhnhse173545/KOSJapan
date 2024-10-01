@@ -14,10 +14,10 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "payment_methods")
 public class PaymentMethod {
     @Id
-    @Column(name = "id", nullable = false, length = 10)
+    @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "name", nullable = false, length = 10)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ColumnDefault("false")
