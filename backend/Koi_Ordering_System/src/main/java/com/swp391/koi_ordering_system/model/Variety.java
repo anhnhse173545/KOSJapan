@@ -29,8 +29,8 @@ public class Variety {
     @ManyToMany
     @JoinTable(
             name = "farm_varieties",
-            joinColumns = @JoinColumn(name = "farm_id"),
-            inverseJoinColumns = @JoinColumn(name = "variety_id")
+            joinColumns = @JoinColumn(name = "variety_id"),
+            inverseJoinColumns = @JoinColumn(name = "farm_id")
     )
-    private Set<Variety> varieties;
+    private Set<Farm> farms;
 }
