@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+
 import { Button, Form, Input, Checkbox, Upload, Select, DatePicker, InputNumber, Switch } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import api from "../../config/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
+import { useState } from "react";
 
 const { TextArea } = Input;
 const { Option } = Select;

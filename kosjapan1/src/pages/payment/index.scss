@@ -16,6 +16,8 @@
     list-style: none;
     padding: 0;
   }
+
+  
   
   .profile-sidebar li {
     padding: 10px;
@@ -109,3 +111,31 @@
     background-color: #e65c00;
   }
   
+  /* Định dạng cho phần tử li */
+.profile-sidebar li {
+  list-style: none; /* Xóa dấu chấm của danh sách */
+  margin: 10px 0; /* Khoảng cách giữa các mục */
+}
+
+/* Định dạng cho các liên kết (Link) trong sidebar */
+.sidebar-link {
+  display: block; /* Đảm bảo liên kết bao hết toàn bộ vùng của li */
+  padding: 10px 15px; /* Khoảng cách bên trong để tăng kích thước vùng nhấn */
+  text-decoration: none; /* Xóa gạch chân mặc định của link */
+  color: #333; /* Màu chữ mặc định */
+  border-radius: 5px; /* Bo tròn góc */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Thêm hiệu ứng chuyển màu */
+}
+
+/* Định dạng khi di chuột (hover) vào link */
+.sidebar-link:hover {
+  background-color: #ff6600; /* Đổi màu nền khi hover */
+  color: white; /* Màu chữ khi hover */
+}
+
+/* Định dạng cho link đang được active (áp dụng màu nổi bật) */
+.sidebar-link.active {
+  background-color: #ff6600;
+  color: white;
+  font-weight: bold; /* Tăng độ dày của chữ */
+}

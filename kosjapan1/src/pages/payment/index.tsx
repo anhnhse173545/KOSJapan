@@ -1,82 +1,181 @@
-
-import './index.scss'; // Create a new CSS file for styling
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import './index.scss'; // Import CSS file for styling
 
 const koiPayments = [
   {
     id: 1,
     farm: 'Dainichi Koi Farm',
-    koi: 'Kohaku - koi #w0508b066',
+    time: 'Time Start: 9/19/2024',
     quantity: 1,
-    status: 'Completed',
+    status: 'Request',
     price: '$400.00',
-    img: '/images/kohaku.jpg',
-    statusLabel: 'Delivery successful | Completed',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOxfoK9Pk6FKjHPQrqVj8SUHJIohxdxkK1Iw&s',
+    statusLabel: 'Request | Pending Approval',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
   },
   {
     id: 2,
-    farm: 'Dainichi Koi Farm',
-    koi: 'Kohaku - koi #w0508b066',
-    quantity: 1,
-    status: 'Pending Payment',
+    farm: 'Matsue Nishikigoi Center',
+    time: 'Time Start: 9/19/2024',
+    quantity: 2,
+    status: 'Pending Quota',
     price: '$400.00',
-    img: '/images/kohaku.jpg',
-    statusLabel: 'Waiting payment | Pending',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuK5Sz8ToO0Sz50esp9c-QAu_w71BHtKJLEA&s',
+    statusLabel: 'Pending Quota | Waiting',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
   },
   {
     id: 3,
     farm: 'Dainichi Koi Farm',
-    koi: 'Kohaku - koi #w0508b066',
+    time: 'Time Start: 9/19/2024',
     quantity: 1,
-    status: 'In Transit',
+    status: 'Completed',
     price: '$400.00',
-    img: '/images/kohaku.jpg',
-    statusLabel: 'In transit | Pending',
+    img: 'https://i.ytimg.com/vi/pUADEpL3DNM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA3nCkTx9J7kqjMCIk6ImhQ7ih5iw',
+    statusLabel: 'Completed | Delivery Completed',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
   },
   {
     id: 4,
-    farm: 'Tour from HCMC - Kyoto',
-    koi: 'Kyoto - K11287w29s',
+    farm: 'Otsuka Koi Farm',
     time: 'Time Start: 9/19/2024',
+    status: 'Canceled',
     price: '$900.00',
-    img: '/images/tour.jpg',
-    statusLabel: 'Payment Successful | Completed',
+    img: 'https://onkoi.vn/wp-content/uploads/2020/04/Ho-nuoi-Koi-can-phai-co-kich-thuoc-lon-va-rong-rai.jpg',
+    statusLabel: 'Canceled | Order Canceled',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
   },
 ];
 
 function PaymentPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [payments, setPayments] = useState(koiPayments);
+  const [selectedStatus, setSelectedStatus] = useState('All');
+
+  const filteredPayments = payments.filter((payment) =>
+    selectedStatus === 'All' ? true : payment.status === selectedStatus
+  );
+
+  const handleCancel = (id: any) => {
+    setPayments((prevPayments) =>
+      prevPayments.map((payment) =>
+        payment.id === id
+          ? { ...payment, status: 'Canceled', statusLabel: 'Canceled | Order Canceled' }
+          : payment
+      )
+    );
+  };
+
   return (
     <div className="payment-page-container">
+      {/* Sidebar */}
       <div className="profile-sidebar">
         <ul>
-          <li>My Profile</li>
-          <li className="active">My Payment</li>
-          <li>My Tour</li>
+          <li>
+            <Link to="/profile" className={`sidebar-link ${location.pathname === '/profile' ? 'active' : ''}`}>
+              My Profile
+            </Link>
+          </li>
+          <li>
+            <Link to="/payment" className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
+              My Trip
+            </Link>
+          </li>
+          <li>
+            <Link to="/mykoi" className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+              My Koi Fish
+            </Link>
+          </li>
+          <li>
+            <Link to="/mytour" className={`sidebar-link ${location.pathname === '/mytour' ? 'active' : ''}`}>
+              My Tour
+            </Link>
+          </li>
         </ul>
       </div>
 
+      {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          <button className="tab active">All</button>
-          <button className="tab">Waiting for payment</button>
-          <button className="tab">Transport</button>
-          <button className="tab">Completed</button>
-          <button className="tab">Canceled</button>
+          {['All', 'Request', 'Pending Quota', 'Completed', 'Canceled'].map((status) => (
+            <button
+              key={status}
+              className={`tab ${selectedStatus === status ? 'active' : ''}`}
+              onClick={() => setSelectedStatus(status)}
+            >
+              {status}
+            </button>
+          ))}
         </div>
 
+        {/* Payment List */}
         <div className="payment-list">
-          {koiPayments.map((koi) => (
+          {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
-              <img src={koi.img} alt={koi.koi} className="koi-image" />
+              <img src={koi.img} alt={koi.farm} className="koi-image" />
               <div className="payment-details">
                 <h3>{koi.farm}</h3>
-                <p>{koi.koi}</p>
+                <p>{koi.time}</p>
                 {koi.quantity && <p>Quantity: {koi.quantity}</p>}
-                {koi.time && <p>{koi.time}</p>}
                 <p className="status">{koi.statusLabel}</p>
                 <p className="price">{koi.price}</p>
-                <button className="details-button">
-                  {koi.status === 'Pending Payment' ? 'Purchase' : 'See Details'}
-                </button>
+
+            
+                {(koi.status === 'Request' || koi.status === 'Pending Quota') ? (
+                  <div className="button-group">
+                    <button
+                      className="details-button"
+                      onClick={() => navigate(`/payment/${koi.id}`)}
+                    >
+                      See Details
+                    </button>
+                    <button
+                      className="details-button"
+                      onClick={() => navigate('/paykoi')}
+                    >
+                      Purchase
+                    </button>
+                    <button
+                      className="details-button"
+                      onClick={() => handleCancel(koi.id)} 
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="details-button"
+                    onClick={() => navigate(`/payment/${koi.id}`)}
+                  >
+                    See Details
+                  </button>
+                )}
               </div>
             </div>
           ))}
