@@ -1,5 +1,11 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
+import com.swp391.koi_ordering_system.dto.response.BookingDTO;
+import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.mapper.TripMapper;
+import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.service.TripService;
@@ -17,19 +23,39 @@ public class TripController {
     @Autowired
     private TripService tripService;
 
+    @Autowired
+    private TripMapper tripMapper;
+
+    //    @RequestMapping("/create")
+//    public Trip createTrip(@RequestBody Trip trip) {
+//        return tripService.createTrip(trip);
+//    }
     @RequestMapping("/create")
-    public Trip createTrip(@RequestBody Trip trip) {
-        return tripService.createTrip(trip);
+    public ResponseEntity<TripDTO> createTrip(@RequestBody CreateTripDTO createTripDTO) {
+        Trip trip = tripMapper.toEntity(createTripDTO);
+        tripService.createTrip(trip);
+        return ResponseEntity.ok(tripMapper.toDTO(trip));
     }
 
     @RequestMapping("/list")
-    public List<Trip> getAllTrip() {
-        return tripService.getAllTrip();
+    public ResponseEntity<List<TripDTO>> getAllTrip() {
+        return ResponseEntity.ok(tripService.getAllTrips());
     }
 
+
+
+//    @RequestMapping("/get/{id}")
+//    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable String id) {
+//        Optional<Trip> trip = tripService.getTripById(id);
+//        if (trip.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(trip);
+//    }
+
     @RequestMapping("/get/{id}")
-    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable String id) {
-        Optional<Trip> trip = tripService.getTripById(id);
+    public ResponseEntity<Optional<TripDTO>> getBookingById(@PathVariable String id) {
+        Optional<TripDTO> trip = tripService.getTripById(id);
         if (trip.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -37,8 +63,8 @@ public class TripController {
     }
 
     @RequestMapping("/update/{id}")
-    public ResponseEntity<Trip> updateTrip(@PathVariable String id, @RequestBody Trip tripDetails) {
-        Trip  updatedTrip = tripService.updateTrip(id, tripDetails);
+    public ResponseEntity<TripDTO> updateTrip(@PathVariable String id, @RequestBody UpdateTripDTO updateTripDTO) {
+        TripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
         if (updatedTrip == null) {
             return ResponseEntity.notFound().build();
         }

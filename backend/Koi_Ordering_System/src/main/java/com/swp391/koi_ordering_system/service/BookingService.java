@@ -1,7 +1,15 @@
 package com.swp391.koi_ordering_system.service;
 
+import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
+import com.swp391.koi_ordering_system.dto.response.BookingDTO;
+import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.mapper.BookingMapper;
+import com.swp391.koi_ordering_system.mapper.TripMapper;
+import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Trip;
+import com.swp391.koi_ordering_system.repository.AccountRepository;
 import com.swp391.koi_ordering_system.repository.BookingRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -19,59 +28,103 @@ public class BookingService {
     private TripRepository tripRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private TripService tripService;
+
+    @Autowired
+    private BookingMapper bookingMapper;
+
+    @Autowired
+    private TripMapper tripMapper;
 
     public Booking createBooking(Booking booking) {
         booking.setId(generateBookingId());
         return bookingRepository.save(booking);
     }
 
-    //    public List<Booking> getAllBooking() {
-//        return bookingRepository.findAll();
+//    public List<Booking> getAllBooking() {
+//        return bookingRepository.findAllByIsDeletedFalse();
 //    }
-    public List<Booking> getAllBooking() {
-        return bookingRepository.findAllByIsDeletedFalse();
+
+    public List<BookingDTO> getAllBooking() {
+        return bookingRepository.findAllByIsDeletedFalse().stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
     }
+
 
 //    public Optional<Booking> getBookingById(String id) {
-//        return bookingRepository.findById(id);
+//        return bookingRepository.findByIdAndIsDeletedFalse(id);
 //    }
+
+    public Optional<BookingDTO> getBookingById(String id) {
+        return bookingRepository.findByIdAndIsDeletedFalse(id)
+                .map(bookingMapper::toDTO);
+    }
+
+//    public List<Booking> getBookingsByCustomerId(String customerId) {
+//        return bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
+//    }
+
+    public List<BookingDTO> getBookingsByCustomerId(String customerId) {
+        return bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+//    public Booking updateBooking(String id, Booking bookingDetails) {
+//        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+//        if (optionalBooking.isPresent()) {
+//            Booking booking = optionalBooking.get();
 //
+//            if (bookingDetails.getStatus() != null) {
+//                booking.setStatus(bookingDetails.getStatus());
+//            }
+//            if (bookingDetails.getSaleStaff() != null) {
+//                booking.setSaleStaff(bookingDetails.getSaleStaff());
+//            }
+//
+//            if (bookingDetails.getConsultingStaff() != null) {
+//                booking.setConsultingStaff(bookingDetails.getConsultingStaff());
+//            }
+//
+//            if (bookingDetails.getDeliveryStaff() != null) {
+//                booking.setDeliveryStaff(bookingDetails.getDeliveryStaff());
+//            }
+//            return bookingRepository.save(booking);
+//        }
+//        return null;
+//    }
 
-    public Optional<Booking> getBookingById(String id) {
-        return bookingRepository.findByIdAndIsDeletedFalse(id);
-    }
+    public Booking updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
+        Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-    public List<Booking> getBookingsByCustomerId(String customerId) {
-        return bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
-    }
-
-    public Booking updateBooking(String id, Booking bookingDetails) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(id);
-        if (optionalBooking.isPresent()) {
-            Booking booking = optionalBooking.get();
-
-            if (bookingDetails.getStatus() != null) {
-                booking.setStatus(bookingDetails.getStatus());
-            }
-            if (bookingDetails.getSaleStaff() != null) {
-                booking.setSaleStaff(bookingDetails.getSaleStaff());
-            }
-
-            if (bookingDetails.getConsultingStaff() != null) {
-                booking.setConsultingStaff(bookingDetails.getConsultingStaff());
-            }
-
-            if (bookingDetails.getDeliveryStaff() != null) {
-                booking.setDeliveryStaff(bookingDetails.getDeliveryStaff());
-            }
-            return bookingRepository.save(booking);
+        if (updateBookingDTO.getSaleStaffId() != null) {
+            Account saleStaff = accountRepository.findById(updateBookingDTO.getSaleStaffId())
+                    .orElseThrow(() -> new RuntimeException("Sale staff not found"));
+            booking.setSaleStaff(saleStaff);
         }
-        return null;
+
+        if (updateBookingDTO.getConsultingStaffId() != null) {
+            Account consultingStaff = accountRepository.findById(updateBookingDTO.getConsultingStaffId())
+                    .orElseThrow(() -> new RuntimeException("Consulting staff not found"));
+            booking.setConsultingStaff(consultingStaff);
+        }
+
+        if (updateBookingDTO.getDeliveryStaffId() != null) {
+            Account deliveryStaff = accountRepository.findById(updateBookingDTO.getDeliveryStaffId())
+                    .orElseThrow(() -> new RuntimeException("Delivery staff not found"));
+            booking.setDeliveryStaff(deliveryStaff);
+        }
+
+        return bookingRepository.save(booking);
     }
 
     public Booking deleteBooking(String id) {
-        Booking booking = bookingRepository.findById(id).orElse(null);
+        Booking booking = bookingRepository.findByIdAndIsDeletedFalse(id).orElse(null);
         if (booking != null) {
             booking.setIsDeleted(true);
             return bookingRepository.save(booking);
@@ -79,30 +132,24 @@ public class BookingService {
         return null;
     }
 
-    public Trip createTripForBooking(String bookingId, Trip trip) {
-        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
-        if (bookingOptional.isPresent()) {
-            trip.setBooking(bookingOptional.get());
-            return tripService.createTrip(trip);
-        }
-        return null;
+    public TripDTO createTripForBooking(String bookingId, CreateTripDTO createTripDTO) {
+        Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        Trip trip = tripMapper.toEntity(createTripDTO);
+        trip.setBooking(booking);
+        Trip savedTrip = tripService.createTrip(trip);
+
+        booking.setTrip(savedTrip);
+        bookingRepository.save(booking);
+
+        return tripMapper.toDTO(savedTrip);
     }
 
     public Optional<Trip> getTripByBookingId(String bookingId) {
         return tripRepository.findByBookingIdAndBookingIsDeletedFalse(bookingId);
     }
 
-//    public Optional<Trip> getTripByBookingId(String bookingId) {
-//        Optional<Booking> booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
-//        if (booking.isPresent()) {
-//            Trip trip = tripRepository.findByBookingId(bookingId);
-//            if (trip != null) {
-//                trip.setBooking(booking.get());
-//                return Optional.of(trip);
-//            }
-//        }
-//        return Optional.empty();
-//    }
 
     private String generateBookingId() {
         String lastBookingId = bookingRepository.findTopByOrderByIdDesc()
@@ -111,6 +158,7 @@ public class BookingService {
         int nextId = Integer.parseInt(lastBookingId.substring(2)) + 1;
         return String.format("BO%04d", nextId);
     }
+
 
 
 }

@@ -12,4 +12,5 @@ public interface FarmRepository extends JpaRepository<Farm, String> {
     List<Farm> findByTripsIdAndIsDeletedFalse(String tripId);
     List<Farm> findAllByIsDeletedFalse();
     Optional<Farm> findByIdAndIsDeletedFalse(String id);
+    Optional<Farm> findTopByOrderByIdDesc();
 }

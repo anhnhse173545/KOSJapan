@@ -1,5 +1,8 @@
 package com.swp391.koi_ordering_system.service;
 
+import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
+import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.mapper.TripMapper;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.repository.FarmRepository;
@@ -7,9 +10,9 @@ import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TripService {
@@ -19,33 +22,56 @@ public class TripService {
     @Autowired
     private FarmRepository farmRepository;
 
+    @Autowired
+    private TripMapper tripMapper;
+
     public Trip createTrip(Trip trip) {
+        trip.setId(generateTripId());
         return tripRepository.save(trip);
     }
 
-    public List<Trip> getAllTrip() {
-        return tripRepository.findAllByIsDeletedFalse();
+//    public List<Trip> getAllTrip() {
+//        return tripRepository.findAllByIsDeletedFalse();
+//    }
+
+    public List<TripDTO> getAllTrips() {
+        return tripRepository.findAllByIsDeletedFalse().stream()
+                .map(tripMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Trip> getTripById(String id) {
-        return tripRepository.findByIdAndIsDeletedFalse(id);
+//    public Optional<Trip> getTripById(String id) {
+//        return tripRepository.findByIdAndIsDeletedFalse(id);
+//    }
+
+    public Optional<TripDTO> getTripById(String id) {
+        return tripRepository.findByIdAndIsDeletedFalse(id)
+                .map(tripMapper::toDTO);
     }
 
-    public Trip updateTrip(String id, Trip tripDetails) {
-        Optional<Trip> optionalTrip = tripRepository.findById(id);
-        if (optionalTrip.isPresent()) {
-            Trip trip = optionalTrip.get();
+//    public Trip updateTrip(String id, Trip tripDetails) {
+//        Optional<Trip> optionalTrip = tripRepository.findById(id);
+//        if (optionalTrip.isPresent()) {
+//            Trip trip = optionalTrip.get();
+//
+//            if (tripDetails.getStatus() != null) {
+//                trip.setStatus(tripDetails.getStatus());
+//            }
+//            return tripRepository.save(trip);
+//        }
+//        return null;
+//    }
 
-            if (tripDetails.getStatus() != null) {
-                trip.setStatus(tripDetails.getStatus());
-            }
-            return tripRepository.save(trip);
-        }
-        return null;
+    public TripDTO updateTrip(String tripId, UpdateTripDTO updateTripDTO) {
+        Trip trip = tripRepository.findByIdAndIsDeletedFalse(tripId)
+                .orElseThrow(() -> new RuntimeException("Trip not found"));
+        tripMapper.updateEntityFromDTO(updateTripDTO, trip);
+        Trip updatedTrip = tripRepository.save(trip);
+        return tripMapper.toDTO(updatedTrip);
     }
 
     public void deleteTrip(String id) {
-        Trip trip = tripRepository.findById(id).orElse(null);
+        Trip trip = tripRepository.findByIdAndIsDeletedFalse(id).orElse(null);
         if (trip != null) {
             trip.setIsDeleted(true);
             tripRepository.save(trip);
@@ -81,7 +107,7 @@ public class TripService {
         tripRepository.save(trip);
     }
 
-    private String generateTripId() {
+    public String generateTripId() {
         String lastTripId = tripRepository.findTopByOrderByIdDesc()
                 .map(Trip::getId)
                 .orElse("TR0000");

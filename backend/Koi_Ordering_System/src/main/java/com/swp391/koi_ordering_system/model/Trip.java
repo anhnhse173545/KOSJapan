@@ -12,8 +12,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "trips")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
 public class Trip {
     @Id
     @Column(name = "id", nullable = false)
@@ -38,12 +36,12 @@ public class Trip {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @JsonBackReference
-    @OneToOne(mappedBy = "trip")
+    @JsonBackReference(value = "booking-trip")
+    @OneToOne(mappedBy = "trip", cascade = CascadeType.PERSIST, optional = true)
     private Booking booking;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "trip-farm")
+    @ManyToMany
     @JoinTable(
             name = "trip_destinations",
             joinColumns = @JoinColumn(name = "trip_id"),

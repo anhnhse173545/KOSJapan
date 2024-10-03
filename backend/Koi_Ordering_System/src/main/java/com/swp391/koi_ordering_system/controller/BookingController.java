@@ -1,5 +1,11 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.CreateBookingDTO;
+import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
+import com.swp391.koi_ordering_system.dto.response.BookingDTO;
+import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.mapper.BookingMapper;
 import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.service.BookingService;
@@ -17,43 +23,86 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    private BookingMapper bookingMapper;
+
+//    @RequestMapping("/create")
+//    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+//        bookingService.createBooking(booking);
+//        return ResponseEntity.ok(booking);
+//    }
+
     @RequestMapping("/create")
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody CreateBookingDTO createBookingDTO) {
+        Booking booking = bookingMapper.toEntity(createBookingDTO);
         bookingService.createBooking(booking);
-        return ResponseEntity.ok(booking);
+        return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
+
+//    @RequestMapping("/list")
+//    public List<Booking> getAllBooking() {
+//        return bookingService.getAllBooking();
+//    }
 
     @RequestMapping("/list")
-    public List<Booking> getAllBooking() {
-        return bookingService.getAllBooking();
+    public ResponseEntity<List<BookingDTO>> getAllBooking() {
+        return ResponseEntity.ok(bookingService.getAllBooking());
     }
 
 
+//    @RequestMapping("customer/{customerId}")
+//    public ResponseEntity<List<Booking>> getBookingsByCustomerId(@PathVariable String customerId) {
+//        List<Booking> bookings = bookingService.getBookingsByCustomerId(customerId);
+//        if (bookings.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(bookings);
+//    }
+
     @RequestMapping("customer/{customerId}")
-    public ResponseEntity<List<Booking>> getBookingsByCustomerId(@PathVariable String customerId) {
-        List<Booking> bookings = bookingService.getBookingsByCustomerId(customerId);
+    public ResponseEntity<List<BookingDTO>> getBookingsByCustomerId(@PathVariable String customerId) {
+        List<BookingDTO> bookings = bookingService.getBookingsByCustomerId(customerId);
         if (bookings.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(bookings);
     }
 
+
+//    @RequestMapping("/get/{id}")
+//    public ResponseEntity<Optional<Booking>> getBookingById(@PathVariable String id) {
+//        Optional<Booking> booking = bookingService.getBookingById(id);
+//        if (booking.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(booking);
+//    }
+
     @RequestMapping("/get/{id}")
-    public ResponseEntity<Optional<Booking>> getBookingById(@PathVariable String id) {
-        Optional<Booking> booking = bookingService.getBookingById(id);
+    public ResponseEntity<Optional<BookingDTO>> getBookingById(@PathVariable String id) {
+        Optional<BookingDTO> booking = bookingService.getBookingById(id);
         if (booking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(booking);
     }
 
+//    @RequestMapping("/update/{id}")
+//    public ResponseEntity<Booking> updateBooking(@PathVariable String id, @RequestBody Booking booking) {
+//        Booking updatedBooking = bookingService.updateBooking(id, booking);
+//        if (updatedBooking == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedBooking);
+//    }
+
     @RequestMapping("/update/{id}")
-    public ResponseEntity<Booking> updateBooking(@PathVariable String id, @RequestBody Booking booking) {
-        Booking updatedBooking = bookingService.updateBooking(id, booking);
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id, @RequestBody UpdateBookingDTO updateBookingDTO) {
+        Booking updatedBooking = bookingService.updateBooking(id, updateBookingDTO);
         if (updatedBooking == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedBooking);
+        return ResponseEntity.ok(bookingMapper.toDTO(updatedBooking));
     }
 
     @RequestMapping ("/delete/{id}")
@@ -63,8 +112,8 @@ public class BookingController {
     }
 
     @RequestMapping("/{bookingId}/create-trip")
-    public ResponseEntity<Trip> createTripForBooking(@PathVariable String bookingId, @RequestBody Trip trip) {
-        Trip createdTrip = bookingService.createTripForBooking(bookingId, trip);
+    public ResponseEntity<TripDTO> createTripForBooking(@PathVariable String bookingId, @RequestBody CreateTripDTO createTripDTO) {
+        TripDTO createdTrip = bookingService.createTripForBooking(bookingId, createTripDTO);
         if (createdTrip == null) {
             return ResponseEntity.notFound().build();
         }
@@ -77,4 +126,7 @@ public class BookingController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+
+
 }

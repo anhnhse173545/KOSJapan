@@ -1,7 +1,14 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.model.Booking;
+import com.swp391.koi_ordering_system.dto.request.CreateFarmDTO;
+import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateFarmDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
+import com.swp391.koi_ordering_system.dto.response.FarmDTO;
+import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.mapper.FarmMapper;
 import com.swp391.koi_ordering_system.model.Farm;
+import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.service.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,28 +26,39 @@ public class FarmController {
     @Autowired
     private FarmService farmService;
 
+    @Autowired
+    private FarmMapper farmMapper;
+
+//    @RequestMapping("/create")
+//    public ResponseEntity<Farm> createFarm(@RequestBody Farm farm) {
+//        return ResponseEntity.ok(farmService.createFarm(farm));
+//    }
+
     @RequestMapping("/create")
-    public ResponseEntity<Farm> createFarm(@RequestBody Farm farm) {
-        return ResponseEntity.ok(farmService.createFarm(farm));
+    public ResponseEntity<FarmDTO> createFarm(@RequestBody CreateFarmDTO createFarmDTO) {
+        Farm farm = farmMapper.toEntity(createFarmDTO);
+        farmService.createFarm(farm);
+        return ResponseEntity.ok(farmMapper.toDTO(farm));
     }
 
     @RequestMapping("/list")
-    public ResponseEntity<List<Farm>> getAllFarm() {
+    public ResponseEntity<List<FarmDTO>> getAllFarm() {
         return ResponseEntity.ok(farmService.getAllFarm());
     }
 
     @RequestMapping("/get/{id}")
-    public ResponseEntity<Optional<Farm>> getBookingById(@PathVariable String id) {
-        Optional<Farm> booking = farmService.getFarmById(id);
-        if (booking.isEmpty()) {
+    public ResponseEntity<Optional<FarmDTO>> getFarmById(@PathVariable String id) {
+        Optional<FarmDTO> farm = farmService.getFarmById(id);
+        if (farm.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(booking);
+        return ResponseEntity.ok(farm);
     }
 
+
     @RequestMapping("/update/{id}")
-    public ResponseEntity<Farm> updateFarm(@PathVariable String id, @RequestBody Farm farmDetails) {
-        Farm updatedFarm = farmService.updateFarm(id, farmDetails);
+    public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id, @RequestBody UpdateFarmDTO updateFarmDTO) {
+        FarmDTO updatedFarm = farmService.updateFarm(id, updateFarmDTO);
         if (updatedFarm == null) {
             return ResponseEntity.notFound().build();
         }
@@ -51,5 +69,15 @@ public class FarmController {
     public ResponseEntity<String> deleteFarm(@PathVariable String id) {
         farmService.deleteFarm(id);
         return ResponseEntity.ok("Farm deleted successfully");
+    }
+
+
+    @RequestMapping("/{farmId}/add-variety/{varietyId}")
+    public ResponseEntity<Farm> addVarietyToFarm(@PathVariable String farmId, @PathVariable String varietyId) {
+        Farm updatedFarm = farmService.addVarietyToFarm(farmId, varietyId);
+        if (updatedFarm == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedFarm);
     }
 }
