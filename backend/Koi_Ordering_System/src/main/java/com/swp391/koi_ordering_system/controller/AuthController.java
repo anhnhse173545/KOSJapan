@@ -1,6 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.dto.LoginRequest;
+import com.swp391.koi_ordering_system.dto.request.LoginRequest;
 import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
 import com.swp391.koi_ordering_system.security.JwtUtil;

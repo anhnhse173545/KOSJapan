@@ -1,11 +1,14 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,43 +17,49 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "bookings")
+
 public class Booking {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Account customer;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "trip_id", nullable = false)
+    @JsonManagedReference(value = "booking-trip")
+    @OneToOne(cascade = CascadeType.PERSIST, optional = true)
+    @JoinColumn(name = "trip_id")
     private Trip trip;
 
     @Column(name = "description")
     private String description;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @CreationTimestamp
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
-    @Column(name = "status", length = 20)
-    private String status;
+    @JsonManagedReference(value = "booking-tripPayment")
+    @OneToOne(mappedBy = "booking")
+    private TripPayment tripPayment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "status", length = 20)
+    private String status = "requested";
+
+    @ManyToOne
     @JoinColumn(name = "sale_staff_id")
     private Account saleStaff;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "consulting_staff_id")
     private Account consultingStaff;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "delivery_staff_id")
     private Account deliveryStaff;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
 }

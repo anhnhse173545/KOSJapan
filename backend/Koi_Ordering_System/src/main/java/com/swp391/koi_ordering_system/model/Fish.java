@@ -18,7 +18,7 @@ public class Fish {
     @Column(name = "id", nullable = false, length = 9)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "variety_id", nullable = false)
     private Variety variety;
 
