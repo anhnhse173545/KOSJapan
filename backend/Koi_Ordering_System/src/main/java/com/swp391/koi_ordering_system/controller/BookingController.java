@@ -26,38 +26,15 @@ public class BookingController {
     @Autowired
     private BookingMapper bookingMapper;
 
-//    @RequestMapping("/create")
-//    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
-//        bookingService.createBooking(booking);
-//        return ResponseEntity.ok(booking);
-//    }
-
     @RequestMapping("/create")
     public ResponseEntity<BookingDTO> createBooking(@RequestBody CreateBookingDTO createBookingDTO) {
         Booking booking = bookingMapper.toEntity(createBookingDTO);
-        bookingService.createBooking(booking);
-        return ResponseEntity.ok(bookingMapper.toDTO(booking));
+        return ResponseEntity.ok(bookingMapper.toDTO(bookingService.createBooking(booking)));
     }
-
-//    @RequestMapping("/list")
-//    public List<Booking> getAllBooking() {
-//        return bookingService.getAllBooking();
-//    }
-
     @RequestMapping("/list")
     public ResponseEntity<List<BookingDTO>> getAllBooking() {
         return ResponseEntity.ok(bookingService.getAllBooking());
     }
-
-
-//    @RequestMapping("customer/{customerId}")
-//    public ResponseEntity<List<Booking>> getBookingsByCustomerId(@PathVariable String customerId) {
-//        List<Booking> bookings = bookingService.getBookingsByCustomerId(customerId);
-//        if (bookings.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(bookings);
-//    }
 
     @RequestMapping("customer/{customerId}")
     public ResponseEntity<List<BookingDTO>> getBookingsByCustomerId(@PathVariable String customerId) {
@@ -68,16 +45,6 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-
-//    @RequestMapping("/get/{id}")
-//    public ResponseEntity<Optional<Booking>> getBookingById(@PathVariable String id) {
-//        Optional<Booking> booking = bookingService.getBookingById(id);
-//        if (booking.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(booking);
-//    }
-
     @RequestMapping("/get/{id}")
     public ResponseEntity<Optional<BookingDTO>> getBookingById(@PathVariable String id) {
         Optional<BookingDTO> booking = bookingService.getBookingById(id);
@@ -86,15 +53,6 @@ public class BookingController {
         }
         return ResponseEntity.ok(booking);
     }
-
-//    @RequestMapping("/update/{id}")
-//    public ResponseEntity<Booking> updateBooking(@PathVariable String id, @RequestBody Booking booking) {
-//        Booking updatedBooking = bookingService.updateBooking(id, booking);
-//        if (updatedBooking == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(updatedBooking);
-//    }
 
     @RequestMapping("/update/{id}")
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id, @RequestBody UpdateBookingDTO updateBookingDTO) {
@@ -126,7 +84,4 @@ public class BookingController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-
-
 }

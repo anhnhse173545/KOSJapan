@@ -44,59 +44,22 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-//    public List<Booking> getAllBooking() {
-//        return bookingRepository.findAllByIsDeletedFalse();
-//    }
-
     public List<BookingDTO> getAllBooking() {
         return bookingRepository.findAllByIsDeletedFalse().stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-
-//    public Optional<Booking> getBookingById(String id) {
-//        return bookingRepository.findByIdAndIsDeletedFalse(id);
-//    }
-
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
                 .map(bookingMapper::toDTO);
     }
-
-//    public List<Booking> getBookingsByCustomerId(String customerId) {
-//        return bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
-//    }
 
     public List<BookingDTO> getBookingsByCustomerId(String customerId) {
         return bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId).stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
-//    public Booking updateBooking(String id, Booking bookingDetails) {
-//        Optional<Booking> optionalBooking = bookingRepository.findById(id);
-//        if (optionalBooking.isPresent()) {
-//            Booking booking = optionalBooking.get();
-//
-//            if (bookingDetails.getStatus() != null) {
-//                booking.setStatus(bookingDetails.getStatus());
-//            }
-//            if (bookingDetails.getSaleStaff() != null) {
-//                booking.setSaleStaff(bookingDetails.getSaleStaff());
-//            }
-//
-//            if (bookingDetails.getConsultingStaff() != null) {
-//                booking.setConsultingStaff(bookingDetails.getConsultingStaff());
-//            }
-//
-//            if (bookingDetails.getDeliveryStaff() != null) {
-//                booking.setDeliveryStaff(bookingDetails.getDeliveryStaff());
-//            }
-//            return bookingRepository.save(booking);
-//        }
-//        return null;
-//    }
 
     public Booking updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)

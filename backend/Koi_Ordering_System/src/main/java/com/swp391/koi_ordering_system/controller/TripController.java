@@ -26,32 +26,16 @@ public class TripController {
     @Autowired
     private TripMapper tripMapper;
 
-    //    @RequestMapping("/create")
-//    public Trip createTrip(@RequestBody Trip trip) {
-//        return tripService.createTrip(trip);
-//    }
     @RequestMapping("/create")
     public ResponseEntity<TripDTO> createTrip(@RequestBody CreateTripDTO createTripDTO) {
         Trip trip = tripMapper.toEntity(createTripDTO);
-        tripService.createTrip(trip);
-        return ResponseEntity.ok(tripMapper.toDTO(trip));
+        return ResponseEntity.ok(tripMapper.toDTO(tripService.createTrip(trip)));
     }
 
     @RequestMapping("/list")
     public ResponseEntity<List<TripDTO>> getAllTrip() {
         return ResponseEntity.ok(tripService.getAllTrips());
     }
-
-
-
-//    @RequestMapping("/get/{id}")
-//    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable String id) {
-//        Optional<Trip> trip = tripService.getTripById(id);
-//        if (trip.isEmpty()) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(trip);
-//    }
 
     @RequestMapping("/get/{id}")
     public ResponseEntity<Optional<TripDTO>> getBookingById(@PathVariable String id) {

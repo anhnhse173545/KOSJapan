@@ -33,10 +33,10 @@ public class Farm {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "image")
+    private String image;
 
-    @JsonManagedReference (value = "farm-variety")
+    @JsonManagedReference(value = "farm-variety")
     @ManyToMany
     @JoinTable(
             name = "farm_varieties",
@@ -44,8 +44,4 @@ public class Farm {
             inverseJoinColumns = @JoinColumn(name = "variety_id")
     )
     private Set<Variety> varieties;
-
-    @JsonBackReference (value = "trip-farm")
-    @ManyToMany(mappedBy = "farms")
-    private Set<Trip> trips;
 }

@@ -10,28 +10,12 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface FarmMapper {
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "address", target = "address")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "varieties", target = "varieties")
+
     FarmDTO toDTO(Farm farm);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "address", target = "address")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "varieties", target = "varieties")
     Farm toEntity(FarmDTO farmDTO);
 
-    @Mapping(source = "address", target = "address")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "varieties", target = "varieties")
     Farm toEntity(CreateFarmDTO createFarmDTO);
 
-    @Mapping(source = "address", target = "address")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    @Mapping(source = "name", target = "name")
     void updateEntityFromDTO(UpdateFarmDTO updateFarmDTO, @MappingTarget Farm farm);
 }

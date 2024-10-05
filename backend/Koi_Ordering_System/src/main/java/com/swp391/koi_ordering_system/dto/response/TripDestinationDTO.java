@@ -5,17 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FarmDTO {
+public class TripDestinationDTO {
     private String id;
-    private String address;
-    private String phoneNumber;
-    private String name;
-    private String image;
-    private Set<VarietyDTO> varieties;
+    private FarmDTO farm;
 }

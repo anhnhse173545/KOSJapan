@@ -1,15 +1,10 @@
 package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.UpdateFarmDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
-import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.FarmDTO;
-import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.mapper.FarmMapper;
 import com.swp391.koi_ordering_system.mapper.VarietyMapper;
-import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
-import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
@@ -34,19 +29,10 @@ public class FarmService {
     @Autowired
     private VarietyMapper varietyMapper;
 
-//    public Farm createFarm(Farm farm) {
-//        farm.setId(generateFarmId());
-//        return farmRepository.save(farm);
-//    }
-
     public Farm createFarm(Farm farm) {
         farm.setId(generateFarmId());
         return farmRepository.save(farm);
     }
-
-//    public List<Farm> getAllFarm() {
-//        return farmRepository.findAllByIsDeletedFalse();
-//    }
 
     public List<FarmDTO> getAllFarm() {
         return farmRepository.findAllByIsDeletedFalse().stream()
@@ -54,38 +40,10 @@ public class FarmService {
                 .collect(Collectors.toList());
     }
 
-//    public Optional<Farm> getFarmById(String id) {
-//        return farmRepository.findByIdAndIsDeletedFalse(id);
-//    }
-
     public Optional<FarmDTO> getFarmById(String id) {
         return farmRepository.findByIdAndIsDeletedFalse(id)
                 .map(farmMapper::toDTO);
     }
-
-//    public Farm updateFarm(String id, Farm farmDetails) {
-//        Optional<Farm> optionalFarm = farmRepository.findById(id);
-//        if (optionalFarm.isPresent()) {
-//            Farm farm = optionalFarm.get();
-//            if (farmDetails.getAddress() != null) {
-//                farm.setAddress(farmDetails.getAddress());
-//            }
-//            if (farmDetails.getPhoneNumber() != null) {
-//                farm.setPhoneNumber(farmDetails.getPhoneNumber());
-//            }
-//            if (farmDetails.getName() != null) {
-//                farm.setName(farmDetails.getName());
-//            }
-//            if (farmDetails.getPhone() != null) {
-//                farm.setPhone(farmDetails.getPhone());
-//            }
-//            if (farmDetails.getIsDeleted() != null) {
-//                farm.setIsDeleted(farmDetails.getIsDeleted());
-//            }
-//            return farmRepository.save(farm);
-//        }
-//        return null;
-//    }
 
     public FarmDTO updateFarm(String farmId, UpdateFarmDTO updateFarmDTO) {
         Farm farm = farmRepository.findByIdAndIsDeletedFalse(farmId)
@@ -105,22 +63,9 @@ public class FarmService {
         return null;
     }
 
-//    public Farm addVarietyToFarm(String farmId, String varietyId) {
-//        Optional<Farm> optionalFarm = farmRepository.findByIdAndIsDeletedFalse(farmId);
-//        Optional<Variety> optionalVariety = varietyRepository.findByIdAndIsDeletedFalse(varietyId);
-//
-//        if (optionalFarm.isPresent() && optionalVariety.isPresent()) {
-//            Farm farm = optionalFarm.get();
-//            Variety variety = optionalVariety.get();
-//            farm.getVarieties().add(variety);
-//            return farmRepository.save(farm);
-//        }
-//        return null;
-//    }
-
     public Farm addVarietyToFarm(String farmId, String varietyId) {
         Optional<Farm> optionalFarm = farmRepository.findByIdAndIsDeletedFalse(farmId);
-        Optional<Variety> optionalVariety = varietyRepository.findById(farmId);
+        Optional<Variety> optionalVariety = varietyRepository.findById(varietyId);
 
         if (optionalFarm.isPresent() && optionalVariety.isPresent()) {
             Farm farm = optionalFarm.get();
@@ -138,6 +83,8 @@ public class FarmService {
         int nextId = Integer.parseInt(lastBookingId.substring(2)) + 1;
         return String.format("FA%04d", nextId);
     }
+
+
 
 
 }

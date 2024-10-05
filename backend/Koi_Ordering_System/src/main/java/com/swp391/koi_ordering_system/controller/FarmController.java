@@ -1,14 +1,10 @@
 package com.swp391.koi_ordering_system.controller;
 
 import com.swp391.koi_ordering_system.dto.request.CreateFarmDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFarmDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.FarmDTO;
-import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.mapper.FarmMapper;
 import com.swp391.koi_ordering_system.model.Farm;
-import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.service.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +33,7 @@ public class FarmController {
     @RequestMapping("/create")
     public ResponseEntity<FarmDTO> createFarm(@RequestBody CreateFarmDTO createFarmDTO) {
         Farm farm = farmMapper.toEntity(createFarmDTO);
-        farmService.createFarm(farm);
-        return ResponseEntity.ok(farmMapper.toDTO(farm));
+        return ResponseEntity.ok(farmMapper.toDTO(farmService.createFarm(farm)));
     }
 
     @RequestMapping("/list")

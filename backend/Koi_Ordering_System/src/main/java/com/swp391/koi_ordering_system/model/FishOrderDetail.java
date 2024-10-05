@@ -25,9 +25,6 @@ public class FishOrderDetail {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "quantity")
-    private Integer quantity;
-
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;

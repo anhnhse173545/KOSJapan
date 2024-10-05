@@ -19,5 +19,5 @@ public class TripDTO {
     private String departureAirport;
     private Double price;
     private String status;
-    private Set<FarmDTO> farms;
+    private Set<TripDestinationDTO> tripDestinations;
 }

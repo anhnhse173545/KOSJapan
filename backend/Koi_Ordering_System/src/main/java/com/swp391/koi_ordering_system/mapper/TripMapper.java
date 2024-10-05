@@ -8,36 +8,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {TripDestinationMapper.class})
 public interface TripMapper {
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "startDate", target = "startDate")
-    @Mapping(source = "endDate", target = "endDate")
-    @Mapping(source = "departureAirport", target = "departureAirport")
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "farms", target = "farms")
+
     TripDTO toDTO(Trip trip);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "startDate", target = "startDate")
-    @Mapping(source = "endDate", target = "endDate")
-    @Mapping(source = "departureAirport", target = "departureAirport")
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "farms", target = "farms")
     Trip toEntity(TripDTO tripDTO);
 
-    @Mapping(source = "startDate", target = "startDate")
-    @Mapping(source = "endDate", target = "endDate")
-    @Mapping(source = "departureAirport", target = "departureAirport")
-    @Mapping(source = "price", target = "price")
     Trip toEntity(CreateTripDTO createTripDTO);
 
-    @Mapping(source = "startDate", target = "startDate")
-    @Mapping(source = "endDate", target = "endDate")
-    @Mapping(source = "departureAirport", target = "departureAirport")
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "status", target = "status")
     void updateEntityFromDTO(UpdateTripDTO updateTripDTO, @MappingTarget Trip trip);
 }

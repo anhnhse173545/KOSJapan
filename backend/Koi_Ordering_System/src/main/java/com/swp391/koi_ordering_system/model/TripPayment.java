@@ -22,18 +22,18 @@ public class TripPayment {
 
     @JsonBackReference(value = "booking-tripPayment")
     @OneToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "payment_method_id", nullable = false)
+    @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
     @CreationTimestamp
     @Column(name = "create_at")
     private Instant createAt;
 
-    @Column(name = "amount")
+    @Column(name = "amount")S
     private Double amount;
 
     @Column(name = "status")
@@ -41,6 +41,6 @@ public class TripPayment {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted;S
 
 }

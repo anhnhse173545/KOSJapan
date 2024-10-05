@@ -7,11 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "username", target = "username")
     AccountDTO toDTO(Account account);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "username", target = "username")
     Account toEntity(AccountDTO accountDTO);
 }

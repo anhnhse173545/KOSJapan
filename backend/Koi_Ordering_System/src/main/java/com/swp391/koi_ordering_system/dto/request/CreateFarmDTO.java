@@ -16,5 +16,6 @@ public class CreateFarmDTO {
     private String address;
     private String phoneNumber;
     private String name;
+    private String image;
     private Set<VarietyDTO> varieties;
 }

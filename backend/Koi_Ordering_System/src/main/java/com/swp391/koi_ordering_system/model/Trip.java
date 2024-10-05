@@ -37,15 +37,9 @@ public class Trip {
     private Boolean isDeleted = false;
 
     @JsonBackReference(value = "booking-trip")
-    @OneToOne(mappedBy = "trip", cascade = CascadeType.PERSIST, optional = true)
+    @OneToOne(mappedBy = "trip")
     private Booking booking;
 
-    @JsonManagedReference(value = "trip-farm")
-    @ManyToMany
-    @JoinTable(
-            name = "trip_destinations",
-            joinColumns = @JoinColumn(name = "trip_id"),
-            inverseJoinColumns = @JoinColumn(name = "farm_id")
-    )
-    private Set<Farm> farms;
+    @OneToMany(mappedBy = "trip")
+    private Set<TripDestination> tripDestinations;
 }

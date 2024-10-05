@@ -12,16 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDTO {
-//    private String id;
-//    private String customerId;
-//    private String tripId;
-//    private String description;
-//    private LocalDateTime createAt;
-//    private String tripPaymentId;
-//    private String status;
-//    private String saleStaffId;
-//    private String consultingStaffId;
-//    private String deliveryStaffId;
     private String id;
     private AccountDTO customer;
     private TripDTO trip;

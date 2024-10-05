@@ -28,7 +28,7 @@ public class Booking {
     private Account customer;
 
     @JsonManagedReference(value = "booking-trip")
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST, optional = true)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
@@ -40,7 +40,7 @@ public class Booking {
     private LocalDateTime createAt;
 
     @JsonManagedReference(value = "booking-tripPayment")
-    @OneToOne(mappedBy = "booking" , cascade = CascadeType.PERSIST, optional = true)
+    @OneToOne(mappedBy = "booking")
     private TripPayment tripPayment;
 
     @Column(name = "status", length = 20)
