@@ -42,9 +42,7 @@ public class AccountServiceImp implements AccountService {
         newAccount.setName(account.getName());
         newAccount.setAddress(account.getAddress());
         newAccount.setPhone(account.getPhone());
-        newAccount.setBankAccountId(account.getBankAccountId());
         newAccount.setIsDeleted(account.getIsDeleted());
-        newAccount.setProfileImage(account.getProfileImage());
         newAccount.setProfileImg(account.getProfileImg());
 
         return repo.save(newAccount);
@@ -65,9 +63,7 @@ public class AccountServiceImp implements AccountService {
         acc.setName(account.getName());
         acc.setAddress(account.getAddress());
         acc.setPhone(account.getPhone());
-        acc.setBankAccountId(account.getBankAccountId());
         acc.setIsDeleted(account.getIsDeleted());
-        acc.setProfileImage(account.getProfileImage());
         acc.setProfileImg(account.getProfileImg());
         return repo.save(acc);
     }
@@ -87,7 +83,7 @@ public class AccountServiceImp implements AccountService {
                 .phone(account.getPhone())
                 .address(account.getAddress())
                 .role(account.getRole())
-                .profileImage(account.getProfileImage())
+                .profileImage(account.getProfileImg())
                 .build();
         return accDTO;
     }
@@ -100,7 +96,6 @@ public class AccountServiceImp implements AccountService {
                 .phone(accountDTO.getPhone())
                 .address(accountDTO.getAddress())
                 .role(accountDTO.getRole())
-                .profileImage(accountDTO.getProfileImage())
                 .build();
         return acc;
     }

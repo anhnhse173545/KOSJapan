@@ -19,7 +19,7 @@ public class FishOrder {
     @Column(name = "id", nullable = false, length = 9)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 

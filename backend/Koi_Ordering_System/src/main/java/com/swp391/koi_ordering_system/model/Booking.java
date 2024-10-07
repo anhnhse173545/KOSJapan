@@ -1,6 +1,7 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,5 +64,8 @@ public class Booking {
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishOrder> fishOrders = new ArrayList<FishOrder>();
 
 }
