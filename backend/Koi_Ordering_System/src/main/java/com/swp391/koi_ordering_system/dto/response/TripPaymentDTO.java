@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TripPaymentDTO {
     private String id;
+    private String paymentMethodName;
     private double amount;
 
 }

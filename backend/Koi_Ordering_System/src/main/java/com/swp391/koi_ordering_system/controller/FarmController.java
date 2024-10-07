@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.dto.response.FarmDTO;
 import com.swp391.koi_ordering_system.mapper.FarmMapper;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.service.FarmService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,7 @@ public class FarmController {
 //    }
 
     @RequestMapping("/create")
-    public ResponseEntity<FarmDTO> createFarm(@RequestBody CreateFarmDTO createFarmDTO) {
+    public ResponseEntity<FarmDTO> createFarm(@Valid @RequestBody CreateFarmDTO createFarmDTO) {
         Farm farm = farmMapper.toEntity(createFarmDTO);
         return ResponseEntity.ok(farmMapper.toDTO(farmService.createFarm(farm)));
     }
@@ -52,7 +53,7 @@ public class FarmController {
 
 
     @RequestMapping("/update/{id}")
-    public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id, @RequestBody UpdateFarmDTO updateFarmDTO) {
+    public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id,@Valid @RequestBody UpdateFarmDTO updateFarmDTO) {
         FarmDTO updatedFarm = farmService.updateFarm(id, updateFarmDTO);
         if (updatedFarm == null) {
             return ResponseEntity.notFound().build();

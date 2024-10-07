@@ -31,8 +31,6 @@ public interface BookingMapper {
     Booking toEntity(CreateBookingDTO createBookingDTO);
 
     @Mapping(source = "tripId", target = "trip.id")
-    @Mapping(source = "description", target = "description")
-    @Mapping(source = "status", target = "status")
     @Mapping(source = "saleStaffId", target = "saleStaff.id")
     @Mapping(source = "consultingStaffId", target = "consultingStaff.id")
     @Mapping(source = "deliveryStaffId", target = "deliveryStaff.id")
