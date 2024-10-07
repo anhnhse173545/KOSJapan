@@ -5,6 +5,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.ErrorDTO;
+import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.mapper.BookingMapper;
 import com.swp391.koi_ordering_system.model.Booking;
@@ -27,6 +28,7 @@ public class BookingController {
 
     @Autowired
     private BookingMapper bookingMapper;
+
 
     @RequestMapping("/create")
     public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
@@ -94,5 +96,14 @@ public class BookingController {
         return bookingService.getTripByBookingId(bookingId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @RequestMapping("/get-fish-orders/{booking_id}")
+    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){
+        List<FishOrderDTO> newList = bookingService.getAllFishOrderByBookingId(booking_id);
+        if(newList.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(newList);
     }
 }

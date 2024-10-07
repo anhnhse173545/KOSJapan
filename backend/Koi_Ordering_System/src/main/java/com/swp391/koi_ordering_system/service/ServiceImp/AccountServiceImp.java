@@ -88,15 +88,15 @@ public class AccountServiceImp implements AccountService {
         return accDTO;
     }
 
-    private Account mapToEnity(AccountDTO accountDTO) {
-        Account acc = new Account().builder()
-                .id(accountDTO.getId())
-                .username(accountDTO.getUsername())
-                .name(accountDTO.getName())
-                .phone(accountDTO.getPhone())
-                .address(accountDTO.getAddress())
-                .role(accountDTO.getRole())
-                .build();
-        return acc;
-    }
+//    private Account mapToEnity(AccountDTO accountDTO) {
+//        Account acc = new Account().builder()
+//                .id(accountDTO.getId())
+//                .username(accountDTO.getUsername())
+//                .name(accountDTO.getName())
+//                .phone(accountDTO.getPhone())
+//                .address(accountDTO.getAddress())
+//                .role(accountDTO.getRole())
+//                .build();
+//        return acc;
+//    }
 }
