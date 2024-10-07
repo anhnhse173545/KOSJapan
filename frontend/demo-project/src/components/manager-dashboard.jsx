@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/ui/button"
+import { Input } from "@/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
+import { Label } from "@/ui/label"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/ui/card"
+import { Badge } from "@/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/ui/dialog";
 import {
   ChevronLeft,
   LogOut,

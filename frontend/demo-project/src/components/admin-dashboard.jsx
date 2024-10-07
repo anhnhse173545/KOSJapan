@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react"
 import { PlusCircle, Trash2, Users, Map, Link, CheckCircle2, XCircle, Menu, X, UserCircle, Briefcase, Truck } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/ui/button"
+import { Input } from "@/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/ui/table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select"
+import { Badge } from "@/ui/badge"
+import { ScrollArea } from "@/ui/scroll-area"
 
 export function AdminDashboardComponent() {
   const [staff, setStaff] = useState([
