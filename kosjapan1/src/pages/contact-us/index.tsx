@@ -33,7 +33,7 @@ function CombinedKoiRequestForm() {
 
     return (
         <AuthenLayout>
-            <h2>RSVP or Request a Koi</h2>
+            <h2>Request A Trip To Koi Farm</h2>
             
             {/* Checkbox to toggle form visibility */}
             <div style={{ marginBottom: 24 }}>
@@ -110,7 +110,7 @@ function CombinedKoiRequestForm() {
             {/* Seat Reservation Form */}
             {showSeatForm && (
                 <Form labelCol={{ span: 24 }} onFinish={handleFormSubmit} layout="vertical">
-                    <h3>Reserve a Seat</h3>
+                    <h3>VIsit koi farm</h3>
                     {/* Number of People */}
                     <Form.Item
                         label="How many people?"
@@ -131,7 +131,7 @@ function CombinedKoiRequestForm() {
 
                     {/* Arrival Date */}
                     <Form.Item
-                        label="Arrival back to USA Date"
+                        label="Arrival back date"
                         name="arrivalDate"
                         rules={[{ required: true, message: "Please select your arrival date" }]}
                     >
@@ -144,12 +144,11 @@ function CombinedKoiRequestForm() {
                             <Form.Item name={['address', 'homeAddress']} noStyle rules={[{ required: true, message: 'Home Address is required' }]}>
                                 <Input placeholder="Home Address" style={{ marginBottom: '8px' }} />
                             </Form.Item>
+                            <br /> 
                             <Form.Item name={['address', 'placeToGo']} noStyle>
                                 <Input placeholder="Place to go (if you have more than 2,separated by , )" style={{ marginBottom: '8px' }} />
                             </Form.Item>
-                            <Form.Item name={['address', 'city']} noStyle rules={[{ required: true, message: 'City is required' }]}>
-                                <Input placeholder="City" style={{ marginBottom: '8px' }} />
-                            </Form.Item>
+                           
                            
                      
                           

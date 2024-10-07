@@ -15,7 +15,7 @@ function Header() {
          <ul className="header__navigation">
             <li>Home</li>
             <li onClick={() => navigate("/payment")}>My Booking</li>
-            <li onClick={() => navigate("/contact")}>Contact us</li>
+            <li onClick={() => navigate("/contact")}>Request</li>
             <li></li>
          </ul>
         </div>

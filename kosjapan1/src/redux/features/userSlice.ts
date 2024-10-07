@@ -3,6 +3,7 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../../models/user";
+import axios from "axios";
 
 
 //default value           user nay vua moi tao 1 la user 2 la null
@@ -18,5 +19,6 @@ export const userSlice = createSlice({
     },
 });
 export const{ login, logout} = userSlice.actions;
+
 export default userSlice.reducer;
 

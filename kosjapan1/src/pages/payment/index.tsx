@@ -58,7 +58,7 @@ const koiPayments = [
     id: 4,
     farm: 'Otsuka Koi Farm',
     time: 'Time Start: 9/19/2024',
-    status: 'Canceled',
+    status: 'On going',
     price: '$900.00',
     img: 'https://onkoi.vn/wp-content/uploads/2020/04/Ho-nuoi-Koi-can-phai-co-kich-thuoc-lon-va-rong-rai.jpg',
     statusLabel: 'Canceled | Order Canceled',
@@ -112,18 +112,14 @@ function PaymentPage() {
               My Koi Fish
             </Link>
           </li>
-          <li>
-            <Link to="/mytour" className={`sidebar-link ${location.pathname === '/mytour' ? 'active' : ''}`}>
-              My Tour
-            </Link>
-          </li>
+          
         </ul>
       </div>
 
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Request', 'Pending Quota', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Request', 'Pending Quota','On going' ,'Completed', 'Canceled' ].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -147,35 +143,26 @@ function PaymentPage() {
                 <p className="price">{koi.price}</p>
 
             
-                {(koi.status === 'Request' || koi.status === 'Pending Quota') ? (
-                  <div className="button-group">
-                    <button
-                      className="details-button"
-                      onClick={() => navigate(`/payment/${koi.id}`)}
-                    >
-                      See Details
-                    </button>
-                    <button
-                      className="details-button"
-                      onClick={() => navigate('/paykoi')}
-                    >
-                      Purchase
-                    </button>
-                    <button
-                      className="details-button"
-                      onClick={() => handleCancel(koi.id)} 
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="details-button"
-                    onClick={() => navigate(`/payment/${koi.id}`)}
-                  >
-                    See Details
-                  </button>
-                )}
+                <div className="button-group">
+  <button
+    className="details-button"
+    onClick={() => {
+      if (koi.status === 'Pending Quota') {
+        navigate(`/quota/${koi.id}`);
+      } else if (koi.status === 'Request') {
+        navigate(`/payment/${koi.id}`);
+      }else if(koi.status === 'On going'){
+        navigate (`/ongoing/${koi.id}`)
+      
+      } else {
+        navigate(`/payment/${koi.id}`);
+      }
+    }}
+  >
+    See Details
+  </button>
+</div>
+
               </div>
             </div>
           ))}

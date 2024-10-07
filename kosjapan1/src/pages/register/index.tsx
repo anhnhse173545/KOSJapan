@@ -23,13 +23,14 @@ function Register() {
         role: 'ADMIN', // Default value for role
       }}
     >
-      {/* UserName */}
-      <Form.Item
-        name="username"
-        label="Username"
-        rules={[{ required: true, message: 'Please enter your username' }]}
+
+       {/* name */}
+       <Form.Item
+        name="name"
+        label="Name"
+        rules={[{ required: true, message: 'Please enter your name' }]}
       >
-        <Input placeholder="Enter username" />
+        <Input placeholder="Enter phone name" />
       </Form.Item>
 
       {/* Phone */}

@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
 
-// Dữ liệu giả lập
 const koiPayments = [
   {
     id: 1,
@@ -24,7 +23,7 @@ const koiPayments = [
     quantity: 2,
     status: 'Transit',
     price: '$400.00',
-    img: 'https://hanoverkoifarms.com/wp-content/uploads/2017/01/great-kohaku-739x1024.jpg',
+    img: 'https://i.etsystatic.com/24648260/r/il/db0eac/2525964906/il_1080xN.2525964906_1k9t.jpg',
     gender: 'Female',
     height: '32 cm',
     weight: '1.7 kg',
@@ -38,7 +37,7 @@ const koiPayments = [
     quantity: 2,
     status: 'completed',
     price: '$400.00',
-    img: 'https://hanoverkoifarms.com/wp-content/uploads/2017/01/great-kohaku-739x1024.jpg',
+    img: 'https://cecilieo.com/content/images/wordpress/2020/11/23-koi-fish-watercolor-cecilieo.jpg',
     gender: 'Female',
     height: '12 cm',
     weight: '1.7 kg',
@@ -52,7 +51,7 @@ const koiPayments = [
     quantity: 5,
     status: 'Canceled',
     price: '$400.00',
-    img: 'https://hanoverkoifarms.com/wp-content/uploads/2017/01/great-kohaku-739x1024.jpg',
+    img: 'https://maxcare.edu.vn/wp-content/uploads/2024/09/anime-girl-119p0cpx.jpg',
     gender: 'Male',
     height: '13 cm',
     weight: '1.7 kg',
@@ -73,7 +72,7 @@ function KoiDetailPage() {
       <img src={koi.img} alt={koi.koi} className="koi-image" />
       <h1>{koi.koi}</h1>
       <p><strong>Name:</strong> {koi.name}</p>
-      <p><strong>ID:</strong> {koi.id}</p>
+      
       <p><strong>Size:</strong> {koi.size} cm</p>
       <p><strong>Quantity:</strong> {koi.quantity}</p>
       <p><strong>Height:</strong> {koi.height}</p>

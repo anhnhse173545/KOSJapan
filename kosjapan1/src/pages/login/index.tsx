@@ -40,16 +40,16 @@ function Login() {
                 onFinish={handleLogin}
             >
                 <Form.Item 
-                    label="Username"
-                    name="username"
+                    label="Phone number"
+                    name="phonenumber"
                     rules={[
                         {
                             required: true,
-                            message: "Please enter your email",
+                            message: "Please enter your phone number",
                         },
                     ]}
                 >
-                    <Input placeholder="Enter your email" />
+                    <Input placeholder="Enter your phone" />
                 </Form.Item>
 
                 <Form.Item 

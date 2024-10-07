@@ -84,9 +84,7 @@ function KoiPage() {
           <li>
             <Link to="/mykoi" className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>My Koi</Link>
           </li>
-          <li>
-            <Link to="/mytour" className={`sidebar-link ${location.pathname === '/mytour' ? 'active' : ''}`}>My Tour</Link>
-          </li>
+         
         </ul>
       </div>
 

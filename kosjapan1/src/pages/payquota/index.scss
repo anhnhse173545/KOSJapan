@@ -1,0 +1,71 @@
+.quota-details-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  
+    .koi-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  
+    .trip-details {
+      margin-top: 20px;
+      display: flex; /* Use flexbox to align items horizontally */
+      gap: 20px; /* Add space between each day */
+      overflow-x: auto; /* Allow horizontal scrolling if the content overflows */
+  
+      .day-detail {
+        flex: 0 0 200px; /* Ensure each item takes up 200px of space */
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+        min-width: 200px; /* Ensure each day has a minimum width */
+        text-align: center; /* Center the text horizontally */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        
+        h3 {
+          margin-bottom: 5px;
+        }
+      }
+    }
+  
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+  
+      .pay-button, .reject-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #ccc;
+        }
+      }
+  
+      .pay-button {
+        background-color: #4CAF50;
+        color: white;
+      }
+  
+      .reject-button {
+        background-color: #f44336;
+        color: white;
+      }
+    }
+  
+    .error-message {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+  }
+  
