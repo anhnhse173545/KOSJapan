@@ -49,7 +49,27 @@ public class TripService {
     public TripDTO updateTrip(String tripId, UpdateTripDTO updateTripDTO) {
         Trip trip = tripRepository.findByIdAndIsDeletedFalse(tripId)
                 .orElseThrow(() -> new RuntimeException("Trip not found"));
-        tripMapper.updateEntityFromDTO(updateTripDTO, trip);
+
+        if (updateTripDTO.getStartDate() != null) {
+            trip.setStartDate(updateTripDTO.getStartDate());
+        }
+
+        if (updateTripDTO.getEndDate() != null) {
+            trip.setEndDate(updateTripDTO.getEndDate());
+        }
+
+        if (updateTripDTO.getDepartureAirport() != null) {
+            trip.setDepartureAirport(updateTripDTO.getDepartureAirport());
+        }
+
+        if (updateTripDTO.getPrice() != null) {
+            trip.setPrice(updateTripDTO.getPrice());
+        }
+
+        if (updateTripDTO.getStatus() != null) {
+            trip.setStatus(updateTripDTO.getStatus());
+        }
+
         Trip updatedTrip = tripRepository.save(trip);
         return tripMapper.toDTO(updatedTrip);
     }

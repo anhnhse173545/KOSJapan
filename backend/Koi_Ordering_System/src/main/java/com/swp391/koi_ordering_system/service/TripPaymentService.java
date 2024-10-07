@@ -1,5 +1,7 @@
 package com.swp391.koi_ordering_system.service;
 
+import com.swp391.koi_ordering_system.dto.response.TripPaymentDTO;
+import com.swp391.koi_ordering_system.mapper.TripPaymentMapper;
 import com.swp391.koi_ordering_system.model.TripPayment;
 import com.swp391.koi_ordering_system.repository.TripPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TripPaymentService {
@@ -14,43 +17,50 @@ public class TripPaymentService {
     @Autowired
     private TripPaymentRepository tripPaymentRepository;
 
+    @Autowired
+    private TripPaymentMapper tripPaymentMapper;
+
     public TripPayment createTripPayment(TripPayment tripPayment) {
         tripPayment.setId(generateTripPaymentId());
         return tripPaymentRepository.save(tripPayment);
     }
 
-    public List<TripPayment> getAllTripPayment() {
-        return tripPaymentRepository.findAllByIsDeletedFalse();
+    public List<TripPaymentDTO> getAllTripPayment() {
+        return tripPaymentRepository.findAllByIsDeletedFalse().stream()
+                .map(tripPaymentMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<TripPayment> getTripPaymentById(String id) {
-        return tripPaymentRepository.findByIdAndIsDeletedFalse(id);
+    public Optional<TripPaymentDTO> getTripPaymentById(String id) {
+        return tripPaymentRepository.findByIdAndIsDeletedFalse(id)
+                .map(tripPaymentMapper::toDTO);
     }
 
-    public TripPayment updateTripPayment(String id, TripPayment tripPaymentDetails) {
-        Optional<TripPayment> optionalTripPayment = tripPaymentRepository.findByIdAndIsDeletedFalse(id);
-        if (optionalTripPayment.isPresent()) {
-            TripPayment tripPayment = optionalTripPayment.get();
-
-            if (tripPaymentDetails.getBooking() != null) {
-                tripPayment.setBooking(tripPaymentDetails.getBooking());
-            }
-            if (tripPaymentDetails.getPaymentMethod() != null) {
-                tripPayment.setPaymentMethod(tripPaymentDetails.getPaymentMethod());
-            }
-            if (tripPaymentDetails.getCreateAt() != null) {
-                tripPayment.setCreateAt(tripPaymentDetails.getCreateAt());
-            }
-            if (tripPaymentDetails.getAmount() != null) {
-                tripPayment.setAmount(tripPaymentDetails.getAmount());
-            }
-            if (tripPaymentDetails.getStatus() != null) {
-                tripPayment.setStatus(tripPaymentDetails.getStatus());
-            }
-            return tripPaymentRepository.save(tripPayment);
-        }
-        return null;
-    }
+//    public TripPayment updateTripPayment(String id, TripPayment tripPaymentDetails) {
+//        Optional<TripPayment> optionalTripPayment = tripPaymentRepository.findByIdAndIsDeletedFalse(id);
+//        if (optionalTripPayment.isPresent()) {
+//            TripPayment tripPayment = optionalTripPayment.get();
+//
+//            if (tripPaymentDetails.getBooking() != null) {
+//                tripPayment.setBooking(tripPaymentDetails.getBooking());
+//            }
+//            if (tripPaymentDetails.getPaymentMethod() != null) {
+//                tripPayment.setPaymentMethod(tripPaymentDetails.getPaymentMethod());
+//            }
+//            if (tripPaymentDetails.getCreateAt() != null) {
+//                tripPayment.setCreateAt(tripPaymentDetails.getCreateAt());
+//            }
+//            if (tripPaymentDetails.getAmount() != null) {
+//                tripPayment.setAmount(tripPaymentDetails.getAmount());
+//            }
+//            if (tripPaymentDetails.getStatus() != null) {
+//                tripPayment.setStatus(tripPaymentDetails.getStatus());
+//            }
+//            return tripPaymentRepository.save(tripPayment);
+//        }
+//        return null;
+//    }
+//
 
     public void deleteTripPayment(String id) {
         Optional<TripPayment> optionalTripPayment = tripPaymentRepository.findById(id);

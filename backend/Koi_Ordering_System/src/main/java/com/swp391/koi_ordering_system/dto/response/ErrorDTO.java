@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TripPaymentDTO {
-    private String id;
-    private String paymentMethodName;
-    private double amount;
-
+public class ErrorDTO {
+    private int statusCode;
+    private  String message;
 }

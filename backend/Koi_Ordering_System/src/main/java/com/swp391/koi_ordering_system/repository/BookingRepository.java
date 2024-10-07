@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, String> {
-    List<Booking> findByCustomerId(String customerId);
+    List<Booking> findByStatusAndIsDeletedFalse(String status);
     Optional<Booking> findTopByOrderByIdDesc();
     List<Booking> findByCustomerIdAndIsDeletedFalse(String customerId);
     Optional<Booking> findByIdAndIsDeletedFalse(String id);
