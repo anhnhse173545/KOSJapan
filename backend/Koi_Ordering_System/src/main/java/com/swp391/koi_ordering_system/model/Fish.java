@@ -34,9 +34,6 @@ public class Fish {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image")
-    private String image;
-
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
