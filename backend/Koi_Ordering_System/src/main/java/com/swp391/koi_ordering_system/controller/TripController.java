@@ -9,6 +9,7 @@ import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.service.TripService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class TripController {
     private TripMapper tripMapper;
 
     @RequestMapping("/create")
-    public ResponseEntity<TripDTO> createTrip(@RequestBody CreateTripDTO createTripDTO) {
+    public ResponseEntity<TripDTO> createTrip(@Valid @RequestBody CreateTripDTO createTripDTO) {
         Trip trip = tripMapper.toEntity(createTripDTO);
         return ResponseEntity.ok(tripMapper.toDTO(tripService.createTrip(trip)));
     }
@@ -47,7 +48,7 @@ public class TripController {
     }
 
     @RequestMapping("/update/{id}")
-    public ResponseEntity<TripDTO> updateTrip(@PathVariable String id, @RequestBody UpdateTripDTO updateTripDTO) {
+    public ResponseEntity<TripDTO> updateTrip(@PathVariable String id,@Valid @RequestBody UpdateTripDTO updateTripDTO) {
         TripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
         if (updatedTrip == null) {
             return ResponseEntity.notFound().build();

@@ -19,13 +19,13 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private String id;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "name")

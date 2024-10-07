@@ -48,7 +48,23 @@ public class FarmService {
     public FarmDTO updateFarm(String farmId, UpdateFarmDTO updateFarmDTO) {
         Farm farm = farmRepository.findByIdAndIsDeletedFalse(farmId)
                 .orElseThrow(() -> new RuntimeException("Farm not found"));
-        farmMapper.updateEntityFromDTO(updateFarmDTO, farm);
+
+        if (updateFarmDTO.getName() != null) {
+            farm.setName(updateFarmDTO.getName());
+        }
+
+        if (updateFarmDTO.getAddress() != null) {
+            farm.setAddress(updateFarmDTO.getAddress());
+        }
+
+        if (updateFarmDTO.getPhoneNumber() != null) {
+            farm.setPhoneNumber(updateFarmDTO.getPhoneNumber());
+        }
+
+        if (updateFarmDTO.getImage() != null) {
+            farm.setImage(updateFarmDTO.getImage());
+        }
+
         Farm updatedFarm = farmRepository.save(farm);
         return farmMapper.toDTO(updatedFarm);
     }

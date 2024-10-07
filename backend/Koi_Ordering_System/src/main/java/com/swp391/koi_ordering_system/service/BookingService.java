@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.mapper.BookingMapper;
@@ -50,6 +51,12 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDTO> getBookingsByStatusRequested() {
+        return bookingRepository.findByStatusAndIsDeletedFalse("requested").stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
                 .map(bookingMapper::toDTO);
@@ -61,9 +68,16 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public Booking updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
+
+    public BookingDTO updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (updateBookingDTO.getTripId() != null) {
+            Trip trip = tripRepository.findById(updateBookingDTO.getTripId())
+                    .orElseThrow(() -> new RuntimeException("Trip not found"));
+            booking.setTrip(trip);
+        }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
             Account saleStaff = accountRepository.findById(updateBookingDTO.getSaleStaffId())
@@ -83,7 +97,10 @@ public class BookingService {
             booking.setDeliveryStaff(deliveryStaff);
         }
 
-        return bookingRepository.save(booking);
+        booking.setDescription(updateBookingDTO.getDescription());
+        booking.setStatus(updateBookingDTO.getStatus());
+
+        return bookingMapper.toDTO(bookingRepository.save(booking));
     }
 
     public Booking deleteBooking(String id) {

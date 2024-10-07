@@ -33,7 +33,7 @@ public class TripPayment {
     @Column(name = "create_at")
     private Instant createAt;
 
-    @Column(name = "amount")S
+    @Column(name = "amount")
     private Double amount;
 
     @Column(name = "status")
@@ -41,6 +41,6 @@ public class TripPayment {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;S
+    private Boolean isDeleted;
 
 }
