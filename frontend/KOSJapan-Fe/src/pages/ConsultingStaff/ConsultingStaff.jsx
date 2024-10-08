@@ -12,7 +12,9 @@ import { Avatar, Button, Layout, Menu, theme } from "antd";
 import { Link, Route, Routes } from "react-router-dom"; // Import routing components
 import ConsultingStaffHome from "./ConsultingStaffHome";
 import TourList from "./TourList";
-import AddKoi from "./AddKoi";
+import TourDetails from "./TourDetails"; // Import the new TourDetails component
+import KoiDetails from "./KoiDetails";
+import OrderList from "./OrderList";
 
 const { Header, Sider, Content } = Layout;
 
@@ -56,12 +58,12 @@ const ConsultingStaff = () => {
             {
               key: "2",
               icon: <UnorderedListOutlined />,
-              label: <Link to="/TourList">List Tour</Link>, // Link for List Tour
+              label: <Link to="/TourList">Tour List</Link>, // Link for List Tour
             },
             {
               key: "3",
               icon: <PlusOutlined />,
-              label: <Link to="/AddKoi">Add New Order</Link>, // Link for Add New Order
+              label: <Link to="/OrderList">Order List</Link>, // Link for Add New Order
             },
             {
               key: "4",
@@ -106,7 +108,13 @@ const ConsultingStaff = () => {
               element={<ConsultingStaffHome userName={userName} />}
             />
             <Route path="/TourList" element={<TourList />} />
-            <Route path="/AddKoi" element={<AddKoi />} />
+            <Route path="/OrderList" element={<OrderList />} />
+            <Route path="/koi-details" element={<KoiDetails />} />
+            <Route
+              path="/tour-details/:tourId"
+              element={<TourDetails />}
+            />{" "}
+            {/* New Route for Tour Details */}
           </Routes>
         </Content>
       </Layout>

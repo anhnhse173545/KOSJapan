@@ -1,16 +1,15 @@
-import { useState } from "react";
-import { Table, Button, Badge, message, Modal } from "antd";
-import jsPDF from "jspdf";
-import "jspdf-autotable"; // Import the jsPDF autoTable plugin
+import { useState, useEffect } from "react";
+import { Table, Button, Badge, message, Select } from "antd";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import moment from "moment"; // For handling date comparisons
 
-// Initial data for the tours
 const initialTourData = [
   {
     key: "1",
     customer: "John Doe",
     startDate: "2024-10-01",
     endDate: "2024-10-05",
-    status: "Not Check In",
+    status: "Completed",
   },
   {
     key: "2",
@@ -33,46 +32,107 @@ const initialTourData = [
     endDate: "2024-10-08",
     status: "Not Check In",
   },
+  {
+    key: "5",
+    customer: "Emily Davis",
+    startDate: "2024-10-09",
+    endDate: "2024-10-12",
+    status: "Cancelled",
+  },
+  {
+    key: "6",
+    customer: "Michael Wilson",
+    startDate: "2024-10-05",
+    endDate: "2024-10-10",
+    status: "Completed",
+  },
+  {
+    key: "7",
+    customer: "Sarah Miller",
+    startDate: "2024-10-07",
+    endDate: "2024-10-10",
+    status: "Not Check In",
+  },
+  {
+    key: "8",
+    customer: "David Martin",
+    startDate: "2024-10-15",
+    endDate: "2024-10-20",
+    status: "Cancelled",
+  },
+  {
+    key: "9",
+    customer: "Laura Martinez",
+    startDate: "2024-10-17",
+    endDate: "2024-10-22",
+    status: "Not Check In",
+  },
+  {
+    key: "10",
+    customer: "James Taylor",
+    startDate: "2024-10-12",
+    endDate: "2024-10-18",
+    status: "Completed",
+  },
+  {
+    key: "11",
+    customer: "Linda Harris",
+    startDate: "2024-10-20",
+    endDate: "2024-10-25",
+    status: "Not Check In",
+  },
+  {
+    key: "12",
+    customer: "Richard Clark",
+    startDate: "2024-10-10",
+    endDate: "2024-10-14",
+    status: "Checked In",
+  },
+  {
+    key: "13",
+    customer: "Barbara Lewis",
+    startDate: "2024-10-22",
+    endDate: "2024-10-27",
+    status: "Not Check In",
+  },
+  {
+    key: "14",
+    customer: "Daniel Walker",
+    startDate: "2024-10-14",
+    endDate: "2024-10-19",
+    status: "Cancelled",
+  },
+  {
+    key: "15",
+    customer: "Matthew Lee",
+    startDate: "2024-10-25",
+    endDate: "2024-10-29",
+    status: "Not Check In",
+  },
 ];
-
-// Sample trip itinerary
-const tripPlan = `
-Day 1: Tokyo – A Blend of Old and New
-  Morning: Tsukiji Market and Toyosu Market
-  Midday: Tokyo Tower and Modern Art
-  Afternoon: Shibuya Crossing and Shopping
-  Evening: Dining in Golden Gai
-
-Day 2: Kyoto – Timeless Traditions
-  Morning: Fushimi Inari Shrine
-  Midday: Nishiki Market and Lunch
-  Afternoon: Traditional Arts and Green Tea Ceremony
-  Evening: Traditional Japanese Dinner and Ryokan Experience
-
-Day 3: The Mount Fuji Experience
-  Early Morning: Travel to Mount Fuji
-  Midday: Boat Ride and Lunch
-  Afternoon: Hiking and Nature Exploration
-  Evening: Luxury Onsen Ryokan Stay
-
-Day 4: Tokyo Revisited – Cherry Blossoms and Serenity
-  Morning: Meguro River Cherry Blossoms
-  Midday: Lunch and Quirky Convenience Store Experience
-  Afternoon: Cultural Sites and Relaxation
-  Evening: Shibuya Sensory Overload
-
-Day 5: Departure from Narita Airport
-  Morning: Last Minute Shopping and Sightseeing
-  Midday: Reflective Lunch
-  Afternoon: Departure Preparations
-`;
 
 const TourList = () => {
   const [tourData, setTourData] = useState(initialTourData);
-  const [selectedTour, setSelectedTour] = useState(null); // State for the selected tour
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [filteredStatus, setFilteredStatus] = useState("All");
+  const [sortOrder, setSortOrder] = useState("ascend");
+  const [sortBy, setSortBy] = useState("startDate"); // New state for sorting criteria
+  const navigate = useNavigate(); // useNavigate hook to programmatically navigate
 
-  // Function to handle status change when "Check In" button is clicked
+  // Automatically cancel tours if start date has passed and status is still "Not Check In"
+  useEffect(() => {
+    const updatedTourData = tourData.map((tour) => {
+      const today = moment(); // Current date
+      const tourStartDate = moment(tour.startDate, "YYYY-MM-DD");
+
+      if (tour.status === "Not Check In" && today.isAfter(tourStartDate)) {
+        return { ...tour, status: "Cancelled" };
+      }
+      return tour;
+    });
+
+    setTourData(updatedTourData);
+  }, [tourData]);
+
   const handleCheckIn = (key) => {
     const updatedTourData = tourData.map((tour) => {
       if (tour.key === key && tour.status === "Not Check In") {
@@ -85,64 +145,81 @@ const TourList = () => {
     message.success("Status changed to Checked In.");
   };
 
-  // Function to handle viewing tour details
+  const handleCancel = (key) => {
+    const updatedTourData = tourData.map((tour) => {
+      if (tour.key === key && tour.status !== "Checked In") {
+        return { ...tour, status: "Cancelled" };
+      }
+      return tour;
+    });
+
+    setTourData(updatedTourData);
+    message.success("Status changed to Cancelled.");
+  };
+
+  const handleMarkCompleted = (key) => {
+    const updatedTourData = tourData.map((tour) => {
+      if (tour.key === key && tour.status === "Checked In") {
+        return { ...tour, status: "Completed" };
+      }
+      return tour;
+    });
+
+    setTourData(updatedTourData);
+    message.success("Tour marked as Completed.");
+  };
+
   const handleViewDetails = (tour) => {
-    setSelectedTour(tour);
-    setIsModalVisible(true); // Open the modal
+    navigate(`/tour-details/${tour.key}`); // Navigate to the details page
   };
 
-  // Function to handle exporting details to PDF
-  const handleExportToPDF = () => {
-    if (!selectedTour) return;
-
-    const doc = new jsPDF();
-    doc.text("Tour Details", 20, 10);
-
-    // Add auto table for the customer's tour details
-    doc.autoTable({
-      head: [["Customer", "Start Date", "End Date", "Status"]],
-      body: [
-        [
-          selectedTour.customer,
-          selectedTour.startDate,
-          selectedTour.endDate,
-          selectedTour.status,
-        ],
-      ],
-    });
-
-    doc.text("Trip Plan", 20, 50);
-    doc.autoTable({
-      body: tripPlan.split("\n").map((line) => [line.trim()]), // Splitting the trip plan for multi-line display
-    });
-
-    // Save the PDF
-    doc.save(`${selectedTour.customer}_tour_details.pdf`);
+  const handleStatusFilter = (value) => {
+    setFilteredStatus(value);
   };
 
-  // Define the columns for the table
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+  };
+
+  const handleSortByChange = (value) => {
+    setSortBy(value);
+  };
+
+  const filteredData = tourData.filter((tour) => {
+    if (filteredStatus === "All") return true;
+    return tour.status === filteredStatus;
+  });
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    const dateA = moment(a[sortBy]);
+    const dateB = moment(b[sortBy]);
+    return sortOrder === "ascend" ? dateA - dateB : dateB - dateA;
+  });
+
   const columns = [
-    {
-      title: "Customer",
-      dataIndex: "customer",
-      key: "customer",
-    },
-    {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-    },
-    {
-      title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
-    },
+    { title: "Customer", dataIndex: "customer", key: "customer" },
+    { title: "Start Date", dataIndex: "startDate", key: "startDate" },
+    { title: "End Date", dataIndex: "endDate", key: "endDate" },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      filters: [
+        { text: "Not Check In", value: "Not Check In" },
+        { text: "Checked In", value: "Checked In" },
+        { text: "Cancelled", value: "Cancelled" },
+        { text: "Completed", value: "Completed" },
+      ],
+      onFilter: (value, record) => record.status.includes(value),
       render: (text) => {
-        const statusColor = text === "Checked In" ? "success" : "warning";
+        const statusColor =
+          text === "Checked In"
+            ? "success"
+            : text === "Cancelled"
+            ? "error"
+            : text === "Completed"
+            ? "processing"
+            : "warning";
         return <Badge status={statusColor} text={text} />;
       },
     },
@@ -153,11 +230,27 @@ const TourList = () => {
         <>
           <Button
             type="primary"
-            disabled={record.status === "Checked In"} // Disable if already checked in
+            disabled={
+              record.status === "Checked In" ||
+              record.status === "Cancelled" ||
+              record.status === "Completed"
+            }
             onClick={() => handleCheckIn(record.key)}
             style={{ marginRight: 8 }}
           >
             {record.status === "Checked In" ? "Checked In" : "Check In"}
+          </Button>
+          <Button
+            type="danger"
+            disabled={
+              record.status === "Checked In" ||
+              record.status === "Cancelled" ||
+              record.status === "Completed"
+            }
+            onClick={() => handleCancel(record.key)}
+            style={{ marginRight: 8 }}
+          >
+            Cancel
           </Button>
           <Button type="default" onClick={() => handleViewDetails(record)}>
             More
@@ -170,43 +263,28 @@ const TourList = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Customer Tour List</h1>
-      <Table
-        columns={columns}
-        dataSource={tourData}
-        pagination={false} // Disable pagination for simplicity
-      />
-
-      {/* Modal for displaying trip details */}
-      {selectedTour && (
-        <Modal
-          title="Trip Details"
-          visible={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={[
-            <Button key="export" type="primary" onClick={handleExportToPDF}>
-              Export to PDF
-            </Button>,
-            <Button key="close" onClick={() => setIsModalVisible(false)}>
-              Close
-            </Button>,
+      <div style={{ marginBottom: 16 }}>
+        <Select
+          value={sortBy}
+          onChange={handleSortByChange}
+          style={{ width: 200, marginRight: 16 }}
+          options={[
+            { label: "Sort by Start Date", value: "startDate" },
+            { label: "Sort by End Date", value: "endDate" },
           ]}
-        >
-          <p>
-            <strong>Customer:</strong> {selectedTour.customer}
-          </p>
-          <p>
-            <strong>Start Date:</strong> {selectedTour.startDate}
-          </p>
-          <p>
-            <strong>End Date:</strong> {selectedTour.endDate}
-          </p>
-          <p>
-            <strong>Status:</strong> {selectedTour.status}
-          </p>
-          <h3>Trip Plan</h3>
-          <pre>{tripPlan}</pre>
-        </Modal>
-      )}
+        />
+
+        <Select
+          value={sortOrder}
+          onChange={handleSortOrderChange}
+          style={{ width: 150 }}
+          options={[
+            { label: "Date Ascending", value: "ascend" },
+            { label: "Date Descending", value: "descend" },
+          ]}
+        />
+      </div>
+      <Table columns={columns} dataSource={sortedData} pagination={false} />
     </div>
   );
 };
