@@ -36,65 +36,15 @@ function CombinedKoiRequestForm() {
             <h2>Request A Trip To Koi Farm</h2>
             
             {/* Checkbox to toggle form visibility */}
-            <div style={{ marginBottom: 24 }}>
-                <span style={{ marginRight: 16 }}>
-                    <Switch
-                        checked={showSeatForm}
-                        onChange={(checked) => setShowSeatForm(checked)}
-                        style={{ marginRight: 8 }}
-                    />
-                    Show Reserve Seat Form
-                </span>
-                <span>
-                    <Switch
-                        checked={showKoiForm}
-                        onChange={(checked) => setShowKoiForm(checked)}
-                        style={{ marginRight: 8 }}
-                    />
-                    Show Request Koi Form
-                </span>
-            </div>
             {
                 <Form labelCol={{ span: 24 }} onFinish={handleFormSubmit} layout="vertical">
                        {/* Full Name */}
-                <Form.Item
-                    label="Full Name"
-                    name="fullName"
-                    rules={[{ required: true, message: "Please enter your full name" }]}
-                >
-                    <Input placeholder="First and Last Name" />
-                </Form.Item>
+                
 
-                {/* Email */}
-                <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true, message: "Please enter your email" }]}
-                >
-                    <Input placeholder="Enter your email" />
-                </Form.Item>
 
-                {/* Phone */}
-                <Form.Item
-                    label="Phone"
-                    name="phone"
-                    rules={[{ required: true, message: "Please enter your phone number" }]}
-                >
-                    <Input placeholder="Enter your phone number" />
-                </Form.Item>
+             
 
-                {/* Dealer/Wholesaler Question */}
-                <Form.Item
-                    label="Are you a dealer, wholesaler, or in the pond business?"
-                    name="businessType"
-                    rules={[{ required: true, message: "Please select yes or no" }]}
-                >
-                    <Select placeholder="Choose Yes or No">
-                        <Option value="yes">Yes</Option>
-                        <Option value="no">No</Option>
-                    </Select>
-                </Form.Item>
-
+                
                 {/* Desired Koi Variety and Description */}
                 <Form.Item
                     label="Desired Koi Variety and Description"
@@ -105,97 +55,52 @@ function CombinedKoiRequestForm() {
                 >
                     <TextArea placeholder="Describe the Koi you're looking for" rows={4} />
                 </Form.Item>
-                </Form>
-            }
-            {/* Seat Reservation Form */}
-            {showSeatForm && (
-                <Form labelCol={{ span: 24 }} onFinish={handleFormSubmit} layout="vertical">
-                    <h3>VIsit koi farm</h3>
-                    {/* Number of People */}
-                    <Form.Item
-                        label="How many people?"
-                        name="numberOfPeople"
-                        rules={[{ required: true, message: "Please enter the number of people" }]}
-                    >
-                        <InputNumber min={1} placeholder="Number of People" />
-                    </Form.Item>
 
-                    {/* Departure Date */}
-                    <Form.Item
-                        label="Departure Date"
-                        name="departureDate"
-                        rules={[{ required: true, message: "Please select your departure date" }]}
-                    >
-                        <DatePicker style={{ width: "100%" }} placeholder="Select departure date" />
-                    </Form.Item>
-
-                    {/* Arrival Date */}
-                    <Form.Item
-                        label="Arrival back date"
-                        name="arrivalDate"
-                        rules={[{ required: true, message: "Please select your arrival date" }]}
-                    >
-                        <DatePicker style={{ width: "100%" }} placeholder="Select arrival date" />
-                    </Form.Item>
-
-                    {/* Address */}
-                    <Form.Item label="Address" name="address" rules={[{ required: true, message: "Please enter your address" }]}>
-                        <Input.Group>
-                            <Form.Item name={['address', 'homeAddress']} noStyle rules={[{ required: true, message: 'Home Address is required' }]}>
-                                <Input placeholder="Home Address" style={{ marginBottom: '8px' }} />
-                            </Form.Item>
-                            <br /> 
-                            <Form.Item name={['address', 'placeToGo']} noStyle>
-                                <Input placeholder="Place to go (if you have more than 2,separated by , )" style={{ marginBottom: '8px' }} />
-                            </Form.Item>
-                           
-                           
-                     
-                          
-                        </Input.Group>
-                    </Form.Item>
-
-                   
-                </Form>
-            )}
-
-            {/* Koi Request Form */}
-            {showKoiForm && (
-                <Form labelCol={{ span: 24 }} onFinish={handleFormSubmit} layout="vertical">
-                    <h3>Request a Koi</h3>
-
-                                    {/* Koi Size Range */}
-                <Form.Item
-                    label="Koi Size Range"
-                    name="koiSizeRange"
-                    rules={[{ required: true, message: "Please select a size range" }]}
+                 {/* Desired Trip you wanna go */}
+                 <Form.Item 
+                    label="Desired Trip and Description"
+                    name="TripDescription"
+                    rules={[
+                        { required: true, message: "Please provide a description" },
+                    ]}
                 >
-                    <Checkbox.Group>
-                        <Checkbox value="20 inches+">20 inches +</Checkbox>
-                        <Checkbox value="16-20 inches">16 - 20 inches</Checkbox>
-                        <Checkbox value="12-16 inches">12 - 16 inches</Checkbox>
-                        <Checkbox value="8-12 inches">8 - 12 inches</Checkbox>
-                        <Checkbox value="other">Other</Checkbox>
-                    </Checkbox.Group>
+                    <TextArea placeholder="Describe the Trip you're looking for" rows={4} />
+                </Form.Item>
+                    {/* Desired your address */}
+                 <Form.Item
+                    label="Your House Address"
+                    name="Address"
+                    rules={[
+                        { required: true, message: "Please provide a address" },
+                    ]}
+                >
+                    <TextArea placeholder="Describe the Address" rows={4} />
                 </Form.Item>
 
-                {/* Price Range */}
-                <Form.Item
-                    label="Price Range"
-                    name="priceRange"
-                    rules={[{ required: true, message: "Please select a price range" }]}
-                >
-                    <Checkbox.Group>
-                        <Checkbox value="$5000+">$5000+</Checkbox>
-                        <Checkbox value="$3000-$5000">$3000 - $5000</Checkbox>
-                        <Checkbox value="$1000-$2000">$1000 - $2000</Checkbox>
-                        <Checkbox value="upTo$1000">Up to $1000</Checkbox>
-                        <Checkbox value="other">Other</Checkbox>
-                    </Checkbox.Group>
-                </Form.Item>
+                 {/* Desired Trip Start */}
+<Form.Item
+    label="Desired Trip Start"
+    name="TripStartDate"
+    rules={[
+        { required: true, message: "Please select the start date of your trip" },
+    ]}
+>
+    <DatePicker placeholder="Select the start date" />
+</Form.Item>
 
-                {/* Image Upload */}
-                <Form.Item label="You can send us images here:">
+{/* Desired Trip End */}
+<Form.Item
+    label="Desired Trip End"
+    name="TripEndDate"
+    rules={[
+        { required: true, message: "Please select the end date of your trip" },
+    ]}
+>
+    <DatePicker placeholder="Select the end date" />
+</Form.Item>
+
+  {/* Image Upload */}
+  <Form.Item label="You can send us images here:">
                     <Upload 
                         name="images" 
                         listType="picture"
@@ -204,9 +109,18 @@ function CombinedKoiRequestForm() {
                         <Button icon={<UploadOutlined />}>Select files</Button>
                     </Upload>
                 </Form.Item> 
-                   
+
+           
                 </Form>
-            )}
+            }
+           
+            
+
+               
+
+              
+            
+           
              {/* Submit Button */}
              <Form.Item>
                         <Button type="primary" htmlType="submit">

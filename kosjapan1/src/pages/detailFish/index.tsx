@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-
+import './index.scss'; // Assuming you're using a SCSS file for styling
 const koiPayments = [
   {
     id: 1,

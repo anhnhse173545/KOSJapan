@@ -13,16 +13,16 @@ function Header() {
          width={100}
          />
          <ul className="header__navigation">
-            <li>Home</li>
+            <li  onClick={() => navigate("/")}>Home</li>
             <li onClick={() => navigate("/payment")}>My Booking</li>
             <li onClick={() => navigate("/contact")}>Request</li>
-            <li></li>
+            <li>Koi Farm</li>
          </ul>
         </div>
          {/* space */}
         <div className="header__right">
             <div className="header__cart">
-                <span className="number">0</span>
+                <span className="number"></span>
             </div>
             <div className="header__account">
             <UserOutlined size={50} className="icon" onClick={()=>navigate("/login")}

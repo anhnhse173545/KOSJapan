@@ -57,7 +57,6 @@ function QuotaDetailsPage() {
       <p ><strong>Name:</strong> {paymentDetails.name}</p>
         <p><strong>Email:</strong> {paymentDetails.email}</p>
         <p><strong>Phone:</strong> {paymentDetails.phone}</p>
-        <p><strong>Number of People:</strong> {paymentDetails.numberOfPeople}</p>
         <p><strong>Start Date:</strong> {paymentDetails.startDate}</p>
         <p><strong>End Date:</strong> {paymentDetails.endDate}</p>
         <p><strong>Address:</strong> {paymentDetails.address}</p>
