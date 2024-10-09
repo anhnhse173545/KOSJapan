@@ -1,10 +1,7 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,5 +43,10 @@ public class Account {
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
+
+    @Column(name="email")
+    private String email;
+
+
 
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 public class Fish {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @ManyToOne

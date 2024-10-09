@@ -26,7 +26,7 @@ public class Booking {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "customer_id")
     private Account customer;
 

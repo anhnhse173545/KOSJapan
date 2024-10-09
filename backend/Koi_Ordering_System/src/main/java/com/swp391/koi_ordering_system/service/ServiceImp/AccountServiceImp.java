@@ -2,9 +2,14 @@ package com.swp391.koi_ordering_system.service.ServiceImp;
 
 import com.swp391.koi_ordering_system.dto.AccountDTO;
 import com.swp391.koi_ordering_system.model.Account;
+import com.swp391.koi_ordering_system.model.Booking;
+import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
+import com.swp391.koi_ordering_system.repository.BookingRepository;
+import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.service.AccountService;
 //import com.swp.KoiOrderSystem.utils.AutoGenerateIDPattern;
+import com.swp391.koi_ordering_system.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +27,11 @@ public class AccountServiceImp implements AccountService {
         this.repo = repo;
     }
 
-//    @Autowired
-//    private AutoGenerateIDPattern autoGenerateID;
+    @Autowired
+    public BookingRepository bookingRepo;
+
+    @Autowired
+    public OrderRepository orderRepo;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -71,7 +79,8 @@ public class AccountServiceImp implements AccountService {
     @Override
     public void deleteAccount(String id) {
         Account acc = repo.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
-        repo.delete(acc);
+        acc.setIsDeleted(true);
+        repo.save(acc);
     }
 
 
