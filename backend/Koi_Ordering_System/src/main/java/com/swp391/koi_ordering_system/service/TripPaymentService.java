@@ -36,32 +36,6 @@ public class TripPaymentService {
                 .map(tripPaymentMapper::toDTO);
     }
 
-//    public TripPayment updateTripPayment(String id, TripPayment tripPaymentDetails) {
-//        Optional<TripPayment> optionalTripPayment = tripPaymentRepository.findByIdAndIsDeletedFalse(id);
-//        if (optionalTripPayment.isPresent()) {
-//            TripPayment tripPayment = optionalTripPayment.get();
-//
-//            if (tripPaymentDetails.getBooking() != null) {
-//                tripPayment.setBooking(tripPaymentDetails.getBooking());
-//            }
-//            if (tripPaymentDetails.getPaymentMethod() != null) {
-//                tripPayment.setPaymentMethod(tripPaymentDetails.getPaymentMethod());
-//            }
-//            if (tripPaymentDetails.getCreateAt() != null) {
-//                tripPayment.setCreateAt(tripPaymentDetails.getCreateAt());
-//            }
-//            if (tripPaymentDetails.getAmount() != null) {
-//                tripPayment.setAmount(tripPaymentDetails.getAmount());
-//            }
-//            if (tripPaymentDetails.getStatus() != null) {
-//                tripPayment.setStatus(tripPaymentDetails.getStatus());
-//            }
-//            return tripPaymentRepository.save(tripPayment);
-//        }
-//        return null;
-//    }
-//
-
     public void deleteTripPayment(String id) {
         Optional<TripPayment> optionalTripPayment = tripPaymentRepository.findById(id);
         if (optionalTripPayment.isPresent()) {

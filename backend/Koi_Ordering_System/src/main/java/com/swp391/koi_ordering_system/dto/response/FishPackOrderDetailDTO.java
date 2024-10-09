@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TripDestinationDTO {
+public class FishPackOrderDetailDTO {
     private String id;
-    private FarmDTO farm;
-    private LocalDateTime visitDate;
+    private double price;
+    private FishPackDTO fishPacks;
 }

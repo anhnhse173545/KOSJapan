@@ -159,10 +159,10 @@ public class BookingService {
         CreateFishOrderDTO createFishOrderDTO = new CreateFishOrderDTO();
 
         createFishOrderDTO.setId(fishOrder.getId());
-        createFishOrderDTO.setDelivery_address(fishOrder.getDeliveryAddress());
+        createFishOrderDTO.setDeliveryAddress(fishOrder.getDeliveryAddress());
         createFishOrderDTO.setTotal(fishOrder.getTotal());
         createFishOrderDTO.setStatus(fishOrder.getStatus());
-        createFishOrderDTO.setCreate_at(fishOrder.getCreateAt());
+        createFishOrderDTO.setCreateAt(fishOrder.getCreateAt());
         createFishOrderDTO.setArrive_date(fishOrder.getArrivedDate());
 
         return createFishOrderDTO;
@@ -188,6 +188,20 @@ public class BookingService {
         fishOrder.setDeliveryAddress(fishOrderDTO.getDeliveryAddress());
 
         return fishOrder;
+    }
+
+    public List<BookingDTO> getBookingsByStatusForSaleStaff() {
+        List<String> statuses = List.of("Requested", "Pending", "Approved");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByStatusForConsultingStaff() {
+        List<String> statuses = List.of("Confirmed", "Ongoing");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private String generateBookingId() {

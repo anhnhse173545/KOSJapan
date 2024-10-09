@@ -1,6 +1,5 @@
 package com.swp391.koi_ordering_system.dto.request;
 
-import com.swp391.koi_ordering_system.dto.response.FarmDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDestinationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

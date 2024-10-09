@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +21,7 @@ public class FishOrder {
     @Column(name = "id", nullable = false, length = 9)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
@@ -46,4 +48,6 @@ public class FishOrder {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @OneToMany(mappedBy = "fishOrder")
+    private Set<FishPackOrderDetail> fishPackOrderDetails;
 }

@@ -15,10 +15,10 @@ import java.util.Set;
 @Table(name = "varieties")
 public class Variety {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id")
     private String id;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "description")
@@ -28,12 +28,7 @@ public class Variety {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @JsonBackReference (value = "farm-variety")
-    @ManyToMany
-    @JoinTable(
-            name = "farm_varieties",
-            joinColumns = @JoinColumn(name = "variety_id"),
-            inverseJoinColumns = @JoinColumn(name = "farm_id")
-    )
+    @JsonBackReference(value = "farm-variety")
+    @ManyToMany(mappedBy = "varieties")
     private Set<Farm> farms;
 }

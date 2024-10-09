@@ -28,11 +28,10 @@ public class Media {
     private String type;
 
     @JsonBackReference(value = "fish-media")
-    @ManyToMany
-    @JoinTable(
-            name = "fish_medias",
-            joinColumns = @JoinColumn(name = "media_id"),
-            inverseJoinColumns = @JoinColumn(name = "fish_id")
-    )
-    private Set<Media> medias;
+    @ManyToMany(mappedBy = "medias")
+    private Set<Fish> fishes;
+
+    @JsonBackReference(value = "fishPack-media")
+    @ManyToMany(mappedBy = "medias")
+    private Set<FishPack> fishPacks;
 }
