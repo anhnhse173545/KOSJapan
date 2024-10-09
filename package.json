@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "antd": "^5.21.2",
-    "axios": "^1.7.7",
-    "react-router-dom": "^6.26.2",
-    "react-toastify": "^10.0.5"
-  }
-}
