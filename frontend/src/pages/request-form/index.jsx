@@ -12,14 +12,14 @@ const CombinedKoiRequestForm = () => {
   const [form] = Form.useForm(); // Ant Design form instance
   const navigate = useNavigate();
 
-  // Form submission handler
+
   const handleFormSubmit = async (values) => {
     try {
-      // Chuẩn bị dữ liệu cho upload
       const formData = new FormData();
 
-      // Thêm từng field vào formData
       formData.append("fullName", values.fullName);
+      formData.append("phone", values.phone);
+      formData.append("email", values.mail);
       formData.append("koiDescription", values.koiDescription);
       formData.append("tripDescription", values.tripDescription);
       formData.append("otherRequirements", values.otherRequirements);
