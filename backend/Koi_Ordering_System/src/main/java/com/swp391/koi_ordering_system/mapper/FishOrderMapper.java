@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface FishOrderMapper {
-    @Mapping(source = "fishPackOrderDetails", target = "fishPackOrderDetails")
+    //@Mapping(source = "fishPackOrderDetails", target = "fishPackOrderDetails")
     FishOrderDTO toDTO(FishOrder fishOrder);
 
     FishOrder toEntity(FishOrderDTO fishOrderDTO);

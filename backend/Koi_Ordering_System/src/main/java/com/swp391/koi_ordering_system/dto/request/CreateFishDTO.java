@@ -1,6 +1,5 @@
 package com.swp391.koi_ordering_system.dto.request;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBookingDTO {
-    @Id
-    private String customerId;
+public class CreateFishDTO {
+    private String variety_id;
+    private Double weight;
+    private Double length;
     private String description;
 }
