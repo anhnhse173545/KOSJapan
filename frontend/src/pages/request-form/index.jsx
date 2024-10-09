@@ -17,14 +17,21 @@ const CombinedKoiRequestForm = () => {
     try {
       const formData = new FormData();
 
-      formData.append("fullName", values.fullName);
-      formData.append("phone", values.phone);
-      formData.append("email", values.mail);
-      formData.append("koiDescription", values.koiDescription);
-      formData.append("tripDescription", values.tripDescription);
-      formData.append("otherRequirements", values.otherRequirements);
-      formData.append("tripStartDate", values.tripStartDate.format("YYYY-MM-DD"));
-      formData.append("tripEndDate", values.tripEndDate.format("YYYY-MM-DD"));
+      const data = {
+        fullName: values.fullName,
+        phone: values.phone,
+        email: values.mail,
+        koiDescription: values.koiDescription,
+        tripDescription: values.tripDescription,
+        otherRequirements: values.otherRequirements,
+        tripStartDate: values.tripStartDate.format("YYYY-MM-DD"), 
+        tripEndDate: values.tripEndDate.format("YYYY-MM-DD"),     
+    };
+    
+    // Duyệt qua từng thuộc tính của đối tượng và thêm vào FormData
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
 
       // Thêm ảnh vào formData (nếu có)
       if (values.images) {
@@ -65,14 +72,7 @@ const CombinedKoiRequestForm = () => {
         onFinish={handleFormSubmit}
         layout="vertical"
       >
-        {/* Full Name */}
-        <Form.Item
-          label="Full Name"
-          name="fullName"
-          rules={[{ required: true, message: "Please enter your full name" }]}
-        >
-          <Input placeholder="Enter your full name" />
-        </Form.Item>
+
 
         {/* Desired Koi Variety and Description */}
         <Form.Item

@@ -1,4 +1,4 @@
-export interface Food{
+export interface Koi{
     id: number;
     name: string;
     description: string;
