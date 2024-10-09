@@ -9,10 +9,7 @@ import com.swp391.koi_ordering_system.service.FarmService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,18 +28,18 @@ public class FarmController {
 //        return ResponseEntity.ok(farmService.createFarm(farm));
 //    }
 
-    @RequestMapping("/create")
+    @PostMapping("/create")
     public ResponseEntity<FarmDTO> createFarm(@Valid @RequestBody CreateFarmDTO createFarmDTO) {
         Farm farm = farmMapper.toEntity(createFarmDTO);
         return ResponseEntity.ok(farmMapper.toDTO(farmService.createFarm(farm)));
     }
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<List<FarmDTO>> getAllFarm() {
         return ResponseEntity.ok(farmService.getAllFarm());
     }
 
-    @RequestMapping("/get/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<Optional<FarmDTO>> getFarmById(@PathVariable String id) {
         Optional<FarmDTO> farm = farmService.getFarmById(id);
         if (farm.isEmpty()) {
@@ -51,9 +48,8 @@ public class FarmController {
         return ResponseEntity.ok(farm);
     }
 
-
-    @RequestMapping("/update/{id}")
-    public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id,@Valid @RequestBody UpdateFarmDTO updateFarmDTO) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id, @Valid @RequestBody UpdateFarmDTO updateFarmDTO) {
         FarmDTO updatedFarm = farmService.updateFarm(id, updateFarmDTO);
         if (updatedFarm == null) {
             return ResponseEntity.notFound().build();
@@ -61,14 +57,13 @@ public class FarmController {
         return ResponseEntity.ok(updatedFarm);
     }
 
-    @RequestMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteFarm(@PathVariable String id) {
         farmService.deleteFarm(id);
         return ResponseEntity.ok("Farm deleted successfully");
     }
 
-
-    @RequestMapping("/{farmId}/add-variety/{varietyId}")
+    @PostMapping("/{farmId}/add-variety/{varietyId}")
     public ResponseEntity<Farm> addVarietyToFarm(@PathVariable String farmId, @PathVariable String varietyId) {
         Farm updatedFarm = farmService.addVarietyToFarm(farmId, varietyId);
         if (updatedFarm == null) {

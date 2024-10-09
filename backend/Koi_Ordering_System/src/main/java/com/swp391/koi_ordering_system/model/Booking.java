@@ -47,7 +47,7 @@ public class Booking {
     private TripPayment tripPayment;
 
     @Column(name = "status", length = 20)
-    private String status = "requested";
+    private String status = "Requested";
 
     @ManyToOne
     @JoinColumn(name = "sale_staff_id")

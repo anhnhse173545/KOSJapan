@@ -15,5 +15,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     List<Booking> findByCustomerIdAndIsDeletedFalse(String customerId);
     Optional<Booking> findByIdAndIsDeletedFalse(String id);
     List<Booking> findAllByIsDeletedFalse();
+    List<Booking> findByStatusInAndIsDeletedFalse(List<String> statuses);
 
 }

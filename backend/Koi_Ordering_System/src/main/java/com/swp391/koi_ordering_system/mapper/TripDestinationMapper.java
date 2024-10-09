@@ -7,6 +7,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TripDestinationMapper {
+
     TripDestinationDTO toTripDestinationDTO(TripDestination tripDestination);
+
     TripDestination toTripDestination(TripDestinationDTO tripDestinationDTO);
 }

@@ -27,18 +27,18 @@ public class TripController {
     @Autowired
     private TripMapper tripMapper;
 
-    @RequestMapping("/create")
+    @PostMapping("/create")
     public ResponseEntity<TripDTO> createTrip(@Valid @RequestBody CreateTripDTO createTripDTO) {
         Trip trip = tripMapper.toEntity(createTripDTO);
         return ResponseEntity.ok(tripMapper.toDTO(tripService.createTrip(trip)));
     }
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<List<TripDTO>> getAllTrip() {
         return ResponseEntity.ok(tripService.getAllTrips());
     }
 
-    @RequestMapping("/get/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<Optional<TripDTO>> getBookingById(@PathVariable String id) {
         Optional<TripDTO> trip = tripService.getTripById(id);
         if (trip.isEmpty()) {
@@ -47,8 +47,8 @@ public class TripController {
         return ResponseEntity.ok(trip);
     }
 
-    @RequestMapping("/update/{id}")
-    public ResponseEntity<TripDTO> updateTrip(@PathVariable String id,@Valid @RequestBody UpdateTripDTO updateTripDTO) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<TripDTO> updateTrip(@PathVariable String id, @Valid @RequestBody UpdateTripDTO updateTripDTO) {
         TripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
         if (updatedTrip == null) {
             return ResponseEntity.notFound().build();
@@ -56,13 +56,13 @@ public class TripController {
         return ResponseEntity.ok(updatedTrip);
     }
 
-    @RequestMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteTrip(@PathVariable String id) {
         tripService.deleteTrip(id);
         return ResponseEntity.ok("Trip deleted successfully");
     }
 
-    @RequestMapping("/{tripId}/add-farm/{farmId}")
+    @PostMapping("/{tripId}/add-farm/{farmId}")
     public ResponseEntity<Trip> addFarmToTrip(@PathVariable String tripId, @PathVariable String farmId) {
         Trip updatedTrip = tripService.addFarmToTrip(tripId, farmId);
         if (updatedTrip == null) {
@@ -71,13 +71,13 @@ public class TripController {
         return ResponseEntity.ok(updatedTrip);
     }
 
-    @RequestMapping("/{tripId}/farm/{farmId}")
+    @DeleteMapping("/{tripId}/farm/{farmId}")
     public ResponseEntity<Void> removeFarmFromTrip(@PathVariable String tripId, @PathVariable String farmId) {
         tripService.removeFarmFromTrip(tripId, farmId);
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping("/{tripId}/farm")
+    @GetMapping("/{tripId}/farm")
     public ResponseEntity<List<Farm>> getFarmsByTripId(@PathVariable String tripId) {
         List<Farm> farms = tripService.getFarmsByTripId(tripId);
         if (farms == null || farms.isEmpty()) {

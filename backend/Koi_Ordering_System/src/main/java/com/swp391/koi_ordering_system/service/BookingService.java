@@ -60,7 +60,7 @@ public class BookingService {
     }
 
     public List<BookingDTO> getBookingsByStatusRequested() {
-        return bookingRepository.findByStatusAndIsDeletedFalse("Requested").stream()
+        return bookingRepository.findByStatusAndIsDeletedFalse("requested").stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -125,13 +125,10 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         Trip trip = tripMapper.toEntity(createTripDTO);
-
         trip.setBooking(booking);
-
         Trip savedTrip = tripService.createTrip(trip);
 
         booking.setTrip(savedTrip);
-
         bookingRepository.save(booking);
 
         return tripMapper.toDTO(savedTrip);
@@ -147,7 +144,29 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+//  Can them cai OrderDetail va Order Service !!
+//    public List<CreateFishOrderDTO> addOrdersToBooking(String bookingID){
+//        List<FishOrder> newList = fishOrderRepo.findAllByBookingId(bookingID);
+//        if( !newList.isEmpty()){
+//            throw new RuntimeException("Orders existed !");
+//        }
+//        return newList.stream()
+//                .map((FishOrder) -> mapToDTO2(FishOrder))
+//                .collect(Collectors.toList());
+//    }
 
+    public CreateFishOrderDTO mapToDTO2 (FishOrder fishOrder){
+        CreateFishOrderDTO createFishOrderDTO = new CreateFishOrderDTO();
+
+        createFishOrderDTO.setId(fishOrder.getId());
+        createFishOrderDTO.setDeliveryAddress(fishOrder.getDeliveryAddress());
+        createFishOrderDTO.setTotal(fishOrder.getTotal());
+        createFishOrderDTO.setStatus(fishOrder.getStatus());
+        createFishOrderDTO.setCreateAt(fishOrder.getCreateAt());
+        createFishOrderDTO.setArrive_date(fishOrder.getArrivedDate());
+
+        return createFishOrderDTO;
+    }
 
     public FishOrderDTO mapToDTO(FishOrder fishOrder){
         FishOrderDTO fishOrderDTO = new FishOrderDTO();
@@ -169,6 +188,20 @@ public class BookingService {
         fishOrder.setDeliveryAddress(fishOrderDTO.getDeliveryAddress());
 
         return fishOrder;
+    }
+
+    public List<BookingDTO> getBookingsByStatusForSaleStaff() {
+        List<String> statuses = List.of("Requested", "Pending", "Approved");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByStatusForConsultingStaff() {
+        List<String> statuses = List.of("Confirmed", "Ongoing");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private String generateBookingId() {

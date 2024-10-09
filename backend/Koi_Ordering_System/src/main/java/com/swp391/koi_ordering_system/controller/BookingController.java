@@ -5,7 +5,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.ErrorDTO;
-import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
+//import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.mapper.BookingMapper;
 import com.swp391.koi_ordering_system.model.Booking;
@@ -35,6 +35,7 @@ public class BookingController {
         Booking booking = bookingMapper.toEntity(createBookingDTO);
         return ResponseEntity.ok(bookingMapper.toDTO(bookingService.createBooking(booking)));
     }
+
     @GetMapping("/list")
     public ResponseEntity<List<BookingDTO>> getAllBooking() {
         return ResponseEntity.ok(bookingService.getAllBooking());
@@ -46,7 +47,7 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("customer/{customerId}")
+    @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getBookingsByCustomerId(@PathVariable String customerId) {
         List<BookingDTO> bookings = bookingService.getBookingsByCustomerId(customerId);
         if (bookings.isEmpty()) {
@@ -67,23 +68,22 @@ public class BookingController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id,@Valid @RequestBody UpdateBookingDTO updateBookingDTO) {
+    public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id, @Valid @RequestBody UpdateBookingDTO updateBookingDTO) {
         BookingDTO updatedBookingDTO = bookingService.updateBooking(id, updateBookingDTO);
         if (updatedBookingDTO == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(updatedBookingDTO);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> deleteBooking(@PathVariable String id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.ok("Booking deleted successfully");
     }
 
     @PostMapping("/{bookingId}/create-trip")
-    public ResponseEntity<TripDTO> createTripForBooking(@PathVariable String bookingId,@Valid @RequestBody CreateTripDTO createTripDTO) {
+    public ResponseEntity<TripDTO> createTripForBooking(@PathVariable String bookingId, @Valid @RequestBody CreateTripDTO createTripDTO) {
         TripDTO createdTrip = bookingService.createTripForBooking(bookingId, createTripDTO);
         if (createdTrip == null) {
             return ResponseEntity.notFound().build();
@@ -98,12 +98,24 @@ public class BookingController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/get-fish-orders/{booking_id}")
-    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){
-        List<FishOrderDTO> newList = bookingService.getAllFishOrderByBookingId(booking_id);
-        if(newList.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(newList);
+    @GetMapping("/sale-staff")
+    public ResponseEntity<List<BookingDTO>> getBookingsByStatusRequestedPendingApproved() {
+        List<BookingDTO> bookings = bookingService.getBookingsByStatusForSaleStaff();
+        return ResponseEntity.ok(bookings);
     }
+
+    @GetMapping("/consulting-staff")
+    public ResponseEntity<List<BookingDTO>> getBookingsByStatusConfirmedOngoing() {
+        List<BookingDTO> bookings = bookingService.getBookingsByStatusForConsultingStaff();
+        return ResponseEntity.ok(bookings);
+    }
+
+//    @RequestMapping("/get-fish-orders/{booking_id}")
+//    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){
+//        List<FishOrderDTO> newList = bookingService.getAllFishOrderByBookingId(booking_id);
+//        if(newList.isEmpty()){
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(newList);
+//    }
 }
