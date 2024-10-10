@@ -98,10 +98,6 @@ function QuotaDetailsPage() {
 
   if (!paymentDetails) return <div>Order not found.</div>;
 
-  const cusDetails = cusDetails.find((payment) => payment.id === parseInt(id));
-
-  if (!paymentDetails) return <div>Order not found.</div>;
-
   const handlePay = () => {
     alert('Proceed to Payment');
     navigate('/paykoi');
@@ -199,3 +195,149 @@ const SingleCustomerStaffData = ({ customerId }) => {
 };
 
 export default QuotaDetailsPage;
+
+/*
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import './index.scss';
+
+// Sample koiPayments data should be defined or imported here
+const koiPayments = []; // Replace this with actual data or fetch logic
+
+const SingleSalesStaffData = ({ salesStaffId }) => {
+  const [salesData, setSalesData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log('Fetching sales staff data...');
+    fetch('https://6704ec62031fd46a830de9fb.mockapi.io/api/v1/sales')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Received data:', data);
+        const staff = data.find(staff => staff.id === salesStaffId);
+        setSalesData(staff || null);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setError(error);
+        setLoading(false);
+      });
+  }, [salesStaffId]);
+
+  if (loading) return <div>Loading sales staff data...</div>;
+  if (error) return <div>Error loading data: {error.message}</div>;
+  if (!salesData) return <div>No sales staff data available.</div>;
+
+  return (
+    <div className="sales-staff-data">
+      <h2>Sales Staff Information</h2>
+      <div className="staff-data-card">
+        <h3>Trip: {salesData.tripDescription}</h3>
+        <p><strong>Airport:</strong> {salesData.airport}</p>
+        <p><strong>Sales Representative:</strong> {salesData.salesRep}</p>
+        <p><strong>Benefits:</strong> {salesData.benefits}</p>
+        <p><strong>Terms:</strong> {salesData.terms}</p>
+        <p><strong>Additional Info:</strong> {salesData.additionalInfo}</p>
+      </div>
+      <div className="trip-details">
+        <div className="day-detail">
+          <h3>{salesData.day}</h3>
+          <p><strong>Farm:</strong> {salesData.farm}</p>
+          <p><strong>Koi:</strong> {salesData.koi}</p>
+          <p><strong>Image:</strong> <img src={salesData.img} alt={salesData.koi} /></p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SingleCustomerData = ({ customerId }) => {
+  const [cusData, setCusData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log('Fetching customer data...');
+    fetch(`https://6707a1be8e86a8d9e42c3e8e.mockapi.io/api/v1/customerdata/${customerId}`) // Fetch specific customer data
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCusData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [customerId]);
+
+  if (loading) return <div>Loading customer data...</div>;
+  if (error) return <div>Error loading data: {error.message}</div>;
+  if (!cusData) return <div>No customer data available.</div>;
+
+  return (
+    <div className="customer-data">
+      <h2>Customer Request</h2>
+      <div className="customer-data-card">
+        <h3>Name: {cusData.name}</h3>
+        <p><strong>Email:</strong> {cusData.email}</p>
+        <p><strong>Phone:</strong> {cusData.phone}</p>
+        <p><strong>Koi Description:</strong> {cusData.koiDescription}</p>
+        <p><strong>Trip Description:</strong> {cusData.tripDescription}</p>
+        <p><strong>Other Requirements:</strong> {cusData.otherRequirements}</p>
+        <p><strong>Start Date:</strong> {cusData.startDate}</p>
+        <p><strong>End Date:</strong> {cusData.endDate}</p>
+      </div>
+    </div>
+  );
+};
+
+function QuotaDetailsPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const paymentDetails = koiPayments.find((payment) => payment.id === parseInt(id));
+
+  if (!paymentDetails) return <div>Order not found.</div>;
+
+  const handlePay = () => {
+    alert('Proceed to Payment');
+    navigate('/paykoi');
+  };
+
+  const handleReject = () => {
+    alert('Quote Rejected');
+    navigate('/payment');
+  };
+
+  return (
+    <div className="quota-details-page">
+      <div className="sales-staff-container">
+        <SingleSalesStaffData salesStaffId={paymentDetails.salesStaffId} />
+      </div>
+      <div className="customer-container">
+        <SingleCustomerData customerId={paymentDetails.cusId} />
+      </div>
+      <div className="button-group">
+        <button className="pay-button" onClick={handlePay}>Pay</button>
+        <button className="reject-button" onClick={handleReject}>Reject</button>
+      </div>
+    </div>
+  );
+}
+
+export default QuotaDetailsPage;
+
+
+*/
