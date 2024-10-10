@@ -1,11 +1,14 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,11 +18,12 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "fishes")
 public class Fish {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "variety_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "variety_id")
     private Variety variety;
 
     @Column(name = "length")
@@ -31,11 +35,17 @@ public class Fish {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image")
-    private String image;
-
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @JsonManagedReference(value = "fish-media")
+    @ManyToMany
+    @JoinTable(
+            name = "fish_medias",
+            joinColumns = @JoinColumn(name = "fish_id"),
+            inverseJoinColumns = @JoinColumn(name = "media_id")
+    )
+    private Set<Media> medias;
 
 }

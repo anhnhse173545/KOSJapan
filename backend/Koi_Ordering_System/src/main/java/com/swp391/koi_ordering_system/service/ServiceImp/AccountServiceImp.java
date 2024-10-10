@@ -2,9 +2,14 @@ package com.swp391.koi_ordering_system.service.ServiceImp;
 
 import com.swp391.koi_ordering_system.dto.AccountDTO;
 import com.swp391.koi_ordering_system.model.Account;
+import com.swp391.koi_ordering_system.model.Booking;
+import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
+import com.swp391.koi_ordering_system.repository.BookingRepository;
+import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.service.AccountService;
 //import com.swp.KoiOrderSystem.utils.AutoGenerateIDPattern;
+import com.swp391.koi_ordering_system.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +27,11 @@ public class AccountServiceImp implements AccountService {
         this.repo = repo;
     }
 
-//    @Autowired
-//    private AutoGenerateIDPattern autoGenerateID;
+    @Autowired
+    public BookingRepository bookingRepo;
+
+    @Autowired
+    public OrderRepository orderRepo;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -36,15 +44,13 @@ public class AccountServiceImp implements AccountService {
         Account newAccount = new Account();
 
         newAccount.setId(account.getId());
-        newAccount.setUsername(account.getUsername());
+//        newAccount.setUsername(account.getUsername());
         newAccount.setPassword(account.getPassword());
         newAccount.setRole(account.getRole());
         newAccount.setName(account.getName());
         newAccount.setAddress(account.getAddress());
         newAccount.setPhone(account.getPhone());
-        newAccount.setBankAccountId(account.getBankAccountId());
         newAccount.setIsDeleted(account.getIsDeleted());
-        newAccount.setProfileImage(account.getProfileImage());
         newAccount.setProfileImg(account.getProfileImg());
 
         return repo.save(newAccount);
@@ -60,14 +66,12 @@ public class AccountServiceImp implements AccountService {
     public Account updateAccount(String id, Account account) {
         Account acc = repo.findById(id).orElseThrow(() -> new RuntimeException("Account can not be updated"));
 
-        acc.setUsername(account.getUsername());
+//        acc.setUsername(account.getUsername());
         acc.setRole(account.getRole());
         acc.setName(account.getName());
         acc.setAddress(account.getAddress());
         acc.setPhone(account.getPhone());
-        acc.setBankAccountId(account.getBankAccountId());
         acc.setIsDeleted(account.getIsDeleted());
-        acc.setProfileImage(account.getProfileImage());
         acc.setProfileImg(account.getProfileImg());
         return repo.save(acc);
     }
@@ -75,33 +79,33 @@ public class AccountServiceImp implements AccountService {
     @Override
     public void deleteAccount(String id) {
         Account acc = repo.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
-        repo.delete(acc);
+        acc.setIsDeleted(true);
+        repo.save(acc);
     }
 
 
     private AccountDTO mapToDTO(Account account) {
         AccountDTO accDTO = AccountDTO.builder()
                 .id(account.getId())
-                .username(account.getUsername())
+//                .username(account.getUsername())
                 .name(account.getName())
                 .phone(account.getPhone())
                 .address(account.getAddress())
                 .role(account.getRole())
-                .profileImage(account.getProfileImage())
+                .profileImage(account.getProfileImg())
                 .build();
         return accDTO;
     }
 
-    private Account mapToEnity(AccountDTO accountDTO) {
-        Account acc = new Account().builder()
-                .id(accountDTO.getId())
-                .username(accountDTO.getUsername())
-                .name(accountDTO.getName())
-                .phone(accountDTO.getPhone())
-                .address(accountDTO.getAddress())
-                .role(accountDTO.getRole())
-                .profileImage(accountDTO.getProfileImage())
-                .build();
-        return acc;
-    }
+//    private Account mapToEnity(AccountDTO accountDTO) {
+//        Account acc = new Account().builder()
+//                .id(accountDTO.getId())
+//                .username(accountDTO.getUsername())
+//                .name(accountDTO.getName())
+//                .phone(accountDTO.getPhone())
+//                .address(accountDTO.getAddress())
+//                .role(accountDTO.getRole())
+//                .build();
+//        return acc;
+//    }
 }

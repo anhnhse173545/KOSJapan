@@ -1,9 +1,13 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -13,14 +17,19 @@ import java.time.Instant;
 @Table(name = "trip_payments")
 public class TripPayment {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JsonBackReference(value = "booking-tripPayment")
+    @OneToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
+
+    @CreationTimestamp
     @Column(name = "create_at")
     private Instant createAt;
 
