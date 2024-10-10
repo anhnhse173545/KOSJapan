@@ -5,6 +5,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import PaymentPage from "./pages/booking";
 import PaymentDetailsPage from "./pages/tripDetail";
+import QuotaDetailsPage from "./pages/tripQuota";
 
 
 
@@ -20,6 +21,7 @@ function App() {
         {path: "/login", element: <Login/>},
         {path: "/payment", element: <PaymentPage/>},
         {path: "/payment/:id", element: <PaymentDetailsPage/>},
+        {path: "/quota/:id", element: <QuotaDetailsPage/>},
       ],
     },
   ]);
