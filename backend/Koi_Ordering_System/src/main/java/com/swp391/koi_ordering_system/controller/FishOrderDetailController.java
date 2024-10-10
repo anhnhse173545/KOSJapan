@@ -39,10 +39,9 @@ public class FishOrderDetailController {
         return ResponseEntity.ok(addedOrderDetail);
     }
 
-    @PutMapping("/{orderDetail_id}/update-order-detail")
-    public ResponseEntity<FishOrderDetail> updateFishInOrderDetail(@PathVariable String orderDetail_id,
-                                                                   @RequestBody UpdateFishInOrderDetailDTO fishOrderDetailDTO){
-        FishOrderDetail updatedOrderDetail = service.updateFishInOrderDetail(orderDetail_id, fishOrderDetailDTO);
+    @PostMapping("/update-order-detail")
+    public ResponseEntity<FishOrderDetail> updateFishInOrderDetail(@RequestBody UpdateFishInOrderDetailDTO fishOrderDetailDTO){
+        FishOrderDetail updatedOrderDetail = service.updateFishInOrderDetail(fishOrderDetailDTO);
         return ResponseEntity.ok(updatedOrderDetail);
     }
 

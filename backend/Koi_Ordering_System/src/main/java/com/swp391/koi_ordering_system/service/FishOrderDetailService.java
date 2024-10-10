@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,44 +56,60 @@ public class FishOrderDetailService {
     }
 
     public void deleteFishOrderDetail(String fishOrderDetailId){
-        fishOrderDetailRepository.deleteById(fishOrderDetailId);
+        Optional<FishOrderDetail> fishOrderDetail = fishOrderDetailRepository.findById(fishOrderDetailId);
+        if(fishOrderDetail.isPresent()){
+            FishOrderDetail fishOrderDetail1 = fishOrderDetail.get();
+            fishOrderDetail1.setIsDeleted(true);
+            fishOrderDetailRepository.save(fishOrderDetail1);
+        }
+        throw new RuntimeException("Fish Order Detail does not exist");
     }
 
     public FishOrderDetail addFishToOrderDetail(String orderDetailID, String fishId){
-        FishOrderDetail orderDetail = fishOrderDetailRepository.findFishOrderDetailById(orderDetailID);
+        Optional<Fish> findFish= fishRepository.findById(fishId);
+        Optional<FishOrderDetail> findOrderDetail = fishOrderDetailRepository.findById(orderDetailID);
 
-        Fish addFish = fishRepository.findFishById(fishId);
+        if(findFish.isPresent() && findOrderDetail.isPresent()){
+            FishOrderDetail fishOrderDetail = findOrderDetail.get();
+            Fish addFish = findFish.get();
+            fishOrderDetail.setFish(addFish);
+            fishOrderDetailRepository.save(fishOrderDetail);
+        }
 
-        orderDetail.setFish(addFish);
-
-        return fishOrderDetailRepository.save(orderDetail);
+        return null;
     }
 
-    public FishOrderDetail updateFishInOrderDetail(String orderDetailID, UpdateFishInOrderDetailDTO fishDTO){
-            FishOrderDetail orderDetail = fishOrderDetailRepository.findFishOrderDetailById(orderDetailID);
-            if(orderDetail == null){
-                throw new RuntimeException("Fish Order Detail not found");
+    public FishOrderDetail updateFishInOrderDetail(UpdateFishInOrderDetailDTO fishDTO){
+        Optional<FishOrderDetail> foundFishOrderDetail = fishOrderDetailRepository.findById(fishDTO.getOrderDetailId());
+        if(foundFishOrderDetail.isPresent()){
+
+            FishOrderDetail fishOrderDetail1 = foundFishOrderDetail.get();
+            Optional<Fish> foundFish = fishRepository.findById(fishDTO.getFishId());
+
+            if( foundFish.isEmpty()){
+                throw new RuntimeException("Fish does not exist");
             }
-            Fish updateFish = fishRepository.findFishById(fishDTO.getFishId());
-            if(updateFish == null){
-                throw new RuntimeException("Fish not found");
-            }
-            orderDetail.setFish(updateFish);
-            orderDetail.setPrice(fishDTO.getOrderDetailPrice());
-            return fishOrderDetailRepository.save(orderDetail);
+            Fish updateFish = foundFish.get();
+
+            fishOrderDetail1.setFish(updateFish);
+            fishOrderDetail1.setPrice(fishDTO.getOrderDetailPrice());
+
+            fishOrderDetailRepository.save(fishOrderDetail1);
+        }
+        return null;
     }
 
     public FishOrderDetail removeFishFromOrderDetail(String orderDetailId, String fishId){
-        FishOrderDetail orderDetail = fishOrderDetailRepository.findFishOrderDetailById(orderDetailId);
-        if(orderDetail == null){
-            throw new RuntimeException("Fish Order Detail not found");
+        Optional<FishOrderDetail> foundFishOrderDetail = fishOrderDetailRepository.findById(orderDetailId);
+        if(foundFishOrderDetail.isPresent()){
+            FishOrderDetail fishOrderDetail1 = foundFishOrderDetail.get();
+            Optional<Fish> foundFish = fishRepository.findById(fishId);
+            if(foundFish.isEmpty()){
+                throw new RuntimeException("Fish does not exist");
+            }
+            fishOrderDetail1.getFish().setIsDeleted(true);
         }
-        Fish removeFish = fishRepository.findFishById(fishId);
-        if(removeFish == null){
-            throw new RuntimeException("Fish not found");
-        }
-        fishOrderDetailRepository.deleteFishByFish(removeFish);
-        return fishOrderDetailRepository.save(orderDetail);
+        return null;
     }
 
     public FishOrderDetailDTO mapToDTO(FishOrderDetail fishOrderDetail) {

@@ -62,10 +62,12 @@ public class FishService {
     }
 
     public void deleteFish(String fishID){
-        if( !fishRepository.existsById(fishID)){
-            throw new RuntimeException("Fish not found");
+        Fish foundfish = fishRepository.findFishById(fishID);
+        if(foundfish != null){
+            foundfish.setIsDeleted(true);
+            fishRepository.save(foundfish);
         }
-        fishRepository.deleteById(fishID);
+        throw new RuntimeException("Fish not found");
     }
 
     public FishDTO mapToDTO(Fish fish){
