@@ -98,6 +98,10 @@ function QuotaDetailsPage() {
 
   if (!paymentDetails) return <div>Order not found.</div>;
 
+  const cusDetails = cusDetails.find((payment) => payment.id === parseInt(id));
+
+  if (!paymentDetails) return <div>Order not found.</div>;
+
   const handlePay = () => {
     alert('Proceed to Payment');
     navigate('/paykoi');
