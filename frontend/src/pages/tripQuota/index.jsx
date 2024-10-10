@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './index.scss';
 
-// API URLs (bạn có thể thay đổi URL này với API của bạn)
-const KOI_PAYMENTS_API = ''; // API URL cho koiPayments
+// API URLs
+const KOI_PAYMENTS_API = 'https://6704ec62031fd46a830de9fb.mockapi.io/api/v1/payments'; // API URL cho koiPayments
 const SALES_STAFF_API = 'https://6704ec62031fd46a830de9fb.mockapi.io/api/v1/sales';    // API URL cho Sales Staff
 
 // Component để hiển thị thông tin của sales staff
-const SingleSalesStaffData = ({ salesStaffId }) => {
+const SingleSalesStaffData = ({ salesStaffId, itinerary }) => {
   const [salesData, setSalesData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Hàm gọi API để lấy dữ liệu sales staff
     const fetchSalesStaffData = async () => {
       try {
         const response = await fetch(`${SALES_STAFF_API}/${salesStaffId}`);
@@ -47,6 +46,18 @@ const SingleSalesStaffData = ({ salesStaffId }) => {
         <p><strong>Terms:</strong> {salesData.terms}</p>
         <p><strong>Additional Info:</strong> {salesData.additionalInfo}</p>
       </div>
+
+      {/* Thêm phần hiển thị thông tin ngày, farm, và cá Koi */}
+      <h3>Itinerary Details</h3>
+      <div className="itinerary-details">
+        {itinerary.map((dayDetail, index) => (
+          <div key={index} className="day-detail">
+            <h4>{dayDetail.day}</h4>
+            <p><strong>Farm:</strong> {dayDetail.farm}</p>
+            <p><strong>Koi:</strong> {dayDetail.koi.join(', ')}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -59,7 +70,6 @@ function QuotaDetailsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Hàm gọi API để lấy dữ liệu order theo id
     const fetchPaymentDetails = async () => {
       try {
         const response = await fetch(`${KOI_PAYMENTS_API}/${id}`);
@@ -110,7 +120,8 @@ function QuotaDetailsPage() {
         </div>
 
         <div className="right-side">
-          <SingleSalesStaffData salesStaffId={paymentDetails.salesStaffId} />
+          {/* Truyền thêm props itinerary vào SingleSalesStaffData */}
+          <SingleSalesStaffData salesStaffId={paymentDetails.salesStaffId} itinerary={paymentDetails.itinerary} />
         </div>
       </div>
 
