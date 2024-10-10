@@ -44,7 +44,7 @@ public class AccountServiceImp implements AccountService {
         Account newAccount = new Account();
 
         newAccount.setId(account.getId());
-        newAccount.setUsername(account.getUsername());
+//        newAccount.setUsername(account.getUsername());
         newAccount.setPassword(account.getPassword());
         newAccount.setRole(account.getRole());
         newAccount.setName(account.getName());
@@ -66,7 +66,7 @@ public class AccountServiceImp implements AccountService {
     public Account updateAccount(String id, Account account) {
         Account acc = repo.findById(id).orElseThrow(() -> new RuntimeException("Account can not be updated"));
 
-        acc.setUsername(account.getUsername());
+//        acc.setUsername(account.getUsername());
         acc.setRole(account.getRole());
         acc.setName(account.getName());
         acc.setAddress(account.getAddress());
@@ -87,7 +87,7 @@ public class AccountServiceImp implements AccountService {
     private AccountDTO mapToDTO(Account account) {
         AccountDTO accDTO = AccountDTO.builder()
                 .id(account.getId())
-                .username(account.getUsername())
+//                .username(account.getUsername())
                 .name(account.getName())
                 .phone(account.getPhone())
                 .address(account.getAddress())

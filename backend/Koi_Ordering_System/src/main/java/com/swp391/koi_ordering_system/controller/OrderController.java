@@ -31,10 +31,11 @@ public class OrderController {
     public ResponseEntity<FishOrderDTO> createFishOrder(@RequestBody CreateFishOrderDTO createFishOrderDTO) {
         return ResponseEntity.ok(orderService.createFishOrder(createFishOrderDTO));
     }
+
+
     @GetMapping("/list")
-    public ResponseEntity<List<FishOrderDTO>> getAllFishOrders() {
-        List<FishOrderDTO> fishOrders = orderService.getAllOrder();
-        return ResponseEntity.ok(fishOrders);
+    public ResponseEntity<List<FishOrderDTO>> getAllFarm() {
+        return ResponseEntity.ok(orderService.getAllOrder());
     }
 
 }

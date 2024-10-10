@@ -22,7 +22,6 @@ public class FishPack {
     @Column(name = "id")
     private String id;
 
-    @Size(max = 100)
     @Column(name = "length")
     private String length;
 

@@ -24,10 +24,9 @@ public class FishOrderDetailController {
         return ResponseEntity.ok(list);
     }
 
-    @PostMapping("/{order_id}/create")
-    public ResponseEntity<FishOrderDetailDTO> createOrderDetail(@PathVariable String order_id,
-                                                             @RequestBody CreateOrderDetailDTO createOrderDetailDTO){
-        FishOrderDetail newOrderDetail = service.createFishOrderDetail( createOrderDetailDTO, order_id);
+    @PostMapping("/create")
+    public ResponseEntity<FishOrderDetailDTO> createOrderDetail(@RequestBody CreateOrderDetailDTO newOrderDetailDTO){
+        FishOrderDetail newOrderDetail = service.createFishOrderDetail(newOrderDetailDTO);
         FishOrderDetailDTO showOrderDetail = service.mapToDTO(newOrderDetail);
         return ResponseEntity.ok(showOrderDetail);
     }
@@ -39,10 +38,9 @@ public class FishOrderDetailController {
         return ResponseEntity.ok(addedOrderDetail);
     }
 
-    @PutMapping("/{orderDetail_id}/update-order-detail")
-    public ResponseEntity<FishOrderDetail> updateFishInOrderDetail(@PathVariable String orderDetail_id,
-                                                                   @RequestBody UpdateFishInOrderDetailDTO fishOrderDetailDTO){
-        FishOrderDetail updatedOrderDetail = service.updateFishInOrderDetail(orderDetail_id, fishOrderDetailDTO);
+    @PostMapping("/update-order-detail")
+    public ResponseEntity<FishOrderDetail> updateFishInOrderDetail(@RequestBody UpdateFishInOrderDetailDTO fishOrderDetailDTO){
+        FishOrderDetail updatedOrderDetail = service.updateFishInOrderDetail(fishOrderDetailDTO);
         return ResponseEntity.ok(updatedOrderDetail);
     }
 
