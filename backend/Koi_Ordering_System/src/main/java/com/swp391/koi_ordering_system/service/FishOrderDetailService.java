@@ -30,6 +30,9 @@ public class FishOrderDetailService {
     @Autowired
     private OrderRepository orderRepository;
 
+    private static final String PREFIX = "FOD";
+    private static final int ID_PADDING = 4;
+
     public List<FishOrderDetailDTO> findAllByOrderId(String id) {
         List<FishOrderDetail> list = fishOrderDetailRepository.findByFishOrderId(id);
         return list.stream()
@@ -37,20 +40,23 @@ public class FishOrderDetailService {
                 .collect(Collectors.toList());
     }
 
-    public FishOrderDetail createFishOrderDetail(CreateOrderDetailDTO createFishOrderDTO, String orderDetailId){
-        FishOrderDetail fishOrderDetail = fishOrderDetailRepository.findFishOrderDetailById(orderDetailId);
-        if(fishOrderDetail != null){
-            throw new RuntimeException("Fish Order Detail existed");
-        }
-        fishOrderDetail = new FishOrderDetail();
+    public FishOrderDetail createFishOrderDetail(CreateOrderDetailDTO createFishOrderDTO){
+
+        FishOrderDetail fishOrderDetail = new FishOrderDetail();
         fishOrderDetail.setId(generateOrderDetailId());
-        Fish orderFish = fishRepository.findFishById(createFishOrderDTO.getFish_id());
-        FishOrder fishOrder = orderRepository.findFishOrderById(createFishOrderDTO.getOrderId());
-        if(fishOrder != null && orderFish != null){
+
+        Optional<Fish> foundFish = fishRepository.findById(createFishOrderDTO.getFish_id());
+        if(foundFish.isEmpty()){
+            throw new RuntimeException("Fish does not exists");
+        }
+        Fish addfish = foundFish.get();
+        fishOrderDetail.setFish(addfish);
+
+        Optional<FishOrder> foundFishOrder = orderRepository.findById(createFishOrderDTO.getOrderId());
+        if(foundFishOrder.isPresent()){
+            FishOrder fishOrder = foundFishOrder.get();
+            fishOrder.getFishOrderDetails().add(fishOrderDetail);
             fishOrderDetail.setFishOrder(fishOrder);
-            fishOrderDetail.setFish(orderFish);
-            fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
-            fishOrderDetailRepository.save(fishOrderDetail);
         }
         return fishOrderDetail;
     }
@@ -126,8 +132,14 @@ public class FishOrderDetailService {
     private String generateOrderDetailId() {
         String lastId = fishOrderDetailRepository.findTopByOrderByIdDesc()
                 .map(FishOrderDetail::getId)
-                .orElse("POD0000");
-        int nextId = Integer.parseInt(lastId.substring(2)) + 1;
-        return String.format("POD%04d", nextId);
+                .orElse(PREFIX + String.format("%0" + ID_PADDING + "d", 0));
+
+        try {
+            int nextId = Integer.parseInt(lastId.substring(PREFIX.length())) + 1;
+            return PREFIX + String.format("%0" + ID_PADDING + "d", nextId);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Invalid order detail ID format: " + lastId, e);
+        }
     }
 }
