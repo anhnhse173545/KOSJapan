@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './index.scss'; // Import CSS file for styling
 
@@ -80,7 +80,8 @@ function PaymentPage() {
     selectedStatus === 'All' ? true : payment.status === selectedStatus
   );
 
-  const handleCancel = (id) => {
+ 
+  {/** const handleCancel = (id) => {
     setPayments((prevPayments) =>
       prevPayments.map((payment) =>
         payment.id === id
@@ -88,8 +89,7 @@ function PaymentPage() {
           : payment
       )
     );
-  };
-
+  }; */}
   return (
     <div className="payment-page-container">
       {/* Sidebar */}
