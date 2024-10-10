@@ -1,6 +1,5 @@
 package com.swp391.koi_ordering_system.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,16 +18,15 @@ import java.util.List;
 @Table(name = "fish_orders")
 public class FishOrder {
     @Id
-    @Column(name = "id", nullable = false, length = 9)
+    @Column(name = "id")
     private String id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "farm_id", nullable = false)
+    @JoinColumn(name = "farm_id")
     private Farm farm;
 
     @Column(name = "delivery_address")
@@ -43,14 +41,13 @@ public class FishOrder {
     @Column(name = "arrived_date")
     private LocalDateTime arrivedDate;
 
-    @Column(name = "status", length = 50)
+    @Column(name = "status")
     private String status;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToMany(mappedBy = "fishOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FishOrderDetail> fishOrderDetails = new ArrayList<FishOrderDetail>();
-
+    @OneToMany(mappedBy = "fishOrder")
+    private Set<FishPackOrderDetail> fishPackOrderDetails;
 }

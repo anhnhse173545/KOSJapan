@@ -14,5 +14,5 @@ import java.util.Set;
 public class FishPackOrderDetailDTO {
     private String id;
     private double price;
-    private FishPackDTO fishPacks;
+    private FishPackDTO fishPack;
 }

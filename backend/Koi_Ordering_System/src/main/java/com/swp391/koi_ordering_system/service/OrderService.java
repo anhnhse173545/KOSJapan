@@ -43,35 +43,31 @@ public class OrderService {
     @Autowired
     private FishPackMapper fishPackMapper;
 
+    @Autowired
+    private BookingRepository bookingRepository;
+
     @Transactional
     public FishOrderDTO createFishOrder(CreateFishOrderDTO createFishOrderDTO) {
-        // Map CreateFishOrderDTO to FishOrder entity
         FishOrder fishOrder = fishOrderMapper.toEntity(createFishOrderDTO);
         fishOrder.setId(generateFishOrderId());
 
-        // Save FishOrder entity
         fishOrder = orderRepository.save(fishOrder);
 
-        // Save FishPackOrderDetails and FishPacks
         for (FishPackOrderDetailDTO detailDTO : createFishOrderDTO.getFishPackOrderDetails()) {
-            // Map DTO to entity and generate ID
-            FishPackOrderDetail detail = fishPackOrderDetailMapper.toEntity(detailDTO);
-            detail.setId(generateFishPackOrderDetailId()); // Set the ID
 
-            // Associate with FishOrder
+            FishPackOrderDetail detail = fishPackOrderDetailMapper.toEntity(detailDTO);
+            detail.setId(generateFishPackOrderDetailId());
+
             detail.setFishOrder(fishOrder);
 
-            // Map FishPack and generate its ID
-            FishPack fishPack = fishPackMapper.toEntity(detailDTO.getFishPacks());
-            fishPack.setId(generateFishPackId()); // Set the FishPack ID
-            fishPackRepository.save(fishPack);
+            FishPack fishPacks = fishPackMapper.toEntity(detailDTO.getFishPack());
+            fishPacks.setId(generateFishPackId());
+            fishPackRepository.save(fishPacks);
 
-            // Set FishPack for the detail and save the detail
-            detail.setFishPack(fishPack);
-            fishPackOrderDetailRepository.save(detail); // Persist FishPackOrderDetail
+            detail.setFishPack(fishPacks);
+            fishPackOrderDetailRepository.save(detail);
         }
 
-        // Fetch the updated FishOrder with details
         fishOrder = orderRepository.findById(fishOrder.getId()).orElseThrow(() -> new RuntimeException("FishOrder not found"));
         return fishOrderMapper.toDTO(fishOrder);
     }

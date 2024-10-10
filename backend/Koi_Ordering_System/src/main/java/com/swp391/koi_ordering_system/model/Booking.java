@@ -46,6 +46,7 @@ public class Booking {
     @OneToOne(mappedBy = "booking")
     private TripPayment tripPayment;
 
+
     @Column(name = "status", length = 20)
     private String status = "Requested";
 

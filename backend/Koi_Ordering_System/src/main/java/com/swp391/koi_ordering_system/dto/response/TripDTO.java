@@ -17,6 +17,7 @@ public class TripDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String departureAirport;
+    private String description;
     private Double price;
     private String status;
     private Set<TripDestinationDTO> tripDestinations;
