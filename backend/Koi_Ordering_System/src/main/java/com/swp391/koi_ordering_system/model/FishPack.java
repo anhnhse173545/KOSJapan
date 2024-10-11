@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -37,6 +39,9 @@ public class FishPack {
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @OneToMany(mappedBy = "fishPack")
+    private List<Fish> listFish = new ArrayList<>();
 
     @JsonManagedReference(value = "fishPack-media")
     @ManyToMany
