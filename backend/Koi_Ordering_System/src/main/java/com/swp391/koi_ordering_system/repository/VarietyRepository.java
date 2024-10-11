@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface VarietyRepository extends JpaRepository<Variety, String> {
     List<Variety> findAllByIsDeletedFalse();
     Optional<Variety> findByIdAndIsDeletedFalse(String id);
+    Optional<Variety> findTopByOrderByIdDesc();
 }
