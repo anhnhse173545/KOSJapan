@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 ///////////////
-
+import { AccountApiTester } from './account-api-tester'
 ///////////////
 
 import DashboardOverview from './DashboardOverview'
@@ -32,7 +32,7 @@ export default function ManagerDashboard() {
 
   const navItems = [
     ///////////////
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test' },
     ///////////////
     { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/dashboard' },
     { name: 'Customer Requests', icon: <ClipboardList className="h-5 w-5" />, path: '/customer-requests' },
@@ -104,7 +104,7 @@ export default function ManagerDashboard() {
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
               <Routes>
                 {/* /////////////////// */}
-                <Route path='/' element={<Navigate to="/" />} />
+                <Route path='/test' element={<AccountApiTester />} />
                 {/* ///////////////////// */}
 
                 <Route path="/dashboard" element={<DashboardOverview />} />
