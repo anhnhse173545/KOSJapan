@@ -11,6 +11,4 @@ import java.util.Optional;
 public interface TripDestinationRepository extends JpaRepository<TripDestination, String> {
     List<TripDestination> findByTripIdAndIsDeletedFalse(String tripId);
     Optional<TripDestination> findByTripAndFarm(Trip trip, Farm farm);
-    Optional<TripDestination> findByTrip(Trip trip);
-
 }

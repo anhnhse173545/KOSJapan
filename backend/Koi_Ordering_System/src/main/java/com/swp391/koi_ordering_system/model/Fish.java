@@ -1,6 +1,7 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sun.xml.bind.v2.runtime.reflect.Lister;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -19,7 +21,6 @@ import java.util.Set;
 public class Fish {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @ManyToOne
@@ -38,6 +39,10 @@ public class Fish {
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fish_pack_id", nullable = true)
+    private FishPack fishPack;
 
     @JsonManagedReference(value = "fish-media")
     @ManyToMany

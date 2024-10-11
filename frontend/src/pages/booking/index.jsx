@@ -1,40 +1,95 @@
-import { useState, useEffect } from 'react';
+import  { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './index.scss'; // Import CSS file for styling
+
+const koiPayments = [
+  {
+    id: 1,
+    farm: 'Nguyen hoang minh',
+    time: 'Time Start: 9/19/2024',
+    status: 'Request',
+    price: '$400.00',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOxfoK9Pk6FKjHPQrqVj8SUHJIohxdxkK1Iw&s',
+    statusLabel: 'Request | Pending Approval',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    koidescriptopn: 'xxxyyy',
+    tripdescriptopn: 'xxxyyy',
+    otherrequirments: 'xxxx',
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    
+  },
+  {
+    id: 2,
+    farm: 'Matsue Nishikigoi Center',
+    time: 'Time Start: 9/19/2024',
+    status: 'Pending Quota',
+    price: '$400.00',
+    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuK5Sz8ToO0Sz50esp9c-QAu_w71BHtKJLEA&s',
+    statusLabel: 'Pending Quota | Waiting',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
+  },
+  {
+    id: 3,
+    farm: 'Dainichi Koi Farm',
+    time: 'Time Start: 9/19/2024',
+    quantity: 1,
+    status: 'Completed',
+    price: '$400.00',
+    img: 'https://i.ytimg.com/vi/pUADEpL3DNM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA3nCkTx9J7kqjMCIk6ImhQ7ih5iw',
+    statusLabel: 'Completed | Delivery Completed',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    numberOfPeople: 2,
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
+  },
+  {
+    id: 4,
+    farm: 'Otsuka Koi Farm',
+    time: 'Time Start: 9/19/2024',
+    status: 'On going',
+    price: '$900.00',
+    img: 'https://onkoi.vn/wp-content/uploads/2020/04/Ho-nuoi-Koi-can-phai-co-kich-thuoc-lon-va-rong-rai.jpg',
+    statusLabel: 'Canceled | Order Canceled',
+    email: 'minh@gmail.com',
+    phone: '0981918818',
+    startDate: '2024-09-19',
+    endDate: '2024-09-25',
+    address: '123-123 Ho Chi minh City',
+    destination: 'Nishikigoi Museum',
+  },
+];               
 
 function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [payments, setPayments] = useState([]);
+  const [payments, setPayments] = useState(koiPayments);
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Fetch data from API
-  useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const response = await fetch('https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip'); // Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error('Failed to fetch payments');
-        }
-        const data = await response.json();
-        setPayments(data); // Set the fetched payments data
-      } catch (error) {
-        setError(error.message); // Handle any errors
-      } finally {
-        setLoading(false); // Set loading to false when finished
-      }
-    };
-
-    fetchPayments();
-  }, []);
-
-  // Filter payments based on selected status
   const filteredPayments = payments.filter((payment) =>
     selectedStatus === 'All' ? true : payment.status === selectedStatus
   );
 
+ 
+  {/** const handleCancel = (id) => {
+    setPayments((prevPayments) =>
+      prevPayments.map((payment) =>
+        payment.id === id
+          ? { ...payment, status: 'Canceled', statusLabel: 'Canceled | Order Canceled' }
+          : payment
+      )
+    );
+  }; */}
   return (
     <div className="payment-page-container">
       {/* Sidebar */}
@@ -55,13 +110,14 @@ function PaymentPage() {
               My Koi Fish
             </Link>
           </li>
+          
         </ul>
       </div>
 
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Request', 'Pending Quota', 'On going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Request', 'Pending Quota','On going' ,'Completed', 'Canceled' ].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -74,9 +130,6 @@ function PaymentPage() {
 
         {/* Payment List */}
         <div className="payment-list">
-          {loading && <p>Loading...</p>} {/* Show loading state */}
-          {error && <p className="error">{error}</p>} {/* Show error state */}
-          {!loading && !error && filteredPayments.length === 0 && <p>No payments found.</p>} {/* No payments message */}
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
               <img src={koi.img} alt={koi.farm} className="koi-image" />
@@ -87,24 +140,27 @@ function PaymentPage() {
                 <p className="status">{koi.statusLabel}</p>
                 <p className="price">{koi.price}</p>
 
+            
                 <div className="button-group">
-                  <button
-                    className="details-button"
-                    onClick={() => {
-                      if (koi.status === 'Pending Quota') {
-                        navigate(`/quota/${koi.id}`);
-                      } else if (koi.status === 'Request') {
-                        navigate(`/payment/${koi.id}`);
-                      } else if (koi.status === 'On going') {
-                        navigate(`/ongoing/${koi.id}`);
-                      } else {
-                        navigate(`/payment/${koi.id}`);
-                      }
-                    }}
-                  >
-                    See Details
-                  </button>
-                </div>
+  <button
+    className="details-button"
+    onClick={() => {
+      if (koi.status === 'Pending Quota') {
+        navigate(`/quota/${koi.id}`);
+      } else if (koi.status === 'Request') {
+        navigate(`/payment/${koi.id}`);
+      }else if(koi.status === 'On going'){
+        navigate (`/ongoing/${koi.id}`)
+      
+      } else {
+        navigate(`/payment/${koi.id}`);
+      }
+    }}
+  >
+    See Details
+  </button>
+</div>
+
               </div>
             </div>
           ))}

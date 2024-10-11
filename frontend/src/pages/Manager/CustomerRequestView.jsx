@@ -59,7 +59,7 @@ async function assignStaffToCustomer(customerId, staffId) {
   }
 }
 
-export default function CustomerRequestView() {
+export function CustomerRequestView() {
   const [customerRequests, setCustomerRequests] = useState([]);
   const [staffMembers, setStaffMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -1,65 +1,108 @@
+
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import "./index.scss";
 
+
+const koiPayments = [
+    {
+        id: 1,
+        name: 'Nguyen Hoang Minh  ',
+        status: 'Request',
+        price: '$400.00',
+        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOxfoK9Pk6FKjHPQrqVj8SUHJIohxdxkK1Iw&s',
+        statusLabel: 'Request | Pending Approval',
+        email: 'minh@gmail.com',
+        phone: '0981918818',  
+        koiDescription:'hihihaha',
+        tripdescription:'hahahii',
+        otherrequirements:'otherrerer',
+        startDate: '2024-09-19',
+        endDate: '2024-09-25',
+        address: '123-123 Ho Chi minh City',
+        destination: 'Dainichi Koi Farm',
+      },
+      {
+        id: 2,
+        farm: 'Matsue Nishikigoi Center',
+        time: 'Time Start: 9/19/2024',
+        quantity: 2,
+        status: 'Pending Quota',
+        price: '$400.00',
+        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuK5Sz8ToO0Sz50esp9c-QAu_w71BHtKJLEA&s',
+        statusLabel: 'Pending Quota | Waiting',
+        email: 'minh@gmail.com',
+        phone: '0981918818',
+        numberOfPeople: 2,
+        startDate: '2024-09-19',
+        endDate: '2024-09-25',
+        address: '123-123 Ho Chi minh City',
+        destination: 'Matsue Nishikigoi Center',
+        koiDescription:'hihihaha',
+        tripdescription:'hahahii',
+        otherrequirements:'otherrerer',
+      },
+      {
+        id: 3,
+        farm: 'Dainichi Koi Farm',
+        time: 'Time Start: 9/19/2024',
+        quantity: 1,
+        status: 'Completed',
+        price: '$400.00',
+        img: 'https://i.ytimg.com/vi/pUADEpL3DNM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA3nCkTx9J7kqjMCIk6ImhQ7ih5iw',
+        statusLabel: 'Completed | Delivery Completed',
+        email: 'minh@gmail.com',
+        phone: '0981918818',
+        numberOfPeople: 2,
+        startDate: '2024-09-19',
+        endDate: '2024-09-25',
+        address: '123-123 Ho Chi minh City',
+        destination: 'Dainichi Koi Farm',
+        koiDescription:'hihihaha',
+        tripdescription:'hahahii',
+        otherrequirements:'otherrerer',
+      },
+      {
+        id: 4,
+        farm: 'Otsuka Koi Farm',
+        time: 'Time Start: 9/19/2024',
+        status: 'Canceled',
+        price: '$900.00',
+        img: 'https://onkoi.vn/wp-content/uploads/2020/04/Ho-nuoi-Koi-can-phai-co-kich-thuoc-lon-va-rong-rai.jpg',
+        statusLabel: 'Canceled | Order Canceled',
+        email: 'minh@gmail.com',
+        phone: '0981918818',
+        numberOfPeople: 2,
+        startDate: '2024-09-19',
+        endDate: '2024-09-25',
+        address: '123-123 Ho Chi minh City',
+        destination: 'Otsuka Koi Farm',
+        koiDescription:'hihihaha',
+        tripdescription:'hahahii',
+        otherrequirements:'otherrerer',
+      },
+];
+
 function PaymentDetailsPage() {
-  const { id } = useParams(); // Get the ID from the URL
+  const { id } = useParams(); // Lấy ID từ URL để xác định đơn hàng nào được chọn
   const navigate = useNavigate();
-  
-  const [paymentDetails, setPaymentDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Fetch payment details from API
-  useEffect(() => {
-    const fetchPaymentDetails = async () => {
-      try {
-        const response = await fetch(`https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip/${id}`); // Replace with your API URL
-        if (!response.ok) {
-          throw new Error('Failed to fetch payment details');
-        }
-        const data = await response.json();
-        setPaymentDetails(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Lấy thông tin chi tiết của đơn hàng dựa trên ID
+  const paymentDetails = koiPayments.find((payment) => payment.id === parseInt(id));
 
-    fetchPaymentDetails();
-  }, [id]); // Dependency array ensures this runs when `id` changes
-
-  // Handle loading state
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Handle error state
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  // If paymentDetails is still null (though it shouldn't be if fetching is successful)
-  if (!paymentDetails) {
-    return <div>Order not found</div>;
-  }
+  if (!paymentDetails) return <div>Order not found</div>;
 
   return (
     <div className="payment-details-page">
       <h2>Payment Details for Order ID: {paymentDetails.id}</h2>
       <div className="details-container">
-        <img src={paymentDetails.img} alt={paymentDetails.name} className="payment-image" />
-        <p><strong>Name:</strong> {paymentDetails.name}</p>
+      <p><strong>Name:</strong> {paymentDetails.name}</p>
         <p><strong>Email:</strong> {paymentDetails.email}</p>
         <p><strong>Phone:</strong> {paymentDetails.phone}</p>
-        <p><strong>Koi Description:</strong> {paymentDetails.koidescription}</p>
+        <p><strong>Koi Descriptopn:</strong> {paymentDetails.koiDescription}</p>
         <p><strong>Trip Description:</strong> {paymentDetails.tripdescription}</p>
-        <p><strong>Other Requirements:</strong> {paymentDetails.otherrequiremenets}</p>
-        <p><strong>Start Date:</strong> {paymentDetails.startdate}</p>
-        <p><strong>End Date:</strong> {paymentDetails.enddate}</p>
-        <p><strong>Status:</strong> {paymentDetails.status}</p>
-        <p><strong>Price:</strong> {paymentDetails.price}</p>
+        <p><strong>Other Requirements:</strong> {paymentDetails.otherrequirements}</p>
+        <p><strong>Start Date:</strong> {paymentDetails.startDate}</p>
+        <p><strong>End Date:</strong> {paymentDetails.endDate}</p>
       </div>
       <button className="back-button" onClick={() => navigate(-1)}>Back</button>
     </div>

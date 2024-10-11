@@ -113,14 +113,6 @@ public class TripService {
         tripDestinationRepository.delete(tripDestination);
     }
 
-    public void removeTripById(String tripId ) {
-        Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
-
-        TripDestination tripDestination = tripDestinationRepository.findByTrip(trip)
-                .orElseThrow(() -> new RuntimeException("TripDestination not found"));
-        tripDestinationRepository.delete(tripDestination);
-    }
-
     public String generateTripId() {
         String lastTripId = tripRepository.findTopByOrderByIdDesc()
                 .map(Trip::getId)

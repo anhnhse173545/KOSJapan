@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,6 +41,9 @@ public class FishPack {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @OneToMany(mappedBy = "fishPack")
+    private List<Fish> listFish = new ArrayList<>();
+
     @JsonManagedReference(value = "fishPack-media")
     @ManyToMany
     @JoinTable(
@@ -46,4 +52,5 @@ public class FishPack {
             inverseJoinColumns = @JoinColumn(name = "media_id")
     )
     private Set<Media> medias;
+
 }
