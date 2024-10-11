@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 ///////////////
-import { AccountApiTester } from './account-api-tester'
+import { AccountApiTester } from './tests/account-api-tester'
 ///////////////
 
 import DashboardOverview from './DashboardOverview'
