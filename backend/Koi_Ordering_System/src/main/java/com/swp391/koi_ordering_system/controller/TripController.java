@@ -56,24 +56,30 @@ public class TripController {
         return ResponseEntity.ok(updatedTrip);
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTrip(@PathVariable String id) {
         tripService.deleteTrip(id);
         return ResponseEntity.ok("Trip deleted successfully");
     }
 
-    @PostMapping("/{tripId}/add-farm/{farmId}")
-    public ResponseEntity<Trip> addFarmToTrip(@PathVariable String tripId, @PathVariable String farmId) {
-        Trip updatedTrip = tripService.addFarmToTrip(tripId, farmId);
-        if (updatedTrip == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedTrip);
-    }
+//    @PostMapping("/{tripId}/add-farm/{farmId}")
+//    public ResponseEntity<Trip> addFarmToTrip(@PathVariable String tripId, @PathVariable String farmId) {
+//        Trip updatedTrip = tripService.addFarmToTrip(tripId, farmId);
+//        if (updatedTrip == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedTrip);
+//    }
 
-    @DeleteMapping("/{tripId}/farm/{farmId}")
-    public ResponseEntity<Void> removeFarmFromTrip(@PathVariable String tripId, @PathVariable String farmId) {
-        tripService.removeFarmFromTrip(tripId, farmId);
+//    @DeleteMapping("/{tripId}/farm/{farmId}")
+//    public ResponseEntity<Void> removeFarmFromTrip(@PathVariable String tripId, @PathVariable String farmId) {
+//        tripService.removeFarmFromTrip(tripId, farmId);
+//        return ResponseEntity.noContent().build();
+//    }
+
+    @DeleteMapping("/{tripId}")
+    public ResponseEntity<Void> removeTripById(@PathVariable String tripId) {
+        tripService.removeTripById(tripId);
         return ResponseEntity.noContent().build();
     }
 

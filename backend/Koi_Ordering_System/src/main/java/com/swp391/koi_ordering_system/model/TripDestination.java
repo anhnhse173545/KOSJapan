@@ -28,6 +28,9 @@ public class TripDestination {
     @Column(name = "visit_date")
     private LocalDateTime visitDate;
 
+    @Column(name = "description")
+    private String description;
+
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;

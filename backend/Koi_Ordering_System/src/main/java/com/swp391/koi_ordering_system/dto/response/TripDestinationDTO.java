@@ -15,4 +15,5 @@ public class TripDestinationDTO {
     private String id;
     private FarmDTO farm;
     private LocalDateTime visitDate;
+    private String description;
 }
