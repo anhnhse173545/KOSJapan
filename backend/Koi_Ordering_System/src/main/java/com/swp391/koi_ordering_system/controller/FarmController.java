@@ -57,7 +57,7 @@ public class FarmController {
         return ResponseEntity.ok(updatedFarm);
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteFarm(@PathVariable String id) {
         farmService.deleteFarm(id);
         return ResponseEntity.ok("Farm deleted successfully");

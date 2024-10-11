@@ -13,4 +13,6 @@ public interface TripDestinationRepository extends JpaRepository<TripDestination
     Optional<TripDestination> findByTripAndFarm(Trip trip, Farm farm);
     Optional<TripDestination> findByTrip(Trip trip);
 
+    Optional<TripDestination> findTopByOrderByIdDesc();
+    Optional<TripDestination> findByIdAndIsDeletedFalse(String id);
 }

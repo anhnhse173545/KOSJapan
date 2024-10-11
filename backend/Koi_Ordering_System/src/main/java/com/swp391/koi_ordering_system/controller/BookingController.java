@@ -76,7 +76,7 @@ public class BookingController {
         return ResponseEntity.ok(updatedBookingDTO);
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBooking(@PathVariable String id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.ok("Booking deleted successfully");
