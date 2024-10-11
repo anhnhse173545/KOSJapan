@@ -83,12 +83,12 @@ public class TripController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{tripId}/farm")
-    public ResponseEntity<List<Farm>> getFarmsByTripId(@PathVariable String tripId) {
-        List<Farm> farms = tripService.getFarmsByTripId(tripId);
-        if (farms == null || farms.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(farms);
-    }
+//    @GetMapping("/{tripId}/farm")
+//    public ResponseEntity<List<Farm>> getFarmsByTripId(@PathVariable String tripId) {
+//        List<Farm> farms = tripService.getFarmsByTripId(tripId);
+//        if (farms == null || farms.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(farms);
+//    }
 }
