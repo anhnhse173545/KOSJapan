@@ -144,8 +144,8 @@ function QuotaDetailsPage() {
   );
 }
 
-const SingleCustomerStaffData = ({ customerId }) => {
-  const [cusData, setCustomerData] = useState(null);
+const SingletripStaffData = ({ tripId }) => {
+  const [tripData, settripData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -160,8 +160,8 @@ const SingleCustomerStaffData = ({ customerId }) => {
       })
       .then((data) => {
         console.log('Received data:', data);
-        const customer = data.find(customer => customer.id === customerId);
-        setCustomerData(customer || null);
+        const trip = data.find(trip => trip.id === tripId);
+        settripData(trip || null);
         setLoading(false);
       })
       .catch((error) => {
@@ -169,24 +169,19 @@ const SingleCustomerStaffData = ({ customerId }) => {
         setError(error);
         setLoading(false);
       });
-  }, [customerId]);
+  }, [tripId]);
 
   if (loading) return <div>Loading sales staff data...</div>;
   if (error) return <div>Error loading data: {error.message}</div>;
-  if (!cusData) return <div>No customer data available.</div>;
+  if (!tripData) return <div>No trip data available.</div>;
 
   return (
-    <div className="customer-data">
-      <h2>Customer Request</h2>
-      <div className="customer-data-card">
-        <h3>Name: {cusData.Name}</h3>
-        <p><strong>Email:</strong> {cusData.Email}</p>
-        <p><strong>Phone Representative:</strong> {cusData.Phone}</p>
-        <p><strong>Koi Description:</strong> {cusData.KoiDescription}</p>
-        <p><strong>Trip Description:</strong> {cusData.TripDescription}</p>
-        <p><strong>Other Requirements Info:</strong> {cusData.OtherRequirements}</p>
-        <p><strong>Start Date :</strong> {cusData.StartDate}</p>
-        <p><strong>ENd Date :</strong> {cusData.EndDate}</p>
+    <div className="trip-data">
+      <h2>trip Request</h2>
+      <div className="trip-data-card">
+        <h3>Name: {tripData.Name}</h3>
+        <p><strong>email:</strong> {tripData.status}</p>
+        <p><strong>phone:</strong> {tripData.price}</p>
 
       
       </div>
