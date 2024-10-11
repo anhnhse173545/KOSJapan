@@ -2,7 +2,6 @@ package com.swp391.koi_ordering_system.controller;
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateFishInPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.model.FishPack;
@@ -52,11 +51,12 @@ public class FishPackController {
         return ResponseEntity.ok(fishPackService.mapToDTO(fishPack));
     }
 
-    @PutMapping("/{koi_pack_id}/update-fish-in-koi-pack/{fish_id}")
+    @PutMapping("/{koi_pack_is}/update-fish-in-koi-pack/{fish_id}")
     public ResponseEntity<FishPackDTO> updateFishInKoiPack(@PathVariable String fish_id,
                                                            @PathVariable String koi_pack_id,
-                                                           @RequestBody UpdateFishInPackDTO dto) {
-        FishPack updateFishPack = fishPackService.updateFishInFishPack(fish_id, koi_pack_id, dto);
+                                                           @RequestBody CreateFishPackDTO fishPackDTO,
+                                                           @RequestBody CreateFishDTO fishDTO) {
+        FishPack updateFishPack = fishPackService.updateFishInFishPack(fish_id, koi_pack_id, fishPackDTO, fishDTO);
         return ResponseEntity.ok(fishPackService.mapToDTO(updateFishPack));
     }
 
