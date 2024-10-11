@@ -151,7 +151,7 @@ const SingleCustomerStaffData = ({ customerId }) => {
 
   useEffect(() => {
     console.log('Fetching cus staff data...');
-    fetch('https://6707a1be8e86a8d9e42c3e8e.mockapi.io/api/v1/customerdata')
+    fetch('https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip')
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -173,7 +173,7 @@ const SingleCustomerStaffData = ({ customerId }) => {
 
   if (loading) return <div>Loading sales staff data...</div>;
   if (error) return <div>Error loading data: {error.message}</div>;
-  if (!cusData) return <div>No sales staff data available.</div>;
+  if (!cusData) return <div>No customer data available.</div>;
 
   return (
     <div className="customer-data">

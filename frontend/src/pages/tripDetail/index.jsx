@@ -59,7 +59,7 @@ function PaymentDetailsPage() {
         <p><strong>Start Date:</strong> {paymentDetails.startdate}</p>
         <p><strong>End Date:</strong> {paymentDetails.enddate}</p>
         <p><strong>Status:</strong> {paymentDetails.status}</p>
-        <p><strong>Price:</strong> {paymentDetails.price}</p>
+        
       </div>
       <button className="back-button" onClick={() => navigate(-1)}>Back</button>
     </div>
