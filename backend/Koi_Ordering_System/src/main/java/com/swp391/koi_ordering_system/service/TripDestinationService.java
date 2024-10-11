@@ -88,4 +88,3 @@ public class TripDestinationService {
         tripDestination.setIsDeleted(true);
         tripDestinationRepository.save(tripDestination);
     }
-}
