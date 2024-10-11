@@ -46,31 +46,31 @@ public class OrderService {
     @Autowired
     private BookingRepository bookingRepository;
 
-    @Transactional
-    public FishOrderDTO createFishOrder(CreateFishOrderDTO createFishOrderDTO) {
-        FishOrder fishOrder = fishOrderMapper.toEntity(createFishOrderDTO);
-        fishOrder.setId(generateFishOrderId());
-
-        fishOrder = orderRepository.save(fishOrder);
-
-        for (FishPackOrderDetailDTO detailDTO : createFishOrderDTO.getFishPackOrderDetails()) {
-
-            FishPackOrderDetail detail = fishPackOrderDetailMapper.toEntity(detailDTO);
-            detail.setId(generateFishPackOrderDetailId());
-
-            detail.setFishOrder(fishOrder);
-
-            FishPack fishPacks = fishPackMapper.toEntity(detailDTO.getFishPack());
-            fishPacks.setId(generateFishPackId());
-            fishPackRepository.save(fishPacks);
-
-            detail.setFishPack(fishPacks);
-            fishPackOrderDetailRepository.save(detail);
-        }
-
-        fishOrder = orderRepository.findById(fishOrder.getId()).orElseThrow(() -> new RuntimeException("FishOrder not found"));
-        return fishOrderMapper.toDTO(fishOrder);
-    }
+//    @Transactional
+//    public FishOrderDTO createFishOrder(CreateFishOrderDTO createFishOrderDTO) {
+//        FishOrder fishOrder = fishOrderMapper.toEntity(createFishOrderDTO);
+//        fishOrder.setId(generateFishOrderId());
+//
+//        fishOrder = orderRepository.save(fishOrder);
+//
+//        for (FishPackOrderDetailDTO detailDTO : createFishOrderDTO.getFishPackOrderDetails()) {
+//
+//            FishPackOrderDetail detail = fishPackOrderDetailMapper.toEntity(detailDTO);
+//            detail.setId(generateFishPackOrderDetailId());
+//
+//            detail.setFishOrder(fishOrder);
+//
+//            FishPack fishPacks = fishPackMapper.toEntity(detailDTO.getFishPack());
+//            fishPacks.setId(generateFishPackId());
+//            fishPackRepository.save(fishPacks);
+//
+//            detail.setFishPack(fishPacks);
+//            fishPackOrderDetailRepository.save(detail);
+//        }
+//
+//        fishOrder = orderRepository.findById(fishOrder.getId()).orElseThrow(() -> new RuntimeException("FishOrder not found"));
+//        return fishOrderMapper.toDTO(fishOrder);
+//    }
 
     public List<FishOrderDTO> getAllOrder() {
         return orderRepository.findAll().stream()
