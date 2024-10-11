@@ -1,4 +1,4 @@
-package com.swp391.koi_ordering_system.dto.response;
+package com.swp391.koi_ordering_system.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +11,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FishPackDTO {
-    private String id;
+public class CreateFishPackDTO {
     private String length;
     private String weight;
     private String description;
-    private List<FishDTO> listFish;
 }
