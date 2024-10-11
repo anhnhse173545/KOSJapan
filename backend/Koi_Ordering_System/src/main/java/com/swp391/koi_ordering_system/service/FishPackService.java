@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
+import com.swp391.koi_ordering_system.dto.request.UpdateFishInPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.model.Fish;
@@ -102,8 +103,7 @@ public class FishPackService {
     }
 
     public FishPack updateFishInFishPack(String fishId, String fishPackId,
-                                         CreateFishPackDTO updateKoiPackDTO,
-                                         CreateFishDTO fishDTO) {
+                                         UpdateFishInPackDTO updateFishInPackDTO) {
         Optional<FishPack> fishPack = fishPackRepository.findById(fishPackId);
         Optional<Fish> fish = fishRepository.findById(fishId);
         if(fishPack.isEmpty()){
@@ -115,16 +115,16 @@ public class FishPackService {
         FishPack fishPackToUpdate = fishPack.get();
         Fish foundFish = fish.get();
 
-        fishPackToUpdate.setLength(updateKoiPackDTO.getLength());
-        fishPackToUpdate.setWeight(updateKoiPackDTO.getWeight());
-        fishPackToUpdate.setDescription(updateKoiPackDTO.getDescription());
+        fishPackToUpdate.setLength(updateFishInPackDTO.getPackDTO().getLength());
+        fishPackToUpdate.setWeight(updateFishInPackDTO.getPackDTO().getWeight());
+        fishPackToUpdate.setDescription(updateFishInPackDTO.getPackDTO().getDescription());
 
         if( !fishPackToUpdate.getListFish().contains(foundFish)){
             throw new RuntimeException("Fish in Pack not found, Please add fish !");
         }
 
         int index = fishPackToUpdate.getListFish().indexOf(foundFish);
-        foundFish = fishService.updateFish(fishId, fishDTO);
+        foundFish = fishService.updateFish(fishId, updateFishInPackDTO.getFishDTO());
         fishPackToUpdate.getListFish().set(index, foundFish);
 
         return fishPackRepository.save(fishPackToUpdate);
