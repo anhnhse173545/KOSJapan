@@ -3,6 +3,7 @@ package com.swp391.koi_ordering_system.service;
 import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.model.Fish;
+import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
@@ -21,6 +22,9 @@ public class FishService {
     @Autowired
     private VarietyRepository varietyRepository;
 
+    private static final String PREFIX = "KF";
+    private static final int ID_PADDING = 4;
+
     public List<FishDTO> getAllVarietyId(String id){
         List<Fish> fishList = fishRepository.findByVarietyId(id);
         return fishList.stream()
@@ -28,20 +32,20 @@ public class FishService {
                 .collect(Collectors.toList());
     }
 
-    public Fish createFish(Fish fish, String varietyId){
-        Fish newFish = new Fish();
-        newFish.setId(generateFishId());
-        Variety variety = varietyRepository.findById(varietyId).get();
-        if(variety == null){
+    public Fish createFish(CreateFishDTO dto){
+        Optional<Variety> variety = varietyRepository.findById(dto.getVariety_id());
+        if(variety.isEmpty()){
             throw new RuntimeException("Variety id not found");
         }
-        newFish.setVariety(variety);
-        newFish.setLength(fish.getLength());
-        newFish.setWeight(fish.getWeight());
-        newFish.setDescription(fish.getDescription());
-        newFish.setIsDeleted(fish.getIsDeleted());
+        Fish fish = new Fish();
 
-        return fishRepository.save(newFish);
+        fish.setId(generateFishId());
+        fish.setVariety(variety.get());
+        fish.setLength(dto.getLength());
+        fish.setWeight(dto.getWeight());
+        fish.setDescription(dto.getDescription());
+
+        return fishRepository.save(fish);
     }
 
     public Fish updateFish(String fishId, CreateFishDTO fishDTO) {
@@ -84,11 +88,17 @@ public class FishService {
 
 
     private String generateFishId() {
-        String lastFishId = fishRepository.findTopByOrderByIdDesc()
+        String lastId = fishRepository.findTopByOrderByIdDesc()
                 .map(Fish::getId)
-                .orElse("KF0000");
-        int nextId = Integer.parseInt(lastFishId.substring(2)) + 1;
-        return String.format("KF%04d", nextId);
+                .orElse(PREFIX + String.format("%0" + ID_PADDING + "d", 0));
+
+        try {
+            int nextId = Integer.parseInt(lastId.substring(PREFIX.length())) + 1;
+            return PREFIX + String.format("%0" + ID_PADDING + "d", nextId);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Invalid order detail ID format: " + lastId, e);
+        }
     }
 
 
