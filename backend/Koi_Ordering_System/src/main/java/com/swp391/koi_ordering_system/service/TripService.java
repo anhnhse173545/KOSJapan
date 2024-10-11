@@ -61,6 +61,9 @@ public class TripService {
         if (updateTripDTO.getDepartureAirport() != null) {
             trip.setDepartureAirport(updateTripDTO.getDepartureAirport());
         }
+        if (updateTripDTO.getDescription() != null) {
+            trip.setDescription(updateTripDTO.getDescription());
+        }
 
         if (updateTripDTO.getPrice() != null) {
             trip.setPrice(updateTripDTO.getPrice());
@@ -82,21 +85,21 @@ public class TripService {
         }
     }
 
-    public Trip addFarmToTrip(String tripId, String farmId) {
-        Optional<Trip> tripOptional = tripRepository.findById(tripId);
-        Optional<Farm> farmOptional = farmRepository.findById(farmId);
-
-        if (tripOptional.isPresent() && farmOptional.isPresent()) {
-            Trip trip = tripOptional.get();
-            Farm farm = farmOptional.get();
-            TripDestination tripDestination = new TripDestination();
-            tripDestination.setTrip(trip);
-            tripDestination.setFarm(farm);
-            tripDestinationRepository.save(tripDestination);
-            return trip;
-        }
-        return null;
-    }
+//    public Trip addFarmToTrip(String tripId, String farmId) {
+//        Optional<Trip> tripOptional = tripRepository.findById(tripId);
+//        Optional<Farm> farmOptional = farmRepository.findById(farmId);
+//
+//        if (tripOptional.isPresent() && farmOptional.isPresent()) {
+//            Trip trip = tripOptional.get();
+//            Farm farm = farmOptional.get();
+//            TripDestination tripDestination = new TripDestination();
+//            tripDestination.setTrip(trip);
+//            tripDestination.setFarm(farm);
+//            tripDestinationRepository.save(tripDestination);
+//            return trip;
+//        }
+//        return null;
+//    }
 
     public List<Farm> getFarmsByTripId(String tripId) {
         return tripDestinationRepository.findByTripIdAndIsDeletedFalse(tripId).stream()
@@ -104,11 +107,19 @@ public class TripService {
                 .collect(Collectors.toList());
     }
 
-    public void removeFarmFromTrip(String tripId, String farmId) {
-        Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
-        Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new RuntimeException("Farm not found"));
+//    public void removeFarmFromTrip(String tripId, String farmId) {
+//        Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
+//        Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new RuntimeException("Farm not found"));
+//
+//        TripDestination tripDestination = tripDestinationRepository.findByTripAndFarm(trip, farm)
+//                .orElseThrow(() -> new RuntimeException("TripDestination not found"));
+//        tripDestinationRepository.delete(tripDestination);
+//    }
 
-        TripDestination tripDestination = tripDestinationRepository.findByTripAndFarm(trip, farm)
+    public void removeTripById(String tripId ) {
+        Trip trip = tripRepository.findById(tripId).orElseThrow(() -> new RuntimeException("Trip not found"));
+
+        TripDestination tripDestination = tripDestinationRepository.findByTrip(trip)
                 .orElseThrow(() -> new RuntimeException("TripDestination not found"));
         tripDestinationRepository.delete(tripDestination);
     }
