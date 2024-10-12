@@ -21,6 +21,7 @@ public interface TripMapper {
 
     void updateEntityFromDTO(UpdateTripDTO updateTripDTO, @MappingTarget Trip trip);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "booking.customer", target = "customer")
     @Mapping(source = "booking.saleStaff", target = "saleStaff")
     @Mapping(source = "description", target = "description")
