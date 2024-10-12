@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TripWithCustomerAndSaleStaffDTO {
+    private String id;
     private String description;
     private String bookingDescription;
     private String startDate;
