@@ -61,7 +61,7 @@ function PaymentPage() {
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Request', 'Pending Quota', 'On going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Request', 'Pending Quota', 'On-Going', 'Completed', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -81,10 +81,10 @@ function PaymentPage() {
             <div key={koi.id} className="payment-item">
               <img src={koi.img} alt={koi.farm} className="koi-image" />
               <div className="payment-details">
-                <h3>{koi.farm}</h3>
+                <h3>{koi.startDate}</h3>
                 <p>{koi.time}</p>
                 {koi.quantity && <p>Quantity: {koi.quantity}</p>}
-                <p className="status">{koi.statusLabel}</p>
+                <p className="status">{koi.status}</p>
                 <p className="price">{koi.price}</p>
 
                 <div className="button-group">
@@ -95,7 +95,7 @@ function PaymentPage() {
                         navigate(`/quota/${koi.id}`);
                       } else if (koi.status === 'Request') {
                         navigate(`/payment/${koi.id}`);
-                      } else if (koi.status === 'On going') {
+                      } else if (koi.status === 'On-Going') {
                         navigate(`/ongoing/${koi.id}`);
                       } else {
                         navigate(`/payment/${koi.id}`);
