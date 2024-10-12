@@ -13,11 +13,18 @@ function Login() {
 
   const handleLogin = async (values) => {
     try {
-      const { data } = await api.post('login', values);
+      // Replace 'login' with the actual URL you provided
+      const { data } = await api.get(
+        `http://localhost:8080/accounts/all`,
+        { params: { phone: values.phonenumber, password: values.password } } // Assuming the API requires these parameters
+      );
+      
       // Successful login
       toast.success('Login successful');
-      // Update user state in Redux
+      
+      // Update user state in Redux (depending on the response structure)
       dispatch(login(data));
+      
       // Navigate to homepage
       navigate('/');
     } catch (err) {

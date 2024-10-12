@@ -33,14 +33,14 @@ public class Trip {
     private String description;
 
     @Column(name = "status")
-    private String status;
+    private String status = "Pending";
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
     @JsonBackReference(value = "booking-trip")
-    @OneToOne(mappedBy = "trip")
+    @OneToOne(mappedBy = "trip", cascade = CascadeType.ALL)
     private Booking booking;
 
     @OneToMany(mappedBy = "trip")

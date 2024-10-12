@@ -14,7 +14,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip'); // Replace with your API endpoint
+        const response = await fetch('http://localhost:8080/api/trip/list'); // Replace with your API endpoint
         if (!response.ok) {
           throw new Error('Failed to fetch payments');
         }
