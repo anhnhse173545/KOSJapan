@@ -39,7 +39,6 @@ public class TripController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Optional<TripDTO>> getBookingById(@PathVariable String id) {
     public ResponseEntity<Optional<TripDTO>> getTripById(@PathVariable String id) {
         Optional<TripDTO> trip = tripService.getTripById(id);
         if (trip.isEmpty()) {
