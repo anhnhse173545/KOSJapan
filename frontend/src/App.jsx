@@ -10,6 +10,7 @@ import QuotaDetailsPage from "./pages/tripQuota";
 
 
 
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -22,6 +23,8 @@ function App() {
         {path: "/payment", element: <PaymentPage/>},
         {path: "/payment/:id", element: <PaymentDetailsPage/>},
         {path: "/quota/:id", element: <QuotaDetailsPage/>},
+        {path: "/ongoing/:id", element: <onGoingPage/>}
+        
       ],
     },
   ]);
