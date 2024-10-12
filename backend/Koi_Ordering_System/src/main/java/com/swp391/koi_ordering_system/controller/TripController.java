@@ -4,6 +4,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.dto.response.TripWithCustomerAndSaleStaffDTO;
 import com.swp391.koi_ordering_system.mapper.TripMapper;
 import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
@@ -41,6 +42,15 @@ public class TripController {
     @GetMapping("/get/{id}")
     public ResponseEntity<Optional<TripDTO>> getTripById(@PathVariable String id) {
         Optional<TripDTO> trip = tripService.getTripById(id);
+        if (trip.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(trip);
+    }
+
+    @GetMapping("/get/{id}/customer-sale")
+    public ResponseEntity<Optional<TripWithCustomerAndSaleStaffDTO>> getTripByIdCustomerAndSale(@PathVariable String id) {
+        Optional<TripWithCustomerAndSaleStaffDTO> trip = tripService.getTripByIdCustomerAndSale(id);
         if (trip.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

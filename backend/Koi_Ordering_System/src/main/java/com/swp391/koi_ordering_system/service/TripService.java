@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.dto.response.TripWithCustomerAndSaleStaffDTO;
 import com.swp391.koi_ordering_system.mapper.TripMapper;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Trip;
@@ -44,6 +45,11 @@ public class TripService {
     public Optional<TripDTO> getTripById(String id) {
         return tripRepository.findByIdAndIsDeletedFalse(id)
                 .map(tripMapper::toDTO);
+    }
+
+    public Optional<TripWithCustomerAndSaleStaffDTO> getTripByIdCustomerAndSale(String id) {
+        return tripRepository.findByIdAndIsDeletedFalse(id)
+                .map(tripMapper::toTripWithCustomerAndSaleStaffDTO);
     }
 
     public TripDTO updateTrip(String tripId, UpdateTripDTO updateTripDTO) {
