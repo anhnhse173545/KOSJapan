@@ -43,6 +43,7 @@ public class Trip {
     @OneToOne(mappedBy = "trip", cascade = CascadeType.ALL)
     private Booking booking;
 
+    @JsonManagedReference(value = "trip-destination")
     @OneToMany(mappedBy = "trip")
     private Set<TripDestination> tripDestinations;
 }

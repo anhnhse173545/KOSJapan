@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class TripDestination {
     @Column(name = "id")
     private String id;
 
+    @JsonBackReference(value = "trip-destination")
     @ManyToOne
     @JoinColumn(name = "trip_id")
     private Trip trip;
