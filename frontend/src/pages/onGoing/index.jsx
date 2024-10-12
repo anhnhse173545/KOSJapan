@@ -59,15 +59,15 @@ const sampleItinerary = [
 const SingleCustomerStaffData = ({ tripData }) => {
   return (
     <div className="customer-data">
-      <h2>Trip Details</h2>
+      <h2>Customer Request</h2>
       <div className="customer-data-card">
-        <h3>Name: {tripData.name}</h3>
-        <p><strong>Email:</strong> {tripData.email}</p>
-        <p><strong>Phone:</strong> {tripData.phone}</p>
-        <p><strong>Koi Description:</strong> {tripData.koidescription}</p>
-        <p><strong>Trip Description:</strong> {tripData.tripdescription}</p>
-        <p><strong>Start Date:</strong> {tripData.startdate}</p>
-        <p><strong>End Date:</strong> {tripData.enddate}</p>
+        <h3>Name: {tripData.customer.name}</h3>
+        <p><strong>Email:</strong> {tripData.customer.email}</p>
+        <p><strong>Phone:</strong> {tripData.customer.phone}</p>
+        <p><strong>Koi Description:</strong> {tripData.customer.bookingDescription}</p>
+        <p><strong>Trip Description:</strong> {tripData.customer.description}</p>
+        <p><strong>Start Date:</strong> {tripData.startDate}</p>
+        <p><strong>End Date:</strong> {tripData.endDate}</p>
       </div>
     </div>
   );
@@ -77,7 +77,7 @@ const SingleCustomerStaffData = ({ tripData }) => {
 const SingleSalesStaffData = ({ salesData }) => {
   return (
     <div className="sales-staff-data">
-      <h2>Sales Staff Information</h2>
+      <h2>Sale Staff Response</h2>
       <div className="staff-data-card">
         <h3>Trip: {salesData.tripDescription}</h3>
         <p><strong>Airport:</strong> {salesData.airport}</p>
@@ -161,7 +161,7 @@ function OnGoingPage() {
 
   // Fetch trip data based on the ID from the URL
   useEffect(() => {
-    fetch(`https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip/${id}`)
+    fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -174,7 +174,7 @@ function OnGoingPage() {
 
         // Fetch sales data if trip data is successfully retrieved
         if (id) {
-          fetch(`https://6704ec62031fd46a830de9fb.mockapi.io/api/v1/sales/${id}`)
+          fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
