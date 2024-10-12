@@ -18,4 +18,5 @@ public class CreateTripDTO {
     private LocalDateTime endDate;
     private String departureAirport;
     private Double price;
+    private String description;
 }
