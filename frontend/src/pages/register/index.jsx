@@ -1,14 +1,26 @@
 import { toast } from "react-toastify";
 import AuthenLayout from "../../components/auth-layout";
 import { Button, Form, Input } from "antd";
-import api from "../../config/api";
+import api from "../../config/api"; // Assuming api is a configured axios instance
 
 function Register() {
-  const handleRegister = (values) => {
+  const handleRegister = async (values) => {
     try {
-      api.post("register", values);
+      // Make a POST request to the provided endpoint
+      const { data } = await api.post("http://localhost:8080/account-controller/createNewAccount", values);
+      
+      // If registration is successful, show a success message
+      toast.success("Account created successfully!");
+      
+      // You can navigate the user to the login page or another page after registration
+      // navigate('/login'); // Uncomment if using react-router-dom for navigation
     } catch (err) {
-      toast.error(err.response.data);
+      // Show error message
+      if (err.response && err.response.data) {
+        toast.error(err.response.data);
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -21,7 +33,7 @@ function Register() {
         layout="vertical"
         onFinish={handleRegister}
         initialValues={{
-          role: "ADMIN", // Default value for role
+          role: "ADMIN", // Default value for role, if applicable
         }}
       >
         {/* Name */}
@@ -62,20 +74,6 @@ function Register() {
         >
           <Input.Password placeholder="Enter password" />
         </Form.Item>
-
-        {/* Role */}
-        {/**
-         * <Form.Item
-          name="role"
-          label="Role"
-          rules={[{ required: true, message: 'Please select a role' }]}
-        >
-          <Select placeholder="Select role">
-            <Select.Option value="ADMIN">Admin</Select.Option>
-            <Select.Option value="USER">User</Select.Option>
-          </Select>
-        </Form.Item>
-         */}
 
         {/* Submit Button */}
         <Form.Item>
