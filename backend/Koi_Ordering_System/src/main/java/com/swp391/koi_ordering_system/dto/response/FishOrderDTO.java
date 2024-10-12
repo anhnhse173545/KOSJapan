@@ -15,9 +15,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class FishOrderDTO {
     private String id;
+    private String farmId;
     private String deliveryAddress;
     private String status;
     private Double total;
+    private String bookingId;
     private List<FishOrderDetailDTO> fishOrderDetails;
     private List<FishPackOrderDetailDTO> fishPackOrderDetails;
 }

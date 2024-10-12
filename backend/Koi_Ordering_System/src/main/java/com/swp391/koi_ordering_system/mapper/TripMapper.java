@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", uses = {TripDestinationMapper.class, AccountMapper.class})
+@Mapper(componentModel = "spring", uses = {TripDestinationMapper.class, AccountMapper.class, FishOrderMapper.class})
 public interface TripMapper {
     @Mapping(target = "description", source = "description")
     TripDTO toDTO(Trip trip);
@@ -30,5 +30,8 @@ public interface TripMapper {
     @Mapping(source = "departureAirport", target = "departureAirport")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "booking.description", target = "bookingDescription")
+    @Mapping(source = "booking.fishOrders", target = "fishOrders")
     TripWithCustomerAndSaleStaffDTO toTripWithCustomerAndSaleStaffDTO(Trip trip);
+
+    
 }
