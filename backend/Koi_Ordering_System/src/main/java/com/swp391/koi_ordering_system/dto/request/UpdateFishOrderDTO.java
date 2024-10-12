@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateTripDTO {
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private String departureAirport;
-    private String description;
-    private Double price;
+public class UpdateFishOrderDTO {
+    private String delivery_address;
+    private Double total;
+    private LocalDateTime arrived_date;
     private String status;
 }

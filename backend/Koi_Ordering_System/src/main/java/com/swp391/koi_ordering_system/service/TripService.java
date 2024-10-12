@@ -61,6 +61,9 @@ public class TripService {
         if (updateTripDTO.getDepartureAirport() != null) {
             trip.setDepartureAirport(updateTripDTO.getDepartureAirport());
         }
+        if (updateTripDTO.getDescription() != null) {
+            trip.setDescription(updateTripDTO.getDescription());
+        }
 
         if (updateTripDTO.getPrice() != null) {
             trip.setPrice(updateTripDTO.getPrice());

@@ -6,6 +6,8 @@ import Login from "./pages/login";
 import PaymentPage from "./pages/booking";
 import PaymentDetailsPage from "./pages/tripDetail";
 import QuotaDetailsPage from "./pages/tripQuota";
+import OnGoingPage from "./pages/onGoing";
+
 
 
 
@@ -22,6 +24,9 @@ function App() {
         {path: "/payment", element: <PaymentPage/>},
         {path: "/payment/:id", element: <PaymentDetailsPage/>},
         {path: "/quota/:id", element: <QuotaDetailsPage/>},
+        {path: "/onGoing/:id", element: <OnGoingPage/>},
+        
+        
       ],
     },
   ]);
