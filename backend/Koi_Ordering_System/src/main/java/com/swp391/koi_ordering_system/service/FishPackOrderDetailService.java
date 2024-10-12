@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.service;
 
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
+import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
@@ -135,9 +136,9 @@ public class FishPackOrderDetailService {
 
     }
 
-    public FishPackOrderDetail updatePackInOrderDetail(String fishOrderDetailId, String packId,
+    public FishPackOrderDetail updatePackInOrderDetail(String fishPackOrderDetailId, String packId,
                                                        CreateFishPackDTO fishPackDTO){
-        Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findById(fishOrderDetailId);
+        Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findById(fishPackOrderDetailId);
         Optional<FishPack> foundFP = FishPackRepository.findById(packId);
 
         if(foundFPOD.isEmpty()){
@@ -174,6 +175,20 @@ public class FishPackOrderDetailService {
         fishPackOrderDetailDTO.setFishPack(fishPackService.mapToDTO(fishPackOrderDetail.getFishPack()));
 
         return fishPackOrderDetailDTO;
+    }
+
+    public List<FishPackOrderDetailDTO> mapToListDTO(List<FishPackOrderDetail> fishPackOrderDetails) {
+        List<FishPackOrderDetailDTO> fishPackOrderDetailDTOList = new ArrayList<>();
+        for (FishPackOrderDetail fishPackOrderDetail : fishPackOrderDetails) {
+            FishPackOrderDetailDTO dto = new FishPackOrderDetailDTO();
+
+            dto.setId(fishPackOrderDetail.getId());
+            dto.setPrice(fishPackOrderDetail.getPrice());
+            dto.setFishPack(fishPackService.mapToDTO(fishPackOrderDetail.getFishPack()));
+
+            fishPackOrderDetailDTOList.add(dto);
+        }
+        return fishPackOrderDetailDTOList;
     }
 
     private String generateFishPackOrderDetailId() {

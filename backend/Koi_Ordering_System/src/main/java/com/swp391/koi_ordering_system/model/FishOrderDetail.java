@@ -18,7 +18,7 @@ public class FishOrderDetail {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fish_order_id", nullable = false)
+    @JoinColumn(name = "fish_order_id", nullable = true)
     private FishOrder fishOrder;
 
     @JsonIgnore

@@ -49,9 +49,12 @@ public class FishOrder {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToMany(mappedBy = "fishOrder")
-    private Set<FishPackOrderDetail> fishPackOrderDetails;
+//    @OneToMany(mappedBy = "fishOrder")
+//    private Set<FishPackOrderDetail> fishPackOrderDetails;
 
     @OneToMany(mappedBy = "fishOrder")
     private List<FishOrderDetail> fishOrderDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fishOrder")
+    private List<FishPackOrderDetail> fishPackOrderDetails = new ArrayList<>();
 }
