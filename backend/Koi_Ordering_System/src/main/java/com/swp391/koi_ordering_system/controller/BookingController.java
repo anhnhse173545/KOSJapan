@@ -110,6 +110,18 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+    @GetMapping("/sale-staff/{customerId}")
+    public ResponseEntity<?> getBookingsByStatusAndCustomerId(
+            @PathVariable String customerId) {
+        try {
+            List<BookingDTO> bookings = bookingService.getBookingsByStatusAndCustomerIdForSaleStaff(customerId);
+            return ResponseEntity.ok(bookings);
+        } catch (RuntimeException e) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Customer not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+    }
+
 //    @RequestMapping("/get-fish-orders/{booking_id}")
 //    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){
 //        List<FishOrderDTO> newList = bookingService.getAllFishOrderByBookingId(booking_id);

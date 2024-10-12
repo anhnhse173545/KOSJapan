@@ -28,6 +28,9 @@ public class Account {
     @Column(name = "role")
     private String role;
 
+    @Column(name="email")
+    private String email;
+
     @Column(name = "phone")
     private String phone;
 
@@ -41,8 +44,6 @@ public class Account {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @Column(name="email")
-    private String email;
 
 
 

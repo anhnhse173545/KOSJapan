@@ -33,7 +33,7 @@ public class Trip {
     private String description;
 
     @Column(name = "status")
-    private String status = "Pending";
+    private String status;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
@@ -43,6 +43,7 @@ public class Trip {
     @OneToOne(mappedBy = "trip", cascade = CascadeType.ALL)
     private Booking booking;
 
+    @JsonManagedReference(value = "trip-destination")
     @OneToMany(mappedBy = "trip")
     private Set<TripDestination> tripDestinations;
 }

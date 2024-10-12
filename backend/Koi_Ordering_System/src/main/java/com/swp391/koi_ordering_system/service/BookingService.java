@@ -82,25 +82,25 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         if (updateBookingDTO.getTripId() != null) {
-            Trip trip = tripRepository.findById(updateBookingDTO.getTripId())
+            Trip trip = tripRepository.findByIdAndIsDeletedFalse(updateBookingDTO.getTripId())
                     .orElseThrow(() -> new RuntimeException("Trip not found"));
             booking.setTrip(trip);
         }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
-            Account saleStaff = accountRepository.findById(updateBookingDTO.getSaleStaffId())
+            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sale Staff")
                     .orElseThrow(() -> new RuntimeException("Sale staff not found"));
             booking.setSaleStaff(saleStaff);
         }
 
         if (updateBookingDTO.getConsultingStaffId() != null) {
-            Account consultingStaff = accountRepository.findById(updateBookingDTO.getConsultingStaffId())
+            Account consultingStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getConsultingStaffId(), "Consulting Staff")
                     .orElseThrow(() -> new RuntimeException("Consulting staff not found"));
             booking.setConsultingStaff(consultingStaff);
         }
 
         if (updateBookingDTO.getDeliveryStaffId() != null) {
-            Account deliveryStaff = accountRepository.findById(updateBookingDTO.getDeliveryStaffId())
+            Account deliveryStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getDeliveryStaffId(), "Delivery Staff")
                     .orElseThrow(() -> new RuntimeException("Delivery staff not found"));
             booking.setDeliveryStaff(deliveryStaff);
         }
@@ -138,22 +138,16 @@ public class BookingService {
         return tripRepository.findByBookingIdAndBookingIsDeletedFalse(bookingId);
     }
 
-    public List<FishOrderDTO> getAllFishOrderByBookingId(String bookingID){
-        return fishOrderRepo.findByBookingId(bookingID).stream()
-                .map((fishOrder -> mapToDTO(fishOrder)))
+    public List<BookingDTO> getBookingsByStatusAndCustomerIdForSaleStaff(String customerId) {
+        if (!accountRepository.findByIdAndIsDeletedFalseAndRole(customerId, "Customer").isPresent()) {
+            throw new RuntimeException("Customer not found");
+        }
+        List<String> statuses = List.of("Requested", "Waiting For Approved", "Approved", "Declined");
+        return bookingRepository.findByStatusInAndCustomerIdAndIsDeletedFalse(statuses, customerId).stream()
+                .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-//  Can them cai OrderDetail va Order Service !!
-//    public List<CreateFishOrderDTO> addOrdersToBooking(String bookingID){
-//        List<FishOrder> newList = fishOrderRepo.findAllByBookingId(bookingID);
-//        if( !newList.isEmpty()){
-//            throw new RuntimeException("Orders existed !");
-//        }
-//        return newList.stream()
-//                .map((FishOrder) -> mapToDTO2(FishOrder))
-//                .collect(Collectors.toList());
-//    }
 
     public CreateFishOrderDTO mapToDTO2 (FishOrder fishOrder){
         CreateFishOrderDTO createFishOrderDTO = new CreateFishOrderDTO();
@@ -179,18 +173,14 @@ public class BookingService {
         return fishOrderDTO;
     }
 
-    public FishOrder mapToEnity(FishOrderDTO fishOrderDTO){
-        FishOrder fishOrder = new FishOrder();
-
-        fishOrder.setId(fishOrderDTO.getId());
-        fishOrder.setTotal(fishOrderDTO.getTotal());
-        fishOrder.setStatus(fishOrderDTO.getStatus());
-        fishOrder.setDeliveryAddress(fishOrderDTO.getDeliveryAddress());
-
-        return fishOrder;
+    public List<BookingDTO> getBookingsByStatusForSaleStaff() {
+        List<String> statuses = List.of("Requested", "Pending", "Approved");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<BookingDTO> getBookingsByStatusForSaleStaff() {
+    public List<BookingDTO> getBookingsByStatusForSaleStaffByCustomer() {
         List<String> statuses = List.of("Requested", "Pending", "Approved");
         return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
                 .map(bookingMapper::toDTO)
