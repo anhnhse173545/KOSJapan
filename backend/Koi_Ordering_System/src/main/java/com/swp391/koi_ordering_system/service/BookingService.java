@@ -82,25 +82,25 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         if (updateBookingDTO.getTripId() != null) {
-            Trip trip = tripRepository.findById(updateBookingDTO.getTripId())
+            Trip trip = tripRepository.findByIdAndIsDeletedFalse(updateBookingDTO.getTripId())
                     .orElseThrow(() -> new RuntimeException("Trip not found"));
             booking.setTrip(trip);
         }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
-            Account saleStaff = accountRepository.findById(updateBookingDTO.getSaleStaffId())
+            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sale Staff")
                     .orElseThrow(() -> new RuntimeException("Sale staff not found"));
             booking.setSaleStaff(saleStaff);
         }
 
         if (updateBookingDTO.getConsultingStaffId() != null) {
-            Account consultingStaff = accountRepository.findById(updateBookingDTO.getConsultingStaffId())
+            Account consultingStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getConsultingStaffId(), "Consulting Staff")
                     .orElseThrow(() -> new RuntimeException("Consulting staff not found"));
             booking.setConsultingStaff(consultingStaff);
         }
 
         if (updateBookingDTO.getDeliveryStaffId() != null) {
-            Account deliveryStaff = accountRepository.findById(updateBookingDTO.getDeliveryStaffId())
+            Account deliveryStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getDeliveryStaffId(), "Delivery Staff")
                     .orElseThrow(() -> new RuntimeException("Delivery staff not found"));
             booking.setDeliveryStaff(deliveryStaff);
         }
