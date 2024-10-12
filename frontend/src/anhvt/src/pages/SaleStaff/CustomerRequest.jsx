@@ -10,7 +10,7 @@ import {
   message,
   DatePicker,
 } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
@@ -26,7 +26,7 @@ const CustomerRequest = () => {
   // Fetch customer requests from API
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/trip/create")
+      .get("http://localhost:8080/api/booking/list")
       .then((response) => {
         setCustomers(response.data); // Set the fetched data
       })
@@ -36,29 +36,57 @@ const CustomerRequest = () => {
       });
   }, []);
 
+  // Open modal to edit customer
   const openEditModal = (customer) => {
     setEditingCustomer(customer);
     form.setFieldsValue({
       ...customer,
-      startDate: moment(customer.startDate),
-      endDate: moment(customer.endDate),
+      startDate: moment(customer.trip.startDate),
+      endDate: moment(customer.trip.endDate),
+      tripDetails: customer.description, // Use customer.description here
     });
     setIsModalVisible(true);
   };
 
+  // Handle save and update the customer data via API
   const handleSave = () => {
     form
       .validateFields()
       .then((values) => {
-        setCustomers((prev) =>
-          prev.map((customer) =>
-            customer.id === editingCustomer.id
-              ? { ...customer, ...values }
-              : customer
+        const updatedCustomer = {
+          ...editingCustomer,
+          customer: {
+            ...editingCustomer.customer,
+            phone: values.phone,
+            email: values.email,
+            description: values.tripDetails, // Use this to update the customer description
+          },
+          trip: {
+            ...editingCustomer.trip,
+            startDate: values.startDate.format("YYYY-MM-DD"),
+            endDate: values.endDate.format("YYYY-MM-DD"),
+          },
+        };
+
+        // Send the updated customer data to the API
+        axios
+          .put(
+            `http://localhost:8080/api/booking/${editingCustomer.id}`,
+            updatedCustomer
           )
-        );
-        setIsModalVisible(false);
-        message.success("Customer details updated successfully!");
+          .then(() => {
+            setCustomers((prev) =>
+              prev.map((customer) =>
+                customer.id === editingCustomer.id ? updatedCustomer : customer
+              )
+            );
+            setIsModalVisible(false);
+            message.success("Customer details updated successfully!");
+          })
+          .catch((error) => {
+            console.error("Failed to update customer details:", error);
+            message.error("Failed to update customer details.");
+          });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -75,39 +103,41 @@ const CustomerRequest = () => {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: ["farms", "0", "farm", "name"], // Adjust to API data structure
-      key: "name",
+      title: "Customer Name",
+      dataIndex: ["customer", "name"], // Adjusted for API structure
+      key: "customerName",
     },
     {
-      title: "Contact",
-      dataIndex: "contact", // Adjust this field according to the data structure
-      key: "contact",
+      title: "Phone",
+      dataIndex: ["customer", "phone"], // Adjust this field according to the data structure
+      key: "phone",
     },
     {
-      title: "Koi Type",
-      dataIndex: ["farms", "0", "farm", "varieties", "0", "name"], // Adjust to API data structure
-      key: "koiType",
+      title: "Email",
+      dataIndex: ["customer", "email"], // Added email
+      key: "email",
     },
     {
       title: "Koi Farm",
-      dataIndex: ["farms", "0", "farm", "name"], // Adjust to API data structure
+      dataIndex: ["trip", "tripDestinations", "0", "farm", "name"], // Adjust to API data structure
       key: "farm",
     },
     {
       title: "Start Date",
-      dataIndex: "startDate",
+      dataIndex: ["trip", "startDate"],
       key: "startDate",
+      render: (date) => moment(date).format("YYYY-MM-DD"), // Format the date
     },
     {
       title: "End Date",
-      dataIndex: "endDate",
+      dataIndex: ["trip", "endDate"],
       key: "endDate",
+      render: (date) => moment(date).format("YYYY-MM-DD"),
     },
     {
-      title: "Trip Details",
-      dataIndex: "description", // Adjust this based on API response
-      key: "tripDetails",
+      title: "Description",
+      dataIndex: ["description"], // Changed to use the correct description field
+      key: "description",
     },
     {
       title: "Actions",
@@ -174,11 +204,18 @@ const CustomerRequest = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="contact"
-            label="Contact Information"
+            name="phone"
+            label="Phone"
             rules={[
-              { required: true, message: "Please enter contact information!" },
+              { required: true, message: "Please enter the phone number!" },
             ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please enter the email!" }]}
           >
             <Input />
           </Form.Item>
@@ -212,10 +249,12 @@ const CustomerRequest = () => {
           </Form.Item>
           <Form.Item
             name="tripDetails"
-            label="Trip Details"
-            rules={[{ required: true, message: "Please enter trip details!" }]}
+            label="Description"
+            rules={[
+              { required: true, message: "Please enter trip description!" },
+            ]}
           >
-            <Input />
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>
