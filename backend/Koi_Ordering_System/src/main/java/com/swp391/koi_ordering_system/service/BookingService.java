@@ -142,7 +142,7 @@ public class BookingService {
         if (!accountRepository.findByIdAndIsDeletedFalseAndRole(customerId, "Customer").isPresent()) {
             throw new RuntimeException("Customer not found");
         }
-        List<String> statuses = List.of("Requested", "Wating For Approved", "Approved", "Cancelled");
+        List<String> statuses = List.of("Requested", "Waiting For Approved", "Approved", "Declined");
         return bookingRepository.findByStatusInAndCustomerIdAndIsDeletedFalse(statuses, customerId).stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
