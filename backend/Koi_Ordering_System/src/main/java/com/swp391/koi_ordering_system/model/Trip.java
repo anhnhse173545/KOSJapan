@@ -33,7 +33,7 @@ public class Trip {
     private String description;
 
     @Column(name = "status")
-    private String status = "Pending";
+    private String status;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
