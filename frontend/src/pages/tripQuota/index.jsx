@@ -62,7 +62,7 @@ function QuotaDetailsPage() {
 
   // Gọi API để lấy dữ liệu trip dựa trên ID từ URL
   useEffect(() => {
-    fetch(`http://localhost:8080/api/trip/get/${id}`)
+    fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
