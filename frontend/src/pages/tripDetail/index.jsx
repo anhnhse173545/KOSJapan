@@ -14,7 +14,7 @@ function PaymentDetailsPage() {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/booking/list`); // Replace with your API URL
+        const response = await fetch(`http://localhost:8080/api/trip/get/${id}`); // Replace with your API URL
         if (!response.ok) {
           throw new Error('Failed to fetch payment details');
         }
