@@ -122,6 +122,19 @@ public class BookingController {
         }
     }
 
+    @GetMapping("/trip/{tripId}")
+    public ResponseEntity<?> getBookingByTripId(@PathVariable String tripId) {
+        Optional<BookingDTO> booking = bookingService.getBookingByTripId(tripId);
+        if (booking.isPresent()) {
+            return ResponseEntity.ok(booking.get());
+        } else {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+    }
+
+
+
 //    @RequestMapping("/get-fish-orders/{booking_id}")
 //    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){
 //        List<FishOrderDTO> newList = bookingService.getAllFishOrderByBookingId(booking_id);

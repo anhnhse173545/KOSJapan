@@ -202,6 +202,11 @@ public class BookingService {
         return String.format("BO%04d", nextId);
     }
 
+    public Optional<BookingDTO> getBookingByTripId(String tripId) {
+        return bookingRepository.findByTripIdAndIsDeletedFalse(tripId)
+                .map(bookingMapper::toDTO);
+    }
+
 
 
 }
