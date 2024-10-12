@@ -27,6 +27,7 @@ public interface TripMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "departureAirport", target = "departureAirport")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "booking.description", target = "bookingDescription")
     TripWithCustomerAndSaleStaffDTO toTripWithCustomerAndSaleStaffDTO(Trip trip);
