@@ -5,7 +5,6 @@ import com.swp391.koi_ordering_system.dto.request.UpdateFarmDTO;
 import com.swp391.koi_ordering_system.dto.response.FarmDTO;
 import com.swp391.koi_ordering_system.model.Farm;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")

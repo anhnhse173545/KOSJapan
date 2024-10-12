@@ -138,9 +138,13 @@ public class BookingService {
         return tripRepository.findByBookingIdAndBookingIsDeletedFalse(bookingId);
     }
 
-    public List<FishOrderDTO> getAllFishOrderByBookingId(String bookingID){
-        return fishOrderRepo.findByBookingId(bookingID).stream()
-                .map((fishOrder -> mapToDTO(fishOrder)))
+    public List<BookingDTO> getBookingsByStatusAndCustomerIdForSaleStaff(String customerId) {
+        if (!accountRepository.findByIdAndIsDeletedFalseAndRole(customerId, "Customer").isPresent()) {
+            throw new RuntimeException("Customer not found");
+        }
+        List<String> statuses = List.of("Requested", "Wating For Approved", "Approved", "Cancelled");
+        return bookingRepository.findByStatusInAndCustomerIdAndIsDeletedFalse(statuses, customerId).stream()
+                .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -170,6 +174,13 @@ public class BookingService {
     }
 
     public List<BookingDTO> getBookingsByStatusForSaleStaff() {
+        List<String> statuses = List.of("Requested", "Pending", "Approved");
+        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByStatusForSaleStaffByCustomer() {
         List<String> statuses = List.of("Requested", "Pending", "Approved");
         return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
                 .map(bookingMapper::toDTO)

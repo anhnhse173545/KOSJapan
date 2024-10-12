@@ -10,10 +10,11 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = {TripDestinationMapper.class})
 public interface TripMapper {
-
+    @Mapping(target = "description", source = "description")
     TripDTO toDTO(Trip trip);
 
     Trip toEntity(TripDTO tripDTO);
+
 
     Trip toEntity(CreateTripDTO createTripDTO);
 

@@ -1,6 +1,5 @@
 package com.swp391.koi_ordering_system.repository;
 
-import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +15,5 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     Optional<Booking> findByIdAndIsDeletedFalse(String id);
     List<Booking> findAllByIsDeletedFalse();
     List<Booking> findByStatusInAndIsDeletedFalse(List<String> statuses);
-
+    List<Booking> findByStatusInAndCustomerIdAndIsDeletedFalse(List<String> statuses, String customerId);
 }

@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.service;
 
+
 import com.swp391.koi_ordering_system.dto.request.CreateAccountDTO;
 import com.swp391.koi_ordering_system.dto.response.AccountDTO;
 import com.swp391.koi_ordering_system.model.Account;
@@ -23,7 +24,7 @@ public class AccountService {
     public List<AccountDTO> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         return accounts.stream()
-                .map((Account)-> mapToDTO(Account))
+                .map((Account) -> mapToDTO(Account))
                 .collect(Collectors.toList());
     }
 
@@ -35,7 +36,7 @@ public class AccountService {
     public List<AccountDTO> getAccountByRole(String role) {
         List<Account> accounts = accountRepository.findAccountsByRole(role);
         return accounts.stream()
-                .map((Account)-> mapToDTO(Account))
+                .map((Account) -> mapToDTO(Account))
                 .collect(Collectors.toList());
     }
 
@@ -52,10 +53,9 @@ public class AccountService {
         newAccount.setAddress(accountDTO.getAddress());
         newAccount.setRole(accountDTO.getRole());
 
-        if(acc1 != null){
+        if (acc1 != null) {
             throw new RuntimeException("Email already in use");
-        }
-        else if(acc2 != null){
+        } else if (acc2 != null) {
             throw new RuntimeException("Phone already in use");
         }
         return accountRepository.save(newAccount);
@@ -63,7 +63,7 @@ public class AccountService {
 
     public Account updateAccount(String accountId, CreateAccountDTO accountDTO) {
         Optional<Account> findAcc = accountRepository.findById(accountId);
-        if(findAcc.isEmpty()){
+        if (findAcc.isEmpty()) {
             throw new RuntimeException("Account not found");
         }
         Account acc = findAcc.get();
@@ -82,7 +82,7 @@ public class AccountService {
 
     public void deleteAccount(String accountId) {
         Optional<Account> findAcc = accountRepository.findById(accountId);
-        if(findAcc.isEmpty()){
+        if (findAcc.isEmpty()) {
             throw new RuntimeException("Account not found");
         }
         Account foundAcc = findAcc.get();
@@ -103,6 +103,7 @@ public class AccountService {
 
         return accountDTO;
     }
+
     private String generateAccountId() {
         String lastId = accountRepository.findTopByOrderByIdDesc()
                 .map(Account::getId)
@@ -116,5 +117,4 @@ public class AccountService {
             throw new IllegalStateException("Invalid order detail ID format: " + lastId, e);
         }
     }
-
 }

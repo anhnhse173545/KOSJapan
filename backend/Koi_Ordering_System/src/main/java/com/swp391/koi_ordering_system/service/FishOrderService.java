@@ -161,9 +161,9 @@ public class FishOrderService {
 
         FishOrderDetail updateFOD = FODService.updateFishInOrderDetail(dto.getUpdateFOD());
         FishPackOrderDetail updateFPOD = FPODService.updatePackInOrderDetail(
-                                                            foundFPOD.getId(),
-                                                            foundFPOD.getFishPack().getId(),
-                                                            dto.getUpdateFPOD());
+                foundFPOD.getId(),
+                foundFPOD.getFishPack().getId(),
+                dto.getUpdateFPOD());
 
         int indexFOD = foundOrder.getFishOrderDetails().indexOf(foundFOD);
         int indexFPOD = foundOrder.getFishPackOrderDetails().indexOf(foundFPOD);
