@@ -31,7 +31,7 @@ public class Booking {
     private Account customer;
 
     @JsonManagedReference(value = "booking-trip")
-    @OneToOne(cascade = CascadeType.PERSIST, optional = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
