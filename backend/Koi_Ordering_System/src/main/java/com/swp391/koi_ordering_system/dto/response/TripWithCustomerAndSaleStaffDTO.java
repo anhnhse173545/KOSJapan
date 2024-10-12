@@ -15,6 +15,7 @@ public class TripWithCustomerAndSaleStaffDTO {
     private String bookingDescription;
     private String startDate;
     private String endDate;
+    private String departureAirport;
     private String status;
     private AccountDTO customer;
     private AccountDTO saleStaff;
