@@ -144,16 +144,6 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-//  Can them cai OrderDetail va Order Service !!
-//    public List<CreateFishOrderDTO> addOrdersToBooking(String bookingID){
-//        List<FishOrder> newList = fishOrderRepo.findAllByBookingId(bookingID);
-//        if( !newList.isEmpty()){
-//            throw new RuntimeException("Orders existed !");
-//        }
-//        return newList.stream()
-//                .map((FishOrder) -> mapToDTO2(FishOrder))
-//                .collect(Collectors.toList());
-//    }
 
     public CreateFishOrderDTO mapToDTO2 (FishOrder fishOrder){
         CreateFishOrderDTO createFishOrderDTO = new CreateFishOrderDTO();
@@ -177,17 +167,6 @@ public class BookingService {
         fishOrderDTO.setDeliveryAddress(fishOrder.getDeliveryAddress());
 
         return fishOrderDTO;
-    }
-
-    public FishOrder mapToEnity(FishOrderDTO fishOrderDTO){
-        FishOrder fishOrder = new FishOrder();
-
-        fishOrder.setId(fishOrderDTO.getId());
-        fishOrder.setTotal(fishOrderDTO.getTotal());
-        fishOrder.setStatus(fishOrderDTO.getStatus());
-        fishOrder.setDeliveryAddress(fishOrderDTO.getDeliveryAddress());
-
-        return fishOrder;
     }
 
     public List<BookingDTO> getBookingsByStatusForSaleStaff() {
