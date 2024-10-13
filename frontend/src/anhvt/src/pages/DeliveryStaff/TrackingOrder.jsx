@@ -1,58 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Container,
-  Row,
-  Col,
   Table,
   Button,
-  Badge,
+  Tag,
+  message,
   Card,
+  Descriptions,
+  Steps,
   Tabs,
-  Tab,
-} from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+  Typography,
+} from "antd";
+import axios from "axios";
 
-const TrackingOrder = () => {
+const { Step } = Steps;
+const { TabPane } = Tabs;
+const { Title } = Typography;
+
+const OrderTracking = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("list");
+  const [activeTab, setActiveTab] = useState("1");
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8080/fish-order/all");
+      setOrders(response.data);
+    } catch (error) {
+      message.error("Failed to fetch orders. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/fish-order/all");
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setOrders(data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
   }, []);
 
   const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "warning";
-      case "in transit":
-        return "info";
-      case "delivered":
-      case "completed":
-        return "success";
-      case "rejected":
-      case "cancelled":
-        return "danger";
-      case "return":
-        return "secondary";
+    switch (status) {
+      case "Pending":
+        return "gold";
+      case "In Transit":
+        return "blue";
+      case "Delivered":
+        return "green";
+      case "Completed":
+        return "green";
+      case "Rejected":
+        return "volcano";
+      case "Cancelled":
+        return "red";
+      case "Return":
+        return "purple";
       default:
-        return "light";
+        return "default";
     }
   };
 
@@ -66,148 +69,141 @@ const TrackingOrder = () => {
   };
 
   const getStatusStep = (status) => {
-    switch (status.toLowerCase()) {
-      case "pending":
+    switch (status) {
+      case "Pending":
         return 0;
-      case "in transit":
+      case "In Transit":
         return 1;
-      case "delivered":
-      case "rejected":
+      case "Delivered":
+      case "Rejected":
         return 2;
-
+      case "Completed":
+      case "Cancelled":
+      case "Return":
+        return 3;
       default:
         return 0;
     }
   };
 
+  const columns = [
+    {
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Delivery Address",
+      dataIndex: "deliveryAddress",
+      key: "deliveryAddress",
+    },
+    {
+      title: "Fish Varieties",
+      key: "fishVarieties",
+      render: (_, record) => formatOrderDetails(record.fishOrderDetails),
+    },
+    {
+      title: "Total Price",
+      dataIndex: "total",
+      key: "total",
+      render: (total) => `$${total.toFixed(2)}`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button onClick={() => handleViewDetails(record)}>View Details</Button>
+      ),
+    },
+  ];
+
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
-    setActiveTab("details");
+    setActiveTab("2");
   };
 
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        Loading...
-      </div>
-    );
-  }
-
   return (
-    <Container className="mt-4">
-      <h1 className="mb-4">Order Tracking</h1>
-      <Tabs
-        activeKey={activeTab}
-        onSelect={(k) => setActiveTab(k)}
-        id="order-tracking-tabs"
-        className="mb-3"
-      >
-        <Tab eventKey="list" title="Order List">
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Fish Varieties</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.bookingId}</td>
-                  <td>{formatOrderDetails(order.fishOrderDetails)}</td>
-                  <td>${order.total.toFixed(2)}</td>
-                  <td>
-                    <Badge bg={getStatusColor(order.status)}>
-                      {order.status}
-                    </Badge>
-                  </td>
-                  <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      onClick={() => handleViewDetails(order)}
-                    >
-                      View Details
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Tab>
-        <Tab eventKey="details" title="Order Details">
+    <div>
+      <Title level={2}>Order Tracking</Title>
+      <Tabs activeKey={activeTab} onChange={setActiveTab}>
+        <TabPane tab="Order List" key="1">
+          <Table
+            dataSource={orders}
+            columns={columns}
+            rowKey="id"
+            loading={loading}
+          />
+        </TabPane>
+        <TabPane tab="Order Details" key="2">
           {selectedOrder ? (
-            <Card>
-              <Card.Header>
-                <Card.Title>
-                  Order Details: {selectedOrder.bookingId}
-                </Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  Delivery Address: {selectedOrder.deliveryAddress}
-                </Card.Subtitle>
-              </Card.Header>
-              <Card.Body>
-                <div className="d-flex justify-content-between mb-4">
-                  {["Pending", "In Transit", "Delivered"].map((step, index) => (
-                    <div key={step} className="text-center">
-                      <div
-                        className={`rounded-circle d-flex align-items-center justify-content-center ${
-                          index <= getStatusStep(selectedOrder.status)
-                            ? "bg-primary text-white"
-                            : "bg-light"
-                        }`}
-                        style={{ width: "40px", height: "40px" }}
-                      >
-                        {index + 1}
-                      </div>
-                      <div className="mt-2">{step}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ maxHeight: "200px", overflowY: "auto" }}>
-                  <h5>Order Items</h5>
+            <Card title={`Order Details: ${selectedOrder.bookingId}`}>
+              <Steps current={getStatusStep(selectedOrder.status)}>
+                <Step title="Pending" description="Order has been placed" />
+                <Step title="In Transit" description="Order is on the way" />
+                <Step
+                  title="Delivered/Rejected"
+                  description="Order delivered or rejected"
+                />
+                <Step
+                  title="Completed/Cancelled/Return"
+                  description="Order finalized"
+                />
+              </Steps>
+              <Descriptions
+                title="Order Information"
+                bordered
+                style={{ marginTop: 20 }}
+              >
+                <Descriptions.Item label="Delivery Address">
+                  {selectedOrder.deliveryAddress}
+                </Descriptions.Item>
+                <Descriptions.Item label="Status">
+                  <Tag color={getStatusColor(selectedOrder.status)}>
+                    {selectedOrder.status.toUpperCase()}
+                  </Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="Total Price">
+                  ${selectedOrder.total.toFixed(2)}
+                </Descriptions.Item>
+                <Descriptions.Item label="Fish Order Details" span={3}>
                   {selectedOrder.fishOrderDetails.map((detail) => (
-                    <div key={detail.id} className="mb-3">
-                      <strong>{detail.fish.variety.name}</strong> ($
-                      {detail.fish_price.toFixed(2)})
-                      <br />
-                      <small>
-                        Length: {detail.fish.length} cm, Weight:{" "}
-                        {detail.fish.weight} kg
-                      </small>
+                    <div key={detail.id}>
+                      {detail.fish.variety.name} (Length: {detail.fish.length}{" "}
+                      cm, Weight: {detail.fish.weight} kg, Price: $
+                      {detail.fish_price})
                     </div>
                   ))}
-                  {selectedOrder.fishPackOrderDetails.map((detail) => (
-                    <div key={detail.id} className="mb-3">
-                      <strong>Fish Pack</strong> (${detail.price.toFixed(2)})
-                      <br />
-                      <small>
-                        {detail.fishPack.description} - Quantity:{" "}
-                        {detail.fishPack.quantity}
-                      </small>
-                    </div>
-                  ))}
-                </div>
-              </Card.Body>
-              <Card.Footer>
-                <strong>Total: ${selectedOrder.total.toFixed(2)}</strong>
-              </Card.Footer>
+                </Descriptions.Item>
+                {selectedOrder.fishPackOrderDetails &&
+                  selectedOrder.fishPackOrderDetails.length > 0 && (
+                    <Descriptions.Item label="Fish Pack Order Details" span={3}>
+                      {selectedOrder.fishPackOrderDetails.map((detail) => (
+                        <div key={detail.id}>
+                          Fish Pack (Price: ${detail.price}, Quantity:{" "}
+                          {detail.fishPack.quantity})
+                          <br />
+                          Description: {detail.fishPack.description}
+                        </div>
+                      ))}
+                    </Descriptions.Item>
+                  )}
+              </Descriptions>
             </Card>
           ) : (
-            <div className="text-center py-4">
-              Select an order to view details
-            </div>
+            <div>Select an order to view details</div>
           )}
-        </Tab>
+        </TabPane>
       </Tabs>
-    </Container>
+    </div>
   );
 };
 
-export default TrackingOrder;
+export default OrderTracking;
