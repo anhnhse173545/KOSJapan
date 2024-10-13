@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,5 +24,5 @@ public class BookingDTO {
     private AccountDTO saleStaff;
     private AccountDTO consultingStaff;
     private AccountDTO deliveryStaff;
-    private Set<FishOrderDTO> fishOrders;
+    private List<FishOrderDTO> fishOrders;
 }

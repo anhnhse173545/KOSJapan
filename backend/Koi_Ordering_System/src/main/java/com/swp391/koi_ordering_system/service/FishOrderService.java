@@ -244,6 +244,8 @@ public class FishOrderService {
         dto.setStatus(fishOrder.getStatus());
         dto.setTotal(fishOrder.getTotal());
         dto.setDeliveryAddress(fishOrder.getDeliveryAddress());
+        dto.setFarmId(fishOrder.getFarm().getId());
+        dto.setBookingId(fishOrder.getBooking().getId());
         dto.setFishOrderDetails(FODService.mapToListDTO(findFOD));
         dto.setFishPackOrderDetails(FPODService.mapToListDTO(findFPOD));
 

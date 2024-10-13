@@ -133,6 +133,20 @@ public class BookingController {
         }
     }
 
+    @PutMapping("/{booking_id}/add-fish-order-to-booking/{order_id}")
+    public ResponseEntity<BookingDTO> addFishOrderToBooking(@PathVariable String booking_id,
+                                                            @PathVariable String order_id) {
+        Booking updateBooking = bookingService.updateOrderToBooking(booking_id, order_id);
+        return ResponseEntity.ok(bookingService.mapToDTO(updateBooking));
+    }
+
+    @PutMapping("/{booking_id}/remove-fish-order-from-booking/{order_id}")
+    public ResponseEntity<BookingDTO> removeFishOrderFromBooking(@PathVariable String booking_id,
+                                                                 @PathVariable String order_id) {
+        Booking removedBooking = bookingService.removeOrderFromBooking(booking_id, order_id);
+        return ResponseEntity.ok(bookingService.mapToDTO(removedBooking));
+    }
+
 
 
 //    @RequestMapping("/get-fish-orders/{booking_id}")

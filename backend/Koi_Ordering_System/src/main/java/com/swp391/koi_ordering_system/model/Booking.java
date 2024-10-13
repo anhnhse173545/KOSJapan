@@ -69,6 +69,6 @@ public class Booking {
 
     @JsonManagedReference(value = "booking-fishOrder")
     @OneToMany(mappedBy = "booking")
-    private Set<FishOrder> fishOrders;
+    private List<FishOrder> fishOrders;
 
 }

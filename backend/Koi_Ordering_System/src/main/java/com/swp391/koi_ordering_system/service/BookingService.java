@@ -20,9 +20,7 @@ import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +45,18 @@ public class BookingService {
 
     @Autowired
     private OrderRepository fishOrderRepo;
+
+    @Autowired
+    private FishOrderService orderService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private TripPaymentService tripPaymentService;
+
+    @Autowired
+    private FishOrderService fishOrderService;
 
     public Booking createBooking(Booking booking) {
         booking.setId(generateBookingId());
@@ -148,31 +158,6 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-
-    public CreateFishOrderDTO mapToDTO2 (FishOrder fishOrder){
-        CreateFishOrderDTO createFishOrderDTO = new CreateFishOrderDTO();
-
-        createFishOrderDTO.setId(fishOrder.getId());
-        createFishOrderDTO.setDeliveryAddress(fishOrder.getDeliveryAddress());
-        createFishOrderDTO.setTotal(fishOrder.getTotal());
-        createFishOrderDTO.setStatus(fishOrder.getStatus());
-        createFishOrderDTO.setCreateAt(fishOrder.getCreateAt());
-        createFishOrderDTO.setArrive_date(fishOrder.getArrivedDate());
-
-        return createFishOrderDTO;
-    }
-
-    public FishOrderDTO mapToDTO(FishOrder fishOrder){
-        FishOrderDTO fishOrderDTO = new FishOrderDTO();
-
-        fishOrderDTO.setId(fishOrder.getId());
-        fishOrderDTO.setTotal(fishOrder.getTotal());
-        fishOrderDTO.setStatus(fishOrder.getStatus());
-        fishOrderDTO.setDeliveryAddress(fishOrder.getDeliveryAddress());
-
-        return fishOrderDTO;
-    }
-
     public List<BookingDTO> getBookingsByStatusForSaleStaff() {
         List<String> statuses = List.of("Requested", "Pending", "Approved");
         return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
@@ -192,6 +177,76 @@ public class BookingService {
         return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Booking updateOrderToBooking(String bookingId, String orderId){
+        Optional<Booking> booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
+        Optional<FishOrder> findOrder = fishOrderRepo.findFishOrderByBookingId(bookingId);
+        Optional<FishOrder> order = fishOrderRepo.findById(orderId);
+        if (booking.isEmpty()) {
+            throw new RuntimeException("Booking not found");
+        }
+        else if (findOrder.isEmpty()) {
+            throw new RuntimeException("Order In Booking not found");
+        }
+        else if(order.isEmpty()){
+            throw new RuntimeException("Order not found");
+        }
+        Booking sameBooking = booking.get();
+        FishOrder oldOrder = findOrder.get();
+        FishOrder addOrder = order.get();
+
+        int index = sameBooking.getFishOrders().indexOf(oldOrder);
+        sameBooking.getFishOrders().set(index, addOrder);
+        addOrder.setBooking(sameBooking);
+
+        fishOrderRepo.save(addOrder);
+        return bookingRepository.save(sameBooking);
+    }
+
+    public Booking removeOrderFromBooking(String bookingId, String orderId){
+        Optional<Booking> booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
+        Optional<FishOrder> order = fishOrderRepo.findById(orderId);
+        if (booking.isEmpty()) {
+            throw new RuntimeException("Booking not found");
+        }
+        else if (order.isEmpty()) {
+            throw new RuntimeException("Order not found");
+        }
+        Booking sameBooking = booking.get();
+        FishOrder removeOrder = order.get();
+
+        sameBooking.getFishOrders().remove(removeOrder);
+        removeOrder.setIsDeleted(true);
+
+        fishOrderRepo.save(removeOrder);
+        return bookingRepository.save(sameBooking);
+    }
+
+    public BookingDTO mapToDTO(Booking booking) {
+        BookingDTO bookingDTO = new BookingDTO();
+
+        bookingDTO.setId(booking.getId());
+        bookingDTO.setCustomer(accountService.mapToDTO(booking.getCustomer()));
+        bookingDTO.setStatus(booking.getStatus());
+        bookingDTO.setDescription(booking.getDescription());
+        bookingDTO.setTrip(tripService.mapToDTO(booking.getTrip()));
+        bookingDTO.setSaleStaff(accountService.mapToDTO(booking.getSaleStaff()));
+        bookingDTO.setDeliveryStaff(accountService.mapToDTO(booking.getDeliveryStaff()));
+        bookingDTO.setConsultingStaff(accountService.mapToDTO(booking.getConsultingStaff()));
+        bookingDTO.setCreateAt(booking.getCreateAt());
+        bookingDTO.setTripPayment(tripPaymentService.mapToDTO(booking.getTripPayment()));
+
+        List<FishOrder> orders = booking.getFishOrders();
+        List<FishOrderDTO> orderDTOs = new ArrayList<>();
+        for (FishOrder order : orders) {
+            FishOrderDTO fishOrderDTO = new FishOrderDTO();
+            fishOrderDTO = fishOrderService.mapToDTO2(order);
+            orderDTOs.add(fishOrderDTO);
+        }
+        bookingDTO.setFishOrders(orderDTOs);
+
+        return bookingDTO;
     }
 
     private String generateBookingId() {
