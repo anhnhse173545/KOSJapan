@@ -1,126 +1,67 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, DatePicker, message, InputNumber } from "antd";
+// CreateTripPlan.js
+import React, { useState } from "react";
+import { Form, Input, Button, Select, DatePicker, message } from "antd";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
+
+const { Option } = Select;
 
 const CreateTripPlan = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
-  const customer = location.state?.customer;
+  const { customer } = location.state; // Receive customer data from state
 
-  // Log customer data for debugging
-  console.log("Customer data from location.state:", customer);
-
-  // Pre-fill form if customer trip data is available
-  useEffect(() => {
-    if (customer) {
-      const tripPlan = customer.tripPlan || {}; // Default empty object
-      form.setFieldsValue({
-        ...tripPlan,
-        startDate: tripPlan.startDate ? moment(tripPlan.startDate) : null,
-        endDate: tripPlan.endDate ? moment(tripPlan.endDate) : null,
-        price: tripPlan.price || 0,
-      });
-    } else {
-      console.error("Customer data is missing!");
-      message.error(
-        "Unable to load trip data. Customer information is missing."
-      );
-    }
-  }, [customer, form]);
-
-  // Custom validation: start date should not be greater than end date
-  const validateDates = (_, value) => {
-    const startDate = form.getFieldValue("startDate");
-    if (startDate && value && moment(startDate).isAfter(value)) {
-      return Promise.reject(
-        new Error("End date cannot be earlier than start date.")
-      );
-    }
-    return Promise.resolve();
-  };
-
-  const onFinish = (values) => {
-    // Log form values before formatting for debugging
-    console.log("Form values before formatting:", values);
-
-    // Safely format the date values
-    const formattedValues = {
-      ...values,
-      startDate: values.startDate
-        ? values.startDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
-        : null,
-      endDate: values.endDate
-        ? values.endDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
-        : null,
-      farms: [
-        {
-          id: "farm-id", // Replace with actual farm ID
-          farm: {
-            id: "farm-id",
-            address: "123 Farm Address", // Replace with actual farm address
-            phoneNumber: "1234567890", // Replace with actual phone number
-            name: "Farm Name", // Replace with actual farm name
-            image: "url-to-farm-image", // Replace with actual image URL
-            varieties: [
-              {
-                id: "variety-id", // Replace with actual variety ID
-                name: "Koi Variety", // Replace with actual variety name
-                description: "Koi description", // Replace with actual description
-              },
-            ],
-          },
-          visitDate: values.startDate, // Customize this
-          description: values.additionalDetails || "Farm visit", // Add description from form
-        },
-      ],
+  const handleSubmit = (values) => {
+    const tripPlan = {
+      customerId: customer.id,
+      farm: values.farm,
+      koiType: values.koiType,
+      startDate: values.startDate.format("YYYY-MM-DD"),
+      endDate: values.endDate.format("YYYY-MM-DD"),
+      description: values.description,
     };
 
-    // Log formatted data before making the API request
-    console.log("Formatted values:", formattedValues);
-
-    // Call API to save trip details
+    // Send trip plan data to API
     axios
-      .post("http://localhost:8080/api/trip/create", formattedValues)
-      .then((response) => {
+      .post("http://localhost:8080/api/trip-plans", tripPlan)
+      .then(() => {
         message.success("Trip plan created successfully!");
-        navigate("/customer-request", {
-          state: {
-            ...customer,
-            tripPlan: response.data,
-            status: "Waiting for Approval",
-          },
-        });
+        navigate("/"); // Redirect back to customer list after creating the trip plan
       })
       .catch((error) => {
-        // Log detailed error response if API fails
-        console.error(
-          "Error creating trip plan:",
-          error.response?.data || error.message
-        );
-        message.error("Failed to create trip plan. Please try again.");
+        console.error("Failed to create trip plan:", error);
+        message.error("Failed to create trip plan.");
       });
-  };
-
-  const handleEdit = () => {
-    navigate("/create-trip-plan", { state: { customer } });
   };
 
   return (
     <div>
-      <h2>Create Trip Plan for {customer?.name || "Unknown Customer"}</h2>
-
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <h2>Create Trip Plan for {customer.customer.name}</h2>
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
-          name="itinerary"
-          label="Itinerary"
-          rules={[
-            { required: true, message: "Please enter the trip itinerary!" },
-          ]}
+          name="koiType"
+          label="Koi Type"
+          rules={[{ required: true, message: "Please select a koi type!" }]}
         >
-          <Input.TextArea placeholder="Describe the trip itinerary..." />
+          <Select>
+            <Option value="kohaku">Kohaku</Option>
+            <Option value="sanke">Sanke</Option>
+            <Option value="showa">Showa</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="farm"
+          label="Koi Farm"
+          rules={[{ required: true, message: "Please select a koi farm!" }]}
+        >
+          <Select>
+            <Option value="farm1">Farm 1</Option>
+            <Option value="farm2">Farm 2</Option>
+            <Option value="farm3">Farm 3</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -134,40 +75,26 @@ const CreateTripPlan = () => {
         <Form.Item
           name="endDate"
           label="End Date"
-          dependencies={["startDate"]}
-          rules={[
-            { required: true, message: "Please select an end date!" },
-            { validator: validateDates },
-          ]}
+          rules={[{ required: true, message: "Please select an end date!" }]}
         >
           <DatePicker />
         </Form.Item>
 
         <Form.Item
-          name="price"
-          label="Price"
+          name="description"
+          label="Trip Description"
           rules={[
-            { required: true, message: "Please enter the price for the trip!" },
-            {
-              type: "number",
-              min: 0,
-              message: "Price must be a non-negative number!",
-            },
+            { required: true, message: "Please enter trip description!" },
           ]}
         >
-          <InputNumber
-            placeholder="Enter trip price"
-            style={{ width: "100%" }}
-          />
+          <Input.TextArea />
         </Form.Item>
 
-        <Form.Item name="additionalDetails" label="Additional Details">
-          <Input.TextArea placeholder="Any additional information?" />
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Create Trip Plan
+          </Button>
         </Form.Item>
-
-        <Button type="primary" htmlType="submit">
-          Submit Trip Plan
-        </Button>
       </Form>
     </div>
   );

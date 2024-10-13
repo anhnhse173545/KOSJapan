@@ -68,16 +68,18 @@ const CustomerRequest = () => {
           },
         };
 
-        // Send the updated customer data to the API
+        // Send the updated customer data to the API using the trip id
         axios
           .put(
-            `http://localhost:8080/api/booking/${editingCustomer.id}`,
+            `http://localhost:8080/api/booking/update/${editingCustomer.trip.id}`, // Update using trip.id
             updatedCustomer
           )
           .then(() => {
             setCustomers((prev) =>
               prev.map((customer) =>
-                customer.id === editingCustomer.id ? updatedCustomer : customer
+                customer.trip.id === editingCustomer.trip.id
+                  ? updatedCustomer
+                  : customer
               )
             );
             setIsModalVisible(false);

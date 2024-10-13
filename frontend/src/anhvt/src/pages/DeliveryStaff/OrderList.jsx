@@ -1,67 +1,29 @@
-import React from "react";
-import { Table, Button, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Tag, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderList = () => {
   const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const orders = [
-    {
-      id: 1,
-      customer: "Alice Smith",
-      address: "123 Main St",
-      status: "In Transit",
-      product: "Koi Fish",
-      variety: "Kohaku",
+  // Fetch orders from the API
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8080/fish-order/all");
+      setOrders(response.data);
+    } catch (error) {
+      message.error("Failed to fetch orders. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      totalPrice: 300.0,
-      koiFarm: "Sunrise Koi Farm",
-    },
-    {
-      id: 2,
-      customer: "Bob Johnson",
-      address: "456 Elm St",
-      status: "Pending",
-      product: "Koi Fish",
-      variety: "Showa",
-
-      totalPrice: 200.0,
-      koiFarm: "Golden Scales Koi",
-    },
-    {
-      id: 3,
-      customer: "Charlie Brown",
-      address: "789 Oak St",
-      status: "Delivered",
-      product: "Koi Fish",
-      variety: "Sanke",
-
-      totalPrice: 450.0,
-      koiFarm: "Mystic Waters Koi",
-    },
-    {
-      id: 4,
-      customer: "Diana Prince",
-      address: "101 Pine St",
-      status: "Rejected",
-      product: "Koi Fish",
-      variety: "Asagi",
-
-      totalPrice: 350.0,
-      koiFarm: "Azure Ponds Koi",
-    },
-    {
-      id: 5,
-      customer: "Ethan Hunt",
-      address: "202 Maple St",
-      status: "Cancelled",
-      product: "Koi Fish",
-      variety: "Kigoi",
-
-      totalPrice: 150.0,
-      koiFarm: "Serene Koi Gardens",
-    },
-  ];
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -84,6 +46,16 @@ const OrderList = () => {
     }
   };
 
+  // Flatten fish order details into a readable format
+  const formatOrderDetails = (fishOrderDetails) => {
+    return fishOrderDetails
+      .map(
+        (detail) =>
+          `${detail.fish.variety.name} (${detail.fish.length} cm, ${detail.fish.weight} kg)`
+      )
+      .join(", ");
+  };
+
   const columns = [
     {
       title: "Order ID",
@@ -91,25 +63,20 @@ const OrderList = () => {
       key: "id",
     },
     {
-      title: "Customer",
-      dataIndex: "customer",
-      key: "customer",
+      title: "Delivery Address",
+      dataIndex: "deliveryAddress",
+      key: "deliveryAddress",
     },
     {
-      title: "Product",
-      dataIndex: "product",
-      key: "product",
+      title: "Fish Varieties",
+      key: "fishVarieties",
+      render: (_, record) => formatOrderDetails(record.fishOrderDetails), // Combine fish details
     },
     {
-      title: "Variety",
-      dataIndex: "variety",
-      key: "variety",
-    },
-
-    {
-      title: "Koi Farm",
-      dataIndex: "koiFarm",
-      key: "koiFarm",
+      title: "Total Price",
+      dataIndex: "total",
+      key: "total",
+      render: (total) => `$${total.toFixed(2)}`,
     },
     {
       title: "Status",
@@ -133,7 +100,12 @@ const OrderList = () => {
   return (
     <div>
       <h2>Order List</h2>
-      <Table dataSource={orders} columns={columns} rowKey="id" />
+      <Table
+        dataSource={orders}
+        columns={columns}
+        rowKey="id"
+        loading={loading}
+      />
     </div>
   );
 };
