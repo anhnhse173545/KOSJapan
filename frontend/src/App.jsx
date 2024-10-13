@@ -6,6 +6,9 @@ import Login from "./pages/login";
 import PaymentPage from "./pages/booking";
 import PaymentDetailsPage from "./pages/tripDetail";
 import QuotaDetailsPage from "./pages/tripQuota";
+import OnGoingPage from "./pages/onGoing";
+import HomePage from "./pages/home";
+
 
 
 
@@ -16,12 +19,16 @@ function App() {
       path: "",
       element: <Layout/>,
       children: [
+        {path: "/", element: <HomePage/>},
         {path: "/contact", element: <CombinedKoiRequestForm/>},
         {path: "/register", element: <Register/>},
         {path: "/login", element: <Login/>},
         {path: "/payment", element: <PaymentPage/>},
         {path: "/payment/:id", element: <PaymentDetailsPage/>},
         {path: "/quota/:id", element: <QuotaDetailsPage/>},
+        {path: "/onGoing/:id", element: <OnGoingPage/>},
+        
+        
       ],
     },
   ]);

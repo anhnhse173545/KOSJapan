@@ -13,8 +13,6 @@ import lombok.Setter;
 public class UpdateBookingDTO {
     private String tripId;
     private String description;
-
-    @Pattern(regexp = "^(Requested|Pending Quota|Accepted|Confirmed|On-going|Pending Delivery|Rejected|Refund|null)$", message = "status is invalid")
     private String status;
     private String saleStaffId;
     private String consultingStaffId;

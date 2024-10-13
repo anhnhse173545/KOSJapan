@@ -4,6 +4,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
+import com.swp391.koi_ordering_system.dto.response.TripWithCustomerAndSaleStaffDTO;
 import com.swp391.koi_ordering_system.mapper.TripMapper;
 import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
@@ -39,8 +40,17 @@ public class TripController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Optional<TripDTO>> getBookingById(@PathVariable String id) {
+    public ResponseEntity<Optional<TripDTO>> getTripById(@PathVariable String id) {
         Optional<TripDTO> trip = tripService.getTripById(id);
+        if (trip.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(trip);
+    }
+
+    @GetMapping("/get/{id}/customer-sale")
+    public ResponseEntity<Optional<TripWithCustomerAndSaleStaffDTO>> getTripByIdCustomerAndSale(@PathVariable String id) {
+        Optional<TripWithCustomerAndSaleStaffDTO> trip = tripService.getTripByIdCustomerAndSale(id);
         if (trip.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -56,33 +66,39 @@ public class TripController {
         return ResponseEntity.ok(updatedTrip);
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTrip(@PathVariable String id) {
         tripService.deleteTrip(id);
         return ResponseEntity.ok("Trip deleted successfully");
     }
 
-    @PostMapping("/{tripId}/add-farm/{farmId}")
-    public ResponseEntity<Trip> addFarmToTrip(@PathVariable String tripId, @PathVariable String farmId) {
-        Trip updatedTrip = tripService.addFarmToTrip(tripId, farmId);
-        if (updatedTrip == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedTrip);
-    }
+//    @PostMapping("/{tripId}/add-farm/{farmId}")
+//    public ResponseEntity<Trip> addFarmToTrip(@PathVariable String tripId, @PathVariable String farmId) {
+//        Trip updatedTrip = tripService.addFarmToTrip(tripId, farmId);
+//        if (updatedTrip == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedTrip);
+//    }
 
-    @DeleteMapping("/{tripId}/farm/{farmId}")
-    public ResponseEntity<Void> removeFarmFromTrip(@PathVariable String tripId, @PathVariable String farmId) {
-        tripService.removeFarmFromTrip(tripId, farmId);
+//    @DeleteMapping("/{tripId}/farm/{farmId}")
+//    public ResponseEntity<Void> removeFarmFromTrip(@PathVariable String tripId, @PathVariable String farmId) {
+//        tripService.removeFarmFromTrip(tripId, farmId);
+//        return ResponseEntity.noContent().build();
+//    }
+
+    @DeleteMapping("/{tripId}")
+    public ResponseEntity<Void> removeTripById(@PathVariable String tripId) {
+        tripService.removeTripById(tripId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{tripId}/farm")
-    public ResponseEntity<List<Farm>> getFarmsByTripId(@PathVariable String tripId) {
-        List<Farm> farms = tripService.getFarmsByTripId(tripId);
-        if (farms == null || farms.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(farms);
-    }
+//    @GetMapping("/{tripId}/farm")
+//    public ResponseEntity<List<Farm>> getFarmsByTripId(@PathVariable String tripId) {
+//        List<Farm> farms = tripService.getFarmsByTripId(tripId);
+//        if (farms == null || farms.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(farms);
+//    }
 }

@@ -1,20 +1,20 @@
 package com.swp391.koi_ordering_system.service;
 
-import com.swp391.koi_ordering_system.dto.request.CreateFishOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishInOrderDetailDTO;
-import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
-import com.swp391.koi_ordering_system.model.Booking;
+import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.Fish;
 import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
+import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
 import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -128,6 +128,21 @@ public class FishOrderDetailService {
         return fishOrderDetailDTO;
     }
 
+
+
+    public List<FishOrderDetailDTO> mapToListDTO(List<FishOrderDetail> fishOrderDetails) {
+        List<FishOrderDetailDTO> fishOrderDetailDTOList = new ArrayList<>();
+        for (FishOrderDetail fishOrderDetail : fishOrderDetails) {
+            FishOrderDetailDTO fishOrderDetailDTO = new FishOrderDetailDTO();
+
+            fishOrderDetailDTO.setId(fishOrderDetail.getId());
+            fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
+            fishOrderDetailDTO.setFish_price(fishOrderDetail.getPrice());
+
+            fishOrderDetailDTOList.add(fishOrderDetailDTO);
+        }
+        return fishOrderDetailDTOList;
+    }
 
     private String generateOrderDetailId() {
         String lastId = fishOrderDetailRepository.findTopByOrderByIdDesc()

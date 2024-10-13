@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 public interface FishPackMapper {
 
 
-    FishPackDTO toDTO(FishPack fishPack);
+    FishPackDTO toDTO(FishPack fishPxack);
 
     FishPack toEntity(FishPackDTO fishPackDTO);
 }

@@ -17,7 +17,7 @@ public class FishPackOrderDetail {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "fish_order_id")
+    @JoinColumn(name = "fish_order_id", nullable = true)
     private FishOrder fishOrder;
 
     @ManyToOne

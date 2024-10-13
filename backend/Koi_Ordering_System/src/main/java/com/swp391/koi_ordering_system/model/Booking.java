@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class Booking {
     private Account customer;
 
     @JsonManagedReference(value = "booking-trip")
-    @OneToOne(cascade = CascadeType.PERSIST, optional = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
@@ -66,7 +67,8 @@ public class Booking {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FishOrder> fishOrders = new ArrayList<FishOrder>();
+    @JsonManagedReference(value = "booking-fishOrder")
+    @OneToMany(mappedBy = "booking")
+    private List<FishOrder> fishOrders;
 
 }

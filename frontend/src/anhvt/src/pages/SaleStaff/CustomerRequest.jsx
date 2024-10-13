@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Table,
   Button,
@@ -9,132 +10,85 @@ import {
   message,
   DatePicker,
 } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom"; // For page navigation
+import { EditOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
+
 const { Option } = Select;
 
 const CustomerRequest = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingCustomer, setEditingCustomer] = useState(null); // Holds the current customer being edited
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [customers, setCustomers] = useState([]);
   const [form] = Form.useForm();
-  const navigate = useNavigate(); // Navigation hook
+  const navigate = useNavigate();
 
-  // Sample data for customer requests
-  const [customers, setCustomers] = useState([
-    {
-      id: 1,
-      name: "Alice",
-      contact: "alice@example.com",
-      koiType: "Kohaku",
-      farm: "Tokyo Koi Farm",
-      startDate: "2024-10-15",
-      endDate: "2024-10-17",
-      tripDetails: "2-day trip to explore koi farming",
-      status: "Requested",
-    },
-    {
-      id: 2,
-      name: "Bob",
-      contact: "bob@example.com",
-      koiType: "Asagi",
-      farm: "Osaka Koi Farm",
-      startDate: "2024-10-18",
-      endDate: "2024-10-20",
-      tripDetails: "3-day trip focusing on koi breeding",
-      status: "Waiting for Approval",
-    },
-    {
-      id: 3,
-      name: "Charlie",
-      contact: "charlie@example.com",
-      koiType: "Shusui",
-      farm: "Nagasaki Koi Farm",
-      startDate: "2024-10-22",
-      endDate: "2024-10-25",
-      tripDetails: "Exploring different varieties of koi",
-      status: "Declined",
-    },
-    {
-      id: 4,
-      name: "Diana",
-      contact: "diana@example.com",
-      koiType: "Goshiki",
-      farm: "Kyoto Koi Farm",
-      startDate: "2024-10-28",
-      endDate: "2024-10-30",
-      tripDetails: "3-day trip to observe koi breeding techniques",
-      status: "Approved",
-    },
-    {
-      id: 5,
-      name: "Eve",
-      contact: "eve@example.com",
-      koiType: "Showa",
-      farm: "Hiroshima Koi Farm",
-      startDate: "2024-11-01",
-      endDate: "2024-11-03",
-      tripDetails: "Koi auction and farm tour",
-      status: "Requested",
-    },
-    {
-      id: 6,
-      name: "Frank",
-      contact: "frank@example.com",
-      koiType: "Tancho",
-      farm: "Osaka Koi Farm",
-      startDate: "2024-11-05",
-      endDate: "2024-11-07",
-      tripDetails: "Learning about koi health management",
-      status: "Waiting for Approval",
-    },
-    {
-      id: 7,
-      name: "Grace",
-      contact: "grace@example.com",
-      koiType: "Chagoi",
-      farm: "Tokyo Koi Farm",
-      startDate: "2024-11-09",
-      endDate: "2024-11-12",
-      tripDetails: "Participating in a koi harvest event",
-      status: "Declined",
-    },
-    {
-      id: 8,
-      name: "Henry",
-      contact: "henry@example.com",
-      koiType: "Ogon",
-      farm: "Nara Koi Farm",
-      startDate: "2024-11-13",
-      endDate: "2024-11-16",
-      tripDetails: "Exploring rare koi varieties",
-      status: "Approved",
-    },
-  ]);
+  // Fetch customer requests from API
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/booking/list")
+      .then((response) => {
+        setCustomers(response.data); // Set the fetched data
+      })
+      .catch((error) => {
+        console.error("Failed to load customer requests:", error);
+        message.error("Failed to load customer requests");
+      });
+  }, []);
 
+  // Open modal to edit customer
   const openEditModal = (customer) => {
     setEditingCustomer(customer);
     form.setFieldsValue({
       ...customer,
-      startDate: moment(customer.startDate), // Convert to moment object
-      endDate: moment(customer.endDate), // Convert to moment object
+      startDate: moment(customer.trip.startDate),
+      endDate: moment(customer.trip.endDate),
+      tripDetails: customer.description, // Use customer.description here
     });
     setIsModalVisible(true);
   };
 
+  // Handle save and update the customer data via API
   const handleSave = () => {
     form
       .validateFields()
       .then((values) => {
-        setCustomers((prev) =>
-          prev.map((customer) =>
-            customer.id === editingCustomer.id
-              ? { ...customer, ...values }
-              : customer
+        const updatedCustomer = {
+          ...editingCustomer,
+          customer: {
+            ...editingCustomer.customer,
+            phone: values.phone,
+            email: values.email,
+            description: values.tripDetails, // Use this to update the customer description
+          },
+          trip: {
+            ...editingCustomer.trip,
+            startDate: values.startDate.format("YYYY-MM-DD"),
+            endDate: values.endDate.format("YYYY-MM-DD"),
+          },
+        };
+
+        // Send the updated customer data to the API using the trip id
+        axios
+          .put(
+            `http://localhost:8080/api/booking/update/${editingCustomer.trip.id}`, // Update using trip.id
+            updatedCustomer
           )
-        );
-        setIsModalVisible(false);
-        message.success("Customer details updated successfully!");
+          .then(() => {
+            setCustomers((prev) =>
+              prev.map((customer) =>
+                customer.trip.id === editingCustomer.trip.id
+                  ? updatedCustomer
+                  : customer
+              )
+            );
+            setIsModalVisible(false);
+            message.success("Customer details updated successfully!");
+          })
+          .catch((error) => {
+            console.error("Failed to update customer details:", error);
+            message.error("Failed to update customer details.");
+          });
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -151,54 +105,49 @@ const CustomerRequest = () => {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Customer Name",
+      dataIndex: ["customer", "name"], // Adjusted for API structure
+      key: "customerName",
     },
     {
-      title: "Contact",
-      dataIndex: "contact",
-      key: "contact",
+      title: "Phone",
+      dataIndex: ["customer", "phone"], // Adjust this field according to the data structure
+      key: "phone",
     },
     {
-      title: "Koi Type",
-      dataIndex: "koiType",
-      key: "koiType",
+      title: "Email",
+      dataIndex: ["customer", "email"], // Added email
+      key: "email",
     },
     {
       title: "Koi Farm",
-      dataIndex: "farm",
+      dataIndex: ["trip", "tripDestinations", "0", "farm", "name"], // Adjust to API data structure
       key: "farm",
     },
     {
       title: "Start Date",
-      dataIndex: "startDate",
+      dataIndex: ["trip", "startDate"],
       key: "startDate",
+      render: (date) => moment(date).format("YYYY-MM-DD"), // Format the date
     },
     {
       title: "End Date",
-      dataIndex: "endDate",
+      dataIndex: ["trip", "endDate"],
       key: "endDate",
+      render: (date) => moment(date).format("YYYY-MM-DD"),
     },
     {
-      title: "Trip Details",
-      dataIndex: "tripDetails",
-      key: "tripDetails",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Description",
+      dataIndex: ["description"], // Changed to use the correct description field
+      key: "description",
     },
     {
       title: "Actions",
       key: "actions",
       render: (text, record) => {
-        const status = record.status;
-
+        const status = record.status || "Requested"; // Add a status field as per the requirement
         return (
           <>
-            {/* Show Edit and Create Trip Plan buttons for Requested status */}
             {status === "Requested" ? (
               <>
                 <Button
@@ -208,7 +157,6 @@ const CustomerRequest = () => {
                 >
                   Edit
                 </Button>
-
                 <Button
                   type="primary"
                   onClick={() => handleCreateTripPlan(record)}
@@ -218,16 +166,13 @@ const CustomerRequest = () => {
                 </Button>
               </>
             ) : (
-              // Show View Trip Plan button for Waiting for Approval, Declined, Approved statuses
-              <>
-                <Button
-                  type="primary"
-                  onClick={() => handleViewTripPlan(record)}
-                  style={{ marginRight: 8 }}
-                >
-                  View Trip Plan
-                </Button>
-              </>
+              <Button
+                type="primary"
+                onClick={() => handleViewTripPlan(record)}
+                style={{ marginRight: 8 }}
+              >
+                View Trip Plan
+              </Button>
             )}
           </>
         );
@@ -261,11 +206,18 @@ const CustomerRequest = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="contact"
-            label="Contact Information"
+            name="phone"
+            label="Phone"
             rules={[
-              { required: true, message: "Please enter contact information!" },
+              { required: true, message: "Please enter the phone number!" },
             ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: "Please enter the email!" }]}
           >
             <Input />
           </Form.Item>
@@ -274,42 +226,14 @@ const CustomerRequest = () => {
             label="Koi Type"
             rules={[{ required: true, message: "Please select the Koi type!" }]}
           >
-            <Select>
-              <Option value="Kohaku">Kōhaku</Option>
-              <Option value="Asagi">Asagi</Option>
-              <Option value="Bekko">Bekko</Option>
-              <Option value="Shusui">Shusui</Option>
-              <Option value="Utsurimono">Utsurimono</Option>
-              <Option value="Ogon">Ogon</Option>
-              <Option value="Goshiki">Goshiki</Option>
-              <Option value="Showa">Showa</Option>
-              <Option value="Utsuri">Utsuri</Option>
-              <Option value="Tancho">Tancho</Option>
-              <Option value="Chagoi">Chagoi</Option>
-              <Option value="Taisho Sanke">Taisho Sanke</Option>
-              <Option value="Kumonryu">Kumonryu</Option>
-              <Option value="Showa Sanshoku">Showa Sanshoku</Option>
-              <Option value="Matsuba">Matsuba</Option>
-              <Option value="Soragoi">Soragoi</Option>
-              <Option value="Kawarimono">Kawarimono</Option>
-              <Option value="Koromo">Koromo</Option>
-              <Option value="Ginrin">Ginrin</Option>
-              <Option value="Goromo">Goromo</Option>
-              <Option value="Kujaku">Kujaku</Option>
-              <Option value="Sanke">Sanke</Option>
-              <Option value="Hikarimono">Hikarimono</Option>
-              <Option value="Doitsu">Doitsu</Option>
-            </Select>
+            <Select>{/* Add koi types here */}</Select>
           </Form.Item>
           <Form.Item
             name="farm"
             label="Koi Farm"
             rules={[{ required: true, message: "Please select a farm!" }]}
           >
-            <Select>
-              <Option value="Tokyo Koi Farm">Tokyo Koi Farm</Option>
-              {/* Add more farms as needed */}
-            </Select>
+            <Select>{/* Add farm names here */}</Select>
           </Form.Item>
           <Form.Item
             name="startDate"
@@ -327,10 +251,12 @@ const CustomerRequest = () => {
           </Form.Item>
           <Form.Item
             name="tripDetails"
-            label="Trip Details"
-            rules={[{ required: true, message: "Please enter trip details!" }]}
+            label="Description"
+            rules={[
+              { required: true, message: "Please enter trip description!" },
+            ]}
           >
-            <Input />
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>

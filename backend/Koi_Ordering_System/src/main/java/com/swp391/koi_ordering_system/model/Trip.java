@@ -40,9 +40,10 @@ public class Trip {
     private Boolean isDeleted = false;
 
     @JsonBackReference(value = "booking-trip")
-    @OneToOne(mappedBy = "trip")
+    @OneToOne(mappedBy = "trip", cascade = CascadeType.ALL)
     private Booking booking;
 
+    @JsonManagedReference(value = "trip-destination")
     @OneToMany(mappedBy = "trip")
     private Set<TripDestination> tripDestinations;
 }

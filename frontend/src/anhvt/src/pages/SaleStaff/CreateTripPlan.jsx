@@ -1,43 +1,67 @@
+// CreateTripPlan.js
 import React, { useState } from "react";
-import { Form, Input, Button, DatePicker, message } from "antd";
+import { Form, Input, Button, Select, DatePicker, message } from "antd";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
+
+const { Option } = Select;
 
 const CreateTripPlan = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const location = useLocation(); // Retrieve customer data passed via state
-  const customer = location.state?.customer; // Get customer data from the previous page
+  const location = useLocation();
+  const { customer } = location.state; // Receive customer data from state
 
-  const onFinish = (values) => {
-    // Simulate saving trip details and navigate back to CustomerRequest page
-    message.success("Trip plan created successfully!");
+  const handleSubmit = (values) => {
+    const tripPlan = {
+      customerId: customer.id,
+      farm: values.farm,
+      koiType: values.koiType,
+      startDate: values.startDate.format("YYYY-MM-DD"),
+      endDate: values.endDate.format("YYYY-MM-DD"),
+      description: values.description,
+    };
 
-    // Pass the trip plan data back to CustomerRequest.jsx (can use state management here)
-    navigate("/customer-request", {
-      state: { ...customer, tripPlan: values, status: "Waiting for Approval" },
-    });
+    // Send trip plan data to API
+    axios
+      .post("http://localhost:8080/api/trip-plans", tripPlan)
+      .then(() => {
+        message.success("Trip plan created successfully!");
+        navigate("/"); // Redirect back to customer list after creating the trip plan
+      })
+      .catch((error) => {
+        console.error("Failed to create trip plan:", error);
+        message.error("Failed to create trip plan.");
+      });
   };
-  const handleEdit = () => {
-    navigate("/create-trip-plan", { state: { customer } });
-  };
 
-  // Then add the Edit button in the render method
-  <Button type="primary" onClick={handleEdit} style={{ marginTop: "20px" }}>
-    Edit Trip Plan
-  </Button>;
   return (
     <div>
-      <h2>Create Trip Plan for {customer?.name}</h2>
-
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <h2>Create Trip Plan for {customer.customer.name}</h2>
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
-          name="itinerary"
-          label="Itinerary"
-          rules={[
-            { required: true, message: "Please enter the trip itinerary!" },
-          ]}
+          name="koiType"
+          label="Koi Type"
+          rules={[{ required: true, message: "Please select a koi type!" }]}
         >
-          <Input.TextArea placeholder="Describe the trip itinerary..." />
+          <Select>
+            <Option value="kohaku">Kohaku</Option>
+            <Option value="sanke">Sanke</Option>
+            <Option value="showa">Showa</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="farm"
+          label="Koi Farm"
+          rules={[{ required: true, message: "Please select a koi farm!" }]}
+        >
+          <Select>
+            <Option value="farm1">Farm 1</Option>
+            <Option value="farm2">Farm 2</Option>
+            <Option value="farm3">Farm 3</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -56,13 +80,21 @@ const CreateTripPlan = () => {
           <DatePicker />
         </Form.Item>
 
-        <Form.Item name="additionalDetails" label="Additional Details">
-          <Input.TextArea placeholder="Any additional information?" />
+        <Form.Item
+          name="description"
+          label="Trip Description"
+          rules={[
+            { required: true, message: "Please enter trip description!" },
+          ]}
+        >
+          <Input.TextArea />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit">
-          Submit Trip Plan
-        </Button>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Create Trip Plan
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );

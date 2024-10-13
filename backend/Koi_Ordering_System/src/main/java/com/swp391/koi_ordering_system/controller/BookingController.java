@@ -76,7 +76,7 @@ public class BookingController {
         return ResponseEntity.ok(updatedBookingDTO);
     }
 
-    @PutMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBooking(@PathVariable String id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.ok("Booking deleted successfully");
@@ -109,6 +109,45 @@ public class BookingController {
         List<BookingDTO> bookings = bookingService.getBookingsByStatusForConsultingStaff();
         return ResponseEntity.ok(bookings);
     }
+
+    @GetMapping("/sale-staff/{customerId}")
+    public ResponseEntity<?> getBookingsByStatusAndCustomerId(
+            @PathVariable String customerId) {
+        try {
+            List<BookingDTO> bookings = bookingService.getBookingsByStatusAndCustomerIdForSaleStaff(customerId);
+            return ResponseEntity.ok(bookings);
+        } catch (RuntimeException e) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Customer not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+    }
+
+    @GetMapping("/trip/{tripId}")
+    public ResponseEntity<?> getBookingByTripId(@PathVariable String tripId) {
+        Optional<BookingDTO> booking = bookingService.getBookingByTripId(tripId);
+        if (booking.isPresent()) {
+            return ResponseEntity.ok(booking.get());
+        } else {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+    }
+
+    @PutMapping("/{booking_id}/add-fish-order-to-booking/{order_id}")
+    public ResponseEntity<BookingDTO> addFishOrderToBooking(@PathVariable String booking_id,
+                                                            @PathVariable String order_id) {
+        Booking updateBooking = bookingService.updateOrderToBooking(booking_id, order_id);
+        return ResponseEntity.ok(bookingService.mapToDTO(updateBooking));
+    }
+
+    @PutMapping("/{booking_id}/remove-fish-order-from-booking/{order_id}")
+    public ResponseEntity<BookingDTO> removeFishOrderFromBooking(@PathVariable String booking_id,
+                                                                 @PathVariable String order_id) {
+        Booking removedBooking = bookingService.removeOrderFromBooking(booking_id, order_id);
+        return ResponseEntity.ok(bookingService.mapToDTO(removedBooking));
+    }
+
+
 
 //    @RequestMapping("/get-fish-orders/{booking_id}")
 //    public  ResponseEntity<List<FishOrderDTO>> getFishOrdersByBookingID(@PathVariable String booking_id){

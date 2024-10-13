@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface FishOrderDetailRepository extends JpaRepository<FishOrderDetail, String> {
     Optional<FishOrderDetail> findTopByOrderByIdDesc();
     List<FishOrderDetail> findByFishOrderId(String id);
-    FishOrderDetail findFishOrderDetailById(String id);
-    void deleteFishByFish(Fish fish);
+    Optional<FishOrderDetail>findFishOrderDetailByFishOrderId(String id);
 }
