@@ -1,5 +1,7 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +24,7 @@ public class FishOrder {
     @Column(name = "id")
     private String id;
 
+    @JsonBackReference(value = "booking-fishOrder")
     @ManyToOne
     @JoinColumn(name = "booking_id")
     private Booking booking;

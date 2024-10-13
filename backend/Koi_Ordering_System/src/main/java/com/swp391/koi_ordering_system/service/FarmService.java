@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.UpdateFarmDTO;
 import com.swp391.koi_ordering_system.dto.response.FarmDTO;
+import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.mapper.FarmMapper;
 import com.swp391.koi_ordering_system.mapper.VarietyMapper;
 import com.swp391.koi_ordering_system.model.Farm;
@@ -11,8 +12,10 @@ import com.swp391.koi_ordering_system.repository.VarietyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +31,9 @@ public class FarmService {
 
     @Autowired
     private VarietyMapper varietyMapper;
+
+    @Autowired
+    private VarietyService varietyService;
 
     public Farm createFarm(Farm farm) {
         farm.setId(generateFarmId());
@@ -100,7 +106,26 @@ public class FarmService {
         return String.format("FA%04d", nextId);
     }
 
+    public FarmDTO mapToDTO(Farm farm) {
+        FarmDTO farmDTO = new FarmDTO();
 
+        farmDTO.setId(farm.getId());
+        farmDTO.setName(farm.getName());
+        farmDTO.setAddress(farm.getAddress());
+        farmDTO.setPhoneNumber(farm.getPhoneNumber());
+        farmDTO.setImage(farm.getImage());
 
+        Set<Variety> varieties = farm.getVarieties();
+        Set<VarietyDTO> varietyDTOS = new HashSet<>();
+        for (Variety variety : varieties) {
+            VarietyDTO varietyDTO = new VarietyDTO();
+            varietyDTO = varietyService.mapToDTO(variety);
+
+            varietyDTOS.add(varietyDTO);
+        }
+
+        farmDTO.setVarieties(varietyDTOS);
+        return farmDTO;
+    }
 
 }

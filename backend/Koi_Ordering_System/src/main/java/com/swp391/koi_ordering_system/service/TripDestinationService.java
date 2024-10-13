@@ -29,6 +29,9 @@ public class TripDestinationService {
     private FarmRepository farmRepository;
 
     @Autowired
+    private FarmService farmService;
+
+    @Autowired
     private TripDestinationMapper tripDestinationMapper;
 
 
@@ -81,11 +84,20 @@ public class TripDestinationService {
                 .map(tripDestinationMapper::toTripDestinationDTO);
     }
 
-
     public void deleteTripDestination(String tripDestinationId) {
         TripDestination tripDestination = tripDestinationRepository.findById(tripDestinationId)
                 .orElseThrow(() -> new RuntimeException("TripDestination not found"));
         tripDestination.setIsDeleted(true);
         tripDestinationRepository.save(tripDestination);
     }
+
+    public TripDestinationDTO mapToDTO(TripDestination tripDestination) {
+        TripDestinationDTO tripDestinationDTO = new TripDestinationDTO();
+        tripDestinationDTO.setId(tripDestination.getId());
+        tripDestinationDTO.setDescription(tripDestination.getDescription());
+        tripDestinationDTO.setVisitDate(tripDestination.getVisitDate());
+        tripDestinationDTO.setFarm(farmService.mapToDTO(tripDestination.getFarm()));
+        return tripDestinationDTO;
+    }
+
 }

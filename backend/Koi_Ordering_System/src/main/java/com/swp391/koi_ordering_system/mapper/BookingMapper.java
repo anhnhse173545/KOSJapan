@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, TripMapper.class, TripPaymentMapper.class})
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, TripMapper.class, TripPaymentMapper.class, FishOrderMapper.class})
 public interface BookingMapper {
     @Mapping(source = "customer", target = "customer")
     @Mapping(source = "trip", target = "trip")
@@ -16,6 +16,7 @@ public interface BookingMapper {
     @Mapping(source = "saleStaff", target = "saleStaff")
     @Mapping(source = "consultingStaff", target = "consultingStaff")
     @Mapping(source = "deliveryStaff", target = "deliveryStaff")
+    @Mapping(source = "fishOrders", target = "fishOrders")
     BookingDTO toDTO(Booking booking);
 
     @Mapping(source = "customer", target = "customer")

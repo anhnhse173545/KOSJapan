@@ -161,9 +161,9 @@ public class FishOrderService {
 
         FishOrderDetail updateFOD = FODService.updateFishInOrderDetail(dto.getUpdateFOD());
         FishPackOrderDetail updateFPOD = FPODService.updatePackInOrderDetail(
-                                                            foundFPOD.getId(),
-                                                            foundFPOD.getFishPack().getId(),
-                                                            dto.getUpdateFPOD());
+                foundFPOD.getId(),
+                foundFPOD.getFishPack().getId(),
+                dto.getUpdateFPOD());
 
         int indexFOD = foundOrder.getFishOrderDetails().indexOf(foundFOD);
         int indexFPOD = foundOrder.getFishPackOrderDetails().indexOf(foundFPOD);
@@ -244,6 +244,8 @@ public class FishOrderService {
         dto.setStatus(fishOrder.getStatus());
         dto.setTotal(fishOrder.getTotal());
         dto.setDeliveryAddress(fishOrder.getDeliveryAddress());
+        dto.setFarmId(fishOrder.getFarm().getId());
+        dto.setBookingId(fishOrder.getBooking().getId());
         dto.setFishOrderDetails(FODService.mapToListDTO(findFOD));
         dto.setFishPackOrderDetails(FPODService.mapToListDTO(findFPOD));
 

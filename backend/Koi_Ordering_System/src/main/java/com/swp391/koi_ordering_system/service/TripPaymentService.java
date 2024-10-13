@@ -45,6 +45,16 @@ public class TripPaymentService {
         }
     }
 
+    public TripPaymentDTO mapToDTO(TripPayment tripPayment) {
+        TripPaymentDTO tripPaymentDTO = new TripPaymentDTO();
+
+        tripPaymentDTO.setId(tripPayment.getId());
+        tripPaymentDTO.setPaymentMethodName(tripPayment.getPaymentMethod().getName());
+        tripPaymentDTO.setAmount(tripPayment.getAmount());
+
+        return tripPaymentDTO;
+    }
+
     private String generateTripPaymentId() {
         String lastTripId = tripPaymentRepository.findTopByOrderByIdDesc()
                 .map(TripPayment::getId)

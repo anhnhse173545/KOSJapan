@@ -5,24 +5,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDTO {
+public class TripWithCustomerAndSaleStaffDTO {
     private String id;
-    private AccountDTO customer;
-    private TripDTO trip;
     private String description;
-    private LocalDateTime createAt;
-    private TripPaymentDTO tripPayment;
+    private String bookingDescription;
+
+    private String startDate;
+    private String endDate;
+    private String departureAirport;
     private String status;
+    private AccountDTO customer;
     private AccountDTO saleStaff;
-    private AccountDTO consultingStaff;
-    private AccountDTO deliveryStaff;
-    private List<FishOrderDTO> fishOrders;
+    private Set<TripDestinationDTO> tripDestinations;
+    private Set<FishOrderDTO> fishOrders;
 }

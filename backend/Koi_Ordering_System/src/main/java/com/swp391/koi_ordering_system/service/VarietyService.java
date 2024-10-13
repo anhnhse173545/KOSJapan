@@ -58,4 +58,13 @@ public class VarietyService {
         int nextId = Integer.parseInt(lastVarietyId.substring(2)) + 1;
         return String.format("VA%04d", nextId);
     }
+
+    public VarietyDTO mapToDTO(Variety variety) {
+        VarietyDTO varietyDTO = new VarietyDTO();
+        varietyDTO.setId(variety.getId());
+        varietyDTO.setName(variety.getName());
+        varietyDTO.setDescription(variety.getDescription());
+        return varietyDTO;
+    }
+
 }

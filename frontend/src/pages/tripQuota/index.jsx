@@ -62,7 +62,7 @@ function QuotaDetailsPage() {
 
   // Gọi API để lấy dữ liệu trip dựa trên ID từ URL
   useEffect(() => {
-    fetch(`https://670857d88e86a8d9e42eb866.mockapi.io/api/v1/trip/${id}`)
+    fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -76,7 +76,7 @@ function QuotaDetailsPage() {
 
         // Khi có dữ liệu trip, lấy ID của sales staff để gọi API sales staff
         if (id) {
-          fetch(`https://6704ec62031fd46a830de9fb.mockapi.io/api/v1/sales/${id}`)  // Sử dụng salesStaffId từ tripData
+          fetch(`http://localhost:8080/api/booking/${id}/list`)  // Sử dụng salesStaffId từ tripData
             .then((response) => {
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
