@@ -47,7 +47,7 @@ const CombinedKoiRequestForm = () => {
 
       if (response.status === 201) {
         toast.success("Yêu cầu của bạn đã được gửi thành công!");
-        navigate("/success");
+        navigate("/");
       } else {
         toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
