@@ -16,7 +16,9 @@ import {
 } from 'lucide-react'
 
 ///////////////
-import { AccountApiTester } from './tests/account-api-tester'
+// import { TripListComponent } from './tests/trip-list'
+import { TripListComponent } from './pages/trip-list-component'
+ 
 ///////////////
 
 import DashboardOverview from './DashboardOverview'
@@ -32,7 +34,11 @@ export default function ManagerDashboard() {
 
   const navItems = [
     ///////////////
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test1' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test2' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test3' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test4' },
+    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test5' },
     ///////////////
     { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/dashboard' },
     { name: 'Customer Requests', icon: <ClipboardList className="h-5 w-5" />, path: '/customer-requests' },
@@ -104,7 +110,11 @@ export default function ManagerDashboard() {
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
               <Routes>
                 {/* /////////////////// */}
-                <Route path='/test' element={<AccountApiTester />} />
+                <Route path='/test1' element={<TripListComponent />} />
+                <Route path='/test2' element={<TripListComponent />} />
+                <Route path='/test3' element={<TripListComponent />} />
+                <Route path='/test4' element={<TripListComponent />} />
+                <Route path='/test5' element={<TripListComponent />} />
                 {/* ///////////////////// */}
 
                 <Route path="/dashboard" element={<DashboardOverview />} />

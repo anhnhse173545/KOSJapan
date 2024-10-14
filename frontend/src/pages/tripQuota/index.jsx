@@ -2,65 +2,95 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './index.scss';
 
-// Component để hiển thị thông tin của Trip
+// Component to display the trip information
 const SingleCustomerStaffData = ({ tripData }) => {
   return (
     <div className="customer-data">
-      <h2>Trip Details</h2>
+      <h2>Customer Request</h2>
       <div className="customer-data-card">
-        <h3>Name: {tripData.name}</h3>
-        <p><strong>Email:</strong> {tripData.email}</p>
-        <p><strong>Phone:</strong> {tripData.phone}</p>
-        <p><strong>Koi Description:</strong> {tripData.koidescription}</p>
-        <p><strong>Trip Description:</strong> {tripData.tripdescription}</p>
-        <p><strong>Start Date:</strong> {tripData.startdate}</p>
-        <p><strong>End Date:</strong> {tripData.enddate}</p>
+        <h3>Name: {tripData.customer.name}</h3>
+        <p><strong>Email:</strong> {tripData.customer.email || 'N/A'}</p>
+        <p><strong>Phone:</strong> {tripData.customer.phone || 'N/A'}</p>
+        <p><strong>Koi Description:</strong> {tripData.bookingDescription}</p>
+        <p><strong>Start Date:</strong> {tripData.startDate}</p>
+        <p><strong>End Date:</strong> {tripData.endDate}</p>
       </div>
     </div>
   );
 };
 
-// Component để hiển thị thông tin của Sales Staff
+// Component to display sales staff information
 const SingleSalesStaffData = ({ salesData }) => {
   return (
     <div className="sales-staff-data">
       <h2>Sales Staff Information</h2>
       <div className="staff-data-card">
-        <h3>Trip: {salesData.tripDescription}</h3>
-        <p><strong>Airport:</strong> {salesData.airport}</p>
-        <p><strong>Sales Representative:</strong> {salesData.salesRep}</p>
-        <p><strong>Benefits:</strong> {salesData.benefits}</p>
-        <p><strong>Terms:</strong> {salesData.terms}</p>
-        <p><strong>Additional Info:</strong> {salesData.additionalInfo}</p>
-      </div>
+        <h3>ID: {salesData.saleStaff.id}</h3>
+        <p><strong>Name:</strong> {salesData.saleStaff.name}</p>
+        <p><strong>Phone:</strong> {salesData.saleStaff.phone || 'N/A'}</p>
+        <p><strong>Email:</strong> {salesData.saleStaff.email || 'N/A'}</p>
 
-      <div className="trip-details">
-        <div className="day-detail">
-          <h3>{salesData.day}</h3>
-          <p><strong>Farm:</strong> {salesData.farm}</p>
-          <p><strong>Koi:</strong> {salesData.koi}</p>
-          <p><strong>img:</strong> {salesData.img}</p>
-        </div>
-      </div> 
+      </div>
     </div>
   );
 };
 
-function QuotaDetailsPage() {
-  const { id } = useParams();  // Lấy ID từ URL
+// Itinerary Component to display farm visits and koi details
+const Itinerary = ({ tripDestinations }) => {
+  const navigate = useNavigate();
+  const [expandedDays, setExpandedDays] = useState({});
+
+  const toggleDetails = (dayIndex) => {
+    setExpandedDays((prev) => ({
+      ...prev,
+      [dayIndex]: !prev[dayIndex],
+    }));
+  };
+
+  return (
+    <div className="trip-details">
+      {tripDestinations.map((destination, index) => (
+        <div key={index} className="day-detail">
+          <p><strong>visitDate:</strong> {destination.visitDate || 'N/Á'}</p>
+          <p><strong>Trip description:</strong> {destination.description || 'N/Á'}</p>
+          <h3>Day {index + 1}</h3>
+          <p><strong>Farm:</strong> {destination.farm.name}</p>
+          <p><strong>Address:</strong> {destination.farm.address}</p>
+          <button className="toggle-button" onClick={() => toggleDetails(index)}>
+            {expandedDays[index] ? 'Hide Details' : 'View Details'}
+          </button>
+
+          {expandedDays[index] && (
+            <div className="koi-details">
+              {destination.farm.varieties.length > 0 ? (
+                destination.farm.varieties.map((variety, koiIndex) => (
+                  <div key={koiIndex} className="koi-item">
+                    <p><strong>Variety:</strong> {variety.name}</p>
+                    <p>{variety.description}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No koi varieties available for this farm.</p>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Main OnGoingPage Component
+function OnGoingPage() {
+  const { id } = useParams();  // Get ID from URL
   const navigate = useNavigate();
 
-  // Trạng thái cho dữ liệu trip
+  // State for trip data
   const [tripData, setTripData] = useState(null);
   const [loadingTrip, setLoadingTrip] = useState(true);
   const [errorTrip, setErrorTrip] = useState(null);
 
-  // Trạng thái cho dữ liệu sales staff
-  const [salesData, setSalesData] = useState(null);
-  const [loadingSales, setLoadingSales] = useState(true);
-  const [errorSales, setErrorSales] = useState(null);
-
-  // Gọi API để lấy dữ liệu trip dựa trên ID từ URL
+  // Fetch trip data based on the ID from the URL
   useEffect(() => {
     fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
       .then((response) => {
@@ -70,31 +100,8 @@ function QuotaDetailsPage() {
         return response.json();
       })
       .then((data) => {
-        console.log('Trip Data:', data);
         setTripData(data);
         setLoadingTrip(false);
-
-        // Khi có dữ liệu trip, lấy ID của sales staff để gọi API sales staff
-        if (id) {
-          fetch(`http://localhost:8080/api/booking/${id}/list`)  // Sử dụng salesStaffId từ tripData
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then((salesData) => {
-              console.log('Sales Staff Data:', salesData);
-              setSalesData(salesData);
-              setLoadingSales(false);
-            })
-            .catch((error) => {
-              setErrorSales(error);
-              setLoadingSales(false);
-            });
-        } else {
-          setLoadingSales(false); // Nếu không có salesStaffId thì dừng loading sales staff
-        }
       })
       .catch((error) => {
         setErrorTrip(error);
@@ -102,8 +109,8 @@ function QuotaDetailsPage() {
       });
   }, [id]);
 
-  // Kiểm tra trạng thái loading và error cho cả hai API
-  if (loadingTrip || loadingSales) {
+  // Loading and error handling for both APIs
+  if (loadingTrip) {
     return <div>Loading data...</div>;
   }
 
@@ -111,24 +118,21 @@ function QuotaDetailsPage() {
     return <div>Error loading trip data: {errorTrip.message}</div>;
   }
 
-  if (errorSales) {
-    return <div>Error loading sales staff data: {errorSales.message}</div>;
-  }
-
   return (
     <div className="quota-details-page">
       <h2>Trip Details for Quotation ID: {id}</h2>
 
       <div className="customer-sales-container">
-        {/* Hiển thị thông tin Trip bên trái */}
+        {/* Display Trip Information */}
         <div className="left-side">
           {tripData && <SingleCustomerStaffData tripData={tripData} />}
+          {tripData.tripDestinations && <Itinerary tripDestinations={tripData.tripDestinations} />}
         </div>
 
-        {/* Hiển thị thông tin Sales Staff bên phải */}
+        {/* Display Sales Staff Information */}
         <div className="right-side">
-          {salesData ? (
-            <SingleSalesStaffData salesData={salesData} />
+          {tripData.saleStaff ? (
+            <SingleSalesStaffData salesData={tripData} />
           ) : (
             <div>No sales staff data available.</div>
           )}
@@ -136,11 +140,10 @@ function QuotaDetailsPage() {
       </div>
 
       <div className="button-group">
-        <button className="pay-button" onClick={() => navigate('/paykoi')}>Pay</button>
-        <button className="reject-button" onClick={() => navigate('/payment')}>Reject</button>
+        <button className="back-button" onClick={() => navigate(-1)}>Back</button>
       </div>
     </div>
   );
 }
 
-export default QuotaDetailsPage;
+export default OnGoingPage;

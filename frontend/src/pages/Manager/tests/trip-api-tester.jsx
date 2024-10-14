@@ -1,41 +1,43 @@
-'use client'
-
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
-// Create an Axios instance with default configuration
 const api = axios.create({
-  baseURL: 'http://localhost:8081/api/trip',
-  timeout: 5000, // 5 seconds timeout
+  baseURL: 'http://localhost:8081',
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-export function TripApiTesterComponent() {
-  // State management
-  const [trips, setTrips] = useState([])
+export default function TripApiTesterComponent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [newTripData, setNewTripData] = useState({
-    startDate: '',
-    endDate: '',
-    departureAirport: '',
-    price: '',
-    status: 'Pending',
-  })
-  const [deleteTripData, setDeleteTripData] = useState({
-    tripId: '',
-    farmId: '',
+  const [result, setResult] = useState(null)
+
+  const [Atrip, setAtrip] = useState({
+    id: '',
+    start_date: '',
+    end_date: '',
+    departure_airport: '',
+    price: 0.0,
+    status: '',
+    is_deleted: false
   })
 
-  // Error handling function
+  const [tripId, setTripId] = useState('')
+  const [tripData, setTripData] = useState({})
+  const [tripPaymentId, setTripPaymentId] = useState('')
+  const [tripPaymentData, setTripPaymentData] = useState({})
+  const [tripDestinationId, setTripDestinationId] = useState('')
+  const [tripDestinationData, setTripDestinationData] = useState({})
+
   const handleError = useCallback((error) => {
     if (axios.isAxiosError(error)) {
       setError(error.response?.data?.message || error.message)
@@ -45,213 +47,282 @@ export function TripApiTesterComponent() {
     setLoading(false)
   }, [])
 
-  // Fetch all trips
-  const fetchTrips = useCallback(async () => {
-    setLoading(true)
+  const handleSuccess = useCallback((data) => {
+    setResult(data)
+    setLoading(false)
     setError(null)
-    try {
-      const response = await api.get('/list')
-      setTrips(response.data)
-    } catch (error) {
-      handleError(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [handleError])
+  }, [])
 
-  // Create a new trip
-  const handleCreateTrip = useCallback(async (e) => {
+  // Trip API calls
+  const updateTrip = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
     try {
-      await api.post('/create', newTripData)
-      await fetchTrips()
-      // Reset form after successful creation
-      setNewTripData({
-        startDate: '',
-        endDate: '',
-        departureAirport: '',
-        price: '',
-        status: 'Pending',
-      })
+      const response = await api.put(`/api/trip/update/${tripId}`, tripData)
+      handleSuccess(response.data)
     } catch (error) {
       handleError(error)
-    } finally {
-      setLoading(false)
     }
-  }, [fetchTrips, handleError, newTripData])
-
-  // Delete a trip
-  const handleDeleteTrip = useCallback(async (id) => {
-    setLoading(true)
-    setError(null)
-    try {
-      await api.put(`/delete/${id}`)
-      await fetchTrips()
-    } catch (error) {
-      handleError(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [fetchTrips, handleError])
-
-  // Delete a trip with farm ID
-  const handleDeleteTripWithFarm = useCallback(async (e) => {
+  }
+  const createTrip = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
     try {
-      await api.delete(`/${deleteTripData.tripId}/farm/${deleteTripData.farmId}`)
-      await fetchTrips()
-      // Reset form after successful deletion
-      setDeleteTripData({
-        tripId: '',
-        farmId: '',
-      })
+      const response = await api.post('/api/trip/create', tripData)
+      handleSuccess(response.data)
     } catch (error) {
       handleError(error)
-    } finally {
-      setLoading(false)
     }
-  }, [deleteTripData, fetchTrips, handleError])
+  }
+
+  const listTrips = async () => {
+    setLoading(true)
+    try {
+      const response = await api.get('/api/trip/list')
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const getTrip = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.get(`/api/trip/get/${tripId}`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const deleteTrip = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.delete(`/api/trip/${tripId}`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  // Trip Payment API calls
+  const deleteTripPayment = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.put(`/api/trip-payment/delete/${tripPaymentId}`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const createTripPayment = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.post('/api/trip-payment/create', tripPaymentData)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const listTripPayments = async () => {
+    setLoading(true)
+    try {
+      const response = await api.get('/api/trip-payment/list')
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const getTripPayment = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.get(`/api/trip-payment/get/${tripPaymentId}`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  // Trip Destination API calls
+  const updateTripDestination = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.put(`/api/trip-destination/${tripDestinationId}/update`, tripDestinationData)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const createTripDestination = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.post(`/api/trip-destination/${tripId}/create`, tripDestinationData)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const listTripDestinations = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.get(`/api/trip-destination/${tripId}/list`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const getTripDestination = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.get(`/api/trip-destination/get/${tripDestinationId}`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const deleteTripDestination = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const response = await api.delete(`/api/trip-destination/${tripDestinationId}/delete`)
+      handleSuccess(response.data)
+    } catch (error) {
+      handleError(error)
+    }
+  }
 
   return (
     (<div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">Trip API Tester</h1>
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs defaultValue="trip" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-4">
-          <TabsTrigger value="list">List Trips</TabsTrigger>
-          <TabsTrigger value="create">Create Trip</TabsTrigger>
-          <TabsTrigger value="delete">Delete Trip</TabsTrigger>
+          <TabsTrigger value="trip">Trip</TabsTrigger>
+          <TabsTrigger value="payment">Trip Payment</TabsTrigger>
+          <TabsTrigger value="destination">Trip Destination</TabsTrigger>
         </TabsList>
 
-        {/* List Trips Tab */}
-        <TabsContent value="list">
+        {/* Trip Tab */}
+        <TabsContent value="trip">
           <Card>
             <CardHeader>
-              <CardTitle>List All Trips</CardTitle>
+              <CardTitle>Trip API</CardTitle>
+              <CardDescription>Test Trip-related API endpoints</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button onClick={fetchTrips} disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Fetch Trips'}
-              </Button>
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              {trips.length > 0 && (
-                <div className="mt-4 space-y-4">
-                  {trips.map((trip) => (
-                    <Card key={trip.id}>
-                      <CardContent className="pt-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p><strong>ID:</strong> {trip.id}</p>
-                            <p><strong>Start Date:</strong> {new Date(trip.startDate).toLocaleString()}</p>
-                            <p><strong>End Date:</strong> {new Date(trip.endDate).toLocaleString()}</p>
-                            <p><strong>Departure Airport:</strong> {trip.departureAirport}</p>
-                            <p><strong>Price:</strong> ${trip.price}</p>
-                            <p><strong>Status:</strong> {trip.status}</p>
-                            <p><strong>Destinations:</strong> {trip.tripDestinations.length}</p>
-                          </div>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => handleDeleteTrip(trip.id)}
-                            disabled={loading}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Trip ID"
+                value={tripId}
+                onChange={(e) => setTripId(e.target.value)} />
+              <Textarea
+                placeholder="Trip Data (JSON)"
+                value={JSON.stringify(tripData)}
+                onChange={(e) => setTripData(JSON.parse(e.target.value))} />
+              <div className="flex space-x-2">
+                <Button onClick={updateTrip}>Update Trip</Button>
+                <Button onClick={createTrip}>Create Trip</Button>
+                <Button onClick={listTrips}>List Trips</Button>
+                <Button onClick={getTrip}>Get Trip</Button>
+                <Button onClick={deleteTrip}>Delete Trip</Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Create Trip Tab */}
-        <TabsContent value="create">
+        {/* Trip Payment Tab */}
+        <TabsContent value="payment">
           <Card>
             <CardHeader>
-              <CardTitle>Create New Trip</CardTitle>
+              <CardTitle>Trip Payment API</CardTitle>
+              <CardDescription>Test Trip Payment-related API endpoints</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleCreateTrip} className="space-y-4">
-                <Input
-                  type="datetime-local"
-                  placeholder="Start Date"
-                  value={newTripData.startDate}
-                  onChange={(e) => setNewTripData({ ...newTripData, startDate: e.target.value })}
-                  required />
-                <Input
-                  type="datetime-local"
-                  placeholder="End Date"
-                  value={newTripData.endDate}
-                  onChange={(e) => setNewTripData({ ...newTripData, endDate: e.target.value })}
-                  required />
-                <Input
-                  placeholder="Departure Airport"
-                  value={newTripData.departureAirport}
-                  onChange={(e) => setNewTripData({ ...newTripData, departureAirport: e.target.value })}
-                  required />
-                <Input
-                  type="number"
-                  placeholder="Price"
-                  value={newTripData.price}
-                  onChange={(e) => setNewTripData({ ...newTripData, price: e.target.value })}
-                  required />
-                <div className="text-sm text-gray-500">Status: Pending (default)</div>
-                <Button type="submit" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Create Trip'}
-                </Button>
-              </form>
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Trip Payment ID"
+                value={tripPaymentId}
+                onChange={(e) => setTripPaymentId(e.target.value)} />
+              <Textarea
+                placeholder="Trip Payment Data (JSON)"
+                value={JSON.stringify(tripPaymentData)}
+                onChange={(e) => setTripPaymentData(JSON.parse(e.target.value))} />
+              <div className="flex space-x-2">
+                <Button onClick={deleteTripPayment}>Delete Trip Payment</Button>
+                <Button onClick={createTripPayment}>Create Trip Payment</Button>
+                <Button onClick={listTripPayments}>List Trip Payments</Button>
+                <Button onClick={getTripPayment}>Get Trip Payment</Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Delete Trip Tab */}
-        <TabsContent value="delete">
+        {/* Trip Destination Tab */}
+        <TabsContent value="destination">
           <Card>
             <CardHeader>
-              <CardTitle>Delete Trip</CardTitle>
+              <CardTitle>Trip Destination API</CardTitle>
+              <CardDescription>Test Trip Destination-related API endpoints</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleDeleteTripWithFarm} className="space-y-4">
-                <Input
-                  placeholder="Trip ID"
-                  value={deleteTripData.tripId}
-                  onChange={(e) => setDeleteTripData({ ...deleteTripData, tripId: e.target.value })}
-                  required />
-                <Input
-                  placeholder="Farm ID"
-                  value={deleteTripData.farmId}
-                  onChange={(e) => setDeleteTripData({ ...deleteTripData, farmId: e.target.value })}
-                  required />
-                <Button type="submit" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Delete Trip'}
-                </Button>
-              </form>
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Trip Destination ID"
+                value={tripDestinationId}
+                onChange={(e) => setTripDestinationId(e.target.value)} />
+              <Input
+                placeholder="Trip ID (for create/list)"
+                value={tripId}
+                onChange={(e) => setTripId(e.target.value)} />
+              <Textarea
+                placeholder="Trip Destination Data (JSON)"
+                value={JSON.stringify(tripDestinationData)}
+                onChange={(e) => setTripDestinationData(JSON.parse(e.target.value))} />
+              <div className="flex space-x-2">
+                <Button onClick={updateTripDestination}>Update Trip Destination</Button>
+                <Button onClick={createTripDestination}>Create Trip Destination</Button>
+                <Button onClick={listTripDestinations}>List Trip Destinations</Button>
+                <Button onClick={getTripDestination}>Get Trip Destination</Button>
+                <Button onClick={deleteTripDestination}>Delete Trip Destination</Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+      {loading && (
+        <div className="mt-4 text-center">
+          <Loader2 className="inline-block animate-spin" />
+          <span className="ml-2">Loading...</span>
+        </div>
+      )}
+      {error && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      {result && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle>API Response</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="whitespace-pre-wrap">{JSON.stringify(result, null, 2)}</pre>
+          </CardContent>
+        </Card>
+      )}
     </div>)
   );
 }
