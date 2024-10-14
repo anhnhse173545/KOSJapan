@@ -100,12 +100,12 @@ public class TripService {
     }
 
     public List<Trip> findTripsByCustomerId(String customerId) {
-        List<Booking> findBooking = bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
-        List<Trip> listTrip = new ArrayList<>();
-        if (findBooking.isEmpty()) {
+        List<Booking> list = bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
+        if (list.isEmpty()) {
             throw new RuntimeException("Booking not found");
         }
-        for (Booking booking : findBooking) {
+        List<Trip> listTrip = new ArrayList<>();
+        for (Booking booking : list) {
             Trip trip = booking.getTrip();
             listTrip.add(trip);
         }
