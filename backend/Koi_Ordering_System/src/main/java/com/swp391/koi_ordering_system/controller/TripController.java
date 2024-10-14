@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +56,17 @@ public class TripController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(trip);
+    }
+
+    @GetMapping("{customer_id}/get-all-trips-of-customer")
+    public ResponseEntity<List<TripDTO>> getAllTripsOfCustomer(@PathVariable String customer_id) {
+        List<Trip> list = tripService.findTripsByCustomerId(customer_id);
+        List<TripDTO> showList = new ArrayList<>();
+        for (Trip trip : list) {
+            TripDTO tripDTO = tripService.mapToDTO(trip);
+            showList.add(tripDTO);
+        }
+        return ResponseEntity.ok(showList);
     }
 
     @PutMapping("/update/{id}")

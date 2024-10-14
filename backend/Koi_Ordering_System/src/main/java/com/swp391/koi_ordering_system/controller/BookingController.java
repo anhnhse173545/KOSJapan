@@ -30,10 +30,11 @@ public class BookingController {
     private BookingMapper bookingMapper;
 
 
-    @PostMapping("/create")
-    public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
-        Booking booking = bookingMapper.toEntity(createBookingDTO);
-        return ResponseEntity.ok(bookingMapper.toDTO(bookingService.createBooking(booking)));
+    @PostMapping("/{customer_id}/create")
+    public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO,
+                                                    @PathVariable String customer_id) {
+        Booking booking = bookingService.createBooking(customer_id, createBookingDTO);
+        return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
     @GetMapping("/list")

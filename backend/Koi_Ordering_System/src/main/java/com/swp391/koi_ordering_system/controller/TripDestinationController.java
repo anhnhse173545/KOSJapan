@@ -1,7 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
 import com.swp391.koi_ordering_system.dto.request.AddTripDestinationDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateBookingDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateTripDestinationDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.ErrorDTO;
