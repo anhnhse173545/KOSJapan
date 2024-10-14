@@ -55,9 +55,11 @@ public class FishOrder {
 //    @OneToMany(mappedBy = "fishOrder")
 //    private Set<FishPackOrderDetail> fishPackOrderDetails;
 
+    @JsonManagedReference(value = "fishOrder-fishOrderDetail")
     @OneToMany(mappedBy = "fishOrder")
     private List<FishOrderDetail> fishOrderDetails = new ArrayList<>();
 
+    @JsonManagedReference(value = "fishOrder-fishPackOrderDetail")
     @OneToMany(mappedBy = "fishOrder")
     private List<FishPackOrderDetail> fishPackOrderDetails = new ArrayList<>();
 }
