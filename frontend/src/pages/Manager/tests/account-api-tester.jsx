@@ -29,22 +29,22 @@ export function AccountApiTester() {
     password: '',
     name: '',
     role: '',
+    email: '',
     phone: '',
     address: '',
-    profileImg: '',
-    isDeleted: false,
-    email: '',
+    profile_image: '',
+    is_deleted: false
   })
   const [updateAccountData, setUpdateAccountData] = useState({
     id: '',
     password: '',
     name: '',
     role: '',
+    email: '',
     phone: '',
     address: '',
-    profileImg: '',
-    isDeleted: false,
-    email: '',
+    profile_image: '',
+    is_deleted: false
   })
   const [getAccountId, setGetAccountId] = useState('')
   const [deleteAccountId, setDeleteAccountId] = useState('')
@@ -84,14 +84,14 @@ export function AccountApiTester() {
       // Reset form after successful creation
       setNewAccountData({
         id: '',
-        password: '',
-        name: '',
-        role: '',
-        phone: '',
-        address: '',
-        profileImg: '',
-        isDeleted: false,
-        email: '',
+      password: '',
+      name: '',
+      role: '',
+      email: '',
+      phone: '',
+      address: '',
+      profile_image: '',
+      is_deleted: false
       })
     } catch (error) {
       handleError(error)
@@ -114,11 +114,11 @@ export function AccountApiTester() {
         password: '',
         name: '',
         role: '',
+        email: '',
         phone: '',
         address: '',
-        profileImg: '',
-        isDeleted: false,
-        email: '',
+        profile_image: '',
+        is_deleted: false
       })
     } catch (error) {
       handleError(error)
