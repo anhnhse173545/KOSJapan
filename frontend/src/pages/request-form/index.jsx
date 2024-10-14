@@ -16,16 +16,13 @@ const CombinedKoiRequestForm = () => {
   const handleFormSubmit = async (values) => {
     try {
       const formData = new FormData();
-
       const data = {
-        fullName: values.fullName,
+        name: values.name,
         phone: values.phone,
-        email: values.mail,
-        koiDescription: values.koiDescription,
-        tripDescription: values.tripDescription,
-        otherRequirements: values.otherRequirements,
-        tripStartDate: values.tripStartDate.format("YYYY-MM-DD"), 
-        tripEndDate: values.tripEndDate.format("YYYY-MM-DD"),     
+        email: values.email,
+        description: values.description,
+        startDate: values.startDate.format("YYYY-MM-DD"), 
+        endDate: values.endDate.format("YYYY-MM-DD"),     
     };
     
     // Duyệt qua từng thuộc tính của đối tượng và thêm vào FormData
@@ -73,23 +70,10 @@ const CombinedKoiRequestForm = () => {
         layout="vertical"
       >
 
-
-        {/* Desired Koi Variety and Description */}
-        <Form.Item
-          label="Desired Koi Variety and Description"
-          name="koiDescription"
-          rules={[{ required: true, message: "Please provide a description" }]}
-        >
-          <TextArea
-            placeholder="Describe the Koi you're looking for"
-            rows={4}
-          />
-        </Form.Item>
-
         {/* Desired Trip Description */}
         <Form.Item
-          label="Desired Trip and Description"
-          name="tripDescription"
+          label="Desired Trip and Koi"
+          name="description"
           rules={[{ required: true, message: "Please provide a description" }]}
         >
           <TextArea
@@ -102,7 +86,7 @@ const CombinedKoiRequestForm = () => {
         {/* Desired Trip Start Date */}
         <Form.Item
           label="Desired Trip Start Date"
-          name="tripStartDate"
+          name="startDate"
           rules={[{ required: true, message: "Please select the start date of your trip" }]}
         >
           <DatePicker placeholder="Select the start date" />
@@ -111,7 +95,7 @@ const CombinedKoiRequestForm = () => {
         {/* Desired Trip End Date */}
         <Form.Item
           label="Desired Trip End Date"
-          name="tripEndDate"
+          name="endDate"
           rules={[{ required: true, message: "Please select the end date of your trip" }]}
         >
           <DatePicker placeholder="Select the end date" />

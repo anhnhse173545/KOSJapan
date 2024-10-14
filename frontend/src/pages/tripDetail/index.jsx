@@ -53,8 +53,7 @@ function PaymentDetailsPage() {
         <p><strong>Name:</strong> {paymentDetails.customer.name}</p>
         <p><strong>Email:</strong> {paymentDetails.customer.email}</p>
         <p><strong>Phone:</strong> {paymentDetails.customer.phone}</p>
-        <p><strong>Koi Description:</strong> {paymentDetails.customer.bookingDescription}</p>
-        <p><strong>Trip Description:</strong> {paymentDetails.customer.description}</p>
+        <p><strong>Description:</strong> {paymentDetails.customer.description}</p>
         <p><strong>Start Date:</strong> {paymentDetails.startDate}</p>
         <p><strong>End Date:</strong> {paymentDetails.endDate}</p>
         <p><strong>Status:</strong> {paymentDetails.status}</p>
