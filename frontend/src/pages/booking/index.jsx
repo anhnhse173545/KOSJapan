@@ -14,7 +14,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/trip/list'); // Replace with your API endpoint
+        const response = await fetch('http://localhost:8080/api/trip/AC0007/get-all-trips-of-customer'); 
         if (!response.ok) {
           throw new Error('Failed to fetch payments');
         }
