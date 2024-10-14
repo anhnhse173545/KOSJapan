@@ -8,6 +8,9 @@ import PaymentDetailsPage from "./pages/tripDetail";
 import QuotaDetailsPage from "./pages/tripQuota";
 import OnGoingPage from "./pages/onGoing";
 import HomePage from "./pages/home";
+import KoiPage from "./pages/mykoi";
+import KoiDetailPage from "./pages/detailFish";
+import KoiPayPage from "./pages/paykoi";
 
 
 
@@ -27,6 +30,9 @@ function App() {
         {path: "/payment/:id", element: <PaymentDetailsPage/>},
         {path: "/quota/:id", element: <QuotaDetailsPage/>},
         {path: "/onGoing/:id", element: <OnGoingPage/>},
+        {path: "/mykoi", element: <KoiPage/>},
+        {path: "/mykoi/:id", element: <KoiDetailPage/>},
+        {path: "/paykoi", element: <KoiPayPage/>},
         
         
       ],
