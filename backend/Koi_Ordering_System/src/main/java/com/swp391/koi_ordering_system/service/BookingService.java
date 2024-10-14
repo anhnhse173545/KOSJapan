@@ -288,6 +288,12 @@ public class BookingService {
                 .map(bookingMapper::toDTO);
     }
 
+    public List<BookingDTO> getBookingsBySaleStaffIdAndCustomerId(String saleStaffId, String customerId) {
+        return bookingRepository.findBySaleStaffIdAndCustomerIdAndIsDeletedFalse(saleStaffId, customerId)
+                .stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
 
 }
