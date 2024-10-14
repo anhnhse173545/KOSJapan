@@ -14,7 +14,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/trip/AC0007/get-all-trips-of-customer'); 
+        const response = await fetch('http://localhost:8080/api/trip/AC0007/get-all-trips-of-customer'); // Sử dụng bookingId cố định
         if (!response.ok) {
           throw new Error('Failed to fetch payments');
         }
