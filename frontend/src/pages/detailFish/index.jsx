@@ -44,11 +44,12 @@ function KoiDetailPage() {
       {/* Hiển thị tất cả các đơn đặt hàng */}
       {koi.fishOrders.map(order => (
         <div key={order.id} className="fish-order-details">
+          <br />
           <p><strong>Order ID:</strong> {order.id}</p>
           <p><strong>Delivery Address:</strong> {order.deliveryAddress}</p>
           <p><strong>Status:</strong> {order.status}</p>
           <p><strong>Total:</strong> {order.total} VND</p>
-          <h2>Fish Details</h2>
+        
           {order.fishOrderDetails.map(orderDetail => (
             <div key={orderDetail.id} className="fish-detail">
               <p><strong>Fish ID:</strong> {orderDetail.fish.id}</p>
