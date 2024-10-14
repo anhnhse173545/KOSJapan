@@ -168,6 +168,16 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.mapToDTO(removedBooking));
     }
 
+    @GetMapping("/sale-staff/{saleStaffId}/customer/{customerId}")
+    public ResponseEntity<List<BookingDTO>> getBookingsBySaleStaffIdAndCustomerId(
+            @PathVariable String saleStaffId, @PathVariable String customerId) {
+        List<BookingDTO> bookings = bookingService.getBookingsBySaleStaffIdAndCustomerId(saleStaffId, customerId);
+        if (bookings.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(bookings);
+    }
+
 
 
 //    @RequestMapping("/get-fish-orders/{booking_id}")
