@@ -39,19 +39,19 @@ public class FishOrderService {
     private static final String PREFIX = "PO";
     private static final int ID_PADDING = 4;
 
-    public List<FishOrderDTO> getAllFishOrder() {
-        List<FishOrder> list = OrderRepository.findAll();
-        return list.stream()
-                .map((FishOrder) -> mapToDTO2(FishOrder))
-                .collect(Collectors.toList());
-    }
+        public List<FishOrderDTO> getAllFishOrder() {
+            List<FishOrder> list = OrderRepository.findAll();
+            return list.stream()
+                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .collect(Collectors.toList());
+        }
 
-    public List<FishOrderDTO> getAllByBookingId(String bookingId) {
-        List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
-        return list.stream()
-                .map((FishOrder) -> mapToDTO2(FishOrder))
-                .collect(Collectors.toList());
-    }
+        public List<FishOrderDTO> getAllByBookingId(String bookingId) {
+            List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
+            return list.stream()
+                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .collect(Collectors.toList());
+        }
 
     public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
         List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
