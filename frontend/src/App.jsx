@@ -12,7 +12,7 @@ import KoiPage from "./pages/mykoi";
 import KoiDetailPage from "./pages/detailFish";
 import KoiPayPage from "./pages/paykoi";
 
-import "../src/styles/App.css";
+// import "../src/styles/App.css";
 
 
 

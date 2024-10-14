@@ -1,6 +1,6 @@
 'use client'
 
-// import "./index.css"
+import "./index.css"
 import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,9 +16,9 @@ export function HomepageComponent() {
   ]
 
   const featuredTrips = [
-    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Private Tour" },
-    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Private Tour" },
-    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Private Tour" },
+    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Private Tour", img:"" },
+    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Private Tour", img:"" },
+    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Private Tour", img:"" },
   ]
 
   const nextTestimonial = () => {
@@ -147,6 +147,10 @@ export function HomepageComponent() {
               <Card
                 key={index}
                 className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img
+                src={trip.image} // Use the image link from the trip object
+                alt={trip.title}
+                className="w-full h-64 object-contain" />
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-gray-900">{trip.title}</CardTitle>
                 </CardHeader>
