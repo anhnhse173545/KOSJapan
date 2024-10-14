@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class FishOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
+    @JsonBackReference(value = "fishOrder-fishOrderDetail")
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fish_order_id", nullable = true)

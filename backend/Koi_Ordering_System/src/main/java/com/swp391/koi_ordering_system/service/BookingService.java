@@ -95,6 +95,23 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDTO> getBookingsBySaleStaffId(String saleStaffId) {
+        return bookingRepository.findBySaleStaffIdAndIsDeletedFalse(saleStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByConsultingStaffId(String consultingStaffId) {
+        return bookingRepository.findByConsultingStaffIdAndIsDeletedFalse(consultingStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByDeliveryStaffId(String deliveryStaffId) {
+        return bookingRepository.findByDeliveryStaffIdAndIsDeletedFalse(deliveryStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     public BookingDTO updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)

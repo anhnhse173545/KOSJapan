@@ -41,13 +41,13 @@ const CombinedKoiRequestForm = () => {
       }
 
       // Gửi dữ liệu đến backend bằng axios
-      const response = await axios.post("http://localhost:5000/api/submitForm", formData, {
+      const response = await axios.post("http://localhost:8080/api/booking/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response.status === 201) {
         toast.success("Yêu cầu của bạn đã được gửi thành công!");
-        navigate("/success");
+        navigate("/ ");
       } else {
         toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
@@ -98,14 +98,6 @@ const CombinedKoiRequestForm = () => {
           />
         </Form.Item>
 
-        {/* Other Requirements */}
-        <Form.Item
-          label="Your Other Requirements"
-          name="otherRequirements"
-          rules={[{ required: true, message: "Please provide other requirements" }]}
-        >
-          <TextArea placeholder="Describe any other requirements" rows={4} />
-        </Form.Item>
 
         {/* Desired Trip Start Date */}
         <Form.Item
@@ -125,8 +117,8 @@ const CombinedKoiRequestForm = () => {
           <DatePicker placeholder="Select the end date" />
         </Form.Item>
 
-        {/* Image Upload */}
-        <Form.Item label="Upload Images (Optional)">
+        
+       <Form.Item label="Upload Images (Optional)">
           <Upload
             name="images"
             listType="picture"
@@ -135,7 +127,7 @@ const CombinedKoiRequestForm = () => {
           >
             <Button icon={<UploadOutlined />}>Select Files</Button>
           </Upload>
-        </Form.Item>
+        </Form.Item> 
 
         {/* Submit Button */}
         <Form.Item>

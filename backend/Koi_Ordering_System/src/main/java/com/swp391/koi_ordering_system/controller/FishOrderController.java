@@ -4,9 +4,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateOrderDTO;
-import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
-import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
-import com.swp391.koi_ordering_system.dto.response.OrderDTO;
+import com.swp391.koi_ordering_system.dto.response.*;
 import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
@@ -25,6 +23,8 @@ public class FishOrderController {
 
     @Autowired
     private FishOrderService orderService;
+    @Autowired
+    private FishOrderService fishOrderService;
 
     @GetMapping("/all")
     public ResponseEntity<List<FishOrderDTO>> getAllFishOrders() {
@@ -57,6 +57,7 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(updateOrder));
     }
 
+
     @PutMapping("/{booking_id}/{farm_id}/add-order-detail-to-order")
     public ResponseEntity<FishOrderDTO> addFishOrderDetailToOrder(@PathVariable String booking_id,
                                                               @PathVariable String farm_id,
@@ -85,6 +86,16 @@ public class FishOrderController {
                                                   @PathVariable String farm_id) {
         orderService.deleteFishOrder(booking_id, farm_id);
         return ResponseEntity.ok("Deleted Fish Order: ");
+    }
+
+    @GetMapping("/delivery-staff/{deliveryId}")
+    public ResponseEntity<?> getBookingsByCustomerId(@PathVariable String deliveryId) {
+        List<DeliveryStaffOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
+        if (fishOrder.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(fishOrder);
     }
 
 }

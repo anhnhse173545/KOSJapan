@@ -3,8 +3,10 @@ package com.swp391.koi_ordering_system.service;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateOrderDTO;
+import com.swp391.koi_ordering_system.dto.response.DeliveryStaffOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.OrderDTO;
+import com.swp391.koi_ordering_system.mapper.FishOrderMapper;
 import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
@@ -36,22 +38,25 @@ public class FishOrderService {
     @Autowired
     private FishPackOrderDetailService FPODService;
 
+    @Autowired
+    private FishOrderMapper fishOrderMapper;
+
     private static final String PREFIX = "PO";
     private static final int ID_PADDING = 4;
 
-    public List<FishOrderDTO> getAllFishOrder() {
-        List<FishOrder> list = OrderRepository.findAll();
-        return list.stream()
-                .map((FishOrder) -> mapToDTO2(FishOrder))
-                .collect(Collectors.toList());
-    }
+        public List<FishOrderDTO> getAllFishOrder() {
+            List<FishOrder> list = OrderRepository.findAll();
+            return list.stream()
+                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .collect(Collectors.toList());
+        }
 
-    public List<FishOrderDTO> getAllByBookingId(String bookingId) {
-        List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
-        return list.stream()
-                .map((FishOrder) -> mapToDTO2(FishOrder))
-                .collect(Collectors.toList());
-    }
+        public List<FishOrderDTO> getAllByBookingId(String bookingId) {
+            List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
+            return list.stream()
+                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .collect(Collectors.toList());
+        }
 
     public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
         List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
@@ -264,6 +269,13 @@ public class FishOrderService {
         } catch (NumberFormatException e) {
             throw new IllegalStateException("Invalid order detail ID format: " + lastId, e);
         }
+    }
+
+    public List<DeliveryStaffOrderDTO> getFishOrdersByDeliveryStaffId(String deliveryStaffId) {
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_Id(deliveryStaffId);
+        return fishOrders.stream()
+                .map(fishOrderMapper::toDeliveryStaffOrderDTO)
+                .collect(Collectors.toList());
     }
 
 
