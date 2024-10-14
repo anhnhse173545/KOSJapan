@@ -16,9 +16,12 @@ export function HomepageComponent() {
   ]
 
   const featuredTrips = [
-    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Private Tour", img:"" },
-    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Private Tour", img:"" },
-    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Private Tour", img:"" },
+    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Private Tour",
+       image:"https://plus.unsplash.com/premium_photo-1661914240950-b0124f20a5c1?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8dG9reW98ZW58MHx8MHx8fDA%3Dg" },
+    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Private Tour",
+       image:"https://upload.wikimedia.org/wikipedia/commons/f/fd/Niigata_City_2022-01.jpg" },
+    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Private Tour",
+       image:"https://img.baoninhbinh.org.vn/DATA/ARTICLES/2024/8/6/nhat-ban-tuong-niem-79-nam-vu-nem-bom-nguyen-tu-xuong-a782f.jpg" },
   ]
 
   const nextTestimonial = () => {
@@ -150,7 +153,7 @@ export function HomepageComponent() {
                 <img
                 src={trip.image} // Use the image link from the trip object
                 alt={trip.title}
-                className="w-full h-64 object-contain" />
+                className="w-full h-64 object-cover" />
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-gray-900">{trip.title}</CardTitle>
                 </CardHeader>
