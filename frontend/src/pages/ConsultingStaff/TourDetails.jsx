@@ -1,10 +1,12 @@
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { Button } from "antd";
+import { Button, message } from "antd";
 
-// Sample trip plan
-const tripPlan = `
+// Sample trip plan template
+const tripPlanTemplate = `
 Day 1: Tokyo – A Blend of Old and New
   Morning: Tsukiji Market and Toyosu Market
   Midday: Tokyo Tower and Modern Art
@@ -35,119 +37,29 @@ Day 5: Departure from Narita Airport
   Afternoon: Departure Preparations
 `;
 
-const initialTourData = [
-  {
-    key: "1",
-    customer: "John Doe",
-    startDate: "2024-10-01",
-    endDate: "2024-10-05",
-    status: "Not Check In",
-  },
-  {
-    key: "2",
-    customer: "Jane Smith",
-    startDate: "2024-10-03",
-    endDate: "2024-10-06",
-    status: "Not Check In",
-  },
-  {
-    key: "3",
-    customer: "Alice Johnson",
-    startDate: "2024-10-04",
-    endDate: "2024-10-07",
-    status: "Checked In",
-  },
-  {
-    key: "4",
-    customer: "Bob Brown",
-    startDate: "2024-10-02",
-    endDate: "2024-10-08",
-    status: "Not Check In",
-  },
-  {
-    key: "5",
-    customer: "Emily Davis",
-    startDate: "2024-10-09",
-    endDate: "2024-10-12",
-    status: "Cancelled",
-  },
-  {
-    key: "6",
-    customer: "Michael Wilson",
-    startDate: "2024-10-05",
-    endDate: "2024-10-10",
-    status: "Checked In",
-  },
-  {
-    key: "7",
-    customer: "Sarah Miller",
-    startDate: "2024-10-07",
-    endDate: "2024-10-10",
-    status: "Not Check In",
-  },
-  {
-    key: "8",
-    customer: "David Martin",
-    startDate: "2024-10-15",
-    endDate: "2024-10-20",
-    status: "Cancelled",
-  },
-  {
-    key: "9",
-    customer: "Laura Martinez",
-    startDate: "2024-10-17",
-    endDate: "2024-10-22",
-    status: "Not Check In",
-  },
-  {
-    key: "10",
-    customer: "James Taylor",
-    startDate: "2024-10-12",
-    endDate: "2024-10-18",
-    status: "Not Check In",
-  },
-  {
-    key: "11",
-    customer: "Linda Harris",
-    startDate: "2024-10-20",
-    endDate: "2024-10-25",
-    status: "Not Check In",
-  },
-  {
-    key: "12",
-    customer: "Richard Clark",
-    startDate: "2024-10-10",
-    endDate: "2024-10-14",
-    status: "Checked In",
-  },
-  {
-    key: "13",
-    customer: "Barbara Lewis",
-    startDate: "2024-10-22",
-    endDate: "2024-10-27",
-    status: "Not Check In",
-  },
-  {
-    key: "14",
-    customer: "Daniel Walker",
-    startDate: "2024-10-14",
-    endDate: "2024-10-19",
-    status: "Cancelled",
-  },
-  {
-    key: "15",
-    customer: "Matthew Lee",
-    startDate: "2024-10-25",
-    endDate: "2024-10-29",
-    status: "Not Check In",
-  },
-];
-
 const TourDetails = () => {
-  const { tourId } = useParams();
-  const selectedTour = initialTourData.find((tour) => tour.key === tourId);
+  const { bookingId } = useParams(); // Get bookingId from URL params
+  const [tourData, setTourData] = useState(null); // State to store fetched data
+  const [loading, setLoading] = useState(true); // Loading state
+
+  // Fetch tour details from API using bookingId
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/booking/${bookingId}/trip`)
+      .then((response) => {
+        setTourData(response.data); // Set tour data from API response
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching tour data:", error);
+        message.error("Failed to load tour details.");
+        setLoading(false);
+      });
+  }, [bookingId]);
 
   const handleExportToPDF = () => {
+    if (!tourData) return;
+
     const doc = new jsPDF();
     doc.text("Tour Details", 20, 10);
 
@@ -155,40 +67,47 @@ const TourDetails = () => {
       head: [["Customer", "Start Date", "End Date", "Status"]],
       body: [
         [
-          selectedTour.customer,
-          selectedTour.startDate,
-          selectedTour.endDate,
-          selectedTour.status,
+          tourData.booking.customer.name, // Customer name from API
+          tourData.startDate.split("T")[0], // Format start date
+          tourData.endDate.split("T")[0], // Format end date
+          tourData.status, // Status from API
         ],
       ],
     });
 
     doc.text("Trip Plan", 20, 50);
-    // Split the trip plan into lines and add each line to the PDF
     doc.autoTable({
-      body: tripPlan.split("\n").map((line) => [line.trim()]), // Displaying each line of the trip plan
+      body: tripPlanTemplate.split("\n").map((line) => [line.trim()]), // Split and format trip plan
     });
 
-    doc.save(`${selectedTour.customer}_tour_details.pdf`);
+    doc.save(`${tourData.booking.customer.name}_tour_details.pdf`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!tourData) {
+    return <div>No tour details available.</div>;
+  }
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Tour Details</h1>
       <p>
-        <strong>Customer:</strong> {selectedTour.customer}
+        <strong>Customer:</strong> {tourData.booking.customer.name}
       </p>
       <p>
-        <strong>Start Date:</strong> {selectedTour.startDate}
+        <strong>Start Date:</strong> {tourData.startDate.split("T")[0]}
       </p>
       <p>
-        <strong>End Date:</strong> {selectedTour.endDate}
+        <strong>End Date:</strong> {tourData.endDate.split("T")[0]}
       </p>
       <p>
-        <strong>Status:</strong> {selectedTour.status}
+        <strong>Status:</strong> {tourData.status}
       </p>
       <h3>Trip Plan</h3>
-      <pre>{tripPlan}</pre> {/* Displaying the trip plan */}
+      <pre>{tripPlanTemplate}</pre> {/* Displaying the trip plan */}
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF
       </Button>
