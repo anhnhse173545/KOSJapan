@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class Booking {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private String id;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -48,7 +48,7 @@ public class Booking {
     private TripPayment tripPayment;
 
 
-    @Column(name = "status", length = 20)
+    @Column(name = "status")
     private String status = "Requested";
 
     @ManyToOne

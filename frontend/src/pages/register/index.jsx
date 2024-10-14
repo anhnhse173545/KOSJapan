@@ -7,8 +7,8 @@ function Register() {
   const handleRegister = async (values) => {
     try {
       // Make a POST request to the provided endpoint
-      const { data } = await api.post("http://localhost:8080/account-controller/createNewAccount", values);
-      
+      const { data } = await api.post("http://localhost:8080/accounts/create", values);
+
       // If registration is successful, show a success message
       toast.success("Account created successfully!");
       
@@ -33,7 +33,7 @@ function Register() {
         layout="vertical"
         onFinish={handleRegister}
         initialValues={{
-          role: "ADMIN", // Default value for role, if applicable
+          role: "customer", // Default value for role, if applicable
         }}
       >
         {/* Name */}

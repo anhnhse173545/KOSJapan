@@ -13,6 +13,6 @@ public interface TripRepository extends JpaRepository<Trip, String> {
     Optional<Trip> findTopByOrderByIdDesc();
     Optional<Trip> findByIdAndIsDeletedFalse(String id);
     List<Trip> findAllByIsDeletedFalse();
-
+    List<Trip> findTripsByBookingId(String bookingId);
     Optional<Trip> findByBookingIdAndBookingIsDeletedFalse(String bookingId);
 }

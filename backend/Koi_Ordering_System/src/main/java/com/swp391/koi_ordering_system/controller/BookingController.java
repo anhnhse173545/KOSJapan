@@ -30,10 +30,11 @@ public class BookingController {
     private BookingMapper bookingMapper;
 
 
-    @PostMapping("/create")
-    public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO) {
-        Booking booking = bookingMapper.toEntity(createBookingDTO);
-        return ResponseEntity.ok(bookingMapper.toDTO(bookingService.createBooking(booking)));
+    @PostMapping("/{customer_id}/create")
+    public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO,
+                                                    @PathVariable String customer_id) {
+        Booking booking = bookingService.createBooking(customer_id, createBookingDTO);
+        return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
     @GetMapping("/list")
@@ -110,7 +111,7 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/sale-staff/{customerId}")
+    @GetMapping("/sale-staff-customer/{customerId}")
     public ResponseEntity<?> getBookingsByStatusAndCustomerId(
             @PathVariable String customerId) {
         try {
@@ -120,6 +121,26 @@ public class BookingController {
             ErrorDTO errorDTO = new ErrorDTO(404, "Customer not found");
             return ResponseEntity.status(404).body(errorDTO);
         }
+    }
+
+    @GetMapping("/sale-staff/{saleStaffId}")
+    public ResponseEntity<?> getBookingsBySaleStaffId(@PathVariable String saleStaffId) {
+        List<BookingDTO> bookings = bookingService.getBookingsBySaleStaffId(saleStaffId);
+        if (bookings.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/consulting-staff/{consultingStaffId}")
+    public ResponseEntity<?> getBookingsByConsultingStaffId(@PathVariable String consultingStaffId) {
+        List<BookingDTO> bookings = bookingService.getBookingsByConsultingStaffId(consultingStaffId);
+        if (bookings.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(bookings);
     }
 
     @GetMapping("/trip/{tripId}")

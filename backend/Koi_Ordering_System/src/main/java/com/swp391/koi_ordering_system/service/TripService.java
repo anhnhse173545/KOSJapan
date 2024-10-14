@@ -5,19 +5,18 @@ import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDestinationDTO;
 import com.swp391.koi_ordering_system.dto.response.TripWithCustomerAndSaleStaffDTO;
 import com.swp391.koi_ordering_system.mapper.TripMapper;
+import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Trip;
 import com.swp391.koi_ordering_system.model.TripDestination;
+import com.swp391.koi_ordering_system.repository.BookingRepository;
 import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.TripDestinationRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +29,9 @@ public class TripService {
 
     @Autowired
     private TripDestinationRepository tripDestinationRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @Autowired
     private TripDestinationService tripDestinationService;
@@ -95,6 +97,19 @@ public class TripService {
             trip.setIsDeleted(true);
             tripRepository.save(trip);
         }
+    }
+
+    public List<Trip> findTripsByCustomerId(String customerId) {
+        List<Booking> list = bookingRepository.findByCustomerIdAndIsDeletedFalse(customerId);
+        if (list.isEmpty()) {
+            throw new RuntimeException("Booking not found");
+        }
+        List<Trip> listTrip = new ArrayList<>();
+        for (Booking booking : list) {
+            Trip trip = booking.getTrip();
+            listTrip.add(trip);
+        }
+        return listTrip;
     }
 
 //    public Trip addFarmToTrip(String tripId, String farmId) {

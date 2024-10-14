@@ -1,9 +1,6 @@
 package com.swp391.koi_ordering_system.service;
 
-import com.swp391.koi_ordering_system.dto.request.CreateFishOrderDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateBookingDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
+import com.swp391.koi_ordering_system.dto.request.*;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
@@ -20,6 +17,7 @@ import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,8 +56,19 @@ public class BookingService {
     @Autowired
     private FishOrderService fishOrderService;
 
-    public Booking createBooking(Booking booking) {
+    public Booking createBooking(String cusId, CreateBookingDTO dto) {
+        Optional<Account> acc = accountRepository.findById(cusId);
+        if (acc.isEmpty()) {
+            throw new RuntimeException("Account not found");
+        }
+        Account assignAccount = acc.get();
+        Booking booking = new Booking();
+
         booking.setId(generateBookingId());
+        booking.setCustomer(assignAccount);
+        booking.setDescription(dto.getDescription());
+        booking.setStatus("Requested");
+
         return bookingRepository.save(booking);
     }
 
@@ -86,6 +95,23 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDTO> getBookingsBySaleStaffId(String saleStaffId) {
+        return bookingRepository.findBySaleStaffIdAndIsDeletedFalse(saleStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByConsultingStaffId(String consultingStaffId) {
+        return bookingRepository.findByConsultingStaffIdAndIsDeletedFalse(consultingStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingDTO> getBookingsByDeliveryStaffId(String deliveryStaffId) {
+        return bookingRepository.findByDeliveryStaffIdAndIsDeletedFalse(deliveryStaffId).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     public BookingDTO updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)

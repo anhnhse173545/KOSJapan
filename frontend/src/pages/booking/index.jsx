@@ -81,8 +81,8 @@ function PaymentPage() {
             <div key={koi.id} className="payment-item">
               <img src={koi.img} alt={koi.farm} className="koi-image" />
               <div className="payment-details">
-                <h3>{koi.startDate}</h3>
-                <p>{koi.time}</p>
+                <h3>{koi.id}</h3>
+                <p>{koi.startDate}</p>
                 {koi.quantity && <p>Quantity: {koi.quantity}</p>}
                 <p className="status">{koi.status}</p>
                 <p className="price">{koi.price}</p>
@@ -96,6 +96,8 @@ function PaymentPage() {
                       } else if (koi.status === 'Request') {
                         navigate(`/payment/${koi.id}`);
                       } else if (koi.status === 'On-Going') {
+                        navigate(`/ongoing/${koi.id}`);
+                      } else if (koi.status === 'Completed') {
                         navigate(`/ongoing/${koi.id}`);
                       } else {
                         navigate(`/payment/${koi.id}`);

@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ public class FishPackOrderDetail {
     @Column(name = "id")
     private String id;
 
+    @JsonBackReference(value = "fishPack-fishPackOrderDetail")
     @ManyToOne
     @JoinColumn(name = "fish_order_id", nullable = true)
     private FishOrder fishOrder;
