@@ -92,7 +92,7 @@ function PaidBooking() {
 
   // Fetch trip data based on the ID from the URL
   useEffect(() => {
-    fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
+    fetch(`http://localhost:8080/api/booking/get/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
