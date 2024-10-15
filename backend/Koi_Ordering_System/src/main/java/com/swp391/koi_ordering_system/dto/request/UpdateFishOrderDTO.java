@@ -16,4 +16,5 @@ public class UpdateFishOrderDTO {
     private Double total;
     private LocalDateTime arrived_date;
     private String status;
+    private String paymentStatus;
 }

@@ -18,6 +18,7 @@ public class FishOrderDTO {
     private String farmId;
     private String deliveryAddress;
     private String status;
+    private String paymentStatus;
     private Double total;
     private String bookingId;
     private List<FishOrderDetailDTO> fishOrderDetails;
