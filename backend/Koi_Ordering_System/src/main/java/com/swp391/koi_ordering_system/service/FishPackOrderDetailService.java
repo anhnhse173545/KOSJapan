@@ -170,6 +170,10 @@ public class FishPackOrderDetailService {
     public FishPackOrderDetailDTO mapToDTO(FishPackOrderDetail fishPackOrderDetail) {
         FishPackOrderDetailDTO fishPackOrderDetailDTO = new FishPackOrderDetailDTO();
 
+        if(fishPackOrderDetail == null){
+            return null;
+        }
+
         fishPackOrderDetailDTO.setId(fishPackOrderDetail.getId());
         fishPackOrderDetailDTO.setPrice(fishPackOrderDetail.getPrice());
         fishPackOrderDetailDTO.setFishPack(fishPackService.mapToDTO(fishPackOrderDetail.getFishPack()));

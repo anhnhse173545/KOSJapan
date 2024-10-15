@@ -48,6 +48,9 @@ public class FishOrder {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "payment_status")
+    private String paymentStatus;
+
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;

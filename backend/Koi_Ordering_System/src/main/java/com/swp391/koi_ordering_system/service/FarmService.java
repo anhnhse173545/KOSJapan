@@ -109,6 +109,10 @@ public class FarmService {
     public FarmDTO mapToDTO(Farm farm) {
         FarmDTO farmDTO = new FarmDTO();
 
+        if(farm == null){
+            return null;
+        }
+
         farmDTO.setId(farm.getId());
         farmDTO.setName(farm.getName());
         farmDTO.setAddress(farm.getAddress());

@@ -84,6 +84,12 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDTO> getBookingsByStatus(String status) {
+        return bookingRepository.findByStatusAndIsDeletedFalse(status).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
                 .map(bookingMapper::toDTO);
@@ -252,6 +258,10 @@ public class BookingService {
     public BookingDTO mapToDTO(Booking booking) {
         BookingDTO bookingDTO = new BookingDTO();
 
+        if(booking == null){
+            return null;
+        }
+
         bookingDTO.setId(booking.getId());
         bookingDTO.setCustomer(accountService.mapToDTO(booking.getCustomer()));
         bookingDTO.setStatus(booking.getStatus());
@@ -288,6 +298,12 @@ public class BookingService {
                 .map(bookingMapper::toDTO);
     }
 
+    public List<BookingDTO> getBookingsBySaleStaffIdAndCustomerId(String saleStaffId, String customerId) {
+        return bookingRepository.findBySaleStaffIdAndCustomerIdAndIsDeletedFalse(saleStaffId, customerId)
+                .stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
 
 }
