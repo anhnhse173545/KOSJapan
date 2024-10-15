@@ -14,7 +14,7 @@ function PaymentPage() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/trip/AC0007/get-all-trips-of-customer'); // Sử dụng bookingId cố định
+        const response = await fetch('http://localhost:8080/api/booking/customer/AC0007'); // Sử dụng bookingId cố định
         if (!response.ok) {
           throw new Error('Failed to fetch payments');
         }
@@ -61,7 +61,7 @@ function PaymentPage() {
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Request', 'Pending Quota', 'On-Going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Requested', 'Pending Quota', 'On-Going', 'Completed', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -79,13 +79,13 @@ function PaymentPage() {
           {!loading && !error && filteredPayments.length === 0 && <p>No payments found.</p>} {/* No payments message */}
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
-              <img src={koi.img} alt={koi.farm} className="koi-image" />
+              
               <div className="payment-details">
-                <h3>{koi.id}</h3>
+                <h3>Booking Id :{koi.id}</h3>
                 <p>{koi.startDate}</p>
-                {koi.quantity && <p>Quantity: {koi.quantity}</p>}
+                <p>Create At : {koi.createAt}</p>
                 <p className="status">{koi.status}</p>
-                <p className="price">{koi.price}</p>
+                <img src={"https://a1.cdn.japantravel.com/photo/12865-215185/1440x960!/tokyo-tokyo-prefecture-215185.jpg"} alt="Koi Image" style={{ width: "200px", height: "auto" }} />
 
                 <div className="button-group">
                   <button

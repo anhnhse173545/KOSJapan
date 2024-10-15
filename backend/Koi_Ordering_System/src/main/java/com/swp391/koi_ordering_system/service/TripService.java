@@ -145,6 +145,9 @@ public class TripService {
 
     public TripDTO mapToDTO(Trip trip) {
         TripDTO tripDTO = new TripDTO();
+        if(trip == null){
+            return null;
+        }
         tripDTO.setId(trip.getId());
         tripDTO.setStartDate(trip.getStartDate());
         tripDTO.setEndDate(trip.getEndDate());
@@ -152,6 +155,7 @@ public class TripService {
         tripDTO.setDescription(trip.getDescription());
         tripDTO.setPrice(trip.getPrice());
         tripDTO.setStatus(trip.getStatus());
+        
 
         Set<TripDestination> tripDestinations = trip.getTripDestinations();
         Set<TripDestinationDTO> tripDestinationDTOSet = new HashSet<>();
