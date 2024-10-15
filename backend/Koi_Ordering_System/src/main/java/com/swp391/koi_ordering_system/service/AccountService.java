@@ -93,7 +93,9 @@ public class AccountService {
 
     public AccountDTO mapToDTO(Account account) {
         AccountDTO accountDTO = new AccountDTO();
-
+        if (account == null) {
+            return null;
+        }
         accountDTO.setId(account.getId());
         accountDTO.setName(account.getName());
         accountDTO.setEmail(account.getEmail());

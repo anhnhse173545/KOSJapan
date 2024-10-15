@@ -73,6 +73,10 @@ public class FishService {
     public FishDTO mapToDTO(Fish fish){
         FishDTO fishDTO = new FishDTO();
 
+        if(fish == null){
+            return null;
+        }
+
         fishDTO.setFish_id(fish.getId());
         fishDTO.setFish_variety_name(fish.getVariety().getName());
         fishDTO.setWeight(fish.getWeight());

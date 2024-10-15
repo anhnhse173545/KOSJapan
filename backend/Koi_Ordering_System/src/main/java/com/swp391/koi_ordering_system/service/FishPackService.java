@@ -164,6 +164,11 @@ public class FishPackService {
 
     public List<FishDTO> mapToListDTO(List<Fish> fishList) {
         List<FishDTO> fishDTOList = new ArrayList<>();
+
+        if(fishList == null){
+            return null;
+        }
+
         for (Fish fish : fishList) {
             FishDTO fishDTO = new FishDTO();
 

@@ -1,12 +1,17 @@
 import { Button, Form, Input, Upload, DatePicker } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios"; 
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
 
 const { TextArea } = Input;
+
+// Hàm tạo bookingId ngẫu nhiên
+const generateRandomBookingId = () => {
+  const randomNum = Math.floor(100 + Math.random() * 900); // Tạo số ngẫu nhiên có 3 chữ số
+  return `TR${randomNum}`; // Tạo chuỗi bookingId với định dạng BO+3 số
+};
 
 const CombinedKoiRequestForm = () => {
   const [form] = Form.useForm(); 
@@ -15,13 +20,19 @@ const CombinedKoiRequestForm = () => {
   // Hàm gọi API lấy thông tin của booking với ID AC0007
   const fetchBookingInfo = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/accounts/AC0007/detail");
-      if (response.status === 200) {
-        const cusData = response.data;
+      const response = await fetch("http://localhost:8080/accounts/AC0007/detail", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const cusData = await response.json();
         // Điền giá trị vào form từ dữ liệu API
         form.setFieldsValue({
           name: cusData.name,
-          phone: cusData.phone , // Nếu phone là null thì gán thành chuỗi rỗng
+          phone: cusData.phone || '', // Nếu phone là null thì gán thành chuỗi rỗng
           email: cusData.email,
         });
       } else {
@@ -39,35 +50,39 @@ const CombinedKoiRequestForm = () => {
 
   const handleFormSubmit = async (values) => {
     try {
+      const id = generateRandomBookingId(); // Tạo bookingId ngẫu nhiên
+
       const data = {
+        id, 
         name: form.getFieldValue("name") || '',
         phone: form.getFieldValue("phone") || '',
         email: form.getFieldValue("email") || '',
         description: values.description || '',
         departureAirport: values.departureAirport || '',
-        startDate: values.startDate ? values.startDate : null, 
-        endDate: values.endDate ? values.endDate : null, 
-        status : 'Request',  
-
+        startDate: values.startDate ? values.startDate : null,
+        endDate: values.endDate ? values.endDate : null,
+        status: 'Request',
+        
         price: 0, 
       };
-  
-      const response = await axios.post("http://localhost:8080/api/booking/AC0007/create", data, {
-        headers: { "Content-Type": "application/json" },
+
+      const response = await fetch("http://localhost:8080/api/booking/AC0007/create", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
-  
+
       if (response.status === 201) {
         toast.success("Yêu cầu của bạn đã được gửi thành công!");
         navigate("/");
       } else {
-        toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+        const errorData = await response.json();
+        toast.error(errorData.error || "Đã xảy ra lỗi. Vui lòng thử lại.");
       }
     } catch (error) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error);
-      } else {
-        toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
-      }
+      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
   
@@ -131,17 +146,6 @@ const CombinedKoiRequestForm = () => {
         >
           <DatePicker placeholder="Select the end date" />
         </Form.Item>
-
-        <Form.Item label="Upload Images (Optional)">
-          <Upload
-            name="images"
-            listType="picture"
-            beforeUpload={() => false} // Để ngăn chặn upload tự động
-            multiple
-          >
-            <Button icon={<UploadOutlined />}>Select Files</Button>
-          </Upload>
-        </Form.Item> 
 
         <Form.Item>
           <Button type="primary" htmlType="submit">

@@ -121,6 +121,10 @@ public class FishOrderDetailService {
     public FishOrderDetailDTO mapToDTO(FishOrderDetail fishOrderDetail) {
         FishOrderDetailDTO fishOrderDetailDTO = new FishOrderDetailDTO();
 
+        if (fishOrderDetail == null) {
+            return null;
+        }
+
         fishOrderDetailDTO.setId(fishOrderDetail.getId());
         fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
         fishOrderDetailDTO.setFish_price(fishOrderDetail.getPrice());
@@ -132,6 +136,9 @@ public class FishOrderDetailService {
 
     public List<FishOrderDetailDTO> mapToListDTO(List<FishOrderDetail> fishOrderDetails) {
         List<FishOrderDetailDTO> fishOrderDetailDTOList = new ArrayList<>();
+        if(fishOrderDetails == null){
+            return null;
+        }
         for (FishOrderDetail fishOrderDetail : fishOrderDetails) {
             FishOrderDetailDTO fishOrderDetailDTO = new FishOrderDetailDTO();
 
