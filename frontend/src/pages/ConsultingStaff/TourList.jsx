@@ -20,32 +20,11 @@ const TourList = () => {
         setTourData(
           data.map((item, index) => ({
             key: index + 1,
-            customer: item.customer, // Assuming API returns this field
-            startDate: item.startDate,
-            endDate: item.endDate,
-            status: item.status,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error("Error fetching tour data:", error);
-        message.error("Failed to load data from the server.");
-      });
-  }, []);
-
-  // Automatically cancel tours if start date has passed and status is still "Not Check In"
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/booking/consulting-staff/AC0004")
-      .then((response) => {
-        const data = response.data;
-        setTourData(
-          data.map((item, index) => ({
-            key: index + 1, // Generate unique key
-            customer: item.customer.name, // Access customer name
-            startDate: item.trip.startDate, // Access start date from trip object
-            endDate: item.trip.endDate, // Access end date from trip object
-            status: item.trip.status, // Access status from trip object
+            bookingId: item.id, // This line is redundant
+            customer: item.customer.name,
+            startDate: item.trip.startDate,
+            endDate: item.trip.endDate,
+            status: item.trip.status,
           }))
         );
       })
@@ -117,31 +96,8 @@ const TourList = () => {
   };
 
   const handleViewDetails = (tour) => {
-    navigate(`/tour-details/${tour.key}`);
+    navigate(`/tour-details/${tour.bookingId}`); // Use bookingId for navigation
   };
-
-  const handleStatusFilter = (value) => {
-    setFilteredStatus(value);
-  };
-
-  const handleSortOrderChange = (order) => {
-    setSortOrder(order);
-  };
-
-  const handleSortByChange = (value) => {
-    setSortBy(value);
-  };
-
-  const filteredData = tourData.filter((tour) => {
-    if (filteredStatus === "All") return true;
-    return tour.status === filteredStatus;
-  });
-
-  const sortedData = [...filteredData].sort((a, b) => {
-    const dateA = moment(a[sortBy]);
-    const dateB = moment(b[sortBy]);
-    return sortOrder === "ascend" ? dateA - dateB : dateB - dateA;
-  });
 
   const columns = [
     { title: "Customer", dataIndex: "customer", key: "customer" },
@@ -176,30 +132,9 @@ const TourList = () => {
       render: (text, record) => (
         <>
           <Button
-            type="primary"
-            disabled={
-              record.status === "Checked In" ||
-              record.status === "Cancelled" ||
-              record.status === "Completed"
-            }
-            onClick={() => handleCheckIn(record.key)}
-            style={{ marginRight: 8 }}
+            type="default"
+            onClick={() => handleViewDetails(record)} // Call handleViewDetails
           >
-            {record.status === "Checked In" ? "Checked In" : "Check In"}
-          </Button>
-          <Button
-            type="danger"
-            disabled={
-              record.status === "Checked In" ||
-              record.status === "Cancelled" ||
-              record.status === "Completed"
-            }
-            onClick={() => handleCancel(record.key)}
-            style={{ marginRight: 8 }}
-          >
-            Cancel
-          </Button>
-          <Button type="default" onClick={() => handleViewDetails(record)}>
             More
           </Button>
         </>
@@ -207,30 +142,20 @@ const TourList = () => {
     },
   ];
 
+  const filteredData = tourData.filter((tour) => {
+    if (filteredStatus === "All") return true;
+    return tour.status === filteredStatus;
+  });
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    const dateA = moment(a[sortBy]);
+    const dateB = moment(b[sortBy]);
+    return sortOrder === "ascend" ? dateA - dateB : dateB - dateA;
+  });
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>Customer Tour List</h1>
-      <div style={{ marginBottom: 16 }}>
-        <Select
-          value={sortBy}
-          onChange={handleSortByChange}
-          style={{ width: 200, marginRight: 16 }}
-          options={[
-            { label: "Sort by Start Date", value: "startDate" },
-            { label: "Sort by End Date", value: "endDate" },
-          ]}
-        />
-
-        <Select
-          value={sortOrder}
-          onChange={handleSortOrderChange}
-          style={{ width: 150 }}
-          options={[
-            { label: "Date Ascending", value: "ascend" },
-            { label: "Date Descending", value: "descend" },
-          ]}
-        />
-      </div>
       <Table columns={columns} dataSource={sortedData} pagination={false} />
     </div>
   );

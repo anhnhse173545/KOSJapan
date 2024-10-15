@@ -3,9 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { Button, message } from "antd";
+import { Button, message, Spin } from "antd";
 
-// Sample trip plan template
 const tripPlanTemplate = `
 Day 1: Tokyo – A Blend of Old and New
   Morning: Tsukiji Market and Toyosu Market
@@ -38,53 +37,108 @@ Day 5: Departure from Narita Airport
 `;
 
 const TourDetails = () => {
-  const { bookingId } = useParams(); // Get bookingId from URL params
-  const [tourData, setTourData] = useState(null); // State to store fetched data
-  const [loading, setLoading] = useState(true); // Loading state
+  const { bookingId } = useParams();
+  const [tourData, setTourData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch tour details from API using bookingId
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/booking/${bookingId}/trip`)
-      .then((response) => {
-        setTourData(response.data); // Set tour data from API response
+    const fetchTourData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/booking/get/${bookingId}`
+        );
+        console.log("API Response:", response.data);
+        setTourData(response.data);
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching tour data:", error);
+        setError(
+          error.message || "An error occurred while fetching tour data."
+        );
         message.error("Failed to load tour details.");
         setLoading(false);
-      });
+      }
+    };
+
+    fetchTourData();
   }, [bookingId]);
 
   const handleExportToPDF = () => {
-    if (!tourData) return;
+    if (!tourData) {
+      message.error("No tour data available to export.");
+      return;
+    }
 
-    const doc = new jsPDF();
-    doc.text("Tour Details", 20, 10);
+    try {
+      const doc = new jsPDF();
+      doc.text("Tour Details", 20, 10);
 
-    doc.autoTable({
-      head: [["Customer", "Start Date", "End Date", "Status"]],
-      body: [
-        [
-          tourData.booking.customer.name, // Customer name from API
-          tourData.startDate.split("T")[0], // Format start date
-          tourData.endDate.split("T")[0], // Format end date
-          tourData.status, // Status from API
+      doc.autoTable({
+        head: [["Customer", "Start Date", "End Date", "Status"]],
+        body: [
+          [
+            tourData.customer?.name || "N/A",
+            tourData.trip?.startDate?.split("T")[0] || "N/A",
+            tourData.trip?.endDate?.split("T")[0] || "N/A",
+            tourData.status || "N/A",
+          ],
         ],
-      ],
-    });
+      });
 
-    doc.text("Trip Plan", 20, 50);
-    doc.autoTable({
-      body: tripPlanTemplate.split("\n").map((line) => [line.trim()]), // Split and format trip plan
-    });
+      doc.text("Trip Destinations", 20, 50);
+      const tripDestinations =
+        tourData.trip?.tripDestinations?.map((dest) => [
+          dest.farm?.name || "N/A",
+          dest.farm?.address || "N/A",
+          dest.farm?.phoneNumber || "N/A",
+          dest.farm?.varieties?.map((variety) => variety.name).join(", ") ||
+            "N/A",
+        ]) || [];
+      doc.autoTable({
+        head: [["Farm Name", "Address", "Phone", "Varieties"]],
+        body: tripDestinations,
+      });
 
-    doc.save(`${tourData.booking.customer.name}_tour_details.pdf`);
+      doc.text("Fish Orders", 20, doc.lastAutoTable.finalY + 10);
+      tourData.fishOrders?.forEach((order) => {
+        doc.text(
+          `Farm: ${order.farmId || "N/A"}`,
+          20,
+          doc.lastAutoTable.finalY + 20
+        );
+        doc.autoTable({
+          head: [["Fish Variety", "Length (cm)", "Weight (kg)", "Description"]],
+          body:
+            order.fishOrderDetails?.map((detail) => [
+              detail.fish?.variety?.name || "N/A",
+              detail.fish?.length || "N/A",
+              detail.fish?.weight || "N/A",
+              detail.fish?.description || "N/A",
+            ]) || [],
+          startY: doc.lastAutoTable.finalY + 30,
+        });
+      });
+
+      doc.text("Trip Plan", 20, doc.lastAutoTable.finalY + 30);
+      doc.autoTable({
+        body: tripPlanTemplate.split("\n").map((line) => [line.trim()]),
+      });
+
+      doc.save(`${tourData.customer?.name || "Tour"}_details.pdf`);
+      message.success("PDF exported successfully.");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      message.error("Failed to export PDF.");
+    }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spin size="large" />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   if (!tourData) {
@@ -95,19 +149,53 @@ const TourDetails = () => {
     <div style={{ padding: "20px" }}>
       <h1>Tour Details</h1>
       <p>
-        <strong>Customer:</strong> {tourData.booking.customer.name}
+        <strong>Customer:</strong> {tourData.customer?.name || "N/A"}
       </p>
       <p>
-        <strong>Start Date:</strong> {tourData.startDate.split("T")[0]}
+        <strong>Start Date:</strong>{" "}
+        {tourData.trip?.startDate?.split("T")[0] || "N/A"}
       </p>
       <p>
-        <strong>End Date:</strong> {tourData.endDate.split("T")[0]}
+        <strong>End Date:</strong>{" "}
+        {tourData.trip?.endDate?.split("T")[0] || "N/A"}
       </p>
       <p>
-        <strong>Status:</strong> {tourData.status}
+        <strong>Status:</strong> {tourData.status || "N/A"}
       </p>
+
+      <h2>Trip Destinations</h2>
+      {tourData.trip?.tripDestinations?.map((dest, index) => (
+        <div key={index}>
+          <h3>Farm: {dest.farm?.name || "N/A"}</h3>
+          <p>Address: {dest.farm?.address || "N/A"}</p>
+          <p>Phone: {dest.farm?.phoneNumber || "N/A"}</p>
+          <p>
+            Varieties:{" "}
+            {dest.farm?.varieties?.map((v) => v.name).join(", ") || "N/A"}
+          </p>
+        </div>
+      ))}
+
+      <h2>Fish Orders</h2>
+      {tourData.fishOrders?.map((order, index) => (
+        <div key={index}>
+          <h3>Farm ID: {order.farmId || "N/A"}</h3>
+          <ul>
+            {order.fishOrderDetails?.map((detail, detailIndex) => (
+              <li key={detailIndex}>
+                {detail.fish?.variety?.name || "N/A"} - Length:{" "}
+                {detail.fish?.length || "N/A"}cm, Weight:{" "}
+                {detail.fish?.weight || "N/A"}kg, Description:{" "}
+                {detail.fish?.description || "N/A"}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
       <h3>Trip Plan</h3>
-      <pre>{tripPlanTemplate}</pre> {/* Displaying the trip plan */}
+      <pre>{tripPlanTemplate}</pre>
+
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF
       </Button>
