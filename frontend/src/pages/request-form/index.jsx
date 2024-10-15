@@ -1,76 +1,114 @@
-
 import { Button, Form, Input, Upload, DatePicker } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios"; // Import axios
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
 
 const { TextArea } = Input;
 
+// Hàm tạo bookingId ngẫu nhiên
+const generateRandomBookingId = () => {
+  const randomNum = Math.floor(100 + Math.random() * 900); // Tạo số ngẫu nhiên có 3 chữ số
+  return `TR${randomNum}`; // Tạo chuỗi bookingId với định dạng BO+3 số
+};
+
 const CombinedKoiRequestForm = () => {
-  const [form] = Form.useForm(); // Ant Design form instance
+  const [form] = Form.useForm(); 
   const navigate = useNavigate();
 
+  // Hàm gọi API lấy thông tin của booking với ID AC0007
+  const fetchBookingInfo = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/accounts/AC0007/detail", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const cusData = await response.json();
+        // Điền giá trị vào form từ dữ liệu API
+        form.setFieldsValue({
+          name: cusData.name,
+          phone: cusData.phone || '', // Nếu phone là null thì gán thành chuỗi rỗng
+          email: cusData.email,
+        });
+      } else {
+        toast.error("Không thể tải dữ liệu booking.");
+      }
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi tải dữ liệu.");
+    }
+  };
+
+  // Gọi API khi component được tải
+  useEffect(() => {
+    fetchBookingInfo();
+  }, []); // Chỉ chạy khi component được mount
 
   const handleFormSubmit = async (values) => {
     try {
-      const formData = new FormData();
+      const id = generateRandomBookingId(); // Tạo bookingId ngẫu nhiên
+
       const data = {
-        name: values.name,
-        phone: values.phone,
-        email: values.email,
-        description: values.description,
-        startDate: values.startDate.format("YYYY-MM-DD"), 
-        endDate: values.endDate.format("YYYY-MM-DD"),     
-    };
-    
-    // Duyệt qua từng thuộc tính của đối tượng và thêm vào FormData
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
+        id, 
+        name: form.getFieldValue("name") || '',
+        phone: form.getFieldValue("phone") || '',
+        email: form.getFieldValue("email") || '',
+        description: values.description || '',
+        departureAirport: values.departureAirport || '',
+        startDate: values.startDate ? values.startDate : null,
+        endDate: values.endDate ? values.endDate : null,
+        status: 'Request',
+        
+        price: 0, 
+      };
 
-      // Thêm ảnh vào formData (nếu có)
-      if (values.images) {
-        values.images.fileList.forEach((file) => {
-          formData.append("images", file.originFileObj);
-        });
-      }
-
-      // Gửi dữ liệu đến backend bằng axios
-      const response = await axios.post("http://localhost:8080/api/booking/create", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("http://localhost:8080/api/booking/AC0007/create", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
       if (response.status === 201) {
         toast.success("Yêu cầu của bạn đã được gửi thành công!");
-        navigate("/ ");
+        navigate("/");
       } else {
-        toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+        const errorData = await response.json();
+        toast.error(errorData.error || "Đã xảy ra lỗi. Vui lòng thử lại.");
       }
     } catch (error) {
-      // Xử lý lỗi khi gửi yêu cầu
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error);
-      } else {
-        toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
-      }
+      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
-
+  
   return (
     <AuthenLayout>
       <h2>Request A Trip To Koi Farm</h2>
 
-      {/* Main Form */}
       <Form
         form={form}
         labelCol={{ span: 24 }}
         onFinish={handleFormSubmit}
         layout="vertical"
       >
+        {/* Các trường không hiển thị */}
+        <Form.Item name="name" hidden>
+          <Input />
+        </Form.Item>
+        
+        <Form.Item name="phone" hidden>
+          <Input />
+        </Form.Item>
 
-        {/* Desired Trip Description */}
+        <Form.Item name="email" hidden>
+          <Input />
+        </Form.Item>
+
         <Form.Item
           label="Desired Trip and Koi"
           name="description"
@@ -82,8 +120,17 @@ const CombinedKoiRequestForm = () => {
           />
         </Form.Item>
 
+        <Form.Item
+          label="Desired departureAirport"
+          name="departureAirport"
+          rules={[{ required: true, message: "Please provide a departureAirport" }]}
+        >
+          <TextArea
+            placeholder="Describe the departureAirport you're looking for"
+            rows={4}
+          />
+        </Form.Item>
 
-        {/* Desired Trip Start Date */}
         <Form.Item
           label="Desired Trip Start Date"
           name="startDate"
@@ -92,7 +139,6 @@ const CombinedKoiRequestForm = () => {
           <DatePicker placeholder="Select the start date" />
         </Form.Item>
 
-        {/* Desired Trip End Date */}
         <Form.Item
           label="Desired Trip End Date"
           name="endDate"
@@ -101,19 +147,6 @@ const CombinedKoiRequestForm = () => {
           <DatePicker placeholder="Select the end date" />
         </Form.Item>
 
-        
-       <Form.Item label="Upload Images (Optional)">
-          <Upload
-            name="images"
-            listType="picture"
-            action="/upload" // Thay bằng API upload thực tế của bạn nếu có
-            multiple
-          >
-            <Button icon={<UploadOutlined />}>Select Files</Button>
-          </Upload>
-        </Form.Item> 
-
-        {/* Submit Button */}
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Submit Request

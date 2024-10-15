@@ -26,7 +26,7 @@ const CustomerRequest = () => {
   // Fetch customer requests from API
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/booking/list")
+      .get("http://localhost:8080/api/booking/sale-staff/AC0002") // Fetch from correct API
       .then((response) => {
         setCustomers(response.data); // Set the fetched data
       })
@@ -40,7 +40,8 @@ const CustomerRequest = () => {
   const openEditModal = (customer) => {
     setEditingCustomer(customer);
     form.setFieldsValue({
-      ...customer,
+      name: customer.customer.name,
+      email: customer.customer.email,
       startDate: moment(customer.trip.startDate),
       endDate: moment(customer.trip.endDate),
       tripDetails: customer.description, // Use customer.description here
@@ -57,7 +58,6 @@ const CustomerRequest = () => {
           ...editingCustomer,
           customer: {
             ...editingCustomer.customer,
-            phone: values.phone,
             email: values.email,
             description: values.tripDetails, // Use this to update the customer description
           },
@@ -110,13 +110,8 @@ const CustomerRequest = () => {
       key: "customerName",
     },
     {
-      title: "Phone",
-      dataIndex: ["customer", "phone"], // Adjust this field according to the data structure
-      key: "phone",
-    },
-    {
       title: "Email",
-      dataIndex: ["customer", "email"], // Added email
+      dataIndex: ["customer", "email"], // Email field
       key: "email",
     },
     {
@@ -138,14 +133,20 @@ const CustomerRequest = () => {
     },
     {
       title: "Description",
-      dataIndex: ["description"], // Changed to use the correct description field
+      dataIndex: "description", // Changed to use the correct description field
       key: "description",
+    },
+    {
+      title: "Status", // New Status column
+      dataIndex: "status", // Status from API data
+      key: "status",
+      render: (status) => status || "Requested", // Default to 'Requested' if not provided
     },
     {
       title: "Actions",
       key: "actions",
       render: (text, record) => {
-        const status = record.status || "Requested"; // Add a status field as per the requirement
+        const status = record.status || "Requested"; // Use status field from API
         return (
           <>
             {status === "Requested" ? (
@@ -206,34 +207,11 @@ const CustomerRequest = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="phone"
-            label="Phone"
-            rules={[
-              { required: true, message: "Please enter the phone number!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
             name="email"
             label="Email"
             rules={[{ required: true, message: "Please enter the email!" }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="koiType"
-            label="Koi Type"
-            rules={[{ required: true, message: "Please select the Koi type!" }]}
-          >
-            <Select>{/* Add koi types here */}</Select>
-          </Form.Item>
-          <Form.Item
-            name="farm"
-            label="Koi Farm"
-            rules={[{ required: true, message: "Please select a farm!" }]}
-          >
-            <Select>{/* Add farm names here */}</Select>
           </Form.Item>
           <Form.Item
             name="startDate"

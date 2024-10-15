@@ -1,6 +1,6 @@
 // Footer.jsx
 import React from 'react';
-import './index.scss'; // Ensure to import your SCSS file
+import './footer.scss'; // Ensure to import your SCSS file
 
 const Footer = () => {
   return (
@@ -43,10 +43,10 @@ const Footer = () => {
         <p>&copy; 2023 KoiFish. All rights reserved.</p>
         <p>Terms and Conditions | Privacy Policy | Refund Policy</p>
         <div className="payment-methods">
-          <img src="path_to_payment_image_1" alt="Payment Method" />
-          <img src="path_to_payment_image_2" alt="Payment Method" />
-          <img src="path_to_payment_image_3" alt="Payment Method" />
-          <img src="path_to_payment_image_4" alt="Payment Method" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefI6pAZDTEXZqfmgJTghDkO1wpT39ZsuR8A&s" alt="Payment Method" />
+          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
+          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
+          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
         </div>
       </div>
     </footer>

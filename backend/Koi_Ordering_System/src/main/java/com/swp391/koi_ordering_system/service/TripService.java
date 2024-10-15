@@ -155,6 +155,7 @@ public class TripService {
         tripDTO.setDescription(trip.getDescription());
         tripDTO.setPrice(trip.getPrice());
         tripDTO.setStatus(trip.getStatus());
+        
 
         Set<TripDestination> tripDestinations = trip.getTripDestinations();
         Set<TripDestinationDTO> tripDestinationDTOSet = new HashSet<>();

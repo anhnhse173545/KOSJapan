@@ -14,7 +14,7 @@ function PaymentDetailsPage() {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`); // Replace with your API URL
+        const response = await fetch(`http://localhost:8080/api/booking/get/${id}`); 
         if (!response.ok) {
           throw new Error('Failed to fetch payment details');
         }
@@ -53,9 +53,8 @@ function PaymentDetailsPage() {
         <p><strong>Name:</strong> {paymentDetails.customer.name}</p>
         <p><strong>Email:</strong> {paymentDetails.customer.email}</p>
         <p><strong>Phone:</strong> {paymentDetails.customer.phone}</p>
-        <p><strong>Description:</strong> {paymentDetails.customer.description}</p>
-        <p><strong>Start Date:</strong> {paymentDetails.startDate}</p>
-        <p><strong>End Date:</strong> {paymentDetails.endDate}</p>
+        <p><strong>Description:</strong> {paymentDetails.description}</p>
+        <p><strong>Create At:</strong> {paymentDetails.createAt}</p>
         <p><strong>Status:</strong> {paymentDetails.status}</p>
         
       </div>
