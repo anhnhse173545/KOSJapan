@@ -58,6 +58,16 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> getBookingsByCustomerId(@PathVariable String status) {
+        List<BookingDTO> bookings = bookingService.getb(customerId);
+        if (bookings.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(bookings);
+    }
+
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable String id) {
         Optional<BookingDTO> booking = bookingService.getBookingById(id);
