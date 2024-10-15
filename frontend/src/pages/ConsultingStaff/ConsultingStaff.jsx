@@ -112,11 +112,8 @@ const ConsultingStaff = () => {
             <Route path="/OrderList" element={<OrderList />} />
             <Route path="/koi-details" element={<KoiDetails />} />
             <Route path="/add-koi" element={<AddKoi />} />
-            <Route
-              path="/tour-details/:tourId"
-              element={<TourDetails />}
-            />{" "}
-            {/* New Route for Tour Details */}
+            <Route path="/tour-details/:bookingId" element={<TourDetails />} />
+            /> {/* New Route for Tour Details */}
           </Routes>
         </Content>
       </Layout>

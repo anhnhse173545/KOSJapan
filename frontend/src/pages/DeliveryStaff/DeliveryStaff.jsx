@@ -10,7 +10,7 @@ import {
 import { Avatar, Button, Layout, Menu, theme } from "antd";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import DeliveryStaffHome from "./DeliveryStaffHome";
-import OrderList from "./OrderList";
+import DeliveryOrderList from "./DeliveryOrderList";
 import TrackingOrder from "./TrackingOrder";
 
 const { Header, Sider, Content } = Layout;
@@ -63,7 +63,7 @@ const DeliveryStaff = () => {
             {
               key: "2",
               icon: <UnorderedListOutlined />,
-              label: <Link to="/OrderList">Order List</Link>,
+              label: <Link to="/DeliveryOrderList">Order List</Link>,
             },
             {
               key: "3",
@@ -106,8 +106,9 @@ const DeliveryStaff = () => {
               path="/"
               element={<DeliveryStaffHome userName={userName} />}
             />
-            <Route path="/OrderList" element={<OrderList />} />
+            <Route path="/DeliveryOrderList" element={<DeliveryOrderList />} />
             <Route path="/TrackingOrder/:orderId" element={<TrackingOrder />} />
+            <></>
           </Routes>
         </Content>
       </Layout>

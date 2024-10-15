@@ -3,7 +3,7 @@ import { Table, Button, Tag, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const OrderList = () => {
+const DeliveryOrderList = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,4 +110,4 @@ const OrderList = () => {
   );
 };
 
-export default OrderList;
+export default DeliveryOrderList;
