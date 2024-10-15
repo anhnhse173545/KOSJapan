@@ -93,6 +93,9 @@ public class TripDestinationService {
 
     public TripDestinationDTO mapToDTO(TripDestination tripDestination) {
         TripDestinationDTO tripDestinationDTO = new TripDestinationDTO();
+        if(tripDestinationDTO == null){
+            return null;
+        }
         tripDestinationDTO.setId(tripDestination.getId());
         tripDestinationDTO.setDescription(tripDestination.getDescription());
         tripDestinationDTO.setVisitDate(tripDestination.getVisitDate());

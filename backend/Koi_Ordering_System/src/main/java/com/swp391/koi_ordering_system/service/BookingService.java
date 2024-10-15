@@ -252,6 +252,10 @@ public class BookingService {
     public BookingDTO mapToDTO(Booking booking) {
         BookingDTO bookingDTO = new BookingDTO();
 
+        if(booking == null){
+            return null;
+        }
+
         bookingDTO.setId(booking.getId());
         bookingDTO.setCustomer(accountService.mapToDTO(booking.getCustomer()));
         bookingDTO.setStatus(booking.getStatus());

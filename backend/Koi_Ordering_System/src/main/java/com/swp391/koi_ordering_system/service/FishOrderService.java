@@ -217,6 +217,9 @@ public class FishOrderService {
 
     public List<FishOrderDTO> mapToDTO(List<FishOrder> fishOrders) {
         List<FishOrderDTO> dtos = new ArrayList<>();
+        if(fishOrders == null){
+            return null;
+        }
         for (FishOrder fishOrder : fishOrders) {
             List<FishOrderDetail> findFOD = FODRepository.findByFishOrderId(fishOrder.getId());
             List<FishPackOrderDetail> findFPOD = FPODRepository.findFishPackOrderDetailsByFishOrderId(fishOrder.getId());

@@ -61,6 +61,9 @@ public class VarietyService {
 
     public VarietyDTO mapToDTO(Variety variety) {
         VarietyDTO varietyDTO = new VarietyDTO();
+        if(variety == null){
+            return null;
+        }
         varietyDTO.setId(variety.getId());
         varietyDTO.setName(variety.getName());
         varietyDTO.setDescription(variety.getDescription());

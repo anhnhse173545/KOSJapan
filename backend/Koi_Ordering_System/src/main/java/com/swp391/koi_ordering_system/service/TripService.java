@@ -145,6 +145,9 @@ public class TripService {
 
     public TripDTO mapToDTO(Trip trip) {
         TripDTO tripDTO = new TripDTO();
+        if(trip == null){
+            return null;
+        }
         tripDTO.setId(trip.getId());
         tripDTO.setStartDate(trip.getStartDate());
         tripDTO.setEndDate(trip.getEndDate());
