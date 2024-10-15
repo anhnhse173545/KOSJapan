@@ -14,6 +14,7 @@ import com.swp391.koi_ordering_system.service.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/customer/{customerId}")
+    @GetMapping("/customer/{status}")
     public ResponseEntity<?> getBookingsByStatus(@PathVariable String status) {
         List<BookingDTO> bookings = bookingService.getBookingsByStatus(status);
         if (bookings.isEmpty()) {
