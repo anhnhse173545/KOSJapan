@@ -36,9 +36,10 @@ const CustomerRequest = () => {
       });
   }, []);
 
+  // Handle save and update the customer data via API
   // Open modal to edit customer
   const openEditModal = (customer) => {
-    setEditingCustomer(customer);
+    setEditingCustomer(customer); // Store the original data
     form.setFieldsValue({
       name: customer.customer.name,
       email: customer.customer.email,
@@ -54,34 +55,81 @@ const CustomerRequest = () => {
     form
       .validateFields()
       .then((values) => {
-        const updatedCustomer = {
-          ...editingCustomer,
-          customer: {
-            ...editingCustomer.customer,
-            email: values.email,
-            description: values.tripDetails, // Use this to update the customer description
-          },
-          trip: {
-            ...editingCustomer.trip,
-            startDate: values.startDate.format("YYYY-MM-DD"),
-            endDate: values.endDate.format("YYYY-MM-DD"),
-          },
-        };
+        const fieldsToUpdate = {};
 
-        // Send the updated customer data to the API using the trip id
+        // Compare new values with original customer data
+        if (values.name !== editingCustomer.customer.name) {
+          fieldsToUpdate["customer.name"] = values.name;
+        }
+        if (values.email !== editingCustomer.customer.email) {
+          fieldsToUpdate["customer.email"] = values.email;
+        }
+        if (values.tripDetails !== editingCustomer.description) {
+          fieldsToUpdate["description"] = values.tripDetails;
+        }
+        if (
+          values.startDate &&
+          values.startDate.format("YYYY-MM-DD") !==
+            moment(editingCustomer.trip.startDate).format("YYYY-MM-DD")
+        ) {
+          fieldsToUpdate["trip.startDate"] =
+            values.startDate.format("YYYY-MM-DD");
+        }
+        if (
+          values.endDate &&
+          values.endDate.format("YYYY-MM-DD") !==
+            moment(editingCustomer.trip.endDate).format("YYYY-MM-DD")
+        ) {
+          fieldsToUpdate["trip.endDate"] = values.endDate.format("YYYY-MM-DD");
+        }
+
+        if (Object.keys(fieldsToUpdate).length === 0) {
+          message.info("No changes detected.");
+          return; // Do not proceed if no fields were changed
+        }
+
+        console.log("Fields to update:", fieldsToUpdate); // Log the fields to be updated
+
+        // Send only the updated fields in the payload
         axios
           .put(
-            `http://localhost:8080/api/booking/update/${editingCustomer.trip.id}`, // Update using trip.id
-            updatedCustomer
+            `http://localhost:8080/api/trip/update/${editingCustomer.trip.id}`,
+            fieldsToUpdate
           )
-          .then(() => {
-            setCustomers((prev) =>
-              prev.map((customer) =>
+          .then((response) => {
+            console.log("API response:", response.data); // Log the API response
+
+            // Update local state with the modified data
+            setCustomers((prevCustomers) =>
+              prevCustomers.map((customer) =>
                 customer.trip.id === editingCustomer.trip.id
-                  ? updatedCustomer
+                  ? {
+                      ...customer,
+                      customer: {
+                        ...customer.customer,
+                        ...(fieldsToUpdate["customer.name"]
+                          ? { name: fieldsToUpdate["customer.name"] }
+                          : {}),
+                        ...(fieldsToUpdate["customer.email"]
+                          ? { email: fieldsToUpdate["customer.email"] }
+                          : {}),
+                      },
+                      description:
+                        fieldsToUpdate["description"] || customer.description,
+                      trip: {
+                        ...customer.trip,
+                        ...(fieldsToUpdate["trip.startDate"]
+                          ? { startDate: fieldsToUpdate["trip.startDate"] }
+                          : {}),
+                        ...(fieldsToUpdate["trip.endDate"]
+                          ? { endDate: fieldsToUpdate["trip.endDate"] }
+                          : {}),
+                      },
+                    }
                   : customer
               )
             );
+
             setIsModalVisible(false);
             message.success("Customer details updated successfully!");
           })
@@ -146,35 +194,29 @@ const CustomerRequest = () => {
       title: "Actions",
       key: "actions",
       render: (text, record) => {
-        const status = record.status || "Requested"; // Use status field from API
         return (
           <>
-            {status === "Requested" ? (
-              <>
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => openEditModal(record)}
-                  style={{ marginRight: 8 }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => handleCreateTripPlan(record)}
-                  style={{ marginRight: 8 }}
-                >
-                  Create Trip Plan
-                </Button>
-              </>
-            ) : (
-              <Button
-                type="primary"
-                onClick={() => handleViewTripPlan(record)}
-                style={{ marginRight: 8 }}
-              >
-                View Trip Plan
-              </Button>
-            )}
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => openEditModal(record)}
+              style={{ marginRight: 8 }}
+            >
+              Edit
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleCreateTripPlan(record)}
+              style={{ marginRight: 8 }}
+            >
+              Create Trip Plan
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => handleViewTripPlan(record)}
+              style={{ marginRight: 8 }}
+            >
+              View Trip Plan
+            </Button>
           </>
         );
       },

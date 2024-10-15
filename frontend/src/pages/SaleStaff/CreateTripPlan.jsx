@@ -1,9 +1,7 @@
-// CreateTripPlan.js
 import React, { useState } from "react";
 import { Form, Input, Button, Select, DatePicker, message } from "antd";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import moment from "moment";
 
 const { Option } = Select;
 
@@ -14,47 +12,44 @@ const CreateTripPlan = () => {
   const { customer } = location.state; // Receive customer data from state
 
   const handleSubmit = (values) => {
-    const tripPlan = {
-      id: values.id || "", // Auto-generate or handle ID elsewhere
-      startDate: values.startDate.toISOString(),
-      endDate: values.endDate.toISOString(),
-      departureAirport: values.departureAirport,
-      description: values.description,
-      price: values.price,
-      status: values.status,
-      tripDestinations: [
-        {
-          id: values.destinationId || "", // Can be auto-generated
-          farm: {
-            id: values.farm,
-            address: values.farmAddress,
-            phoneNumber: values.farmPhoneNumber,
-            name: values.farmName,
-            image: values.farmImage,
-            varieties: [
-              {
-                id: values.varietyId,
-                name: values.varietyName,
-                description: values.varietyDescription,
-              },
-            ],
-          },
-          visitDate: values.visitDate.toISOString(),
-          description: values.destinationDescription,
-        },
-      ],
+    // Constructing the trip destination object based on the provided sample structure
+    const tripDestination = {
+      id: values.destinationId,
+      farm: {
+        id: values.farmId,
+        address: values.farmAddress,
+        phoneNumber: values.farmPhoneNumber,
+        name: values.farmName,
+        image: values.farmImage || null, // Handle optional image
+        varieties: values.varieties.map((variety) => ({
+          id: variety.id,
+          name: variety.name,
+          description: variety.description,
+        })),
+      },
+      visitDate: values.visitDate ? values.visitDate.toISOString() : null,
+      description: values.destinationDescription || null,
     };
 
-    // Send trip plan data to API
+    // Fetch the tripId from the customer or specify how to get it
+    const tripId = customer.trip.id; // Assuming this structure, adjust as needed
+
+    // Send trip destination data to API
     axios
-      .post("http://localhost:8080/api/trip/create", tripPlan)
+      .post(
+        `http://localhost:8080/api/trip-destination/${tripId}/create`,
+        tripDestination
+      )
       .then(() => {
-        message.success("Trip plan created successfully!");
-        navigate("/"); // Redirect back to customer list after creating the trip plan
+        message.success("Trip destination created successfully!");
+        navigate("/"); // Redirect after successful creation
       })
       .catch((error) => {
-        console.error("Failed to create trip plan:", error);
-        message.error("Failed to create trip plan.");
+        console.error(
+          "Failed to create trip destination:",
+          error.response || error
+        );
+        message.error("Failed to create trip destination.");
       });
   };
 
@@ -63,97 +58,123 @@ const CreateTripPlan = () => {
       <h2>Create Trip Plan for {customer.customer.name}</h2>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
-          name="id"
-          label="Trip ID"
-          rules={[{ required: true, message: "Please enter a trip ID!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="departureAirport"
-          label="Departure Airport"
+          name="destinationId"
+          label="Destination ID"
           rules={[
-            { required: true, message: "Please enter the departure airport!" },
+            { required: true, message: "Please enter a destination ID!" },
           ]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          name="startDate"
-          label="Start Date"
-          rules={[{ required: true, message: "Please select a start date!" }]}
+          name="farmId"
+          label="Farm ID"
+          rules={[{ required: true, message: "Please enter a farm ID!" }]}
         >
-          <DatePicker showTime />
+          <Input />
         </Form.Item>
 
         <Form.Item
-          name="endDate"
-          label="End Date"
-          rules={[{ required: true, message: "Please select an end date!" }]}
+          name="farmName"
+          label="Farm Name"
+          rules={[{ required: true, message: "Please enter the farm name!" }]}
         >
-          <DatePicker showTime />
+          <Input />
         </Form.Item>
 
         <Form.Item
-          name="status"
-          label="Status"
-          rules={[{ required: true, message: "Please enter trip status!" }]}
+          name="farmAddress"
+          label="Farm Address"
+          rules={[
+            { required: true, message: "Please enter the farm address!" },
+          ]}
         >
-          <Select>
-            <Option value="planned">Planned</Option>
-            <Option value="completed">Completed</Option>
-            <Option value="cancelled">Cancelled</Option>
-          </Select>
+          <Input />
         </Form.Item>
 
         <Form.Item
-          name="price"
-          label="Price"
-          rules={[{ required: true, message: "Please enter the price!" }]}
+          name="farmPhoneNumber"
+          label="Farm Phone Number"
+          rules={[
+            { required: true, message: "Please enter the farm phone number!" },
+          ]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
-        <h3>Trip Destination Details</h3>
-
-        <Form.Item
-          name="farm"
-          label="Farm"
-          rules={[{ required: true, message: "Please select a farm!" }]}
-        >
-          <Select>
-            <Option value="farm1">Farm 1</Option>
-            <Option value="farm2">Farm 2</Option>
-            <Option value="farm3">Farm 3</Option>
-          </Select>
+        <Form.Item name="farmImage" label="Farm Image URL">
+          <Input />
         </Form.Item>
 
-        <Form.Item
-          name="visitDate"
-          label="Visit Date"
-          rules={[{ required: true, message: "Please select a visit date!" }]}
-        >
+        <h3>Koi Varieties</h3>
+        {/* Dynamic Fields for Varieties */}
+        <Form.List name="varieties">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, fieldKey, instanceKey }) => (
+                <div key={key} style={{ marginBottom: 16 }}>
+                  <Form.Item
+                    label="Variety Name"
+                    name={[name, "name"]}
+                    fieldKey={[fieldKey, "name"]}
+                    rules={[
+                      { required: true, message: "Please enter variety name!" },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Variety ID"
+                    name={[name, "id"]}
+                    fieldKey={[fieldKey, "id"]}
+                    rules={[
+                      { required: true, message: "Please enter variety ID!" },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Variety Description"
+                    name={[name, "description"]}
+                    fieldKey={[fieldKey, "description"]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter variety description!",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea />
+                  </Form.Item>
+                  <Button type="link" onClick={() => remove(name)}>
+                    Remove Variety
+                  </Button>
+                </div>
+              ))}
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block>
+                  Add Variety
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+
+        <Form.Item name="visitDate" label="Visit Date">
           <DatePicker showTime />
         </Form.Item>
 
         <Form.Item
           name="destinationDescription"
           label="Destination Description"
-          rules={[
-            {
-              required: true,
-              message: "Please enter destination description!",
-            },
-          ]}
         >
           <Input.TextArea />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Create Trip Plan
+            Create Trip Destination
           </Button>
         </Form.Item>
       </Form>
