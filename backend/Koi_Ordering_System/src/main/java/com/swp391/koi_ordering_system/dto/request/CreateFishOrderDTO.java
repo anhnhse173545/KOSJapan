@@ -25,5 +25,4 @@ public class CreateFishOrderDTO {
     private LocalDateTime arrive_date;
     private String status;
     private Set<FishPackOrderDetailDTO> fishPackOrderDetails;
-
 }

@@ -59,8 +59,8 @@ public class BookingController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<?> getBookingsByCustomerId(@PathVariable String status) {
-        List<BookingDTO> bookings = bookingService.getb(customerId);
+    public ResponseEntity<?> getBookingsByStatus(@PathVariable String status) {
+        List<BookingDTO> bookings = bookingService.getBookingsByStatus(status);
         if (bookings.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
             return ResponseEntity.status(404).body(errorDTO);
@@ -109,6 +109,7 @@ public class BookingController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
     @GetMapping("/sale-staff")
     public ResponseEntity<List<BookingDTO>> getBookingsByStatusRequestedPendingApproved() {
         List<BookingDTO> bookings = bookingService.getBookingsByStatusForSaleStaff();
@@ -133,6 +134,7 @@ public class BookingController {
         }
     }
 
+    @PreAuthorize("hasRole('Sale_Staff') or hasRole('Manager')")
     @GetMapping("/sale-staff/{saleStaffId}")
     public ResponseEntity<?> getBookingsBySaleStaffId(@PathVariable String saleStaffId) {
         List<BookingDTO> bookings = bookingService.getBookingsBySaleStaffId(saleStaffId);

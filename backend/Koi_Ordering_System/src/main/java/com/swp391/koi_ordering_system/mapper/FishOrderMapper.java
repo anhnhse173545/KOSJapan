@@ -12,6 +12,7 @@ public interface FishOrderMapper {
     //@Mapping(source = "fishPackOrderDetails", target = "fishPackOrderDetails")
     @Mapping(source = "booking.id", target = "bookingId")
     @Mapping(source = "farm.id", target = "farmId")
+    @Mapping(source = "paymentStatus", target = "paymentStatus")
     FishOrderDTO toDTO(FishOrder fishOrder);
 
     FishOrder toEntity(FishOrderDTO fishOrderDTO);
