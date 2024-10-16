@@ -3,6 +3,7 @@ package com.swp391.koi_ordering_system.controller;
 import com.swp391.koi_ordering_system.dto.request.CreateTripDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateTripDTO;
 import com.swp391.koi_ordering_system.dto.response.BookingDTO;
+import com.swp391.koi_ordering_system.dto.response.ErrorDTO;
 import com.swp391.koi_ordering_system.dto.response.TripDTO;
 import com.swp391.koi_ordering_system.dto.response.TripWithCustomerAndSaleStaffDTO;
 import com.swp391.koi_ordering_system.mapper.TripMapper;
@@ -13,6 +14,7 @@ import com.swp391.koi_ordering_system.service.TripService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -47,6 +49,16 @@ public class TripController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(trip);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<?> getTripsByStatus(@PathVariable String status) {
+        List<TripDTO> trips = tripService.getTripsByStatus(status);
+        if (trips.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Trip not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(trips);
     }
 
     @GetMapping("/get/{id}/customer-sale")
