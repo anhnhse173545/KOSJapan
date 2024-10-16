@@ -42,6 +42,6 @@ public class FishOrderDetail {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
 }

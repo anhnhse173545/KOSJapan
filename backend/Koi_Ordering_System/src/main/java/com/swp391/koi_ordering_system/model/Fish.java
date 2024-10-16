@@ -19,7 +19,6 @@ import java.util.Set;
 public class Fish {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @ManyToOne
@@ -37,7 +36,7 @@ public class Fish {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fish_pack_id", nullable = true)

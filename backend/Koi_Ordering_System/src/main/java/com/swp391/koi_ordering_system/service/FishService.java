@@ -28,7 +28,7 @@ public class FishService {
                 .collect(Collectors.toList());
     }
 
-    public Fish createFish(Fish fish, String varietyId){
+    public Fish createFish(CreateFishDTO fish, String varietyId){
         Fish newFish = new Fish();
         newFish.setId(generateFishId());
         Variety variety = varietyRepository.findById(varietyId).get();
@@ -39,7 +39,6 @@ public class FishService {
         newFish.setLength(fish.getLength());
         newFish.setWeight(fish.getWeight());
         newFish.setDescription(fish.getDescription());
-        newFish.setIsDeleted(fish.getIsDeleted());
 
         return fishRepository.save(newFish);
     }
