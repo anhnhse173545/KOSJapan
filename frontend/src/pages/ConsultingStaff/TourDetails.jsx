@@ -5,36 +5,36 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Button, message, Spin } from "antd";
 
-const tripPlanTemplate = `
-Day 1: Tokyo – A Blend of Old and New
-  Morning: Tsukiji Market and Toyosu Market
-  Midday: Tokyo Tower and Modern Art
-  Afternoon: Shibuya Crossing and Shopping
-  Evening: Dining in Golden Gai
+// const tripPlanTemplate = `
+// Day 1: Tokyo – A Blend of Old and New
+//   Morning: Tsukiji Market and Toyosu Market
+//   Midday: Tokyo Tower and Modern Art
+//   Afternoon: Shibuya Crossing and Shopping
+//   Evening: Dining in Golden Gai
 
-Day 2: Kyoto – Timeless Traditions
-  Morning: Fushimi Inari Shrine
-  Midday: Nishiki Market and Lunch
-  Afternoon: Traditional Arts and Green Tea Ceremony
-  Evening: Traditional Japanese Dinner and Ryokan Experience
+// Day 2: Kyoto – Timeless Traditions
+//   Morning: Fushimi Inari Shrine
+//   Midday: Nishiki Market and Lunch
+//   Afternoon: Traditional Arts and Green Tea Ceremony
+//   Evening: Traditional Japanese Dinner and Ryokan Experience
 
-Day 3: The Mount Fuji Experience
-  Early Morning: Travel to Mount Fuji
-  Midday: Boat Ride and Lunch
-  Afternoon: Hiking and Nature Exploration
-  Evening: Luxury Onsen Ryokan Stay
+// Day 3: The Mount Fuji Experience
+//   Early Morning: Travel to Mount Fuji
+//   Midday: Boat Ride and Lunch
+//   Afternoon: Hiking and Nature Exploration
+//   Evening: Luxury Onsen Ryokan Stay
 
-Day 4: Tokyo Revisited – Cherry Blossoms and Serenity
-  Morning: Meguro River Cherry Blossoms
-  Midday: Lunch and Quirky Convenience Store Experience
-  Afternoon: Cultural Sites and Relaxation
-  Evening: Shibuya Sensory Overload
+// Day 4: Tokyo Revisited – Cherry Blossoms and Serenity
+//   Morning: Meguro River Cherry Blossoms
+//   Midday: Lunch and Quirky Convenience Store Experience
+//   Afternoon: Cultural Sites and Relaxation
+//   Evening: Shibuya Sensory Overload
 
-Day 5: Departure from Narita Airport
-  Morning: Last Minute Shopping and Sightseeing
-  Midday: Reflective Lunch
-  Afternoon: Departure Preparations
-`;
+// Day 5: Departure from Narita Airport
+//   Morning: Last Minute Shopping and Sightseeing
+//   Midday: Reflective Lunch
+//   Afternoon: Departure Preparations
+// `;
 
 const TourDetails = () => {
   const { bookingId } = useParams();
@@ -46,7 +46,7 @@ const TourDetails = () => {
     const fetchTourData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/booking/get/${bookingId}`
+          `http://localhost:8080/api/booking/get/BO0001`
         );
         console.log("API Response:", response.data);
         setTourData(response.data);
@@ -121,9 +121,9 @@ const TourDetails = () => {
       });
 
       doc.text("Trip Plan", 20, doc.lastAutoTable.finalY + 30);
-      doc.autoTable({
-        body: tripPlanTemplate.split("\n").map((line) => [line.trim()]),
-      });
+      // doc.autoTable({
+      //   body: tripPlanTemplate.split("\n").map((line) => [line.trim()]),
+      // });
 
       doc.save(`${tourData.customer?.name || "Tour"}_details.pdf`);
       message.success("PDF exported successfully.");
@@ -193,8 +193,8 @@ const TourDetails = () => {
         </div>
       ))}
 
-      <h3>Trip Plan</h3>
-      <pre>{tripPlanTemplate}</pre>
+      {/* <h3>Trip Plan</h3>
+      <pre>{tripPlanTemplate}</pre> */}
 
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF

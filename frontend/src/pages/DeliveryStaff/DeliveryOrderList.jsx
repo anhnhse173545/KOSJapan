@@ -15,7 +15,13 @@ const DeliveryOrderList = () => {
       const response = await axios.get(
         "http://localhost:8080/fish-order/delivery-staff/AC0003"
       );
-      setOrders(response.data);
+      console.log("API Response:", response.data); // Debugging - check API response
+      if (Array.isArray(response.data)) {
+        setOrders(response.data);
+        console.log("Set Orders:", response.data); // Debugging - check set orders
+      } else {
+        message.error("Unexpected data format from API.");
+      }
     } catch (error) {
       message.error("Failed to fetch orders. Please try again later.");
     } finally {
@@ -34,7 +40,6 @@ const DeliveryOrderList = () => {
       case "In Transit":
         return "blue";
       case "Delivered":
-        return "green";
       case "Completed":
         return "green";
       case "Rejected":
@@ -48,8 +53,10 @@ const DeliveryOrderList = () => {
     }
   };
 
-  // Flatten fish order details into a readable format
   const formatOrderDetails = (fishOrderDetails) => {
+    if (!Array.isArray(fishOrderDetails) || fishOrderDetails.length === 0) {
+      return "No details available";
+    }
     return fishOrderDetails
       .map(
         (detail) =>
@@ -68,17 +75,26 @@ const DeliveryOrderList = () => {
       title: "Delivery Address",
       dataIndex: "deliveryAddress",
       key: "deliveryAddress",
+      render: (address) => {
+        console.log("Rendering Delivery Address:", address); // Debugging
+        return address ? address : "No address provided";
+      },
     },
     {
       title: "Fish Varieties",
       key: "fishVarieties",
-      render: (_, record) => formatOrderDetails(record.fishOrderDetails), // Combine fish details
+      render: (_, record) => formatOrderDetails(record.fishOrderDetails),
     },
     {
       title: "Total Price",
       dataIndex: "total",
       key: "total",
-      render: (total) => `$${total.toFixed(2)}`,
+      render: (total) => {
+        console.log("Rendering Total Price:", total); // Debugging
+        return total !== undefined && total !== null
+          ? `$${total.toFixed(2)}`
+          : "N/A";
+      },
     },
     {
       title: "Status",
