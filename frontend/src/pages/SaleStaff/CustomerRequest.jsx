@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  message,
-  DatePicker,
-} from "antd";
+import { Table, Button, Modal, Form, Input, message, DatePicker } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-
-const { Option } = Select;
 
 const CustomerRequest = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,128 +12,131 @@ const CustomerRequest = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // Fetch customer requests from API
+  // Fetch customer requests from API or localStorage
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/booking/sale-staff/AC0002") // Fetch from correct API
-      .then((response) => {
-        setCustomers(response.data); // Set the fetched data
-      })
-      .catch((error) => {
-        console.error("Failed to load customer requests:", error);
-        message.error("Failed to load customer requests");
-      });
+    const storedCustomers = localStorage.getItem("customers");
+
+    if (storedCustomers) {
+      // Load from localStorage if data is available
+      setCustomers(JSON.parse(storedCustomers));
+    } else {
+      // Otherwise, fetch from API
+      axios
+        .get("http://localhost:8080/api/booking/sale-staff/AC0002")
+        .then((response) => {
+          setCustomers(response.data);
+          // Store in localStorage for future use
+          localStorage.setItem("customers", JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.error("Failed to load customer requests:", error);
+          message.error("Failed to load customer requests");
+        });
+    }
   }, []);
 
-  // Handle save and update the customer data via API
+  // Update localStorage when customers data is updated
+  useEffect(() => {
+    if (customers.length > 0) {
+      localStorage.setItem("customers", JSON.stringify(customers));
+    }
+  }, [customers]);
+
   // Open modal to edit customer
   const openEditModal = (customer) => {
-    setEditingCustomer(customer); // Store the original data
+    setEditingCustomer(customer);
     form.setFieldsValue({
       name: customer.customer.name,
       email: customer.customer.email,
       startDate: moment(customer.trip.startDate),
       endDate: moment(customer.trip.endDate),
-      tripDetails: customer.description, // Use customer.description here
+      tripDetails: customer.description,
     });
     setIsModalVisible(true);
   };
 
-  // Handle save and update the customer data via API
+  // Handle save and update customer data via API and local state
   const handleSave = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        const fieldsToUpdate = {};
+    form.validateFields().then((values) => {
+      const fieldsToUpdate = {};
 
-        // Compare new values with original customer data
-        if (values.name !== editingCustomer.customer.name) {
-          fieldsToUpdate["customer.name"] = values.name;
-        }
-        if (values.email !== editingCustomer.customer.email) {
-          fieldsToUpdate["customer.email"] = values.email;
-        }
-        if (values.tripDetails !== editingCustomer.description) {
-          fieldsToUpdate["description"] = values.tripDetails;
-        }
-        if (
-          values.startDate &&
-          values.startDate.format("YYYY-MM-DD") !==
-            moment(editingCustomer.trip.startDate).format("YYYY-MM-DD")
-        ) {
-          fieldsToUpdate["trip.startDate"] =
-            values.startDate.format("YYYY-MM-DD");
-        }
-        if (
-          values.endDate &&
-          values.endDate.format("YYYY-MM-DD") !==
-            moment(editingCustomer.trip.endDate).format("YYYY-MM-DD")
-        ) {
-          fieldsToUpdate["trip.endDate"] = values.endDate.format("YYYY-MM-DD");
-        }
+      // Compare new values with original customer data
+      if (values.name !== editingCustomer.customer.name) {
+        fieldsToUpdate["customer.name"] = values.name;
+      }
+      if (values.email !== editingCustomer.customer.email) {
+        fieldsToUpdate["customer.email"] = values.email;
+      }
+      if (values.tripDetails !== editingCustomer.description) {
+        fieldsToUpdate["description"] = values.tripDetails;
+      }
+      if (
+        values.startDate &&
+        values.startDate.format("YYYY-MM-DD") !==
+          moment(editingCustomer.trip.startDate).format("YYYY-MM-DD")
+      ) {
+        fieldsToUpdate["trip.startDate"] =
+          values.startDate.format("YYYY-MM-DD");
+      }
+      if (
+        values.endDate &&
+        values.endDate.format("YYYY-MM-DD") !==
+          moment(editingCustomer.trip.endDate).format("YYYY-MM-DD")
+      ) {
+        fieldsToUpdate["trip.endDate"] = values.endDate.format("YYYY-MM-DD");
+      }
 
-        if (Object.keys(fieldsToUpdate).length === 0) {
-          message.info("No changes detected.");
-          return; // Do not proceed if no fields were changed
-        }
+      if (Object.keys(fieldsToUpdate).length === 0) {
+        message.info("No changes detected.");
+        return;
+      }
 
-        console.log("Fields to update:", fieldsToUpdate); // Log the fields to be updated
-
-        // Send only the updated fields in the payload
-        axios
-          .put(
-            `http://localhost:8080/api/trip/update/${editingCustomer.trip.id}`,
-            fieldsToUpdate
-          )
-          .then((response) => {
-            console.log("API response:", response.data); // Log the API response
-
-            // Update local state with the modified data
-            setCustomers((prevCustomers) =>
-              prevCustomers.map((customer) =>
-                customer.trip.id === editingCustomer.trip.id
-                  ? {
-                      ...customer,
-                      customer: {
-                        ...customer.customer,
-                        ...(fieldsToUpdate["customer.name"]
-                          ? { name: fieldsToUpdate["customer.name"] }
-                          : {}),
-                        ...(fieldsToUpdate["customer.email"]
-                          ? { email: fieldsToUpdate["customer.email"] }
-                          : {}),
-                      },
-                      description:
-                        fieldsToUpdate["description"] || customer.description,
-                      trip: {
-                        ...customer.trip,
-                        ...(fieldsToUpdate["trip.startDate"]
-                          ? { startDate: fieldsToUpdate["trip.startDate"] }
-                          : {}),
-                        ...(fieldsToUpdate["trip.endDate"]
-                          ? { endDate: fieldsToUpdate["trip.endDate"] }
-                          : {}),
-                      },
-                    }
-                  : customer
-              )
-            );
-
-            setIsModalVisible(false);
-            message.success("Customer details updated successfully!");
-          })
-          .catch((error) => {
-            console.error("Failed to update customer details:", error);
-            message.error("Failed to update customer details.");
-          });
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
-
-  const handleCreateTripPlan = (customer) => {
-    navigate("/create-trip-plan", { state: { customer } });
+      // Update via API
+      axios
+        .put(
+          `http://localhost:8080/api/trip/update/${editingCustomer.trip.id}`,
+          fieldsToUpdate
+        )
+        .then((response) => {
+          // Update local state with the modified data
+          setCustomers((prevCustomers) =>
+            prevCustomers.map((customer) =>
+              customer.trip.id === editingCustomer.trip.id
+                ? {
+                    ...customer,
+                    customer: {
+                      ...customer.customer,
+                      ...(fieldsToUpdate["customer.name"]
+                        ? { name: fieldsToUpdate["customer.name"] }
+                        : {}),
+                      ...(fieldsToUpdate["customer.email"]
+                        ? { email: fieldsToUpdate["customer.email"] }
+                        : {}),
+                    },
+                    description:
+                      fieldsToUpdate["description"] || customer.description,
+                    trip: {
+                      ...customer.trip,
+                      ...(fieldsToUpdate["trip.startDate"]
+                        ? { startDate: fieldsToUpdate["trip.startDate"] }
+                        : {}),
+                      ...(fieldsToUpdate["trip.endDate"]
+                        ? { endDate: fieldsToUpdate["trip.endDate"] }
+                        : {}),
+                    },
+                  }
+                : customer
+            )
+          );
+          // Hide the modal
+          setIsModalVisible(false);
+          message.success("Customer details updated successfully!");
+        })
+        .catch((error) => {
+          console.error("Failed to update customer details:", error);
+          message.error("Failed to update customer details.");
+        });
+    });
   };
 
   const handleViewTripPlan = (customer) => {
@@ -154,24 +146,24 @@ const CustomerRequest = () => {
   const columns = [
     {
       title: "Customer Name",
-      dataIndex: ["customer", "name"], // Adjusted for API structure
+      dataIndex: ["customer", "name"],
       key: "customerName",
     },
     {
       title: "Email",
-      dataIndex: ["customer", "email"], // Email field
+      dataIndex: ["customer", "email"],
       key: "email",
     },
     {
       title: "Koi Farm",
-      dataIndex: ["trip", "tripDestinations", "0", "farm", "name"], // Adjust to API data structure
+      dataIndex: ["trip", "tripDestinations", "0", "farm", "name"],
       key: "farm",
     },
     {
       title: "Start Date",
       dataIndex: ["trip", "startDate"],
       key: "startDate",
-      render: (date) => moment(date).format("YYYY-MM-DD"), // Format the date
+      render: (date) => moment(date).format("YYYY-MM-DD"),
     },
     {
       title: "End Date",
@@ -181,45 +173,36 @@ const CustomerRequest = () => {
     },
     {
       title: "Description",
-      dataIndex: "description", // Changed to use the correct description field
+      dataIndex: "description",
       key: "description",
     },
     {
-      title: "Status", // New Status column
-      dataIndex: "status", // Status from API data
+      title: "Status",
+      dataIndex: "status",
       key: "status",
-      render: (status) => status || "Requested", // Default to 'Requested' if not provided
+      render: (status) => status || "Requested",
     },
     {
       title: "Actions",
       key: "actions",
-      render: (text, record) => {
-        return (
-          <>
-            <Button
-              icon={<EditOutlined />}
-              onClick={() => openEditModal(record)}
-              style={{ marginRight: 8 }}
-            >
-              Edit
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => handleCreateTripPlan(record)}
-              style={{ marginRight: 8 }}
-            >
-              Create Trip Plan
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => handleViewTripPlan(record)}
-              style={{ marginRight: 8 }}
-            >
-              View Trip Plan
-            </Button>
-          </>
-        );
-      },
+      render: (text, record) => (
+        <>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => openEditModal(record)}
+            style={{ marginRight: 8 }}
+          >
+            Edit
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleViewTripPlan(record)}
+            style={{ marginRight: 8 }}
+          >
+            View Trip Plan
+          </Button>
+        </>
+      ),
     },
   ];
 

@@ -34,67 +34,6 @@ const TourList = () => {
       });
   }, []);
 
-  // Handlers for actions (Check In, Cancel, Mark Completed)
-  const handleCheckIn = (key) => {
-    axios
-      .put(`http://localhost:8080/api/booking/check-in/${key}`)
-      .then(() => {
-        const updatedTourData = tourData.map((tour) => {
-          if (tour.key === key && tour.status === "Not Check In") {
-            return { ...tour, status: "Checked In" };
-          }
-          return tour;
-        });
-
-        setTourData(updatedTourData);
-        message.success("Status changed to Checked In.");
-      })
-      .catch((error) => {
-        console.error("Error checking in:", error);
-        message.error("Failed to check in.");
-      });
-  };
-
-  const handleCancel = (key) => {
-    axios
-      .put(`http://localhost:8080/api/booking/cancel/${key}`)
-      .then(() => {
-        const updatedTourData = tourData.map((tour) => {
-          if (tour.key === key && tour.status !== "Checked In") {
-            return { ...tour, status: "Cancelled" };
-          }
-          return tour;
-        });
-
-        setTourData(updatedTourData);
-        message.success("Status changed to Cancelled.");
-      })
-      .catch((error) => {
-        console.error("Error cancelling:", error);
-        message.error("Failed to cancel the tour.");
-      });
-  };
-
-  const handleMarkCompleted = (key) => {
-    axios
-      .put(`http://localhost:8080/api/booking/complete/${key}`)
-      .then(() => {
-        const updatedTourData = tourData.map((tour) => {
-          if (tour.key === key && tour.status === "Checked In") {
-            return { ...tour, status: "Completed" };
-          }
-          return tour;
-        });
-
-        setTourData(updatedTourData);
-        message.success("Tour marked as Completed.");
-      })
-      .catch((error) => {
-        console.error("Error marking as completed:", error);
-        message.error("Failed to mark as completed.");
-      });
-  };
-
   const handleViewDetails = (tour) => {
     navigate(`/tour-details/${tour.bookingId}`); // Use bookingId for navigation
   };

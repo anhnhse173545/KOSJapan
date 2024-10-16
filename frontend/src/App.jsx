@@ -24,7 +24,7 @@ import DeliveryStaffHome from "./pages/DeliveryStaff/DeliveryStaffHome";
 import DeliveryOrderList from "./pages/DeliveryStaff/DeliveryOrderList";
 import TrackingOrder from "./pages/DeliveryStaff/TrackingOrder";
 import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
-import CreateTripPlan from "./pages/SaleStaff/CreateTripPlan";
+
 import ViewTripPlan from "./pages/SaleStaff/ViewTripPlan";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 
@@ -61,7 +61,7 @@ function App() {
     { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
     { path: "/SaleStaffHome", element: <SaleStaffHome /> },
     { path: "/CustomerRequest", element: <CustomerRequest /> },
-    { path: "/create-trip-plan", element: <CreateTripPlan /> },
+
     { path: "/view-trip-plan", element: <ViewTripPlan /> },
   ]);
   return <RouterProvider router={router} />;
