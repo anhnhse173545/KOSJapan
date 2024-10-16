@@ -11,9 +11,9 @@ const SingleCustomerStaffData = ({ tripData }) => {
         <h3>Name: {tripData.customer.name}</h3>
         <p><strong>Email:</strong> {tripData.customer.email || 'N/A'}</p>
         <p><strong>Phone:</strong> {tripData.customer.phone || 'N/A'}</p>
-        <p><strong>Koi Description:</strong> {tripData.bookingDescription}</p>
-        <p><strong>Start Date:</strong> {tripData.startDate}</p>
-        <p><strong>End Date:</strong> {tripData.endDate}</p>
+        <p><strong>Koi Description:</strong> {tripData.description}</p>
+        <p><strong>Status:</strong> {tripData.status}</p>
+       
       </div>
     </div>
   );
@@ -29,6 +29,7 @@ const SingleSalesStaffData = ({ salesData }) => {
         <p><strong>Name:</strong> {salesData.saleStaff.name}</p>
         <p><strong>Phone:</strong> {salesData.saleStaff.phone || 'N/A'}</p>
         <p><strong>Email:</strong> {salesData.saleStaff.email || 'N/A'}</p>
+        
 
       </div>
     </div>
