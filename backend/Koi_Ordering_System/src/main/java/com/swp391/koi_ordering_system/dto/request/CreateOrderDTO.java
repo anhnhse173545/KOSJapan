@@ -7,13 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateOrderDTO {
-    private String fish_order_detail_id;
-    private String fish_pack_order_detail_id;
-    private FishOrderDetailDTO fishOrderDTO;
-    private FishPackOrderDetailDTO fishPackOrderDetailDTO;
+    private String deliveryAddress;
+    private Double total;
+    private LocalDateTime createAt;
+    private LocalDateTime arrivedDate;
 }

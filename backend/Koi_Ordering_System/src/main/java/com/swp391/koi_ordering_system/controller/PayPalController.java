@@ -31,7 +31,7 @@ public class PayPalController {
     private static final Logger log = LoggerFactory.getLogger(PayPalController.class);
     private final PayPalService payPalService;
 
-    @GetMapping("/")
+    @GetMapping("/PayPal")
     public String index() {
         return "index";
     }
