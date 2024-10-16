@@ -14,7 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class FishOrderDetail {
     @Id
     @Column(name = "id", nullable = false, length = 9)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
     private String id;
 
     @JsonBackReference(value = "fishOrder-fishOrderDetail")
