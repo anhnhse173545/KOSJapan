@@ -69,7 +69,7 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/trip/{tripStatus}")
+    @GetMapping("/trip-status/{tripStatus}")
     public ResponseEntity<?> getBookingsByTripStatus(@PathVariable String tripStatus) {
         List<BookingDTO> bookings = bookingService.getBookingsByTripStatus(tripStatus);
         if (bookings.isEmpty()) {
