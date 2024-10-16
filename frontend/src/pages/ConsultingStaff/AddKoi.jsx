@@ -2,27 +2,65 @@ import React, { useState } from "react";
 import { Form, Input, Button, message, Upload, Select } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 const { Option } = Select;
 
-const AddKoi = ({ onAddKoi }) => {
+const AddKoi = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const [fileList, setFileList] = useState([]);
   const [videoList, setVideoList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values) => {
-    const newKoi = {
-      ...values,
-      photo: fileList,
-      video: videoList,
-      status: "Not Pay Yet", // Default status
+  const handleSubmit = async (values) => {
+    const newOrder = {
+      id: "PO0004", // Example ID, should ideally be generated or provided by the backend
+      farmId: "FA0001", // Example farm ID, replace with actual value
+      deliveryAddress: "string", // Add actual delivery address here
+      status: "Pending",
+      paymentStatus: null,
+      total: 0,
+      bookingId: "BO0002", // Example booking ID
+      fishOrderDetails: [
+        {
+          id: "FOD0001",
+          fish: {
+            id: "KF0001",
+            variety: {
+              id: "VA0001",
+              name: values.type,
+              description: `Details about ${values.type}`,
+              isDeleted: false,
+            },
+            length: 30.5, // Example value, replace with actual input
+            weight: 5, // Example value, replace with actual input
+            description: `Description for ${values.type}`,
+            isDeleted: false,
+            fishPack: null,
+            medias: [],
+          },
+          fish_price: values.price,
+        },
+      ],
+      fishPackOrderDetails: [],
     };
 
-    onAddKoi(location.state.tripId, newKoi); // Pass the tripId from location
-    message.success("Koi added successfully!");
-    navigate("/");
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `http://localhost:8080/fish-order/${newOrder.bookingId}/${newOrder.farmId}/create`,
+        newOrder
+      );
+      message.success("Koi order created successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Error creating order:", error);
+      message.error("Failed to create the order.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFileChange = ({ fileList }) => {
@@ -138,7 +176,7 @@ const AddKoi = ({ onAddKoi }) => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Add Koi
           </Button>
         </Form.Item>
