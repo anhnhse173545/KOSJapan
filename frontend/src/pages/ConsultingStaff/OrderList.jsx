@@ -1,77 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Button, message, Badge } from "antd";
 import { useNavigate } from "react-router-dom"; // For navigation
-
-// Initial Data for the Main Table
-const initialData = [
-  {
-    key: "1",
-    tripId: "T001",
-    customer: "John Doe",
-    startDate: "2024-10-01",
-    endDate: "2024-10-05",
-    koiDetails: [
-      {
-        breeder: "Breeder A",
-        date: "2024-10-02",
-        koi: "Koi A",
-        type: "Kohaku",
-        price: 100,
-        paymentMethod: "Credit Card", // Specific to this koi
-        status: "Not Pay Yet", // Specific to this koi
-      },
-      {
-        breeder: "Breeder B",
-        date: "2024-10-03",
-        koi: "Koi B",
-        type: "Sanke",
-        price: 150,
-        paymentMethod: "PayPal", // Specific to this koi
-        status: "Paid", // Specific to this koi
-      },
-    ],
-  },
-  {
-    key: "2",
-    tripId: "T002",
-    customer: "Jane Smith",
-    startDate: "2024-10-03",
-    endDate: "2024-10-06",
-    koiDetails: [
-      {
-        breeder: "Breeder C",
-        date: "2024-10-04",
-        koi: "Koi C",
-        type: "Showa",
-        price: 120,
-        paymentMethod: "PayPal",
-        status: "Paid",
-      },
-    ],
-  },
-  {
-    key: "3",
-    tripId: "T003",
-    customer: "Bob Brown",
-    startDate: "2024-10-01",
-    endDate: "2024-10-05",
-    koiDetails: [
-      {
-        breeder: "Breeder D",
-        date: "2024-10-02",
-        koi: "Koi D",
-        type: "Asagi",
-        price: 110,
-        paymentMethod: "Bank Transfer",
-        status: "Not Pay Yet",
-      },
-    ],
-  },
-];
+import axios from "axios"; // For API requests
 
 const OrderList = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]); // Data fetched from API
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
+
+  // Fetch data for a specific customer
+  const fetchCustomerData = async (customerId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/booking/customer/${customerId}`
+      );
+      return response.data; // Assuming the API returns data in response.data
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+      message.error("Failed to load customer data.");
+    }
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const customerIds = ["1", "2", "3"]; // Replace with real customer IDs
+      const promises = customerIds.map((id) => fetchCustomerData(id)); // Fetch data for each customer
+      const allData = await Promise.all(promises); // Wait for all API calls to finish
+      setData(allData);
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
   const handleEditKoi = (updatedKoi) => {
     // Update Koi details in the main data
     const updatedData = data.map((trip) => {
@@ -86,6 +48,7 @@ const OrderList = () => {
     setData(updatedData);
     message.success("Koi details updated successfully.");
   };
+
   const handleAddKoi = (tripId, newKoi) => {
     const updatedData = data.map((trip) => {
       if (trip.tripId === tripId) {
@@ -96,7 +59,6 @@ const OrderList = () => {
     setData(updatedData);
   };
 
-  // Update status to 'Paid' when "Mark as Paid" is clicked
   const handleMarkAsPaid = (tripKey, koiKey) => {
     const updatedData = data.map((trip) => {
       if (trip.key === tripKey) {
@@ -118,7 +80,6 @@ const OrderList = () => {
     message.success(`Koi ${koiKey} from trip ID ${tripKey} sent to delivery.`);
   };
 
-  // Expanded row for each trip (with payment method, status, and mark as paid button)
   const expandedRowRender = (record) => {
     const expandedColumns = [
       { title: "Breeder", dataIndex: "breeder", key: "breeder" },
@@ -220,7 +181,8 @@ const OrderList = () => {
         expandable={{
           expandedRowRender: expandedRowRender,
         }}
-        rowKey="tripId" // Make sure each row is uniquely identified by tripId
+        rowKey="tripId"
+        loading={loading} // Show loading spinner while data is being fetched
       />
     </div>
   );

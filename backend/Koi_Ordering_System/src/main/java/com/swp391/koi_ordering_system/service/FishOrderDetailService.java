@@ -58,7 +58,8 @@ public class FishOrderDetailService {
             fishOrder.getFishOrderDetails().add(fishOrderDetail);
             fishOrderDetail.setFishOrder(fishOrder);
         }
-        return fishOrderDetail;
+        fishOrderDetail.setFishOrder(null);
+        return fishOrderDetailRepository.save(fishOrderDetail);
     }
 
     public void deleteFishOrderDetail(String fishOrderDetailId){
