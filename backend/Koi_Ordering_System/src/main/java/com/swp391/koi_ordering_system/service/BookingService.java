@@ -130,7 +130,7 @@ public class BookingService {
         }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
-            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sale Staff")
+            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sales Staff")
                     .orElseThrow(() -> new RuntimeException("Sale staff not found"));
             booking.setSaleStaff(saleStaff);
         }
