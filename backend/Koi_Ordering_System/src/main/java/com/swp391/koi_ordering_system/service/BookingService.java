@@ -90,6 +90,12 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDTO> getBookingsByTripStatus(String status) {
+        return bookingRepository.findByTripStatusAndIsDeletedFalse(status).stream()
+                .map(bookingMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
                 .map(bookingMapper::toDTO);
@@ -130,8 +136,8 @@ public class BookingService {
         }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
-            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sale Staff")
-                    .orElseThrow(() -> new RuntimeException("Sale staff not found"));
+            Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sales Staff")
+                    .orElseThrow(() -> new RuntimeException("Sales staff not found"));
             booking.setSaleStaff(saleStaff);
         }
 

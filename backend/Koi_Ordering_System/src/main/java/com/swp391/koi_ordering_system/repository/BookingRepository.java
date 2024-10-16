@@ -33,4 +33,5 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     List<Booking> findByDeliveryStaffIdAndIsDeletedFalse(String deliveryStaffId);
 
     List<Booking> findBySaleStaffIdAndCustomerIdAndIsDeletedFalse(String saleStaffId, String customerId);
+    List<Booking> findByTripStatusAndIsDeletedFalse(String status);
 }
