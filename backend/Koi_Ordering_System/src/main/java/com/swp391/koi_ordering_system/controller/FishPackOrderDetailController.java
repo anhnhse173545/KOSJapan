@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.controller;
 
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
+import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
 import com.swp391.koi_ordering_system.service.FishPackOrderDetailService;
@@ -41,7 +42,7 @@ public class FishPackOrderDetailController {
 
     @PostMapping("/{fish_order_id}/create")
     public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@PathVariable String fish_order_id,
-                                                                            @RequestBody FishPackOrderDetailDTO dto) {
+                                                                            @RequestBody CreateOrderDetailDTO dto) {
         FishPackOrderDetail foundFPOD = service.createFishPackOrderDetail(fish_order_id, dto);
         return ResponseEntity.ok(service.mapToDTO(foundFPOD));
     }

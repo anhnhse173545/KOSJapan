@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class Fish {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
+    @JsonBackReference(value = "fishPack-fish")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fish_pack_id", nullable = true)
     private FishPack fishPack;
