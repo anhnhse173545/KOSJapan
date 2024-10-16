@@ -94,6 +94,10 @@ public class FishOrderService {
         newFishOrder.setIsDeleted(false);
         newFishOrder.setFishPackOrderDetails(null);
         newFishOrder.setFishOrderDetails(null);
+        OrderRepository.save(newFishOrder);
+
+        booking.getFishOrders().add(newFishOrder);
+        BookingRepository.save(booking);
 
         return OrderRepository.save(newFishOrder);
     }
