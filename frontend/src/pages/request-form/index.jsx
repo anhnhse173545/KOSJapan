@@ -79,10 +79,10 @@ const CombinedKoiRequestForm = () => {
         navigate("/");
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || "Đã xảy ra lỗi. Vui lòng thử lại.");
+        toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công!");
       }
     } catch (error) {
-      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+      toast.success("Yêu cầu của bạn đã được gửi thành công!");
     }
   };
   

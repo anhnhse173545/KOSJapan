@@ -139,21 +139,22 @@ public class FishOrderService {
         FishOrder fishOrder = findOrder.get();
         Optional<FishOrderDetail> findOrderDetail = FODRepository.findById(addId);
         Optional<FishPackOrderDetail> findPackDetail = FPODRepository.findById(addId);
+
         if(findOrderDetail.isEmpty() && findPackDetail.isEmpty()){
-            throw new RuntimeException("There are no Fish Order Detail or Fish Pack Order Detail !");
+            throw new RuntimeException("Fish Pack Order and Fish Order does not existed !");
         }
-        FishOrderDetail orderDetail = findOrderDetail.get();
-        FishPackOrderDetail packOrderDetail = findPackDetail.get();
-
-        fishOrder.getFishOrderDetails().add(orderDetail);
-        fishOrder.getFishPackOrderDetails().add(packOrderDetail);
-
-        orderDetail.setFishOrder(fishOrder);
-        packOrderDetail.setFishOrder(fishOrder);
-
-        FODRepository.save(orderDetail);
-        FPODRepository.save(packOrderDetail);
-
+        else if(findOrderDetail.isPresent()){
+            FishOrderDetail orderDetail = findOrderDetail.get();
+            fishOrder.getFishOrderDetails().add(orderDetail);
+            orderDetail.setFishOrder(fishOrder);
+            FODRepository.save(orderDetail);
+        }
+        else if(findPackDetail.isPresent()){
+            FishPackOrderDetail packOrderDetail = findPackDetail.get();
+            fishOrder.getFishPackOrderDetails().add(packOrderDetail);
+            packOrderDetail.setFishOrder(fishOrder);
+            FPODRepository.save(packOrderDetail);
+        }
         return OrderRepository.save(fishOrder);
     }
 
