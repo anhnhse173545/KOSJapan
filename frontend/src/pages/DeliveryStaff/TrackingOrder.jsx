@@ -25,7 +25,9 @@ const OrderTracking = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8080/fish-order/all");
+      const response = await axios.get(
+        "http://localhost:8080/fish-order/delivery-staff/AC0003"
+      );
       setOrders(response.data);
     } catch (error) {
       message.error("Failed to fetch orders. Please try again later.");
