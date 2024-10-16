@@ -27,7 +27,6 @@ import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 import CreateTripPlan from "./pages/SaleStaff/CreateTripPlan";
 import ViewTripPlan from "./pages/SaleStaff/ViewTripPlan";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
-import PaidBooking from "./pages/paidBooking";
 
 function App() {
   const router = createBrowserRouter([
@@ -46,26 +45,24 @@ function App() {
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi", element: <KoiPayPage /> },
-        { path: "/consulting", element: <ConsultingStaff /> },
-        { path: "/sale", element: <SaleStaff /> },
-        { path: "/paidbooking/:id", element: <PaidBooking /> },
-
-        { path: "/DeliveryStaff", element: <DeliveryStaff /> },
-        { path: "/", element: <ConsultingStaffHome /> },
-        { path: "/TourList", element: <TourList /> },
-        { path: "/OrderList", element: <OrderList /> },
-        { path: "/koi-details", element: <KoiDetails /> },
-        { path: "/add-koi", element: <AddKoi /> },
-        { path: "/tour-details/:tourId", element: <TourDetails /> },
-        { path: "/", element: <DeliveryStaffHome /> },
-        { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
-        { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
-        { path: "/SaleStaffHome", element: <SaleStaffHome /> },
-        { path: "/CustomerRequest", element: <CustomerRequest /> },
-        { path: "/create-trip-plan", element: <CreateTripPlan /> },
-        { path: "/view-trip-plan", element: <ViewTripPlan /> },
       ],
     },
+    { path: "/consulting-staff", element: <ConsultingStaff /> },
+    { path: "/sale-staff", element: <SaleStaff /> },
+    { path: "/delivery-staff", element: <DeliveryStaff /> },
+    { path: "/", element: <ConsultingStaffHome /> },
+    { path: "/TourList", element: <TourList /> },
+    { path: "/OrderList", element: <OrderList /> },
+    { path: "/koi-details", element: <KoiDetails /> },
+    { path: "/add-koi", element: <AddKoi /> },
+    { path: "/tour-details/:tourId", element: <TourDetails /> },
+    { path: "/", element: <DeliveryStaffHome /> },
+    { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
+    { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
+    { path: "/SaleStaffHome", element: <SaleStaffHome /> },
+    { path: "/CustomerRequest", element: <CustomerRequest /> },
+    { path: "/create-trip-plan", element: <CreateTripPlan /> },
+    { path: "/view-trip-plan", element: <ViewTripPlan /> },
   ]);
   return <RouterProvider router={router} />;
 }
