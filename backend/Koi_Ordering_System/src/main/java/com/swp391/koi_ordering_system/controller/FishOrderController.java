@@ -58,10 +58,10 @@ public class FishOrderController {
     }
 
 
-    @PutMapping("/{booking_id}/{farm_id}/add-order-detail-to-order")
+    @PutMapping("/{booking_id}/{farm_id}/{FishOrderDetailId_Or_FishPackOrderDetailId}/add-order-detail-to-order")
     public ResponseEntity<FishOrderDTO> addFishOrderDetailToOrder(@PathVariable String booking_id,
                                                               @PathVariable String farm_id,
-                                                              @RequestBody String FishOrderDetailId_Or_FishPackOrderDetailId){
+                                                              @PathVariable String FishOrderDetailId_Or_FishPackOrderDetailId){
         FishOrder addedOrder = orderService.addFishPackOrFishOrderDetailToOrder(booking_id, farm_id, FishOrderDetailId_Or_FishPackOrderDetailId);
         return ResponseEntity.ok(orderService.mapToDTO2(addedOrder));
     }
