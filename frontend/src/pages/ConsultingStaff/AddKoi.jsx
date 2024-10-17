@@ -11,7 +11,7 @@ const AddKoi = () => {
   const location = useLocation();
 
   // Extract orderId from location state
-  const { orderId, farmId } = location.state || {};
+  const { orderId } = location.state || {};
 
   // Submit Fish and Order Details
   const handleSubmit = async (values) => {
@@ -20,67 +20,27 @@ const AddKoi = () => {
       return;
     }
 
-    // Validate that all necessary IDs are provided
-    for (const fishOrderDetail of values.fishOrderDetails) {
-      const fishId = fishOrderDetail.fish.id;
-      const varietyId = fishOrderDetail.fish.variety.id;
-
-      if (!fishId || !varietyId) {
-        message.error("Fish ID and Variety ID must not be null.");
-        return;
-      }
-    }
-
     try {
       setLoading(true);
 
       // Loop through fishOrderDetails and call the API for each fish
       for (const fishOrderDetail of values.fishOrderDetails) {
+        const payload = {
+          variety_id: fishOrderDetail.variety_id,
+          length: fishOrderDetail.length,
+          weight: fishOrderDetail.weight,
+          description: fishOrderDetail.description,
+          orderId: orderId, // Use the orderId from previous page
+          price: fishOrderDetail.price, // Add price for the fish
+        };
+
         // Log the payload before sending
-        console.log("Payload to send:", {
-          fish: {
-            id: fishOrderDetail.fish.id,
-            variety: {
-              id: fishOrderDetail.fish.variety.id,
-              name: fishOrderDetail.fish.variety.name,
-              description: fishOrderDetail.fish.variety.description,
-              isDeleted: false,
-            },
-            length: fishOrderDetail.fish.length,
-            weight: fishOrderDetail.fish.weight,
-            description: fishOrderDetail.fish.description,
-            isDeleted: false,
-            medias: [],
-          },
-          orderDetail: {
-            orderId: orderId, // Use the orderId from previous page
-            price: fishOrderDetail.price, // Add price for the fish
-          },
-        });
+        console.log("Payload to send:", payload);
 
         // API call to create fish and order detail
         await axios.post(
-          `http://localhost:8080/order-detail/create-fish-and-order-detail`,
-          {
-            fish: {
-              id: fishOrderDetail.fish.id,
-              variety: {
-                id: fishOrderDetail.fish.variety.id,
-                name: fishOrderDetail.fish.variety.name,
-                description: fishOrderDetail.fish.variety.description,
-                isDeleted: false,
-              },
-              length: fishOrderDetail.fish.length,
-              weight: fishOrderDetail.fish.weight,
-              description: fishOrderDetail.fish.description,
-              isDeleted: false,
-              medias: [],
-            },
-            orderDetail: {
-              orderId: orderId, // Use the orderId from previous page
-              price: fishOrderDetail.price, // Add price for the fish
-            },
-          }
+          "http://localhost:8080/order-detail/create-fish-and-order-detail",
+          payload
         );
       }
 
@@ -115,24 +75,11 @@ const AddKoi = () => {
                   style={{ display: "flex", marginBottom: 8 }}
                   align="baseline"
                 >
-                  {/* Fish ID */}
-                  <Form.Item
-                    {...restField}
-                    name={[name, "fish", "id"]}
-                    fieldKey={[fieldKey, "fish", "id"]}
-                    label="Fish ID"
-                    rules={[
-                      { required: true, message: "Please enter Fish ID" },
-                    ]}
-                  >
-                    <Input placeholder="Fish ID" />
-                  </Form.Item>
-
                   {/* Variety ID */}
                   <Form.Item
                     {...restField}
-                    name={[name, "fish", "variety", "id"]}
-                    fieldKey={[fieldKey, "fish", "variety", "id"]}
+                    name={[name, "variety_id"]}
+                    fieldKey={[fieldKey, "variety_id"]}
                     label="Variety ID"
                     rules={[
                       { required: true, message: "Please enter Variety ID" },
@@ -141,46 +88,33 @@ const AddKoi = () => {
                     <Input placeholder="Variety ID" />
                   </Form.Item>
 
-                  {/* Variety Name */}
-                  <Form.Item
-                    {...restField}
-                    name={[name, "fish", "variety", "name"]}
-                    fieldKey={[fieldKey, "fish", "variety", "name"]}
-                    label="Variety Name"
-                    rules={[
-                      { required: true, message: "Please enter Variety Name" },
-                    ]}
-                  >
-                    <Input placeholder="Variety Name" />
-                  </Form.Item>
-
                   {/* Length */}
                   <Form.Item
                     {...restField}
-                    name={[name, "fish", "length"]}
-                    fieldKey={[fieldKey, "fish", "length"]}
+                    name={[name, "length"]}
+                    fieldKey={[fieldKey, "length"]}
                     label="Length (cm)"
                     rules={[{ required: true, message: "Please enter Length" }]}
                   >
-                    <Input placeholder="Length" />
+                    <Input placeholder="Length" type="number" />
                   </Form.Item>
 
                   {/* Weight */}
                   <Form.Item
                     {...restField}
-                    name={[name, "fish", "weight"]}
-                    fieldKey={[fieldKey, "fish", "weight"]}
+                    name={[name, "weight"]}
+                    fieldKey={[fieldKey, "weight"]}
                     label="Weight (kg)"
                     rules={[{ required: true, message: "Please enter Weight" }]}
                   >
-                    <Input placeholder="Weight" />
+                    <Input placeholder="Weight" type="number" />
                   </Form.Item>
 
                   {/* Description */}
                   <Form.Item
                     {...restField}
-                    name={[name, "fish", "description"]}
-                    fieldKey={[fieldKey, "fish", "description"]}
+                    name={[name, "description"]}
+                    fieldKey={[fieldKey, "description"]}
                     label="Description"
                   >
                     <Input placeholder="Description" />
@@ -194,7 +128,7 @@ const AddKoi = () => {
                     label="Price"
                     rules={[{ required: true, message: "Please enter Price" }]}
                   >
-                    <Input placeholder="Price" />
+                    <Input placeholder="Price" type="number" />
                   </Form.Item>
 
                   <MinusCircleOutlined onClick={() => remove(name)} />
