@@ -41,25 +41,27 @@ public class FishOrderDetailService {
     }
 
     public FishOrderDetail createFishOrderDetail(CreateOrderDetailDTO createFishOrderDTO){
-
-        FishOrderDetail fishOrderDetail = new FishOrderDetail();
-        fishOrderDetail.setId(generateOrderDetailId());
-
         Optional<Fish> foundFish = fishRepository.findById(createFishOrderDTO.getFish_id());
         if(foundFish.isEmpty()){
             throw new RuntimeException("Fish does not exists");
         }
         Fish addfish = foundFish.get();
+        FishOrderDetail fishOrderDetail = new FishOrderDetail();
+        fishOrderDetail.setId(generateOrderDetailId());
+        fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
+        fishOrderDetail.setIsDeleted(false);
         fishOrderDetail.setFish(addfish);
+        fishOrderDetailRepository.save(fishOrderDetail);
 
         Optional<FishOrder> foundFishOrder = orderRepository.findById(createFishOrderDTO.getOrderId());
+
         if(foundFishOrder.isPresent()){
             FishOrder fishOrder = foundFishOrder.get();
             fishOrder.getFishOrderDetails().add(fishOrderDetail);
             fishOrderDetail.setFishOrder(fishOrder);
+            orderRepository.save(fishOrder);
         }
-        fishOrderDetail.setFishOrder(null);
-        return fishOrderDetailRepository.save(fishOrderDetail);
+        return fishOrderDetail;
     }
 
     public void deleteFishOrderDetail(String fishOrderDetailId){
@@ -156,7 +158,6 @@ public class FishOrderDetailService {
         String lastId = fishOrderDetailRepository.findTopByOrderByIdDesc()
                 .map(FishOrderDetail::getId)
                 .orElse(PREFIX + String.format("%0" + ID_PADDING + "d", 0));
-
         try {
             int nextId = Integer.parseInt(lastId.substring(PREFIX.length())) + 1;
             return PREFIX + String.format("%0" + ID_PADDING + "d", nextId);

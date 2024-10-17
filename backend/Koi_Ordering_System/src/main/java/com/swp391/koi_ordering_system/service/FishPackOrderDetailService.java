@@ -2,12 +2,10 @@ package com.swp391.koi_ordering_system.service;
 
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
+import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
-import com.swp391.koi_ordering_system.model.FishOrder;
-import com.swp391.koi_ordering_system.model.FishOrderDetail;
-import com.swp391.koi_ordering_system.model.FishPack;
-import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
+import com.swp391.koi_ordering_system.model.*;
 import com.swp391.koi_ordering_system.repository.FishPackOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishPackRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
@@ -71,7 +69,7 @@ public class FishPackOrderDetailService {
     }
 
     public FishPackOrderDetail createFishPackOrderDetail(String orderId,
-                                                         FishPackOrderDetailDTO fishPackOrderDetailDTO) {
+                                                         CreateOrderDetailDTO fishPackOrderDetailDTO) {
         if (orderRepository.findById(orderId).isEmpty()) {
             throw new EntityNotFoundException("Order Id Not Found");
         }
@@ -82,14 +80,20 @@ public class FishPackOrderDetailService {
 
         FishOrder fishOrder = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order Id Not Found"));
         FishPackOrderDetail fishPackOrderDetail = new FishPackOrderDetail();
+        Optional<FishPack> foundFishPack = FishPackRepository.findById(fishPackOrderDetailDTO.getFish_id());
+        if(foundFishPack.isEmpty()){
+            throw new RuntimeException("Fish does not exists");
+        }
 
         fishPackOrderDetail.setId(generateFishPackOrderDetailId());
         fishPackOrderDetail.setPrice(fishPackOrderDetailDTO.getPrice());
         fishPackOrderDetail.setFishOrder(fishOrder);
-        fishPackOrderDetail.setFishPack(null);
+        fishPackOrderDetail.setFishPack(foundFishPack.get());
 
         return fishPackOrderDetailRepository.save(fishPackOrderDetail);
     }
+
+
 
     public FishPackOrderDetail updateFishPackOrderDetail(String orderId,
                                                      FishPackOrderDetailDTO updatedFPOD){

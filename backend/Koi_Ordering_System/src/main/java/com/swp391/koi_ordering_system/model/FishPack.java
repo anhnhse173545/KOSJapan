@@ -40,6 +40,7 @@ public class FishPack {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @JsonManagedReference(value = "fishPack-fish")
     @OneToMany(mappedBy = "fishPack")
     private List<Fish> listFish = new ArrayList<>();
 
