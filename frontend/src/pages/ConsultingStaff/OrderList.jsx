@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message, Badge } from "antd";
+import { Table, Button, message, Badge, Input, Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const OrderList = () => {
   const [data, setData] = useState([]); // Data fetched from API
   const [loading, setLoading] = useState(false); // Loading state
+  const [form] = Form.useForm();
+  const [bookingId, setBookingId] = useState("");
+  const [farmId, setFarmId] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const navigate = useNavigate();
 
   // Fetch orders data from API
@@ -41,8 +45,33 @@ const OrderList = () => {
     return fishTotal + fishPackTotal;
   };
 
-  const handleAddKoi = (bookingId, farmId) => {
-    navigate("/add-koi", { state: { bookingId, farmId } });
+  const handleAddKoi = (id, farmId) => {
+    navigate("/add-koi", { state: { id, farmId } });
+  };
+
+  // Handle creating a new order
+  const handleCreateOrder = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
+        { deliveryAddress }
+      );
+      message.success(`Order created with ID: ${response.data.id}`);
+      fetchOrders(); // Refresh the list after creating the order
+    } catch (error) {
+      console.error("Error creating order:", error);
+      if (error.response) {
+        message.error(
+          `Failed to create order: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else {
+        message.error(
+          "Failed to create order. Please check your network and server."
+        );
+      }
+    }
   };
 
   const columns = [
@@ -136,6 +165,31 @@ const OrderList = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Fish Order List</h1>
+      <div style={{ marginBottom: "20px" }}>
+        <Form form={form} layout="inline">
+          <Form.Item label="Booking ID">
+            <Input
+              value={bookingId}
+              onChange={(e) => setBookingId(e.target.value)}
+              placeholder="Enter Booking ID"
+            />
+          </Form.Item>
+          <Form.Item label="Farm ID">
+            <Input
+              value={farmId}
+              onChange={(e) => setFarmId(e.target.value)}
+              placeholder="Enter Farm ID"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" onClick={handleCreateOrder}>
+              Create Order
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+
       <Table
         columns={columns}
         dataSource={data}
