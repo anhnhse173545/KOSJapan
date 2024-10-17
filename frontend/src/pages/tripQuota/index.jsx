@@ -11,9 +11,9 @@ const SingleCustomerStaffData = ({ tripData }) => {
         <h3>Name: {tripData.customer.name}</h3>
         <p><strong>Email:</strong> {tripData.customer.email || 'N/A'}</p>
         <p><strong>Phone:</strong> {tripData.customer.phone || 'N/A'}</p>
-        <p><strong>Koi Description:</strong> {tripData.bookingDescription}</p>
-        <p><strong>Start Date:</strong> {tripData.startDate}</p>
-        <p><strong>End Date:</strong> {tripData.endDate}</p>
+        <p><strong>Description:</strong> {tripData.description}</p>
+        <p><strong>Created at:</strong> {tripData.createAt}</p>
+        
       </div>
     </div>
   );
@@ -92,7 +92,7 @@ function OnGoingPage() {
 
   // Fetch trip data based on the ID from the URL
   useEffect(() => {
-    fetch(`http://localhost:8080/api/trip/get/${id}/customer-sale`)
+    fetch(`http://localhost:8080/api/booking/get/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
