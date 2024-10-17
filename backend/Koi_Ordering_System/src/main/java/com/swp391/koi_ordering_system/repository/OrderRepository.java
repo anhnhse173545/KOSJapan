@@ -18,4 +18,5 @@ public interface OrderRepository extends JpaRepository<FishOrder, String> {
     Optional<FishOrder> findFishOrderByBookingId(String id);
     Optional<FishOrder> findFishOrderByBookingIdAndFarmId(String bokingId, String farmId);
     List<FishOrder> findByBooking_DeliveryStaff_Id(String deliveryStaffId);
+    List<FishOrder> findByBooking_Customer_Id(String customerId);
 }
