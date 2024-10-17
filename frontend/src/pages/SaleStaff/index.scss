@@ -1,0 +1,131 @@
+/* Toàn bộ ứng dụng */
+body {
+    background-color: #f8f9fa; /* Màu nền sáng nhẹ */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Kiểu chữ dễ đọc */
+    margin: 0;
+    padding: 20px;
+}
+
+/* Bố cục ứng dụng chính */
+.App {
+    max-width: 900px; /* Chiều rộng tối đa */
+    margin: 0 auto;
+    background: #ffffff; /* Nền trắng cho ứng dụng */
+    padding: 30px;
+    border-radius: 12px; /* Bo góc mượt mà */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
+}
+
+/* Tiêu đề ứng dụng */
+h1 {
+    color: #343a40; /* Màu chữ tối */
+    text-align: center;
+    font-size: 2.5em; /* Kích thước chữ lớn */
+    margin-bottom: 20px;
+    font-weight: 600; /* Đậm hơn */
+}
+
+/* Bảng */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Không có khoảng trống giữa các ô */
+    margin-top: 20px;
+}
+
+/* Định dạng cho các ô */
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6; /* Đường kẻ nhẹ cho ô */
+}
+
+/* Định dạng cho tiêu đề bảng */
+th {
+    background-color: #007bff; /* Màu xanh cho tiêu đề */
+    color: white; /* Chữ màu trắng */
+    font-weight: bold;
+}
+
+/* Hiệu ứng hover cho hàng trong bảng */
+tr:hover {
+    background-color: #f1f1f1; /* Nền sáng khi hover */
+}
+
+/* Định dạng cho nút */
+button {
+    background-color: #007bff; /* Màu xanh cho nút */
+    color: white; /* Chữ màu trắng */
+    border: none;
+    border-radius: 5px; /* Bo góc cho nút */
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Hiệu ứng khi hover */
+    font-size: 0.9em; /* Kích thước chữ cho nút */
+}
+
+button:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+    transform: translateY(-2px); /* Nhấn lên khi hover */
+}
+
+/* Định dạng cho modal chỉnh sửa */
+.edit-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff; /* Nền trắng cho modal */
+    border: 1px solid #ccc; /* Đường kẻ nhẹ */
+    padding: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
+    z-index: 1000;
+    border-radius: 12px; /* Bo góc cho modal */
+    width: 300px; /* Chiều rộng cố định cho modal */
+}
+
+/* Tiêu đề của modal */
+.edit-modal h2 {
+    margin: 0 0 15px 0;
+    color: #343a40; /* Màu chữ tối */
+    text-align: center;
+    font-weight: bold; /* Đậm hơn */
+}
+
+/* Định dạng cho nhãn và input trong modal */
+.edit-modal label {
+    display: block;
+    margin: 10px 0;
+    font-weight: bold; /* Đậm */
+}
+
+.edit-modal input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc; /* Đường kẻ nhẹ */
+    border-radius: 5px; /* Bo góc cho input */
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Bóng nhẹ */
+}
+
+/* Định dạng cho nút trong modal */
+.edit-modal button {
+    margin-right: 10px;
+    width: 100%; /* Chiều rộng đầy đủ */
+    font-size: 1em; /* Kích thước chữ lớn hơn */
+}
+
+/* Nút hủy với màu đỏ */
+.edit-modal button:last-child {
+    background-color: #dc3545; /* Màu đỏ cho nút hủy */
+}
+
+.edit-modal button:last-child:hover {
+    background-color: #c82333; /* Đỏ đậm hơn khi hover */
+}
+
+/* Định dạng cho thông báo lỗi */
+.error-message {
+    color: #dc3545; /* Màu đỏ cho thông báo lỗi */
+    font-weight: bold;
+    text-align: center;
+}

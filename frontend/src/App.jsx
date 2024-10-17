@@ -25,9 +25,9 @@ import DeliveryOrderList from "./pages/DeliveryStaff/DeliveryOrderList";
 import TrackingOrder from "./pages/DeliveryStaff/TrackingOrder";
 import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 
-import ViewTripPlan from "./pages/SaleStaff/ViewTripPlan";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
+import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
 
 function App() {
   const router = createBrowserRouter([
@@ -64,9 +64,9 @@ function App() {
     { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
     { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
     { path: "/SaleStaffHome", element: <SaleStaffHome /> },
-    { path: "/CustomerRequest", element: <CustomerRequest /> },
+    { path: "/CustomerRequest/:id", element: <CustomerRequest /> },
 
-    { path: "/view-trip-plan", element: <ViewTripPlan /> },
+    { path: "/createTrip/:id", element: <CreateTrip /> },
   ]);
   return <RouterProvider router={router} />;
 }
