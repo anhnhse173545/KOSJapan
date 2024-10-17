@@ -45,8 +45,8 @@ const OrderList = () => {
     return fishTotal + fishPackTotal;
   };
 
-  const handleAddKoi = (id, farmId) => {
-    navigate("/add-koi", { state: { id, farmId } });
+  const handleAddKoi = (orderId) => {
+    navigate("/add-koi", { state: { orderId, farmId } });
   };
 
   // Handle creating a new order

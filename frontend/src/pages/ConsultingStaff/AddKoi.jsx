@@ -11,7 +11,7 @@ const AddKoi = () => {
   const location = useLocation();
 
   // Extract orderId from location state
-  const { orderId } = location.state || {};
+  const { orderId, farmId } = location.state || {};
 
   // Submit Fish and Order Details
   const handleSubmit = async (values) => {
