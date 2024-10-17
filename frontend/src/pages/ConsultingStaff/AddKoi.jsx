@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Form, Input, Button, message, Space } from "antd";
+import { Form, Input, Button, message, Space, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+
+const { Option } = Select;
 
 const AddKoi = () => {
   const [loading, setLoading] = useState(false);
@@ -13,6 +15,7 @@ const AddKoi = () => {
   // Extract orderId from location state
   const { orderId } = location.state || {};
 
+  // Submit Fish and Order Details
   // Submit Fish and Order Details
   const handleSubmit = async (values) => {
     if (!orderId) {
@@ -45,7 +48,7 @@ const AddKoi = () => {
       }
 
       message.success("Fish and order details created successfully!");
-      navigate("/"); // Navigate to another page after success
+      navigate("/OrderList"); // Navigate to OrderList.jsx after success
     } catch (error) {
       console.error(
         "Error creating fish and order details:",
@@ -82,10 +85,16 @@ const AddKoi = () => {
                     fieldKey={[fieldKey, "variety_id"]}
                     label="Variety ID"
                     rules={[
-                      { required: true, message: "Please enter Variety ID" },
+                      { required: true, message: "Please select Variety ID" },
                     ]}
                   >
-                    <Input placeholder="Variety ID" />
+                    <Select placeholder="Select Variety ID">
+                      <Option value="VA0001">VA0001</Option>
+                      <Option value="VA0002">VA0002</Option>
+                      <Option value="VA0003">VA0003</Option>
+                      <Option value="VA0004">VA0004</Option>
+                      <Option value="VA0005">VA0005</Option>
+                    </Select>
                   </Form.Item>
 
                   {/* Length */}
