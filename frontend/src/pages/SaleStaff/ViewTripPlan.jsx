@@ -60,7 +60,7 @@ const CreateTrip = () => {
 
         try {
             // Send request using bookingId from URL
-            const response = await fetch(`http://localhost:8080/api/booking/BO0021/create-trip`, {
+            const response = await fetch(`http://localhost:8080/api/booking/BO0022/create-trip`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
