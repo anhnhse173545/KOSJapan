@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishInOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
@@ -55,6 +56,12 @@ public class FishOrderDetailController {
     public ResponseEntity<String> deleteOrderDetail(@PathVariable String orderDetail_id){
         service.deleteFishOrderDetail(orderDetail_id);
         return ResponseEntity.ok("Order Detail deleted successfully");
+    }
+
+    @PostMapping("/create-fish-and-order-detail")
+    public ResponseEntity<FishOrderDetail> createFishAndOrderDetail(@RequestBody CreateFishDTO dto) {
+        FishOrderDetail fishOrderDetail = service.createFishAndOrderDetail(dto);
+        return ResponseEntity.ok(fishOrderDetail);
     }
 
 

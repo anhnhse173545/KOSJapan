@@ -1,16 +1,15 @@
 package com.swp391.koi_ordering_system.service;
 
+import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishInOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
-import com.swp391.koi_ordering_system.model.Fish;
-import com.swp391.koi_ordering_system.model.FishOrder;
-import com.swp391.koi_ordering_system.model.FishOrderDetail;
-import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
+import com.swp391.koi_ordering_system.model.*;
 import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
+import com.swp391.koi_ordering_system.repository.VarietyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +28,12 @@ public class FishOrderDetailService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private VarietyRepository varietyRepository;
+
+    @Autowired
+    private FishService fishService;
 
     private static final String PREFIX = "FOD";
     private static final int ID_PADDING = 4;
@@ -61,6 +66,40 @@ public class FishOrderDetailService {
             fishOrderDetail.setFishOrder(fishOrder);
             orderRepository.save(fishOrder);
         }
+        return fishOrderDetail;
+    }
+
+    public FishOrderDetail createFishAndOrderDetail(CreateFishDTO dto) {
+        // Create Fish
+        Fish newFish = new Fish();
+        newFish.setId(fishService.generateFishId());
+        Variety variety = varietyRepository.findById(dto.getVariety_id())
+                .orElseThrow(() -> new RuntimeException("Variety id not found"));
+        newFish.setVariety(variety);
+        newFish.setLength(dto.getLength());
+        newFish.setWeight(dto.getWeight());
+        newFish.setDescription(dto.getDescription());
+        fishRepository.save(newFish);
+
+        // Create FishOrderDetail
+        FishOrderDetail fishOrderDetail = new FishOrderDetail();
+        fishOrderDetail.setId(generateOrderDetailId());
+        fishOrderDetail.setPrice(dto.getPrice());
+        fishOrderDetail.setIsDeleted(false);
+        fishOrderDetail.setFish(newFish);
+        fishOrderDetailRepository.save(fishOrderDetail);
+
+        // Associate FishOrderDetail with FishOrder
+        Optional<FishOrder> foundFishOrder = orderRepository.findById(dto.getOrderId());
+
+        if(foundFishOrder.isPresent()){
+            FishOrder fishOrder = foundFishOrder.get();
+            fishOrder.getFishOrderDetails().add(fishOrderDetail);
+            fishOrderDetail.setFishOrder(fishOrder);
+            fishOrderDetailRepository.save(fishOrderDetail);
+            orderRepository.save(fishOrder);
+        }
+
         return fishOrderDetail;
     }
 
