@@ -64,7 +64,7 @@ function App() {
     { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
     { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
     { path: "/SaleStaffHome", element: <SaleStaffHome /> },
-    { path: "/CustomerRequest/:id", element: <CustomerRequest /> },
+    { path: "/CustomerRequest", element: <CustomerRequest /> },
 
     { path: "/createTrip/:id", element: <CreateTrip /> },
   ]);

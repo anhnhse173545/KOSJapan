@@ -1,131 +1,162 @@
-/* Toàn bộ ứng dụng */
+// Variables
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$background-color: #ecf0f1;
+$text-color: #333;
+$border-color: #bdc3c7;
+$success-color: #2ecc71;
+$danger-color: #e74c3c;
+
+// Mixins
+@mixin button($bg-color) {
+  background-color: $bg-color;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
+}
+
+// Global styles
 body {
-    background-color: #f8f9fa; /* Màu nền sáng nhẹ */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Kiểu chữ dễ đọc */
-    margin: 0;
-    padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
-/* Bố cục ứng dụng chính */
 .App {
-    max-width: 900px; /* Chiều rộng tối đa */
-    margin: 0 auto;
-    background: #ffffff; /* Nền trắng cho ứng dụng */
-    padding: 30px;
-    border-radius: 12px; /* Bo góc mượt mà */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* Tiêu đề ứng dụng */
 h1 {
-    color: #343a40; /* Màu chữ tối */
-    text-align: center;
-    font-size: 2.5em; /* Kích thước chữ lớn */
-    margin-bottom: 20px;
-    font-weight: 600; /* Đậm hơn */
+  color: $secondary-color;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-/* Bảng */
+// Table styles
 table {
-    width: 100%;
-    border-collapse: collapse; /* Không có khoảng trống giữa các ô */
-    margin-top: 20px;
-}
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 
-/* Định dạng cho các ô */
-th, td {
-    padding: 15px;
+  th, td {
+    padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #dee2e6; /* Đường kẻ nhẹ cho ô */
-}
+    border-bottom: 1px solid $border-color;
+  }
 
-/* Định dạng cho tiêu đề bảng */
-th {
-    background-color: #007bff; /* Màu xanh cho tiêu đề */
-    color: white; /* Chữ màu trắng */
+  th {
+    background-color: $primary-color;
+    color: white;
     font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+
+  tr:hover {
+    background-color: #e9ecef;
+  }
 }
 
-/* Hiệu ứng hover cho hàng trong bảng */
-tr:hover {
-    background-color: #f1f1f1; /* Nền sáng khi hover */
-}
-
-/* Định dạng cho nút */
+// Button and select styles
 button {
-    background-color: #007bff; /* Màu xanh cho nút */
-    color: white; /* Chữ màu trắng */
-    border: none;
-    border-radius: 5px; /* Bo góc cho nút */
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s; /* Hiệu ứng khi hover */
-    font-size: 0.9em; /* Kích thước chữ cho nút */
+  @include button($primary-color);
+  margin-right: 10px;
 }
 
-button:hover {
-    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
-    transform: translateY(-2px); /* Nhấn lên khi hover */
+select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+  background-color: white;
+  margin-right: 10px;
 }
 
-/* Định dạng cho modal chỉnh sửa */
+// Modal styles
 .edit-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #ffffff; /* Nền trắng cho modal */
-    border: 1px solid #ccc; /* Đường kẻ nhẹ */
-    padding: 20px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
-    z-index: 1000;
-    border-radius: 12px; /* Bo góc cho modal */
-    width: 300px; /* Chiều rộng cố định cho modal */
-}
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 
-/* Tiêu đề của modal */
-.edit-modal h2 {
-    margin: 0 0 15px 0;
-    color: #343a40; /* Màu chữ tối */
-    text-align: center;
-    font-weight: bold; /* Đậm hơn */
-}
+  h2 {
+    color: $secondary-color;
+    margin-bottom: 20px;
+  }
 
-/* Định dạng cho nhãn và input trong modal */
-.edit-modal label {
+  label {
     display: block;
-    margin: 10px 0;
-    font-weight: bold; /* Đậm */
-}
-
-.edit-modal input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border: 1px solid #ccc; /* Đường kẻ nhẹ */
-    border-radius: 5px; /* Bo góc cho input */
     margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Bóng nhẹ */
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    &:first-of-type {
+      @include button($success-color);
+    }
+
+    &:last-of-type {
+      @include button($danger-color);
+    }
+  }
 }
 
-/* Định dạng cho nút trong modal */
-.edit-modal button {
-    margin-right: 10px;
-    width: 100%; /* Chiều rộng đầy đủ */
-    font-size: 1em; /* Kích thước chữ lớn hơn */
+// Responsive styles
+@media (max-width: 768px) {
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  button, select {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .edit-modal {
+    width: 90%;
+    max-width: 400px;
+  }
 }
 
-/* Nút hủy với màu đỏ */
-.edit-modal button:last-child {
-    background-color: #dc3545; /* Màu đỏ cho nút hủy */
+// Loading and error styles
+.loading, .error {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 50px;
 }
 
-.edit-modal button:last-child:hover {
-    background-color: #c82333; /* Đỏ đậm hơn khi hover */
-}
-
-/* Định dạng cho thông báo lỗi */
-.error-message {
-    color: #dc3545; /* Màu đỏ cho thông báo lỗi */
-    font-weight: bold;
-    text-align: center;
+.error {
+  color: $danger-color;
 }

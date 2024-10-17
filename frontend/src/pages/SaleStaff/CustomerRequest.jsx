@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import './index.scss';
 import { useNavigate } from 'react-router-dom';
 
-function App() {
+function CustomerRequest() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedBooking, setSelectedBooking] = useState(null);
-    const [newDescription, setNewDescription] = useState('');
+
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/booking/sale-staff/AC0002');
+              const response = await fetch(`http://localhost:8080/api/booking/sale-staff/AC0002?timestamp=${new Date().getTime()}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -29,29 +28,27 @@ function App() {
         fetchBookings();
     }, []);
 
- 
-
-    const handleUpdate = async () => {
+    // Handle status change
+    const handleStatusUpdate = async (booking) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/booking/${selectedBooking.id}`, {
+            const response = await fetch(`http://localhost:8080/api/booking/update/${booking.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ...selectedBooking, description: newDescription }),
+                body: JSON.stringify({ ...booking, status: booking.newStatus }), // Update status
             });
 
             if (!response.ok) {
-                throw new Error('Update failed');
+                throw new Error('Status update failed');
             }
 
             const updatedBooking = await response.json();
             setBookings(bookings.map(b => (b.id === updatedBooking.id ? updatedBooking : b)));
-            setSelectedBooking(null); // Đóng modal sau khi cập nhật
-            setNewDescription('');
         } catch (error) {
             setError(error.message);
         }
+        
     };
 
     if (loading) {
@@ -69,10 +66,10 @@ function App() {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Customer name</th>
+                        <th>Customer Name</th>
                         <th>Email</th>
                         <th>Description</th>
-                        <th>Create at</th>
+                        <th>Created At</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -88,29 +85,32 @@ function App() {
                             <td>{booking.status}</td>
                             <td>
                                 <button onClick={() => navigate(`/createTrip/${booking.id}`)}>Edit</button>
+                                {/* Dropdown for changing status */}
+                                <select
+                                    value={booking.newStatus || ''} // Use local state for each booking
+                                    onChange={(e) => {
+                                        const updatedBookings = bookings.map(b =>
+                                            b.id === booking.id ? { ...b, newStatus: e.target.value } : b
+                                        );
+                                        setBookings(updatedBookings);
+                                    }}
+                                >
+                                    <option value="">--Change Status--</option>
+                                    <option value="Requested">Requested</option>
+                                    <option value="Approved Quote">Approved Quote</option>
+                                    <option value="Paid Booking">Paid Booking</option>
+                                    <option value="On-Going">On-Going</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Canceled">Canceled</option>
+                                </select>
+                                <button onClick={() => handleStatusUpdate(booking)}>Update Status</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-
-            {selectedBooking && (
-                <div className="edit-modal">
-                    <h2>Edit Booking</h2>
-                    <label>
-                        Mô Tả:
-                        <input 
-                            type="text" 
-                            value={newDescription} 
-                            onChange={(e) => setNewDescription(e.target.value)} 
-                        />
-                    </label>
-                    <button onClick={handleUpdate}>Cập nhật</button>
-                    <button onClick={() => setSelectedBooking(null)}>Hủy</button>
-                </div>
-            )}
         </div>
     );
 }
 
-export default App;
+export default CustomerRequest;
