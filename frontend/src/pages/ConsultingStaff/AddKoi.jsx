@@ -42,7 +42,7 @@ const AddKoi = () => {
 
         // Step 2: Create fish
         const fishResponse = await axios.post(
-          `http://localhost:8080/fish/${fish.variety.name}/create`,
+          `http://localhost:8080/fish-order-detail-controller/addFishToOrderDetail`,
           { ...fish }
         );
         const createdFish = fishResponse.data; // Kiểm tra response trả về ID của cá mới tạo
@@ -229,7 +229,7 @@ const AddKoi = () => {
                       ]);
                       try {
                         const fishResponse = await axios.post(
-                          `http://localhost:8080/fish/${fish.variety.name}/create`,
+                          `http://localhost:8080/fish-order-detail-controller/addFishToOrderDetail`,
                           { ...fish }
                         );
                         message.success("Fish created successfully!");
@@ -448,7 +448,7 @@ const AddKoi = () => {
                       }
                     }}
                   >
-                    Tạo Fish Pack Order Detail
+                    Add Fish Pack Order Detail
                   </Button>
 
                   <MinusCircleOutlined onClick={() => remove(name)} />
