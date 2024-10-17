@@ -86,7 +86,7 @@ public class FishService {
     }
 
 
-    private String generateFishId() {
+    public String generateFishId() {
         String lastFishId = fishRepository.findTopByOrderByIdDesc()
                 .map(Fish::getId)
                 .orElse("KF0000");
