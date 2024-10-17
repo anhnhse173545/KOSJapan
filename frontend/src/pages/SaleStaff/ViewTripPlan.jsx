@@ -60,7 +60,7 @@ const CreateTrip = () => {
 
         try {
             // Send request using bookingId from URL
-            const response = await fetch(`http://localhost:8080/api/booking/BO0020/create-trip`, {
+            const response = await fetch(`http://localhost:8080/api/booking/BO0021/create-trip`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const CreateTrip = () => {
 
             setSuccess('Trip created successfully!'); // Show success message
             setError(null);
-            setTimeout(() => navigate('/'), 2000); // Redirect to home after 2 seconds
+            setTimeout(() => navigate('/CustomerRequest'), 2000); // Redirect to home after 2 seconds
         } catch (error) {
             setError(error.message);
             setSuccess(null);
