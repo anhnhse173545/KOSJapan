@@ -41,9 +41,8 @@ const OrderList = () => {
     return fishTotal + fishPackTotal;
   };
 
-  // Navigate to AddKoi.jsx with the order ID
-  const handleAddKoi = (orderId) => {
-    navigate("/add-koi", { state: { orderId } });
+  const handleAddKoi = (bookingId, farmId) => {
+    navigate("/add-koi", { state: { bookingId, farmId } });
   };
 
   const columns = [
@@ -70,7 +69,10 @@ const OrderList = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="primary" onClick={() => handleAddKoi(record.id)}>
+        <Button
+          type="primary"
+          onClick={() => handleAddKoi(record.id, record.farmId)}
+        >
           Add Koi
         </Button>
       ),
