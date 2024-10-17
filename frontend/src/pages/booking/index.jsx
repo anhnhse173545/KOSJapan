@@ -91,7 +91,7 @@ function PaymentPage() {
                   <button
                     className="details-button"
                     onClick={() => {
-                      if (koi.status === 'Pending Quota') {
+                      if (koi.status === 'Approved Quote') {
                         navigate(`/quota/${koi.id}`);
                       } else if (koi.status === 'Request') {
                         navigate(`/payment/${koi.id}`);
