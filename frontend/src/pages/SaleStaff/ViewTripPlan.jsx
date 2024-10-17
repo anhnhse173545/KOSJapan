@@ -9,6 +9,8 @@ const CreateTrip = () => {
     const [departureAirport, setDepartureAirport] = useState('');
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState('');
+    const [status, setStatus] = useState('On-Going'); // Default status
+    const [tripDestinations, setTripDestinations] = useState(''); // For multiple destinations, this could be an array
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null); // To show success message
     const navigate = useNavigate();
@@ -19,7 +21,7 @@ const CreateTrip = () => {
     useEffect(() => {
         const fetchTripCount = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/booking/list`); // Fetch list of trips
+                const response = await fetch(`http://localhost:8080/api/booking/customer/AC0007`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch trips');
                 }
@@ -52,11 +54,13 @@ const CreateTrip = () => {
             departureAirport,
             price: Number(price), // Ensure price is a number
             description,
+            status, // Add the status field
+            tripDestinations: tripDestinations.split(',').map(dest => dest.trim()), // Split destinations into an array
         };
 
         try {
             // Send request using bookingId from URL
-            const response = await fetch(`http://localhost:8080/api/booking/${bookingId}/create-trip`, {
+            const response = await fetch(`http://localhost:8080/api/booking/BO0020/create-trip`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,13 +108,13 @@ const CreateTrip = () => {
                     />
                 </label>
                 <label>
-                    Airplane:
+                    Departure Airport:
                     <input 
                         type="text" 
                         value={departureAirport} 
                         onChange={(e) => setDepartureAirport(e.target.value)} 
                         required 
-                        aria-label="Airplane"
+                        aria-label="Departure Airport"
                     />
                 </label>
                 <label>
@@ -128,10 +132,11 @@ const CreateTrip = () => {
                     <textarea 
                         value={description} 
                         onChange={(e) => setDescription(e.target.value)} 
-                        required 
                         aria-label="Description"
                     />
                 </label>
+              
+                
                 <button type="submit">Create Trip</button>
             </form>
             {/* Back button */}

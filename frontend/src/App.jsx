@@ -45,7 +45,7 @@ function App() {
         { path: "/onGoing/:id", element: <OnGoingPage /> },
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
-        { path: "/paykoi", element: <KoiPayPage /> },
+        { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         
 
