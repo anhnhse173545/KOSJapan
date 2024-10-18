@@ -49,7 +49,8 @@ public class FishPackService {
             fishPack.setLength(fishPackDTO.getLength());
             fishPack.setWeight(fishPackDTO.getWeight());
             fishPack.setDescription(fishPackDTO.getDescription());
-            fishPack.setQuantity(fishPack.getListFish().size());
+            fishPack.setQuantity(fishPackDTO.getQuantity());
+            fishPack.setPrice(fishPackDTO.getPrice());
 
             return fishPackRepository.save(fishPack);
     }
@@ -64,7 +65,8 @@ public class FishPackService {
         fishPackToUpdate.setLength(fishPackDTO.getLength());
         fishPackToUpdate.setWeight(fishPackDTO.getWeight());
         fishPackToUpdate.setDescription(fishPackDTO.getDescription());
-        fishPackToUpdate.setQuantity(fishPackToUpdate.getListFish().size());
+        fishPackToUpdate.setQuantity(fishPackDTO.getQuantity());
+        fishPackToUpdate.setPrice(fishPackDTO.getPrice());
 
         return fishPackRepository.save(fishPackToUpdate);
     }
@@ -79,112 +81,50 @@ public class FishPackService {
         fishPackRepository.save(fishPackToDelete);
     }
 
-    public FishPack addFishToFishPack(String fishId, String fishPackId) {
-        Optional<Fish> fish = fishRepository.findById(fishId);
-        Optional<FishPack> fishPack = fishPackRepository.findById(fishPackId);
-
-        if (fishPack.isEmpty()) {
-            throw new RuntimeException("Fish Pack not found");
-        }
-        else if (fish.isEmpty()) {
-            throw new RuntimeException("Fish not found");
-        }
-        Fish foundFish = fish.get();
-        FishPack fishPackFound = fishPack.get();
-
-        foundFish.setFishPack(fishPackFound);
-        fishRepository.save(foundFish);
-
-        fishPackFound.getListFish().add(foundFish);
-        fishPackFound.setQuantity(fishPackFound.getListFish().size());
-
-        return fishPackRepository.save(fishPackFound);
-    }
-
-    public FishPack updateFishInFishPack(String fishId, String fishPackId,
-                                         CreateFishPackDTO updateKoiPackDTO,
-                                         CreateFishDTO fishDTO) {
-        Optional<FishPack> fishPack = fishPackRepository.findById(fishPackId);
-        Optional<Fish> fish = fishRepository.findById(fishId);
-        if(fishPack.isEmpty()){
-            throw new RuntimeException("Fish Pack not found");
-        }
-        else if(fish.isEmpty()){
-            throw new RuntimeException("Fish not found");
-        }
-        FishPack fishPackToUpdate = fishPack.get();
-        Fish foundFish = fish.get();
-
-        fishPackToUpdate.setLength(updateKoiPackDTO.getLength());
-        fishPackToUpdate.setWeight(updateKoiPackDTO.getWeight());
-        fishPackToUpdate.setDescription(updateKoiPackDTO.getDescription());
-
-        if( !fishPackToUpdate.getListFish().contains(foundFish)){
-            throw new RuntimeException("Fish in Pack not found, Please add fish !");
-        }
-
-        int index = fishPackToUpdate.getListFish().indexOf(foundFish);
-        foundFish = fishService.updateFish(fishId, fishDTO);
-        fishPackToUpdate.getListFish().set(index, foundFish);
-
-        return fishPackRepository.save(fishPackToUpdate);
-    }
-
-    public FishPack removeFishFromFishPack(String fishId, String fishPackId) {
-        Optional<FishPack> fishPack = fishPackRepository.findById(fishPackId);
-        Optional<Fish> fish = fishRepository.findById(fishId);
-        if(fishPack.isEmpty()){
-            throw new RuntimeException("Fish Pack not found");
-        }
-        else if(fish.isEmpty()){
-            throw new RuntimeException("Fish not found");
-        }
-        FishPack sameFishPack = fishPack.get();
-        Fish fishFound = fish.get();
-        if( !sameFishPack.getListFish().contains(fishFound)){
-            throw new RuntimeException("Fish in Pack not found , Remove failed !");
-        }
-        sameFishPack.getListFish().remove(fishFound);
-
-        fishFound.setFishPack(null);
-        fishRepository.save(fishFound);
-
-        return fishPackRepository.save(sameFishPack);
-    }
-
     public FishPackDTO mapToDTO(FishPack fishPack) {
         FishPackDTO fishPackDTO = new FishPackDTO();
+
         fishPackDTO.setId(fishPack.getId());
         fishPackDTO.setLength(fishPack.getLength());
         fishPackDTO.setWeight(fishPack.getWeight());
         fishPackDTO.setDescription(fishPack.getDescription());
-        fishPackDTO.setListFish(mapToListDTO(fishPack.getListFish()));
+        fishPackDTO.setQuantity(fishPack.getQuantity());
+        fishPackDTO.setPrice(fishPack.getPrice());
+
         return fishPackDTO;
     }
 
-    public List<FishDTO> mapToListDTO(List<Fish> fishList) {
-        List<FishDTO> fishDTOList = new ArrayList<>();
-
-        if(fishList == null){
-            return null;
+    public List<FishPackDTO> mapToListDTO(List<FishPack> fishPackList){
+        List<FishPackDTO> fishPackDTOList = new ArrayList<>();
+        for(FishPack fishPack : fishPackList){
+            fishPackDTOList.add(mapToDTO(fishPack));
         }
-
-        for (Fish fish : fishList) {
-            FishDTO fishDTO = new FishDTO();
-
-            fishDTO.setFish_id(fish.getId());
-            fishDTO.setFish_variety_name(fish.getVariety().getName());
-            fishDTO.setWeight(fish.getWeight());
-            fishDTO.setLength(fish.getLength());
-            fishDTO.setDescription(fish.getDescription());
-
-            fishDTOList.add(fishDTO);
-        }
-        return fishDTOList;
+        return fishPackDTOList;
     }
 
+//    public List<FishDTO> mapToListDTO(List<Fish> fishList) {
+//        List<FishDTO> fishDTOList = new ArrayList<>();
+//
+//        if(fishList == null){
+//            return null;
+//        }
+//
+//        for (Fish fish : fishList) {
+//            FishDTO fishDTO = new FishDTO();
+//
+//            fishDTO.setFish_id(fish.getId());
+//            fishDTO.setFish_variety_name(fish.getVariety().getName());
+//            fishDTO.setWeight(fish.getWeight());
+//            fishDTO.setLength(fish.getLength());
+//            fishDTO.setDescription(fish.getDescription());
+//
+//            fishDTOList.add(fishDTO);
+//        }
+//        return fishDTOList;
+//    }
 
-    private String generateFishPackId() {
+
+    public String generateFishPackId() {
         String lastId = fishPackRepository.findTopByOrderByIdDesc()
                 .map(FishPack::getId)
                 .orElse(PREFIX + String.format("%0" + ID_PADDING + "d", 0));

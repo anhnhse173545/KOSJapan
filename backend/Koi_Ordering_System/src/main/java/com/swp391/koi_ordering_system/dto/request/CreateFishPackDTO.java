@@ -15,4 +15,6 @@ public class CreateFishPackDTO {
     private String length;
     private String weight;
     private String description;
+    private Integer quantity;
+    private Double price;
 }

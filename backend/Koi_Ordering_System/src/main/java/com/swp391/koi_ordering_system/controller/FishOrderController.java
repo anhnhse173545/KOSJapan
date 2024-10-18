@@ -1,18 +1,12 @@
 package com.swp391.koi_ordering_system.controller;
 
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishOrderDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.*;
 import com.swp391.koi_ordering_system.model.FishOrder;
-import com.swp391.koi_ordering_system.model.FishOrderDetail;
-import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
-import com.swp391.koi_ordering_system.service.FishOrderDetailService;
 import com.swp391.koi_ordering_system.service.FishOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,13 +60,6 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(addedOrder));
     }
 
-    @PutMapping("/{booking_id}/{farm_id}/update-order-detail-in-order")
-    public ResponseEntity<FishOrderDTO> updateFishOrderDetailInOrder(@PathVariable String booking_id,
-                                                                 @PathVariable String farm_id,
-                                                                 @RequestBody UpdateOrderDTO dto){
-        FishOrder updatedOrder = orderService.updateOrder(booking_id, farm_id, dto);
-        return ResponseEntity.ok(orderService.mapToDTO2(updatedOrder));
-    }
 
     @PutMapping("/{booking_id}/{farm_id}/remove-order-detail-from-order")
     public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String booking_id,

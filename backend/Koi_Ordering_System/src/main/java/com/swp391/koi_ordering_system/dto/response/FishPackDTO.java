@@ -24,5 +24,5 @@ public class FishPackDTO {
 
     private int quantity;
 
-    private List<FishDTO> listFish;
+    private double price;
 }

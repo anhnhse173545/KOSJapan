@@ -1,14 +1,13 @@
 package com.swp391.koi_ordering_system.service;
 
 
+import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.*;
-import com.swp391.koi_ordering_system.repository.FishPackOrderDetailRepository;
-import com.swp391.koi_ordering_system.repository.FishPackRepository;
-import com.swp391.koi_ordering_system.repository.OrderRepository;
+import com.swp391.koi_ordering_system.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +30,7 @@ public class FishPackOrderDetailService {
 
     @Autowired
     private OrderRepository orderRepository;
+
 
     private static final String PREFIX = "FPOD";
     private static final int ID_PADDING = 4;
@@ -68,47 +68,25 @@ public class FishPackOrderDetailService {
                 .collect(Collectors.toList());
     }
 
-    public FishPackOrderDetail createFishPackOrderDetail(String orderId,
-                                                         CreateOrderDetailDTO fishPackOrderDetailDTO) {
-        if (orderRepository.findById(orderId).isEmpty()) {
-            throw new EntityNotFoundException("Order Id Not Found");
-        }
+    public FishPackOrderDetail createFishPackAndFishPackOrderDetail(CreateFishPackDTO dto){
+        //create Fish Pack
+        FishPack newFishPack = new FishPack();
+        newFishPack.setId(fishPackService.generateFishPackId());
+        newFishPack = fishPackService.createFishPack(dto);
 
-        if (fishPackOrderDetailRepository.findByFishOrderId(orderId).isPresent()) {
-            throw new RuntimeException("Fish Pack Order Detail Existed!");
-        }
+        //Create Fish Pack Order Detail
+        FishPackOrderDetail newFishPackOrderDetail = new FishPackOrderDetail();
+        newFishPackOrderDetail.setId(generateFishPackOrderDetailId());
+        newFishPackOrderDetail.setFishPack(newFishPack);
+        newFishPackOrderDetail.setFishOrder(null);
+        newFishPackOrderDetail.setPrice(dto.getPrice());
+        newFishPackOrderDetail.setIsDeleted(false);
 
-        FishOrder fishOrder = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order Id Not Found"));
-        FishPackOrderDetail fishPackOrderDetail = new FishPackOrderDetail();
-        Optional<FishPack> foundFishPack = FishPackRepository.findById(fishPackOrderDetailDTO.getFish_id());
-        if(foundFishPack.isEmpty()){
-            throw new RuntimeException("Fish does not exists");
-        }
+        FishPackRepository.save(newFishPack);
 
-        fishPackOrderDetail.setId(generateFishPackOrderDetailId());
-        fishPackOrderDetail.setPrice(fishPackOrderDetailDTO.getPrice());
-        fishPackOrderDetail.setFishOrder(fishOrder);
-        fishPackOrderDetail.setFishPack(foundFishPack.get());
-
-        return fishPackOrderDetailRepository.save(fishPackOrderDetail);
+        return fishPackOrderDetailRepository.save(newFishPackOrderDetail);
     }
 
-
-
-    public FishPackOrderDetail updateFishPackOrderDetail(String orderId,
-                                                     FishPackOrderDetailDTO updatedFPOD){
-        Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findByFishOrderId(orderId);
-        if(foundFPOD.isEmpty()){
-            throw new RuntimeException("Fish Order Not Found");
-        }
-        FishPackOrderDetail fishPackOrderDetail = foundFPOD.get();
-        FishPack foundFishPack = FishPackRepository.findById(updatedFPOD.getFishPack().getId()).get();
-
-        fishPackOrderDetail.setPrice(updatedFPOD.getPrice());
-        fishPackOrderDetail.setFishPack(foundFishPack);
-
-        return fishPackOrderDetailRepository.save(fishPackOrderDetail);
-    }
 
     public void deleteFishPackOrderDetail(String orderId) {
         Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findByFishOrderId(orderId);
@@ -121,24 +99,6 @@ public class FishPackOrderDetailService {
         fishPackOrderDetailRepository.save(fishPackOrderDetail);
     }
 
-    public FishPackOrderDetail addPackToOrderDetail(String fishOrderDetailId, String packId){
-        Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findById(fishOrderDetailId);
-        Optional<FishPack> foundFP = FishPackRepository.findById(packId);
-
-        if(foundFPOD.isEmpty()){
-            throw new RuntimeException("Fish Order Not Found");
-        }
-        else if(foundFP.isEmpty()){
-            throw new RuntimeException("Fish Pack Not Found, please create a new Fish Pack !");
-        }
-        FishPackOrderDetail fishPackOrderDetail = foundFPOD.get();
-        FishPack fishPack = foundFP.get();
-
-        fishPackOrderDetail.setFishPack(fishPack);
-
-        return fishPackOrderDetailRepository.save(fishPackOrderDetail);
-
-    }
 
     public FishPackOrderDetail updatePackInOrderDetail(String fishPackOrderDetailId, String packId,
                                                        CreateFishPackDTO fishPackDTO){
@@ -152,24 +112,15 @@ public class FishPackOrderDetailService {
             throw new RuntimeException("Fish Pack Not Found, please create a new Fish Pack !");
         }
         FishPackOrderDetail fishPackOrderDetail = foundFPOD.get();
-        FishPack fishPack = foundFP.get();
+        FishPack fishPack = foundFP.get(); //old fish pack
 
-        fishPack = fishPackService.updateFishPack(fishPack.getId(), fishPackDTO);
+        fishPack = fishPackService.updateFishPack(fishPack.getId(), fishPackDTO); //updated fish pack
+        fishPackOrderDetail.setFishPack(fishPack);// replace the old
 
-        fishPackOrderDetail.setFishPack(fishPack);
-
+        FishPackRepository.save(fishPack);
         return fishPackOrderDetailRepository.save(fishPackOrderDetail);
     }
 
-    public FishPackOrderDetail removeFishPackFromOrderDetail(String fishOrderDetailId) {
-        Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findById(fishOrderDetailId);
-        if(foundFPOD.isEmpty()){
-            throw new RuntimeException("Fish Order Not Found");
-        }
-        FishPackOrderDetail fishPackOrderDetail = foundFPOD.get();
-        fishPackOrderDetail.setFishPack(null);
-        return fishPackOrderDetailRepository.save(fishPackOrderDetail);
-    }
 
     public FishPackOrderDetailDTO mapToDTO(FishPackOrderDetail fishPackOrderDetail) {
         FishPackOrderDetailDTO fishPackOrderDetailDTO = new FishPackOrderDetailDTO();
@@ -188,13 +139,7 @@ public class FishPackOrderDetailService {
     public List<FishPackOrderDetailDTO> mapToListDTO(List<FishPackOrderDetail> fishPackOrderDetails) {
         List<FishPackOrderDetailDTO> fishPackOrderDetailDTOList = new ArrayList<>();
         for (FishPackOrderDetail fishPackOrderDetail : fishPackOrderDetails) {
-            FishPackOrderDetailDTO dto = new FishPackOrderDetailDTO();
-
-            dto.setId(fishPackOrderDetail.getId());
-            dto.setPrice(fishPackOrderDetail.getPrice());
-            dto.setFishPack(fishPackService.mapToDTO(fishPackOrderDetail.getFishPack()));
-
-            fishPackOrderDetailDTOList.add(dto);
+            fishPackOrderDetailDTOList.add(mapToDTO(fishPackOrderDetail));
         }
         return fishPackOrderDetailDTOList;
     }
