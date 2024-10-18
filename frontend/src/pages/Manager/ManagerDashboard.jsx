@@ -1,4 +1,5 @@
 import { useState } from 'react'
+
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -22,10 +23,10 @@ import { TripListComponent } from './pages/trip-list-component'
 ///////////////
 
 import DashboardOverview from './finals/DashboardOverview'
-import CustomerRequestView from './CustomerRequestView'
+import CustomerRequestView from './temp/CustomerRequestView'
 import StaffManagerView from './finals/StaffManagerView'
-import TourManagerView from './TourManagerView'
-import PaymentStatusView from './PaymentStatusView'
+import TourManagerView from './temp/TourManagerView'
+import PaymentStatusView from './temp/PaymentStatusView'
 import { BookingManagementJsx } from './manage/booking-management'
 import { EnhancedBookingManagementComponent } from './tests/enhanced-booking-management'
 
