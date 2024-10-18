@@ -39,10 +39,10 @@ public class Fish {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    @JsonBackReference(value = "fishPack-fish")
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fish_pack_id", nullable = true)
-    private FishPack fishPack;
+//    @JsonBackReference(value = "fishPack-fish")
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "fish_pack_id", nullable = true)
+//    private FishPack fishPack;
 
     @JsonManagedReference(value = "fish-media")
     @ManyToMany
