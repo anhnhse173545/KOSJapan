@@ -87,8 +87,9 @@ const CombinedKoiRequestForm = () => {
   };
   
   return (
+    
     <AuthenLayout>
-      <h2>Request A Trip To Koi Farm</h2>
+      
 
       <Form
         form={form}
