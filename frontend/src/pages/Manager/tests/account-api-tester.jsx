@@ -19,13 +19,13 @@ const api = axios.create({
   },
 })
 
-export function AccountApiTester() {
+export default function AccountApiTester() {
   // State management
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [newAccountData, setNewAccountData] = useState({
-    id: '',
+     
     password: '',
     name: '',
     role: '',
@@ -36,7 +36,7 @@ export function AccountApiTester() {
     is_deleted: false
   })
   const [updateAccountData, setUpdateAccountData] = useState({
-    id: '',
+     
     password: '',
     name: '',
     role: '',
@@ -83,7 +83,7 @@ export function AccountApiTester() {
       await fetchAccounts()
       // Reset form after successful creation
       setNewAccountData({
-        id: '',
+       
       password: '',
       name: '',
       role: '',
@@ -110,7 +110,7 @@ export function AccountApiTester() {
       await fetchAccounts()
       // Reset form after successful update
       setUpdateAccountData({
-        id: '',
+         
         password: '',
         name: '',
         role: '',
@@ -219,11 +219,7 @@ export function AccountApiTester() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreateAccount} className="space-y-4">
-                <Input
-                  placeholder="ID"
-                  value={newAccountData.id}
-                  onChange={(e) => setNewAccountData({ ...newAccountData, id: e.target.value })}
-                  required />
+                 
                 <Input
                   type="password"
                   placeholder="Password"

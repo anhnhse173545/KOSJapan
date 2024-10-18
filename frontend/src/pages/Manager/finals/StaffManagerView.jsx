@@ -1,4 +1,7 @@
-import { useState } from 'react'
+'use client'
+
+import { useState, useCallback, useEffect } from 'react'
+import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,32 +11,94 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserPlus, UserCircle, Briefcase, Truck, Star } from 'lucide-react'
+import { toast } from "@/components/ui/use-toast"
+
+const api = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 5000,
+})
 
 export default function StaffManagerView() {
-  const [staffList, setStaffList] = useState([
-    { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Sales Staff', performance: 4.5 },
-    { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Consulting Staff', performance: 4.2 },
-    { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'Delivery Staff', performance: 4.8 },
-  ])
+  const [staffList, setStaffList] = useState([])
   const [isAdding, setIsAdding] = useState(false)
   const [editingStaff, setEditingStaff] = useState(null)
 
-  const addStaff = (newStaff) => {
-    setStaffList([...staffList, { id: staffList.length + 1, ...newStaff }])
-    setIsAdding(false)
+  const fetchStaff = useCallback(async () => {
+    try {
+      const response = await api.get('/accounts/all')
+      setStaffList(response.data)
+    } catch (error) {
+      console.error('Error fetching staff:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch staff. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchStaff()
+  }, [fetchStaff])
+
+  const addStaff = async (newStaff) => {
+    try {
+      const response = await api.post('/accounts', newStaff)
+      setStaffList([...staffList, response.data])
+      setIsAdding(false)
+      toast({
+        title: "Success",
+        description: "New staff member added successfully.",
+      })
+    } catch (error) {
+      console.error('Error adding staff:', error)
+      toast({
+        title: "Error",
+        description: "Failed to add new staff member. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const updateStaff = (id, updatedStaff) => {
-    setStaffList(staffList.map(staff => staff.id === id ? { ...staff, ...updatedStaff } : staff))
-    setEditingStaff(null)
+  const updateStaff = async (id, updatedStaff) => {
+    try {
+      const response = await api.put(`/accounts/${id}`, updatedStaff)
+      setStaffList(staffList.map(staff => staff.id === id ? response.data : staff))
+      setEditingStaff(null)
+      toast({
+        title: "Success",
+        description: "Staff member updated successfully.",
+      })
+    } catch (error) {
+      console.error('Error updating staff:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update staff member. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const deleteStaff = (id) => {
-    setStaffList(staffList.filter(staff => staff.id !== id))
+  const deleteStaff = async (id) => {
+    try {
+      await api.delete(`/accounts/${id}`)
+      setStaffList(staffList.filter(staff => staff.id !== id))
+      toast({
+        title: "Success",
+        description: "Staff member deleted successfully.",
+      })
+    } catch (error) {
+      console.error('Error deleting staff:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete staff member. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   return (
-    <div className="space-y-6">
+    (<div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Staff Manager</h2>
       <Card>
         <CardHeader className="flex justify-between items-center">
@@ -50,38 +115,64 @@ export default function StaffManagerView() {
           {isAdding ? (
             <AddStaffForm onAddStaff={addStaff} onCancel={() => setIsAdding(false)} />
           ) : editingStaff ? (
-            <EditStaffForm staff={editingStaff} onUpdateStaff={updateStaff} onCancel={() => setEditingStaff(null)} />
+            <EditStaffForm
+              staff={editingStaff}
+              onUpdateStaff={updateStaff}
+              onCancel={() => setEditingStaff(null)} />
           ) : (
             <Tabs defaultValue="all" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="all">All Staff</TabsTrigger>
                 <TabsTrigger value="sales">Sales</TabsTrigger>
                 <TabsTrigger value="consulting">Consulting</TabsTrigger>
                 <TabsTrigger value="delivery">Delivery</TabsTrigger>
+                <TabsTrigger value="customer">Customer</TabsTrigger>
+                <TabsTrigger value="manager">Manager</TabsTrigger>
               </TabsList>
               <TabsContent value="all">
                 <StaffList staffList={staffList} onEdit={setEditingStaff} onDelete={deleteStaff} />
               </TabsContent>
               <TabsContent value="sales">
-                <StaffList staffList={staffList.filter(staff => staff.role === 'Sales Staff')} onEdit={setEditingStaff} onDelete={deleteStaff} />
+                <StaffList
+                  staffList={staffList.filter(staff => staff.role === 'Sales Staff')}
+                  onEdit={setEditingStaff}
+                  onDelete={deleteStaff} />
               </TabsContent>
               <TabsContent value="consulting">
-                <StaffList staffList={staffList.filter(staff => staff.role === 'Consulting Staff')} onEdit={setEditingStaff} onDelete={deleteStaff} />
+                <StaffList
+                  staffList={staffList.filter(staff => staff.role === 'Consulting Staff')}
+                  onEdit={setEditingStaff}
+                  onDelete={deleteStaff} />
               </TabsContent>
               <TabsContent value="delivery">
-                <StaffList staffList={staffList.filter(staff => staff.role === 'Delivery Staff')} onEdit={setEditingStaff} onDelete={deleteStaff} />
+                <StaffList
+                  staffList={staffList.filter(staff => staff.role === 'Delivery Staff')}
+                  onEdit={setEditingStaff}
+                  onDelete={deleteStaff} />
+              </TabsContent>
+              <TabsContent value="customer">
+                <StaffList
+                  staffList={staffList.filter(staff => staff.role === 'Customer')}
+                  onEdit={setEditingStaff}
+                  onDelete={deleteStaff} />
+              </TabsContent>
+              <TabsContent value="manager">
+                <StaffList
+                  staffList={staffList.filter(staff => staff.role === 'Manager')}
+                  onEdit={setEditingStaff}
+                  onDelete={deleteStaff} />
               </TabsContent>
             </Tabs>
           )}
         </CardContent>
       </Card>
-    </div>
-  )
+    </div>)
+  );
 }
 
 function StaffList({ staffList, onEdit, onDelete }) {
   return (
-    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+    (<ul className="divide-y divide-gray-200 dark:divide-gray-700">
       {staffList.map((staff) => (
         <li key={staff.id} className="py-4">
           <div className="flex items-center justify-between">
@@ -96,11 +187,13 @@ function StaffList({ staffList, onEdit, onDelete }) {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Badge variant="outline" className={
-                staff.role === 'Sales Staff' ? 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700' :
-                staff.role === 'Consulting Staff' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700' :
-                'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700'
-              }>
+              <Badge
+                variant="outline"
+                className={
+                  staff.role === 'Sales Staff' ? 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700' :
+                  staff.role === 'Consulting Staff' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700' :
+                  'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700'
+                }>
                 {staff.role === 'Sales Staff' && <UserCircle className="h-4 w-4 mr-1" />}
                 {staff.role === 'Consulting Staff' && <Briefcase className="h-4 w-4 mr-1" />}
                 {staff.role === 'Delivery Staff' && <Truck className="h-4 w-4 mr-1" />}
@@ -118,8 +211,8 @@ function StaffList({ staffList, onEdit, onDelete }) {
           </div>
         </li>
       ))}
-    </ul>
-  )
+    </ul>)
+  );
 }
 
 function AddStaffForm({ onAddStaff, onCancel }) {
@@ -131,15 +224,14 @@ function AddStaffForm({ onAddStaff, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    (<form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
           value={newStaff.name}
           onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-          required
-        />
+          required />
       </div>
       <div>
         <Label htmlFor="email">Email</Label>
@@ -148,15 +240,13 @@ function AddStaffForm({ onAddStaff, onCancel }) {
           type="email"
           value={newStaff.email}
           onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
-          required
-        />
+          required />
       </div>
       <div>
         <Label htmlFor="role">Role</Label>
         <Select
           value={newStaff.role}
-          onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}
-        >
+          onValueChange={(value) => setNewStaff({ ...newStaff, role: value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
@@ -164,6 +254,8 @@ function AddStaffForm({ onAddStaff, onCancel }) {
             <SelectItem value="Sales Staff">Sales Staff</SelectItem>
             <SelectItem value="Consulting Staff">Consulting Staff</SelectItem>
             <SelectItem value="Delivery Staff">Delivery Staff</SelectItem>
+            <SelectItem value="Customer">Customer</SelectItem>
+            <SelectItem value="Manager">Manager</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -177,15 +269,14 @@ function AddStaffForm({ onAddStaff, onCancel }) {
           step="0.1"
           value={newStaff.performance}
           onChange={(e) => setNewStaff({ ...newStaff, performance: parseFloat(e.target.value) })}
-          required
-        />
+          required />
       </div>
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
         <Button type="submit">Add Staff</Button>
       </div>
-    </form>
-  )
+    </form>)
+  );
 }
 
 function EditStaffForm({ staff, onUpdateStaff, onCancel }) {
@@ -197,15 +288,14 @@ function EditStaffForm({ staff, onUpdateStaff, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    (<form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
           value={editedStaff.name}
           onChange={(e) => setEditedStaff({ ...editedStaff, name: e.target.value })}
-          required
-        />
+          required />
       </div>
       <div>
         <Label htmlFor="email">Email</Label>
@@ -214,15 +304,13 @@ function EditStaffForm({ staff, onUpdateStaff, onCancel }) {
           type="email"
           value={editedStaff.email}
           onChange={(e) => setEditedStaff({ ...editedStaff, email: e.target.value })}
-          required
-        />
+          required />
       </div>
       <div>
         <Label htmlFor="role">Role</Label>
         <Select
           value={editedStaff.role}
-          onValueChange={(value) => setEditedStaff({ ...editedStaff, role: value })}
-        >
+          onValueChange={(value) => setEditedStaff({ ...editedStaff, role: value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
@@ -230,6 +318,8 @@ function EditStaffForm({ staff, onUpdateStaff, onCancel }) {
             <SelectItem value="Sales Staff">Sales Staff</SelectItem>
             <SelectItem value="Consulting Staff">Consulting Staff</SelectItem>
             <SelectItem value="Delivery Staff">Delivery Staff</SelectItem>
+            <SelectItem value="Customer">Customer</SelectItem>
+            <SelectItem value="Manager">Manager</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -243,13 +333,12 @@ function EditStaffForm({ staff, onUpdateStaff, onCancel }) {
           step="0.1"
           value={editedStaff.performance}
           onChange={(e) => setEditedStaff({ ...editedStaff, performance: parseFloat(e.target.value) })}
-          required
-        />
+          required />
       </div>
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
         <Button type="submit">Update Staff</Button>
       </div>
-    </form>
-  )
+    </form>)
+  );
 }

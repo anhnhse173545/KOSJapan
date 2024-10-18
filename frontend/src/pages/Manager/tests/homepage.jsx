@@ -15,9 +15,9 @@ export function HomepageComponent() {
   ]
 
   const featuredTrips = [
-    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Max 8 people" },
-    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Max 6 people" },
-    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Max 8 people" },
+    { title: "Tokyo Koi Adventure", duration: "5 days", price: "$2,999", groupSize: "Private Tour" },
+    { title: "Niigata Koi Expedition", duration: "7 days", price: "$3,999", groupSize: "Private Tour" },
+    { title: "Hiroshima Koi Discovery", duration: "6 days", price: "$3,499", groupSize: "Private Tour" },
   ]
 
   const nextTestimonial = () => {
@@ -29,7 +29,7 @@ export function HomepageComponent() {
       {/* Hero Section */}
       <section className="relative h-screen overflow-hidden">
         <img
-          src="https://ufmvqmhvxvgfvbvdvxjb.supabase.co/storage/v1/object/public/images/koi-closeup.jpg"
+          src="https://www.best4pets.in/cdn/shop/files/kohaku.best4pets.in.jpg?v=1683731525&width=2048"
           alt="Beautiful Koi fish"
           className="absolute inset-0 w-full h-full object-cover z-0" />
         <div
@@ -81,28 +81,62 @@ export function HomepageComponent() {
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12">Featured Koi Breeds</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {['Kohaku', 'Sanke', 'Showa'].map((breed) => (
-              <Card
-                key={breed}
-                className="bg-gray-800 overflow-hidden transform hover:scale-105 transition-transform duration-300">
+            
+            {/* Kohaku Card */}
+            <a href="/breeds/kohaku">
+              <Card className="bg-gray-800 overflow-hidden transform hover:scale-105 transition-transform duration-300">
                 <img
-                  src={`https://ufmvqmhvxvgfvbvdvxjb.supabase.co/storage/v1/object/public/images/${breed.toLowerCase()}-koi.jpg`}
-                  alt={`${breed} Koi`}
-                  className="w-full h-64 object-cover" />
+                  src="https://koilover.vn/uploads/images/nguon-goc-kohaku-3.jpg"
+                  alt="Kohaku Koi"
+                  className="w-full h-64 object-contain" />
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2">{breed}</h3>
-                  <p className="text-gray-300 mb-4">Discover the beauty of {breed} Koi, known for their unique patterns and colors.</p>
-                  <a
-                    href={`/breeds/${breed.toLowerCase()}`}
-                    className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
+                  <h3 className="text-2xl font-semibold mb-2">Kohaku</h3>
+                  <p className="text-gray-300 mb-4">Discover the beauty of Kohaku Koi, known for their pure white skin with red patterns.</p>
+                  <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
                     Learn more <ChevronRight className="ml-1 w-4 h-4" />
-                  </a>
+                  </span>
                 </CardContent>
               </Card>
-            ))}
+            </a>
+
+            {/* Sanke Card */}
+            <a href="/breeds/sanke">
+              <Card className="bg-gray-800 overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="https://www.hoangkhoikoifish.com/upload/product/sp-sanke-7488.png"
+                  alt="Sanke Koi"
+                  className="w-full h-64 object-contain" />
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-semibold mb-2">Sanke</h3>
+                  <p className="text-gray-300 mb-4">Explore Sanke Koi, featuring white bodies with red and black accents.</p>
+                  <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
+                    Learn more <ChevronRight className="ml-1 w-4 h-4" />
+                  </span>
+                </CardContent>
+              </Card>
+            </a>
+
+            {/* Showa Card */}
+            <a href="/breeds/showa">
+              <Card className="bg-gray-800 overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <img 
+                  src="https://cdn0497.cdn4s.com/media/showa1.jpg"
+                  alt="Showa Koi"
+                  className="w-full h-64 object-contain" />
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-semibold mb-2">Showa</h3>
+                  <p className="text-gray-300 mb-4">Admire the Showa Koi, known for their black bodies with red and white patterns.</p>
+                  <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
+                    Learn more <ChevronRight className="ml-1 w-4 h-4" />
+                  </span>
+                </CardContent>
+              </Card>
+            </a>
+
           </div>
         </div>
       </section>
+
       {/* Feature Trips Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-red-600">
         <div className="max-w-7xl mx-auto">

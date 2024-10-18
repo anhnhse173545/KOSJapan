@@ -21,11 +21,24 @@ import { TripListComponent } from './pages/trip-list-component'
  
 ///////////////
 
-import DashboardOverview from './DashboardOverview'
+import DashboardOverview from './finals/DashboardOverview'
 import CustomerRequestView from './CustomerRequestView'
-import StaffManagerView from './StaffManagerView'
+import StaffManagerView from './finals/StaffManagerView'
 import TourManagerView from './TourManagerView'
 import PaymentStatusView from './PaymentStatusView'
+import { BookingManagementJsx } from './manage/booking-management'
+import { EnhancedBookingManagementComponent } from './tests/enhanced-booking-management'
+
+import { ConsultingStaffAssignmentViewJsx } from './pages/components-consulting-staff-assignment-view'
+ import { QuoteDetails } from './pages/quote-details'
+import { SalesStaffManagementComponent } from './finals/sales-staff-management'
+import { ConsultingStaffAssignmentComponent } from './finals/consulting-staff-assignment-component'
+import { ExtendedQuoteReviewComponent } from './finals/extended-quote-review'
+import { DeliveryStaffAssignment } from './finals/delivery-staff-assignment'
+import { DeliveryOrderListComponent } from './finals/delivery-order-list'
+import { OrderListComponent } from '@/components/order-list'
+import BookingManagerComponent from './finals/booking-manager'
+       
 
 export default function ManagerDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true)
@@ -34,17 +47,18 @@ export default function ManagerDashboard() {
 
   const navItems = [
     ///////////////
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test1' },
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test2' },
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test3' },
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test4' },
-    { name: 'Test', icon: <FlaskConical className="h-5 w-5" />, path: '/test5' },
+    
+    
+    { name: 'Sales Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/sales-staff-assignment' },
+    { name: 'Quotes Review', icon: <FlaskConical className="h-5 w-5" />, path: '/test1' },
+    { name: 'Consulting Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/consulting-staff-assignment' },
+    { name: 'Delivery Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/delivery-staff-assignment' },
     ///////////////
-    { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/dashboard' },
-    { name: 'Customer Requests', icon: <ClipboardList className="h-5 w-5" />, path: '/customer-requests' },
+    { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/dashboard' }, 
     { name: 'Staff Manager', icon: <Users className="h-5 w-5" />, path: '/staff-manager' },
-    { name: 'Tour Manager', icon: <MapPin className="h-5 w-5" />, path: '/tour-manager' },
+    { name: 'Booking Manager', icon: <MapPin className="h-5 w-5" />, path: '/booking-manager' },
     { name: 'Payment Status', icon: <CreditCard className="h-5 w-5" />, path: '/payment-status' },
+     { name: 'Test3', icon: <FlaskConical className="h-5 w-5" />, path: '/test3' },
   ]
 
   return (
@@ -110,17 +124,17 @@ export default function ManagerDashboard() {
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
               <Routes>
                 {/* /////////////////// */}
-                <Route path='/test1' element={<TripListComponent />} />
-                <Route path='/test2' element={<TripListComponent />} />
-                <Route path='/test3' element={<TripListComponent />} />
-                <Route path='/test4' element={<TripListComponent />} />
-                <Route path='/test5' element={<TripListComponent />} />
+                <Route path='/test1' element={<ExtendedQuoteReviewComponent  />} />
+                <Route path='/test2' element={<QuoteDetails />} />
+                <Route path='/test3' element={<DeliveryOrderListComponent />} />
+                <Route path='/sales-staff-assignment' element={<SalesStaffManagementComponent />} />
+                <Route path='/consulting-staff-assignment' element={<ConsultingStaffAssignmentComponent />} />
+                <Route path='/delivery-staff-assignment' element={<DeliveryStaffAssignment />} />
                 {/* ///////////////////// */}
 
                 <Route path="/dashboard" element={<DashboardOverview />} />
-                <Route path="/customer-requests" element={<CustomerRequestView />} />
-                <Route path="/staff-manager" element={<StaffManagerView />} />
-                <Route path="/tour-manager" element={<TourManagerView />} />
+                 <Route path="/staff-manager" element={<StaffManagerView />} />
+                <Route path="/booking-manager" element={<BookingManagerComponent />} />
                 <Route path="/payment-status" element={<PaymentStatusView />} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </Routes>
