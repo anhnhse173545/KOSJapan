@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FishOrderDTO {
+    private AccountDTO customer;
     private String id;
     private String farmId;
     private String deliveryAddress;
