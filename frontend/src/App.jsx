@@ -52,7 +52,6 @@ function App() {
         
       ],
     },
-    { path: "/manager-dashboard", element: <ManagerDashboard /> },
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },

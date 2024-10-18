@@ -188,7 +188,6 @@ const TourDetails = () => {
           <Descriptions.Item label="Customer Name">
             {bookingData.customer?.name || "N/A"}
           </Descriptions.Item>
-
           <Descriptions.Item label="Customer Email">
             {bookingData.customer?.email || "N/A"}
           </Descriptions.Item>
