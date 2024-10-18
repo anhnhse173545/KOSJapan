@@ -74,21 +74,82 @@ const OrderList = () => {
     }
   };
 
+  // Function to update payment status
+  const handleUpdatePaymentStatus = async (record) => {
+    try {
+      // Log farmId and bookingId to ensure they are correctly retrieved
+      console.log("Farm ID:", record.farmId);
+      console.log("Booking ID:", record.bookingId);
+
+      // Construct the API URL
+      const url = `http://localhost:8080/fish-order/${record.farmId}/${record.bookingId}/update`;
+      console.log("API URL:", url);
+
+      // Send the PUT request to update the payment status
+      const payload = { paymentStatus: "Deposited" };
+      const response = await axios.put(url, payload);
+
+      // Check the response to ensure the update was successful
+      console.log("Update response:", response.data);
+
+      // Display success message and refresh the orders list
+      message.success(`Payment status updated for Order ID: ${record.id}`);
+      fetchOrders(); // Refresh the list after the update
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+
+      // Check if error is related to "Fish order not found"
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Fish order not found"
+      ) {
+        message.error("Failed to update payment status: Fish order not found.");
+      } else if (error.response) {
+        message.error(
+          `Failed to update payment status: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else {
+        message.error(
+          "Failed to update payment status. Please check your network and server."
+        );
+      }
+    }
+  };
+
   const columns = [
-    { title: "Order ID", dataIndex: "id", key: "id" },
-    { title: "Farm ID", dataIndex: "farmId", key: "farmId" },
-    { title: "Booking ID", dataIndex: "bookingId", key: "bookingId" },
     {
-      title: "Status",
-      dataIndex: "paymentStatus",
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: "Farm ID",
+      dataIndex: "farmId",
+      key: "farmId",
+      sorter: (a, b) => a.farmId.localeCompare(b.farmId),
+    },
+    {
+      title: "Booking ID",
+      dataIndex: "bookingId",
+      key: "bookingId",
+      sorter: (a, b) => a.bookingId.localeCompare(b.bookingId),
+    },
+    {
+      title: "Payment Status",
+      dataIndex: "paymentStatus", // This should match the field name from the API response
       key: "paymentStatus",
       render: (paymentStatus) => (
         <Badge
-          status={paymentStatus === "Paid" ? "success" : "warning"}
-          text={paymentStatus || "Not Paid"}
+          status={paymentStatus === "Deposited" ? "success" : "warning"}
+          text={paymentStatus || "Pending"}
         />
       ),
     },
+
     {
       title: "Total Price",
       key: "total",
@@ -98,12 +159,22 @@ const OrderList = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button
-          type="primary"
-          onClick={() => handleAddKoi(record.id, record.farmId)}
-        >
-          Add Koi
-        </Button>
+        <>
+          <Button
+            type="primary"
+            onClick={() => handleAddKoi(record.id, record.farmId)}
+            style={{ marginRight: 8 }}
+          >
+            Add Koi
+          </Button>
+          <Button
+            type="default"
+            onClick={() => handleUpdatePaymentStatus(record)}
+            disabled={record.paymentStatus === "Deposited"} // Ensure this logic is correct
+          >
+            Update Payment Status
+          </Button>
+        </>
       ),
     },
   ];
@@ -164,14 +235,15 @@ const OrderList = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Fish Order List</h1>
-      <div style={{ marginBottom: "20px" }}>
+      <h1 style={{ textAlign: "center" }}>Fish Order List</h1>
+      <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <Form form={form} layout="inline">
           <Form.Item label="Booking ID">
             <Input
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
               placeholder="Enter Booking ID"
+              style={{ width: 200 }}
             />
           </Form.Item>
           <Form.Item label="Farm ID">
@@ -179,6 +251,7 @@ const OrderList = () => {
               value={farmId}
               onChange={(e) => setFarmId(e.target.value)}
               placeholder="Enter Farm ID"
+              style={{ width: 200 }}
             />
           </Form.Item>
 
@@ -198,6 +271,8 @@ const OrderList = () => {
         }}
         rowKey="id"
         loading={loading}
+        pagination={{ pageSize: 10 }}
+        style={{ background: "#fff" }}
       />
     </div>
   );

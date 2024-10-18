@@ -49,6 +49,7 @@ function App() {
         { path: "/paidbooking/:id", element: <PaidBooking /> },
       ],
     },
+
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },
     { path: "/delivery-staff", element: <DeliveryStaff /> },
