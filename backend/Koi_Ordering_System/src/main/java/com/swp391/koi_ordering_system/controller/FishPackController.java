@@ -51,7 +51,7 @@ public class FishPackController {
         return ResponseEntity.ok(fishPackService.mapToDTO(fishPack));
     }
 
-    @PutMapping("/{koi_pack_is}/update-fish-in-koi-pack/{fish_id}")
+    @PutMapping("/{koi_pack_id}/update-fish-in-koi-pack/{fish_id}")
     public ResponseEntity<FishPackDTO> updateFishInKoiPack(@PathVariable String fish_id,
                                                            @PathVariable String koi_pack_id,
                                                            @RequestBody CreateFishPackDTO fishPackDTO,

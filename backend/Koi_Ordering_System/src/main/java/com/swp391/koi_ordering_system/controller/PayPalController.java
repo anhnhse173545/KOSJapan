@@ -88,35 +88,4 @@ public class PayPalController {
     public String paymentError(){
         return "paymentError";
     }
-
-//    @GetMapping("/payment/success/{tripPayment_id}") //Execute the Payment
-//    public String paymentSuccess(@RequestParam("paymentId") String paymentId,
-//                                 @RequestParam("PayerID") String PayerID,
-//                                 @PathVariable String tripPayment_id){
-//        try {
-//            Payment payment = payPalService.executePayment(paymentId, PayerID);
-//
-//            List<Transaction> list= payment.getTransactions();
-//            String searchTripPayment = "Trip Payment";
-//            Transaction tripTransaction = new Transaction();
-//            for(Transaction transaction : list){
-//                if (transaction.getDescription().equals(searchTripPayment)) {
-//                    tripTransaction = transaction;
-//                    break;
-//                }
-//            }
-//            tripPaymentService.updateTripPaymentUsingPaypal(tripPayment_id, tripTransaction, payment);
-//
-//            if(payment.getState().equals("approved")){
-//                return "paymentSuccess";
-//            }
-//        }
-//        catch (PayPalRESTException e) {
-//            log.error("Error Occurred: ", e);
-//        }
-//        return "paymentSuccess";
-//    }
-
-
-
 }
