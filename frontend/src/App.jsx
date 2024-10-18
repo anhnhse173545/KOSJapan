@@ -47,8 +47,6 @@ function App() {
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
-        
-
       ],
     },
     { path: "/consulting-staff", element: <ConsultingStaff /> },
@@ -59,7 +57,7 @@ function App() {
     { path: "/OrderList", element: <OrderList /> },
     { path: "/koi-details", element: <KoiDetails /> },
     { path: "/add-koi", element: <AddKoi /> },
-    { path: "/tour-details/:tourId", element: <TourDetails /> },
+    { path: "/tour-details/:bookingId", element: <TourDetails /> },
     { path: "/", element: <DeliveryStaffHome /> },
     { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
     { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
