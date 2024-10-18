@@ -1,188 +1,203 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message, Badge } from "antd";
-import { useNavigate } from "react-router-dom"; // For navigation
-import axios from "axios"; // For API requests
+import { Table, Button, message, Badge, Input, Form } from "antd";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderList = () => {
   const [data, setData] = useState([]); // Data fetched from API
   const [loading, setLoading] = useState(false); // Loading state
+  const [form] = Form.useForm();
+  const [bookingId, setBookingId] = useState("");
+  const [farmId, setFarmId] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const navigate = useNavigate();
 
-  // Fetch data for a specific customer
-  const fetchCustomerData = async (customerId) => {
+  // Fetch orders data from API
+  const fetchOrders = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/booking/customer/${customerId}`
-      );
-      return response.data; // Assuming the API returns data in response.data
+      setLoading(true);
+      const response = await axios.get("http://localhost:8080/fish-order/all");
+      setData(response.data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching customer data:", error);
-      message.error("Failed to load customer data.");
+      console.error("Error fetching orders:", error);
+      message.error("Failed to load order data.");
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      const customerIds = ["1", "2", "3"]; // Replace with real customer IDs
-      const promises = customerIds.map((id) => fetchCustomerData(id)); // Fetch data for each customer
-      const allData = await Promise.all(promises); // Wait for all API calls to finish
-      setData(allData);
-      setLoading(false);
-    };
-
-    loadData();
+    fetchOrders(); // Load data when the component mounts
   }, []);
 
-  const handleEditKoi = (updatedKoi) => {
-    // Update Koi details in the main data
-    const updatedData = data.map((trip) => {
-      const updatedKoiDetails = trip.koiDetails.map((koi) => {
-        if (koi.koi === updatedKoi.koi) {
-          return { ...koi, ...updatedKoi }; // Merge updated details
-        }
-        return koi;
-      });
-      return { ...trip, koiDetails: updatedKoiDetails };
-    });
-    setData(updatedData);
-    message.success("Koi details updated successfully.");
+  // Calculate total price for each order
+  const calculateTotalPrice = (record) => {
+    const fishTotal =
+      record.fishOrderDetails?.reduce(
+        (total, item) => total + item.fish_price,
+        0
+      ) || 0;
+    const fishPackTotal =
+      record.fishPackOrderDetails?.reduce(
+        (total, item) => total + item.price,
+        0
+      ) || 0;
+    return fishTotal + fishPackTotal;
   };
 
-  const handleAddKoi = (tripId, newKoi) => {
-    const updatedData = data.map((trip) => {
-      if (trip.tripId === tripId) {
-        return { ...trip, koiDetails: [...trip.koiDetails, newKoi] };
+  const handleAddKoi = (orderId, farmId) => {
+    navigate("/add-koi", { state: { orderId, farmId } });
+  };
+
+  // Handle creating a new order
+  const handleCreateOrder = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
+        { deliveryAddress }
+      );
+      message.success(`Order created with ID: ${response.data.id}`);
+      fetchOrders(); // Refresh the list after creating the order
+    } catch (error) {
+      console.error("Error creating order:", error);
+      if (error.response) {
+        message.error(
+          `Failed to create order: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else {
+        message.error(
+          "Failed to create order. Please check your network and server."
+        );
       }
-      return trip;
-    });
-    setData(updatedData);
+    }
   };
 
-  const handleMarkAsPaid = (tripKey, koiKey) => {
-    const updatedData = data.map((trip) => {
-      if (trip.key === tripKey) {
-        const updatedKoiDetails = trip.koiDetails.map((koi) => {
-          if (koi.koi === koiKey && koi.status === "Not Pay Yet") {
-            return { ...koi, status: "Paid" };
-          }
-          return koi;
-        });
-        return { ...trip, koiDetails: updatedKoiDetails };
-      }
-      return trip;
-    });
-    setData(updatedData);
-    message.success("Koi status changed to Paid.");
-  };
-
-  const handleSendToDelivery = (tripKey, koiKey) => {
-    message.success(`Koi ${koiKey} from trip ID ${tripKey} sent to delivery.`);
-  };
+  const columns = [
+    { title: "Order ID", dataIndex: "id", key: "id" },
+    { title: "Farm ID", dataIndex: "farmId", key: "farmId" },
+    { title: "Booking ID", dataIndex: "bookingId", key: "bookingId" },
+    {
+      title: "Status",
+      dataIndex: "paymentStatus",
+      key: "paymentStatus",
+      render: (paymentStatus) => (
+        <Badge
+          status={paymentStatus === "Paid" ? "success" : "warning"}
+          text={paymentStatus || "Not Paid"}
+        />
+      ),
+    },
+    {
+      title: "Total Price",
+      key: "total",
+      render: (_, record) => <span>{calculateTotalPrice(record)}</span>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button
+          type="primary"
+          onClick={() => handleAddKoi(record.id, record.farmId)}
+        >
+          Add Koi
+        </Button>
+      ),
+    },
+  ];
 
   const expandedRowRender = (record) => {
-    const expandedColumns = [
-      { title: "Breeder", dataIndex: "breeder", key: "breeder" },
-      { title: "Date", dataIndex: "date", key: "date" },
-      { title: "Koi", dataIndex: "koi", key: "koi" },
-      { title: "Type", dataIndex: "type", key: "type" },
-      { title: "Price", dataIndex: "price", key: "price" },
+    const fishColumns = [
       {
-        title: "Payment Method",
-        dataIndex: "paymentMethod",
-        key: "paymentMethod",
+        title: "Variety",
+        dataIndex: ["fish", "variety", "name"],
+        key: "variety",
       },
+      { title: "Length", dataIndex: ["fish", "length"], key: "length" },
+      { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
+      { title: "Price", dataIndex: "fish_price", key: "fish_price" },
       {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (status) => {
-          const statusColor = status === "Paid" ? "success" : "warning";
-          return <Badge status={statusColor} text={status} />;
-        },
-      },
-      {
-        title: "Action",
-        key: "action",
-        render: (_, koiRecord) => (
-          <>
-            <Button
-              type="primary"
-              disabled={koiRecord.status === "Paid"}
-              onClick={() => handleMarkAsPaid(record.key, koiRecord.koi)}
-              style={{ marginRight: 8 }}
-            >
-              {koiRecord.status === "Paid" ? "Paid" : "Mark as Paid"}
-            </Button>
-            <Button
-              type="default"
-              onClick={() => handleSendToDelivery(record.key, koiRecord.koi)}
-              disabled={koiRecord.status !== "Paid"}
-            >
-              Send to Delivery
-            </Button>
-            <Button
-              type="link"
-              onClick={() =>
-                navigate("/koi-details", { state: { koi: koiRecord } })
-              }
-              style={{ marginLeft: 8 }}
-            >
-              More
-            </Button>
-          </>
-        ),
+        title: "Description",
+        dataIndex: ["fish", "description"],
+        key: "description",
       },
     ];
 
     return (
       <div>
+        <h4>Fish Order Details</h4>
         <Table
-          columns={expandedColumns}
-          dataSource={record.koiDetails}
+          columns={fishColumns}
+          dataSource={record.fishOrderDetails}
           pagination={false}
-          rowKey={(row) => row.koi}
+          rowKey={(row) => row.id}
         />
-        <Button
-          type="primary"
-          onClick={() =>
-            navigate("/add-koi", { state: { tripId: record.tripId } })
-          }
-          style={{ marginTop: 16 }}
-        >
-          Add New Koi
-        </Button>
+        <h4>Fish Pack Order Details</h4>
+        <Table
+          columns={[
+            {
+              title: "Description",
+              dataIndex: ["fishPack", "description"],
+              key: "description",
+            },
+            {
+              title: "Length",
+              dataIndex: ["fishPack", "length"],
+              key: "length",
+            },
+            {
+              title: "Weight",
+              dataIndex: ["fishPack", "weight"],
+              key: "weight",
+            },
+            { title: "Price", dataIndex: "price", key: "price" },
+          ]}
+          dataSource={record.fishPackOrderDetails}
+          pagination={false}
+          rowKey={(row) => row.id}
+        />
       </div>
     );
   };
 
-  const columns = [
-    { title: "Trip ID", dataIndex: "tripId", key: "tripId" },
-    { title: "Customer", dataIndex: "customer", key: "customer" },
-    { title: "Start Date", dataIndex: "startDate", key: "startDate" },
-    { title: "End Date", dataIndex: "endDate", key: "endDate" },
-    {
-      title: "Price",
-      key: "price",
-      render: (_, record) => (
-        <span>
-          {record.koiDetails.reduce((total, koi) => total + koi.price, 0)}
-        </span>
-      ),
-    },
-  ];
-
   return (
     <div style={{ padding: "20px" }}>
-      <h1>On-Going Order List</h1>
+      <h1>Fish Order List</h1>
+      <div style={{ marginBottom: "20px" }}>
+        <Form form={form} layout="inline">
+          <Form.Item label="Booking ID">
+            <Input
+              value={bookingId}
+              onChange={(e) => setBookingId(e.target.value)}
+              placeholder="Enter Booking ID"
+            />
+          </Form.Item>
+          <Form.Item label="Farm ID">
+            <Input
+              value={farmId}
+              onChange={(e) => setFarmId(e.target.value)}
+              placeholder="Enter Farm ID"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" onClick={handleCreateOrder}>
+              Create Order
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+
       <Table
         columns={columns}
         dataSource={data}
         expandable={{
           expandedRowRender: expandedRowRender,
         }}
-        rowKey="tripId"
-        loading={loading} // Show loading spinner while data is being fetched
+        rowKey="id"
+        loading={loading}
       />
     </div>
   );

@@ -120,16 +120,7 @@ const CombinedKoiRequestForm = () => {
           />
         </Form.Item>
 
-        <Form.Item
-          label="Desired departureAirport"
-          name="departureAirport"
-          rules={[{ required: true, message: "Please provide a departureAirport" }]}
-        >
-          <TextArea
-            placeholder="Describe the departureAirport you're looking for"
-            rows={4}
-          />
-        </Form.Item>
+      
 
         <Form.Item
           label="Desired Trip Start Date"

@@ -80,29 +80,42 @@ const OrderTracking = () => {
 
   // Update order status
   const updateOrderStatus = async (order, newStatus) => {
-    setUpdating(true);
+    setUpdating(true); // Start the loading state for updating
     try {
       // Ensure the payload structure is correct
       const payload = { status: newStatus };
 
-      // Check that the farmId is present, modify endpoint if necessary
-      const response = await axios.put(
-        `http://localhost:8080/fish-order/${order.id}/${order.farmId}/update`,
-        payload
-      );
+      // Log the values to ensure you're sending correct data
+      console.log("Updating Order ID:", order.id);
+      console.log("Updating Farm ID:", order.farmId); // Check if farmId exists
+      console.log("New Status:", newStatus);
+
+      // Check the correct API endpoint format
+      const endpoint = `http://localhost:8080/fish-order/${order.id}/${order.farmId}/update`;
+      console.log("API Endpoint:", endpoint); // Log the endpoint
+
+      // Send the PUT request to update the status
+      const response = await axios.put(endpoint, payload);
 
       // Log the response for debugging
       console.log("Update Response:", response.data);
+
+      // If the update is successful, show a success message
       message.success("Status updated successfully!");
-      fetchOrders(); // Refresh orders after update
+
+      // Refresh the orders after the update
+      fetchOrders();
     } catch (error) {
-      console.error("Error updating status:", error); // Log the error
+      // Log the error for debugging purposes
+      console.error("Error updating status:", error);
+
+      // Extract and display a user-friendly error message
       const errorMessage = error.response
         ? error.response.data.message
         : "Failed to update status.";
       message.error(errorMessage);
     } finally {
-      setUpdating(false);
+      setUpdating(false); // End the loading state for updating
     }
   };
 

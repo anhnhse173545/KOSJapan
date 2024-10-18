@@ -285,5 +285,12 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
+    public List<FishOrderDTO> getFishOrdersByCustomerId(String customerId) {
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_Customer_Id(customerId);
+        return fishOrders.stream()
+                .map(fishOrderMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
 
 }

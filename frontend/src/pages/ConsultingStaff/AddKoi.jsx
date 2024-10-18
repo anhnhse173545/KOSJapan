@@ -1,145 +1,165 @@
 import React, { useState } from "react";
-import { Form, Input, Button, message, Upload, Select } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Input, Button, message, Space, Select } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 const { Option } = Select;
 
-const AddKoi = ({ onAddKoi }) => {
+const AddKoi = () => {
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
-  const [fileList, setFileList] = useState([]);
-  const [videoList, setVideoList] = useState([]);
 
-  const handleSubmit = (values) => {
-    const newKoi = {
-      ...values,
-      photo: fileList,
-      video: videoList,
-      status: "Not Pay Yet", // Default status
-    };
+  // Extract orderId from location state
+  const { orderId } = location.state || {};
 
-    onAddKoi(location.state.tripId, newKoi); // Pass the tripId from location
-    message.success("Koi added successfully!");
-    navigate("/");
-  };
+  // Submit Fish and Order Details
+  // Submit Fish and Order Details
+  const handleSubmit = async (values) => {
+    if (!orderId) {
+      message.error("Missing order ID.");
+      return;
+    }
 
-  const handleFileChange = ({ fileList }) => {
-    setFileList(fileList);
-  };
+    try {
+      setLoading(true);
 
-  const handleVideoChange = ({ fileList }) => {
-    setVideoList(fileList);
+      // Loop through fishOrderDetails and call the API for each fish
+      for (const fishOrderDetail of values.fishOrderDetails) {
+        const payload = {
+          variety_id: fishOrderDetail.variety_id,
+          length: fishOrderDetail.length,
+          weight: fishOrderDetail.weight,
+          description: fishOrderDetail.description,
+          orderId: orderId, // Use the orderId from previous page
+          price: fishOrderDetail.price, // Add price for the fish
+        };
+
+        // Log the payload before sending
+        console.log("Payload to send:", payload);
+
+        // API call to create fish and order detail
+        await axios.post(
+          "http://localhost:8080/order-detail/create-fish-and-order-detail",
+          payload
+        );
+      }
+
+      message.success("Fish and order details created successfully!");
+      navigate("/OrderList"); // Navigate to OrderList.jsx after success
+    } catch (error) {
+      console.error(
+        "Error creating fish and order details:",
+        error.response || error
+      );
+      message.error(
+        "Failed to create fish and order details: " +
+          (error.response?.data?.message || "Unknown error")
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Add New Koi</h2>
+      <h2>Create Fish Details</h2>
+
+      {/* Form to add fish and order details */}
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <Form.Item
-          label="Breeder"
-          name="breeder"
-          rules={[{ required: true, message: "Please enter the breeder name" }]}
-        >
-          <Input />
-        </Form.Item>
+        <Form.List name="fishOrderDetails">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, fieldKey, ...restField }) => (
+                <Space
+                  key={key}
+                  style={{ display: "flex", marginBottom: 8 }}
+                  align="baseline"
+                >
+                  {/* Variety ID */}
+                  <Form.Item
+                    {...restField}
+                    name={[name, "variety_id"]}
+                    fieldKey={[fieldKey, "variety_id"]}
+                    label="Variety ID"
+                    rules={[
+                      { required: true, message: "Please select Variety ID" },
+                    ]}
+                  >
+                    <Select placeholder="Select Variety ID">
+                      <Option value="VA0001">VA0001</Option>
+                      <Option value="VA0002">VA0002</Option>
+                      <Option value="VA0003">VA0003</Option>
+                      <Option value="VA0004">VA0004</Option>
+                      <Option value="VA0005">VA0005</Option>
+                    </Select>
+                  </Form.Item>
 
-        <Form.Item
-          label="Date"
-          name="date"
-          rules={[{ required: true, message: "Please select the date" }]}
-        >
-          <Input type="date" />
-        </Form.Item>
+                  {/* Length */}
+                  <Form.Item
+                    {...restField}
+                    name={[name, "length"]}
+                    fieldKey={[fieldKey, "length"]}
+                    label="Length (cm)"
+                    rules={[{ required: true, message: "Please enter Length" }]}
+                  >
+                    <Input placeholder="Length" type="number" />
+                  </Form.Item>
 
-        <Form.Item
-          label="Koi Name"
-          name="koi"
-          rules={[{ required: true, message: "Please enter the koi name" }]}
-        >
-          <Input />
-        </Form.Item>
+                  {/* Weight */}
+                  <Form.Item
+                    {...restField}
+                    name={[name, "weight"]}
+                    fieldKey={[fieldKey, "weight"]}
+                    label="Weight (kg)"
+                    rules={[{ required: true, message: "Please enter Weight" }]}
+                  >
+                    <Input placeholder="Weight" type="number" />
+                  </Form.Item>
 
-        <Form.Item
-          label="Type"
-          name="type"
-          rules={[{ required: true, message: "Please select the koi type" }]}
-        >
-          <Select placeholder="Select a Koi Type">
-            <Option value="Kohaku">Kōhaku</Option>
-            <Option value="Asagi">Asagi</Option>
-            <Option value="Bekko">Bekko</Option>
-            <Option value="Shusui">Shusui</Option>
-            <Option value="Utsurimono">Utsurimono</Option>
-            <Option value="Ogon">Ogon</Option>
-            <Option value="Goshiki">Goshiki</Option>
-            <Option value="Showa">Showa</Option>
-            <Option value="Utsuri">Utsuri</Option>
-            <Option value="Tancho">Tancho</Option>
-            <Option value="Chagoi">Chagoi</Option>
-            <Option value="Taisho Sanke">Taisho Sanke</Option>
-            <Option value="Kumonryu">Kumonryu</Option>
-            <Option value="Showa Sanshoku">Showa Sanshoku</Option>
-            <Option value="Matsuba">Matsuba</Option>
-            <Option value="Soragoi">Soragoi</Option>
-            <Option value="Kawarimono">Kawarimono</Option>
-            <Option value="Koromo">Koromo</Option>
-            <Option value="Ginrin">Ginrin</Option>
-            <Option value="Goromo">Goromo</Option>
-            <Option value="Kujaku">Kujaku</Option>
-            <Option value="Sanke">Sanke</Option>
-            <Option value="Hikarimono">Hikarimono</Option>
-            <Option value="Doitsu">Doitsu</Option>
-          </Select>
-        </Form.Item>
+                  {/* Description */}
+                  <Form.Item
+                    {...restField}
+                    name={[name, "description"]}
+                    fieldKey={[fieldKey, "description"]}
+                    label="Description"
+                  >
+                    <Input placeholder="Description" />
+                  </Form.Item>
 
-        <Form.Item
-          label="Price"
-          name="price"
-          rules={[{ required: true, message: "Please enter the price" }]}
-        >
-          <Input type="number" />
-        </Form.Item>
+                  {/* Price */}
+                  <Form.Item
+                    {...restField}
+                    name={[name, "price"]}
+                    fieldKey={[fieldKey, "price"]}
+                    label="Price"
+                    rules={[{ required: true, message: "Please enter Price" }]}
+                  >
+                    <Input placeholder="Price" type="number" />
+                  </Form.Item>
 
-        <Form.Item
-          label="Payment Method"
-          name="paymentMethod"
-          rules={[
-            { required: true, message: "Please select the payment method" },
-          ]}
-        >
-          <Select placeholder="Select a Payment Method">
-            <Option value="Credit Card">Credit Card</Option>
-            <Option value="PayPal">PayPal</Option>
-            <Option value="Bank Transfer">Bank Transfer</Option>
-            <Option value="Cash">Cash</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Upload Photo">
-          <Upload
-            fileList={fileList}
-            onChange={handleFileChange}
-            beforeUpload={() => false}
-          >
-            <Button icon={<UploadOutlined />}>Upload Photo</Button>
-          </Upload>
-        </Form.Item>
-
-        <Form.Item label="Upload Video">
-          <Upload
-            fileList={videoList}
-            onChange={handleVideoChange}
-            beforeUpload={() => false}
-          >
-            <Button icon={<UploadOutlined />}>Upload Video</Button>
-          </Upload>
-        </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Add Fish
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Add Koi
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Submit Fish Details
           </Button>
         </Form.Item>
       </Form>
