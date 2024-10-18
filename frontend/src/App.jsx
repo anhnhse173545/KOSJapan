@@ -52,10 +52,6 @@ function App() {
         
       ],
     },
-<<<<<<< HEAD
-=======
-    { path: "/manager-dashboard", element: <ManagerDashboard /> },
->>>>>>> b20d3e8bf2657aaf483f56924d17f519eac7181d
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },
