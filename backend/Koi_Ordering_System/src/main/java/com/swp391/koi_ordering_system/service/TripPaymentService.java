@@ -53,26 +53,11 @@ public class TripPaymentService {
         }
     }
 
-    public TripPayment updateTripPaymentUsingPaypal(String tripId,
-                                                    Transaction transaction, Payment payment){
-        Optional<TripPayment> findTripPayment = tripPaymentRepository.findById(tripId);
-        if (findTripPayment.isEmpty()) {
-            throw new RuntimeException("Trip payment not found");
-        }
-        TripPayment tripPayment = findTripPayment.get();
-        Optional<PaymentMethod> method = paymentMethodRepository.findById(tripPayment.getPaymentMethod().getId());
-
-        String input = transaction.getAmount().getTotal();
-        String doubleValue = input.replace("[^0-9.]", "");
-
-        tripPayment.setAmount(Double.valueOf(doubleValue));
-        tripPayment.setCreateAt(Instant.parse(payment.getCreateTime()));
-        tripPayment.setStatus(true);
-        tripPayment.setIsDeleted(false);
-        tripPayment.setPaymentMethod(method.get());
-
-        return tripPaymentRepository.save(tripPayment);
-    }
+//    public TripPayment createTripPaymentUsingPayapal(){
+//        TripPayment tripPayment = new TripPayment();
+//        tripPayment.setId(generateTripPaymentId());
+//        tripPayment.setPaymentMethod();
+//    }
 
     public TripPaymentDTO mapToDTO(TripPayment tripPayment) {
         TripPaymentDTO tripPaymentDTO = new TripPaymentDTO();

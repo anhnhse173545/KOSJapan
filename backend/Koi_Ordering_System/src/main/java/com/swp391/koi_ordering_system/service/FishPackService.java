@@ -50,7 +50,7 @@ public class FishPackService {
             fishPack.setWeight(fishPackDTO.getWeight());
             fishPack.setDescription(fishPackDTO.getDescription());
             fishPack.setQuantity(fishPackDTO.getQuantity());
-            fishPack.setPrice(fishPackDTO.getPrice());
+            fishPack.setIsDeleted(false);
 
             return fishPackRepository.save(fishPack);
     }
@@ -66,7 +66,6 @@ public class FishPackService {
         fishPackToUpdate.setWeight(fishPackDTO.getWeight());
         fishPackToUpdate.setDescription(fishPackDTO.getDescription());
         fishPackToUpdate.setQuantity(fishPackDTO.getQuantity());
-        fishPackToUpdate.setPrice(fishPackDTO.getPrice());
 
         return fishPackRepository.save(fishPackToUpdate);
     }
@@ -89,7 +88,6 @@ public class FishPackService {
         fishPackDTO.setWeight(fishPack.getWeight());
         fishPackDTO.setDescription(fishPack.getDescription());
         fishPackDTO.setQuantity(fishPack.getQuantity());
-        fishPackDTO.setPrice(fishPack.getPrice());
 
         return fishPackDTO;
     }

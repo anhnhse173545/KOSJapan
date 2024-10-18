@@ -44,7 +44,4 @@ public class Account {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-
-
-
 }
