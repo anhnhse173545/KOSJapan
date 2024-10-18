@@ -1,9 +1,9 @@
-import { Button, Form, Input, Upload, DatePicker } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Input,  DatePicker } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
+import './request.scss';
 
 const { TextArea } = Input;
 
