@@ -60,7 +60,7 @@ const AuthenLayout = ({ children }) => {
         </Col>
         <Col xs={24} md={14}>
           <div style={contentStyle}>
-            <h2 style={titleStyle}>Request A Trip To Koi Farm</h2>
+            <h2 style={titleStyle}>Koi Farm</h2>
           
             {children}
           </div>

@@ -86,7 +86,7 @@ function KoiPage() {
         <div className="payment-list">
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
-              <img src={koi.img} alt={koi.koi} className="koi-image" />
+              <img src={koi.img || 'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg'} alt={koi.koi} className="koi-image" />
               <div className="payment-details">
                 <h3>{koi.name}</h3>
                 <p>{koi.koi}</p>
