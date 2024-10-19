@@ -77,7 +77,7 @@ public class FishOrderService {
     }
 
     public FishOrder createFishOrder(String bookingId, String farmId, CreateOrderDTO dto) {
-            Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
+            Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
             Optional<Farm> findFarm = FarmRepository.findById(farmId);
             Optional<Booking> findBooking = BookingRepository.findById(bookingId);
         if (findBooking.isEmpty() && findFarm.isEmpty()) {
