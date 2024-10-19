@@ -179,6 +179,7 @@ const OrderList = () => {
             type="primary"
             onClick={() => handleAddKoi(record.id, record.farmId)}
             style={{ marginRight: 8 }}
+            disabled={record.paymentStatus === "Deposited"}
           >
             Add Koi
           </Button>
@@ -192,7 +193,7 @@ const OrderList = () => {
           </Button>
           <Button
             type="danger"
-            icon={<DeleteOutlined />} // Trash can icon for delete
+            icon={<DeleteOutlined />}
             onClick={() => handleDeleteOrder(record)}
           />
         </>
