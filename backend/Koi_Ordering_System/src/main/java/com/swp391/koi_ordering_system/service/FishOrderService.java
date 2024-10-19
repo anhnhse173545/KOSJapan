@@ -71,10 +71,10 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
-    public List<DeliveryStaffOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
+    public List<FishOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
         List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatusAndIsDeletedFalse(deliveryStaff, status);
         return list.stream()
-                .map(fishOrderMapper::toDeliveryStaffOrderDTO)
+                .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -239,10 +239,17 @@ public class FishOrderService {
         }
     }
 
-    public List<DeliveryStaffOrderDTO> getFishOrdersByDeliveryStaffId(String deliveryStaffId) {
+    public List<FishOrderDTO> getFishOrdersByDeliveryStaffId(String deliveryStaffId) {
         List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_Id(deliveryStaffId);
         return fishOrders.stream()
-                .map(fishOrderMapper::toDeliveryStaffOrderDTO)
+                .map(fishOrderMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<FishOrderDTO> getFishOrdersByConsultingStaffId(String consultingStaffId) {
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_ConsultingStaff_Id(consultingStaffId);
+        return fishOrders.stream()
+                .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 

@@ -73,7 +73,17 @@ public class FishOrderController {
 
     @GetMapping("/delivery-staff/{deliveryId}")
     public ResponseEntity<?> getFishOrderByDeliveryId(@PathVariable String deliveryId) {
-        List<DeliveryStaffOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
+        List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
+        if (fishOrder.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(fishOrder);
+    }
+
+    @GetMapping("/consulting-staff/{consultingId}")
+    public ResponseEntity<?> getFishOrderByConsultingId(@PathVariable String consultingId) {
+        List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByConsultingStaffId(consultingId);
         if (fishOrder.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
             return ResponseEntity.status(404).body(errorDTO);
@@ -84,7 +94,7 @@ public class FishOrderController {
     @GetMapping("/delivery-staff/{deliveryId}/{status}")
     public ResponseEntity<?> getFishOrderByDeliveryIdAndStatus(@PathVariable String deliveryId,
                                                                @PathVariable String status) {
-        List<DeliveryStaffOrderDTO> list = fishOrderService.getFishOrderByStatusByDeliveryStaff(deliveryId,status);
+        List<FishOrderDTO> list = fishOrderService.getFishOrderByStatusByDeliveryStaff(deliveryId,status);
         if(list.isEmpty()){
             return ResponseEntity.status(404).body(new ErrorDTO(404, "Order not found"));
         }
