@@ -12,12 +12,12 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<FishOrder, String> {
     List<FishOrder> findAllByIsDeletedFalse();
-    List<FishOrder> findAllByBookingId(String id);
+    List<FishOrder> findAllByBookingIdAndIsDeletedFalse(String id);
     Optional<FishOrder> findTopByOrderByIdDesc();
     List<FishOrder> findByBookingIdAndFarmId(String bookingId, String farmId);
     Optional<FishOrder> findFishOrderByBookingId(String id);
-    Optional<FishOrder> findFishOrderByBookingIdAndFarmId(String bokingId, String farmId);
+    Optional<FishOrder> findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(String bookingId, String farmId);
     List<FishOrder> findByBooking_DeliveryStaff_Id(String deliveryStaffId);
     List<FishOrder> findByBooking_Customer_Id(String customerId);
-    List<FishOrder> findByBooking_DeliveryStaff_IdAndStatus(String deliveryStaffId, String status);
+    List<FishOrder> findByBooking_DeliveryStaff_IdAndStatusAndIsDeletedFalse(String deliveryStaffId, String status);
 }

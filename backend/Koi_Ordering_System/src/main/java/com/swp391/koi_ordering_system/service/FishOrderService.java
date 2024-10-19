@@ -49,14 +49,14 @@ public class FishOrderService {
     private OrderRepository orderRepository;
 
     public List<FishOrderDTO> getAllFishOrder() {
-            List<FishOrder> list = OrderRepository.findAll();
+            List<FishOrder> list = OrderRepository.findAllByIsDeletedFalse();
             return list.stream()
                     .map(fishOrderMapper::toDTO)
                     .collect(Collectors.toList());
         }
 
         public List<FishOrderDTO> getAllByBookingId(String bookingId) {
-            List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
+            List<FishOrder> list = OrderRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
             return list.stream()
                     .map(fishOrderMapper::toDTO)
                     .collect(Collectors.toList());
@@ -70,14 +70,14 @@ public class FishOrderService {
 //    }
 
     public List<DeliveryStaffOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
-        List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatus(deliveryStaff, status);
+        List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatusAndIsDeletedFalse(deliveryStaff, status);
         return list.stream()
                 .map(fishOrderMapper::toDeliveryStaffOrderDTO)
                 .collect(Collectors.toList());
     }
 
     public FishOrder createFishOrder(String bookingId, String farmId, CreateOrderDTO dto) {
-            Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
+            Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
             Optional<Farm> findFarm = FarmRepository.findById(farmId);
             Optional<Booking> findBooking = BookingRepository.findById(bookingId);
         if (findBooking.isEmpty() && findFarm.isEmpty()) {
@@ -101,6 +101,8 @@ public class FishOrderService {
         newFishOrder.setIsDeleted(false);
         newFishOrder.setFishPackOrderDetails(null);
         newFishOrder.setFishOrderDetails(null);
+        newFishOrder.setPaymentStatus("Pending");
+
         OrderRepository.save(newFishOrder);
 
         booking.getFishOrders().add(newFishOrder);
@@ -110,7 +112,7 @@ public class FishOrderService {
     }
 
     public FishOrder updateFishOrder(String bookingId, String farmId, UpdateFishOrderDTO dto) {
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
+        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
         if (findOrder.isEmpty()) {
             throw new RuntimeException("Fish order not found");
         }
@@ -126,7 +128,7 @@ public class FishOrderService {
     }
 
     public void deleteFishOrder(String bookingId, String farmId) {
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
+        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
         if (findOrder.isEmpty()) {
             throw new RuntimeException("Fish order not found");
         }
@@ -139,7 +141,7 @@ public class FishOrderService {
     }
 
     public FishOrder addFishPackOrFishOrderDetailToOrder(String bookingId, String farmId, String addId){
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmId(bookingId,farmId);
+        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId,farmId);
         if(findOrder.isEmpty()){
             throw new RuntimeException("Fish Order does not existed !");
         }
@@ -166,7 +168,7 @@ public class FishOrderService {
     }
 
     public FishOrder removeFishOrFishPackDetailInOrder(String bookingId, String farmId) {
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
+        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
         if (findOrder.isEmpty()) {
             throw new RuntimeException("Fish order not found");
         }

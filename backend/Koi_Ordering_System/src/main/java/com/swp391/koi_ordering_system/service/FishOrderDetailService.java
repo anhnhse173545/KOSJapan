@@ -56,6 +56,8 @@ public class FishOrderDetailService {
         fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
         fishOrderDetail.setIsDeleted(false);
         fishOrderDetail.setFish(addfish);
+        fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
+
         fishOrderDetailRepository.save(fishOrderDetail);
 
         Optional<FishOrder> foundFishOrder = orderRepository.findById(createFishOrderDTO.getOrderId());
