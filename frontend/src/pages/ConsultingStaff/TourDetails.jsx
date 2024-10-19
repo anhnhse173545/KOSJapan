@@ -265,20 +265,6 @@ const TourDetails = () => {
         </Descriptions>
       </Card>
 
-      <Card title="Staff Information" className="mb-6">
-        <Descriptions bordered>
-          <Descriptions.Item label="Sale Staff">
-            {bookingData.saleStaff.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Consulting Staff">
-            {bookingData.consultingStaff.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Delivery Staff">
-            {bookingData.deliveryStaff.name}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-
       <Card title="Fish Orders" className="mb-6">
         <Collapse>
           {bookingData.fishOrders.map((order, index) => (

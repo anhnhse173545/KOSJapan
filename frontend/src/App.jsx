@@ -1,4 +1,11 @@
-import { createBrowserRouter, RouterProvider, Link, Routes, Route, BrowserRouter  } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Link,
+  Routes,
+  Route,
+  BrowserRouter,
+} from "react-router-dom";
 import Layout from "./components/layout";
 import CombinedKoiRequestForm from "./pages/request-form";
 import Register from "./pages/register";
@@ -29,7 +36,7 @@ import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
- 
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -48,10 +55,10 @@ function App() {
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
-
-        
       ],
     },
+
+    { path: "/manager-dashboard", element: <ManagerDashboard /> },
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },

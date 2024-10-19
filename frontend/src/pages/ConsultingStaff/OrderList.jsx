@@ -54,7 +54,7 @@ const OrderList = () => {
     try {
       const response = await axios.post(
         `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
-        { deliveryAddress }
+        { deliveryAddress, paymentStatus: "Pending" } // Include default payment status
       );
       message.success(`Order created with ID: ${response.data.id}`);
       fetchOrders(); // Refresh the list after creating the order

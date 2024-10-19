@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Button, message, Space, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,6 +8,7 @@ const { Option } = Select;
 
 const AddKoi = () => {
   const [loading, setLoading] = useState(false);
+  const [varieties, setVarieties] = useState([]);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,7 +16,23 @@ const AddKoi = () => {
   // Extract orderId from location state
   const { orderId } = location.state || {};
 
-  // Submit Fish and Order Details
+  // Fetch Variety list from the API
+  useEffect(() => {
+    const fetchVarieties = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/variety/list"
+        );
+        setVarieties(response.data); // Assuming the response contains an array of varieties
+      } catch (error) {
+        console.error("Error fetching variety list:", error);
+        message.error("Failed to fetch variety list.");
+      }
+    };
+
+    fetchVarieties();
+  }, []);
+
   // Submit Fish and Order Details
   const handleSubmit = async (values) => {
     if (!orderId) {
@@ -89,11 +106,11 @@ const AddKoi = () => {
                     ]}
                   >
                     <Select placeholder="Select Variety ID">
-                      <Option value="VA0001">VA0001</Option>
-                      <Option value="VA0002">VA0002</Option>
-                      <Option value="VA0003">VA0003</Option>
-                      <Option value="VA0004">VA0004</Option>
-                      <Option value="VA0005">VA0005</Option>
+                      {varieties.map((variety) => (
+                        <Option key={variety.id} value={variety.id}>
+                          {variety.id} - {variety.name}
+                        </Option>
+                      ))}
                     </Select>
                   </Form.Item>
 
