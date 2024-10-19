@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import './index.scss'; // Import CSS file for styling
+import './booking.scss'; // Import CSS file for styling
 
 function PaymentPage() {
   const navigate = useNavigate();

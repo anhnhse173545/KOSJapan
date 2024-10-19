@@ -51,21 +51,28 @@ public class FishOrderService {
     public List<FishOrderDTO> getAllFishOrder() {
             List<FishOrder> list = OrderRepository.findAll();
             return list.stream()
-                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .map(fishOrderMapper::toDTO)
                     .collect(Collectors.toList());
         }
 
         public List<FishOrderDTO> getAllByBookingId(String bookingId) {
             List<FishOrder> list = OrderRepository.findAllByBookingId(bookingId);
             return list.stream()
-                    .map((FishOrder) -> mapToDTO2(FishOrder))
+                    .map(fishOrderMapper::toDTO)
                     .collect(Collectors.toList());
         }
 
-    public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
-        List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
+//    public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
+//        List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
+//        return list.stream()
+//                .map((FishOrder) -> mapToDTO2(FishOrder))
+//                .collect(Collectors.toList());
+//    }
+
+    public List<DeliveryStaffOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
+        List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatus(deliveryStaff, status);
         return list.stream()
-                .map((FishOrder) -> mapToDTO2(FishOrder))
+                .map(fishOrderMapper::toDeliveryStaffOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -256,5 +263,11 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
+    public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
+        List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
+        return list.stream()
+                .map(fishOrderMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
 }

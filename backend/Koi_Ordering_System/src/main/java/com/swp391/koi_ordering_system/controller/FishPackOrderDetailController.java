@@ -34,11 +34,6 @@ public class FishPackOrderDetailController {
         return ResponseEntity.ok(service.getAllFishPackOrderDetailsByOrderId(fish_order_id));
     }
 
-    @GetMapping("/{fish_order_id}/detail")
-    public ResponseEntity<FishPackOrderDetailDTO> findFishPackOrderDetailByOrderId(@PathVariable String fish_order_id) {
-        FishPackOrderDetail foungFPOD = service.findFishPackOrderDetailByOrderId(fish_order_id);
-        return ResponseEntity.ok(service.mapToDTO(foungFPOD));
-    }
 
     @PostMapping("/create-fish-pack-and-fish-pack-order-detail")
     public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@RequestBody CreateFishPackDTO createFishPackDTO) {

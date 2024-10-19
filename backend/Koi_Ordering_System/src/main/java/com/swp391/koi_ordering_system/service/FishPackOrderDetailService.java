@@ -50,14 +50,6 @@ public class FishPackOrderDetailService {
         return foundFishPackOrderDetail.get();
     }
 
-    public FishPackOrderDetail findFishPackOrderDetailByOrderId(String orderId) {
-        Optional<FishPackOrderDetail> foundFishPackOrderDetail = fishPackOrderDetailRepository.findByFishOrderId(orderId);
-        if (foundFishPackOrderDetail.isEmpty()) {
-            throw new RuntimeException("Fish Pack Order Detail Not Found");
-        }
-        return foundFishPackOrderDetail.get();
-    }
-
     public List<FishPackOrderDetailDTO> getAllFishPackOrderDetailsByOrderId(String orderId) {
         List<FishPackOrderDetail> list = fishPackOrderDetailRepository.findFishPackOrderDetailsByFishOrderId(orderId);
         if (list.isEmpty()) {
@@ -79,7 +71,7 @@ public class FishPackOrderDetailService {
         newFishPackOrderDetail.setId(generateFishPackOrderDetailId());
         newFishPackOrderDetail.setFishPack(newFishPack);
         newFishPackOrderDetail.setFishOrder(null);
-        newFishPackOrderDetail.setPrice(dto.getPrice());
+        newFishPackOrderDetail.setPrice(dto.getPackOrderDetailPrice());
         newFishPackOrderDetail.setIsDeleted(false);
 
         FishPackRepository.save(newFishPack);

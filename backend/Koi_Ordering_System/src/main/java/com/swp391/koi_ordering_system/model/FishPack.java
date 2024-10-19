@@ -40,6 +40,10 @@ public class FishPack {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @ManyToOne
+    @JoinColumn(name = "variety_id")
+    private Variety variety;
+
     @JsonManagedReference(value = "fishPack-media")
     @ManyToMany
     @JoinTable(

@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import './index.scss';
+import './detail.scss';
 
 function KoiDetailPage() {
   const { id } = useParams(); 
