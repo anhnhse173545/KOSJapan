@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateFishPackDTO {
     private String orderId;
+    private String varietyId;
     private String length;
     private String weight;
     private String description;

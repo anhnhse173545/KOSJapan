@@ -39,7 +39,7 @@ public class FishPackService {
 
     public FishPack createFishPack(CreateFishPackDTO fishPackDTO) {
             FishPack fishPack = new FishPack();
-            Optional<Variety> findVar = varietyRepository.findById("VA0006");
+            Optional<Variety> findVar = varietyRepository.findById(fishPackDTO.getVarietyId());
             if (findVar.isEmpty()) {
                 throw new RuntimeException("Variety not found");
             }
@@ -83,14 +83,13 @@ public class FishPackService {
 
     public FishPackDTO mapToDTO(FishPack fishPack) {
         FishPackDTO fishPackDTO = new FishPackDTO();
-        Variety packVar = varietyRepository.findById("VA0006").get();
 
         fishPackDTO.setId(fishPack.getId());
         fishPackDTO.setLength(fishPack.getLength());
         fishPackDTO.setWeight(fishPack.getWeight());
         fishPackDTO.setDescription(fishPack.getDescription());
         fishPackDTO.setQuantity(fishPack.getQuantity());
-        fishPackDTO.setVariety(packVar);
+        fishPackDTO.setVariety(fishPack.getVariety());
 
         return fishPackDTO;
     }
