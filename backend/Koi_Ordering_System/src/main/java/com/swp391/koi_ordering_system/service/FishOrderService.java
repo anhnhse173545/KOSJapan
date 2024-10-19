@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +45,12 @@ public class FishOrderService {
 
     @Autowired
     private BookingRepository BookingRepository;
+
+    @Autowired
+    private AccountRepository AccountRepository;
+
+    @Autowired
+    private AccountService AccountService;
 
     private static final String PREFIX = "PO";
     private static final int ID_PADDING = 4;
@@ -76,7 +85,7 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
-    public FishOrder createFishOrder(String bookingId, String farmId, CreateOrderDTO dto) {
+    public FishOrder createFishOrder(String bookingId, String farmId) {
             Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
             Optional<Farm> findFarm = FarmRepository.findById(farmId);
             Optional<Booking> findBooking = BookingRepository.findById(bookingId);
@@ -90,13 +99,18 @@ public class FishOrderService {
         Booking booking = findBooking.get();
         FishOrder newFishOrder = new FishOrder();
 
+
+        Instant instant = Instant.now();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+
         newFishOrder.setId(generateOrderId());
         newFishOrder.setStatus("Pending");
-        newFishOrder.setCreateAt(dto.getCreateAt());
-        newFishOrder.setArrivedDate(dto.getArrivedDate());
-        newFishOrder.setDeliveryAddress(dto.getDeliveryAddress());
-        newFishOrder.setTotal(dto.getTotal());
+        newFishOrder.setCreateAt(localDateTime);
+        newFishOrder.setArrivedDate(null);
+        newFishOrder.setTotal(0.00);
         newFishOrder.setBooking(booking);
+        Account account = newFishOrder.getBooking().getCustomer();
+        newFishOrder.setDeliveryAddress(newFishOrder.getBooking().getCustomer().getAddress());
         newFishOrder.setFarm(farm);
         newFishOrder.setIsDeleted(false);
         newFishOrder.setFishPackOrderDetails(null);
@@ -107,6 +121,7 @@ public class FishOrderService {
 
         booking.getFishOrders().add(newFishOrder);
         BookingRepository.save(booking);
+        AccountRepository.save(account);
 
         return OrderRepository.save(newFishOrder);
     }
@@ -118,7 +133,6 @@ public class FishOrderService {
         }
         FishOrder updateOrder = findOrder.get();
 
-        updateOrder.setTotal(dto.getTotal());
         updateOrder.setStatus(dto.getStatus());
         updateOrder.setPaymentStatus(dto.getPaymentStatus());
         updateOrder.setDeliveryAddress(dto.getDelivery_address());
@@ -138,33 +152,6 @@ public class FishOrderService {
         deleteOrder.setStatus(null);
 
         OrderRepository.save(deleteOrder);
-    }
-
-    public FishOrder addFishPackOrFishOrderDetailToOrder(String bookingId, String farmId, String addId){
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId,farmId);
-        if(findOrder.isEmpty()){
-            throw new RuntimeException("Fish Order does not existed !");
-        }
-        FishOrder fishOrder = findOrder.get();
-        Optional<FishOrderDetail> findOrderDetail = FODRepository.findById(addId);
-        Optional<FishPackOrderDetail> findPackDetail = FPODRepository.findById(addId);
-
-        if(findOrderDetail.isEmpty() && findPackDetail.isEmpty()){
-            throw new RuntimeException("Fish Pack Order and Fish Order does not existed !");
-        }
-        else if(findOrderDetail.isPresent()){
-            FishOrderDetail orderDetail = findOrderDetail.get();
-            fishOrder.getFishOrderDetails().add(orderDetail);
-            orderDetail.setFishOrder(fishOrder);
-            FODRepository.save(orderDetail);
-        }
-        else if(findPackDetail.isPresent()){
-            FishPackOrderDetail packOrderDetail = findPackDetail.get();
-            fishOrder.getFishPackOrderDetails().add(packOrderDetail);
-            packOrderDetail.setFishOrder(fishOrder);
-            FPODRepository.save(packOrderDetail);
-        }
-        return OrderRepository.save(fishOrder);
     }
 
     public FishOrder removeFishOrFishPackDetailInOrder(String bookingId, String farmId) {
@@ -228,7 +215,6 @@ public class FishOrderService {
         dto.setStatus(fishOrder.getStatus());
         dto.setPaymentStatus(fishOrder.getPaymentStatus());
         dto.setTotal(fishOrder.getTotal());
-        dto.setDeliveryAddress(fishOrder.getDeliveryAddress());
         dto.setFarmId(fishOrder.getFarm().getId());
         dto.setBookingId(fishOrder.getBooking().getId());
         dto.setFishOrderDetails(FODService.mapToListDTO(findFOD));

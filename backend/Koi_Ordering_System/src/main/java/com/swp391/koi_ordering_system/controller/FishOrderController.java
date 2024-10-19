@@ -1,6 +1,5 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.*;
 import com.swp391.koi_ordering_system.model.FishOrder;
@@ -38,8 +37,8 @@ public class FishOrderController {
 
     @PostMapping("/{booking_id}/{farm_id}/create")
     public ResponseEntity<FishOrderDTO> createFishOrder(@PathVariable String booking_id,
-                                                    @PathVariable String farm_id, @RequestBody CreateOrderDTO dto) {
-        FishOrder newOrder = orderService.createFishOrder(booking_id, farm_id, dto);
+                                                    @PathVariable String farm_id) {
+        FishOrder newOrder = orderService.createFishOrder(booking_id, farm_id);
         return ResponseEntity.ok(orderService.mapToDTO2(newOrder));
     }
 
@@ -50,16 +49,6 @@ public class FishOrderController {
         FishOrder updateOrder = orderService.updateFishOrder(booking_id, farm_id, dto);
         return ResponseEntity.ok(orderService.mapToDTO2(updateOrder));
     }
-
-
-    @PutMapping("/{booking_id}/{farm_id}/{FishOrderDetailId_Or_FishPackOrderDetailId}/add-order-detail-to-order")
-    public ResponseEntity<FishOrderDTO> addFishOrderDetailToOrder(@PathVariable String booking_id,
-                                                              @PathVariable String farm_id,
-                                                              @PathVariable String FishOrderDetailId_Or_FishPackOrderDetailId){
-        FishOrder addedOrder = orderService.addFishPackOrFishOrderDetailToOrder(booking_id, farm_id, FishOrderDetailId_Or_FishPackOrderDetailId);
-        return ResponseEntity.ok(orderService.mapToDTO2(addedOrder));
-    }
-
 
     @PutMapping("/{booking_id}/{farm_id}/remove-order-detail-from-order")
     public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String booking_id,

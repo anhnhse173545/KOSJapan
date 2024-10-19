@@ -76,6 +76,19 @@ public class FishPackOrderDetailService {
 
         FishPackRepository.save(newFishPack);
 
+        //Add FPOD into Fish Order
+        Optional<FishOrder> foundFishOrder = orderRepository.findById(dto.getOrderId());
+
+        if(foundFishOrder.isPresent()){
+            FishOrder fishOrder = foundFishOrder.get();
+            fishOrder.getFishPackOrderDetails().add(newFishPackOrderDetail);
+            newFishPackOrderDetail.setFishOrder(fishOrder);
+            fishOrder.setTotal(fishOrder.getTotal()+newFishPackOrderDetail.getPrice());
+
+            fishPackOrderDetailRepository.save(newFishPackOrderDetail);
+            orderRepository.save(fishOrder);
+        }
+
         return fishPackOrderDetailRepository.save(newFishPackOrderDetail);
     }
 
