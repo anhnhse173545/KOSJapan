@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, message, Badge, Input, Form } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { DeleteOutlined } from "@ant-design/icons";
 const OrderList = () => {
   const [data, setData] = useState([]); // Data fetched from API
   const [loading, setLoading] = useState(false); // Loading state
@@ -48,13 +48,34 @@ const OrderList = () => {
   const handleAddKoi = (orderId, farmId) => {
     navigate("/add-koi", { state: { orderId, farmId } });
   };
+  // Handle deleting an order
+  const handleDeleteOrder = async (record) => {
+    try {
+      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/delete`;
+      await axios.delete(url);
+      message.success(`Order with ID ${record.id} has been deleted.`);
+      fetchOrders(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Fish order not found"
+      ) {
+        message.error("Failed to delete order: Fish order not found.");
+      } else {
+        message.error(
+          "Failed to delete order. Please check your network and server."
+        );
+      }
+    }
+  };
 
   // Handle creating a new order
   const handleCreateOrder = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
-        { deliveryAddress, paymentStatus: "Pending" } // Include default payment status
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`
       );
       message.success(`Order created with ID: ${response.data.id}`);
       fetchOrders(); // Refresh the list after creating the order
@@ -77,28 +98,22 @@ const OrderList = () => {
   // Function to update payment status
   const handleUpdatePaymentStatus = async (record) => {
     try {
-      // Log farmId and bookingId to ensure they are correctly retrieved
-      console.log("Farm ID:", record.farmId);
-      console.log("Booking ID:", record.bookingId);
+      // Construct the API URL dynamically using bookingId and farmId
+      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/update`;
 
-      // Construct the API URL
-      const url = `http://localhost:8080/fish-order/${record.farmId}/${record.bookingId}/update`;
-      console.log("API URL:", url);
+      // Send the PUT request to update payment status
+      const payload = {
+        paymentStatus: "Deposited", // Update to deposited
+      };
 
-      // Send the PUT request to update the payment status
-      const payload = { paymentStatus: "Deposited" };
       const response = await axios.put(url, payload);
 
       // Check the response to ensure the update was successful
-      console.log("Update response:", response.data);
-
-      // Display success message and refresh the orders list
       message.success(`Payment status updated for Order ID: ${record.id}`);
-      fetchOrders(); // Refresh the list after the update
+      fetchOrders(); // Refresh the order list after updating the payment status
     } catch (error) {
       console.error("Error updating payment status:", error);
 
-      // Check if error is related to "Fish order not found"
       if (
         error.response &&
         error.response.data &&
@@ -119,6 +134,7 @@ const OrderList = () => {
     }
   };
 
+  // Table columns with Update Payment Status action
   const columns = [
     {
       title: "Order ID",
@@ -140,7 +156,7 @@ const OrderList = () => {
     },
     {
       title: "Payment Status",
-      dataIndex: "paymentStatus", // This should match the field name from the API response
+      dataIndex: "paymentStatus",
       key: "paymentStatus",
       render: (paymentStatus) => (
         <Badge
@@ -149,7 +165,6 @@ const OrderList = () => {
         />
       ),
     },
-
     {
       title: "Total Price",
       key: "total",
@@ -164,16 +179,23 @@ const OrderList = () => {
             type="primary"
             onClick={() => handleAddKoi(record.id, record.farmId)}
             style={{ marginRight: 8 }}
+            disabled={record.paymentStatus === "Deposited"}
           >
             Add Koi
           </Button>
           <Button
             type="default"
             onClick={() => handleUpdatePaymentStatus(record)}
-            disabled={record.paymentStatus === "Deposited"} // Ensure this logic is correct
+            disabled={record.paymentStatus === "Deposited"}
+            style={{ marginRight: 8 }}
           >
             Update Payment Status
           </Button>
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteOrder(record)}
+          />
         </>
       ),
     },
@@ -181,6 +203,11 @@ const OrderList = () => {
 
   const expandedRowRender = (record) => {
     const fishColumns = [
+      {
+        title: "Fish ID", // Display Fish ID
+        dataIndex: ["fish", "id"], // Access the fish.id field
+        key: "fishId",
+      },
       {
         title: "Variety",
         dataIndex: ["fish", "variety", "name"],

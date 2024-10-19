@@ -16,10 +16,11 @@ public class VarietyController {
     private VarietyService varietyService;
 
     @PostMapping("/create")
-    public ResponseEntity<VarietyDTO> createVariety(@RequestBody VarietyDTO varietyDTO) {
+    public ResponseEntity<VarietyDTO> createVariety(@RequestBody CreateVarietyDTO varietyDTO) {
         VarietyDTO createdVariety = varietyService.createVariety(varietyDTO);
         return ResponseEntity.ok(createdVariety);
     }
+
 
     @GetMapping("/list")
     public ResponseEntity<List<VarietyDTO>> getAllVarieties() {
