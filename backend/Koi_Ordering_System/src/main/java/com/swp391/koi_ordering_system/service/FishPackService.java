@@ -1,13 +1,11 @@
 package com.swp391.koi_ordering_system.service;
 
-import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
-import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
-import com.swp391.koi_ordering_system.model.Fish;
 import com.swp391.koi_ordering_system.model.FishPack;
+import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FishPackRepository;
-import com.swp391.koi_ordering_system.repository.FishRepository;
+import com.swp391.koi_ordering_system.repository.VarietyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +20,7 @@ public class FishPackService {
     private FishPackRepository fishPackRepository;
 
     @Autowired
-    private FishRepository fishRepository;
-
-    @Autowired
-    private FishService fishService;
+    private VarietyRepository varietyRepository;
 
     private static final String PREFIX = "FP";
     private static final int ID_PADDING = 4;
@@ -44,6 +39,11 @@ public class FishPackService {
 
     public FishPack createFishPack(CreateFishPackDTO fishPackDTO) {
             FishPack fishPack = new FishPack();
+            Optional<Variety> findVar = varietyRepository.findById("VA0006");
+            if (findVar.isEmpty()) {
+                throw new RuntimeException("Variety not found");
+            }
+            Variety variety = findVar.get();
 
             fishPack.setId(generateFishPackId());
             fishPack.setLength(fishPackDTO.getLength());
@@ -51,6 +51,7 @@ public class FishPackService {
             fishPack.setDescription(fishPackDTO.getDescription());
             fishPack.setQuantity(fishPackDTO.getQuantity());
             fishPack.setIsDeleted(false);
+            fishPack.setVariety(variety);
 
             return fishPackRepository.save(fishPack);
     }
@@ -82,12 +83,14 @@ public class FishPackService {
 
     public FishPackDTO mapToDTO(FishPack fishPack) {
         FishPackDTO fishPackDTO = new FishPackDTO();
+        Variety packVar = varietyRepository.findById("VA0006").get();
 
         fishPackDTO.setId(fishPack.getId());
         fishPackDTO.setLength(fishPack.getLength());
         fishPackDTO.setWeight(fishPack.getWeight());
         fishPackDTO.setDescription(fishPack.getDescription());
         fishPackDTO.setQuantity(fishPack.getQuantity());
+        fishPackDTO.setVariety(packVar);
 
         return fishPackDTO;
     }

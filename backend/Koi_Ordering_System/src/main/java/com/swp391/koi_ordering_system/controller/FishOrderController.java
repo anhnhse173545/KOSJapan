@@ -85,6 +85,16 @@ public class FishOrderController {
         return ResponseEntity.ok(fishOrder);
     }
 
+    @GetMapping("/delivery-staff/{deliveryId}/{status}")
+    public ResponseEntity<?> getFishOrderByDeliveryIdAndStatus(@PathVariable String deliveryId,
+                                                               @PathVariable String status) {
+        List<DeliveryStaffOrderDTO> list = fishOrderService.getFishOrderByStatusByDeliveryStaff(deliveryId,status);
+        if(list.isEmpty()){
+            return ResponseEntity.status(404).body(new ErrorDTO(404, "Order not found"));
+        }
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getFishOrderByCustomerId(@PathVariable String customerId) {
         List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByCustomerId(customerId);

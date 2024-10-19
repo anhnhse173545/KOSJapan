@@ -31,12 +31,6 @@ public class FishPackController {
         return ResponseEntity.ok(fishPackDTO);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<FishPackDTO> createFishPack(@RequestBody CreateFishPackDTO fishPack) {
-        FishPack fishPackDTO = fishPackService.createFishPack(fishPack);
-        return ResponseEntity.ok(fishPackService.mapToDTO(fishPackDTO));
-    }
-
     @PutMapping("/{fish_pack_id}/update")
     public ResponseEntity<FishPackDTO> updateFishPack(@PathVariable String fish_pack_id,
                                                       @RequestBody CreateFishPackDTO fishPackDTO) {

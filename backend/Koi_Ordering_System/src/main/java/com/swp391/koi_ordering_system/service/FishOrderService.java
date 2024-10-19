@@ -69,6 +69,13 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
+    public List<DeliveryStaffOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
+        List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatus(deliveryStaff, status);
+        return list.stream()
+                .map(fishOrderMapper::toDeliveryStaffOrderDTO)
+                .collect(Collectors.toList());
+    }
+
     public FishOrder createFishOrder(String bookingId, String farmId, CreateOrderDTO dto) {
             Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
             Optional<Farm> findFarm = FarmRepository.findById(farmId);
