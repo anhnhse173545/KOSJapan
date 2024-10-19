@@ -45,32 +45,6 @@ public class FishOrderDetailService {
                 .collect(Collectors.toList());
     }
 
-    public FishOrderDetail createFishOrderDetail(CreateOrderDetailDTO createFishOrderDTO){
-        Optional<Fish> foundFish = fishRepository.findById(createFishOrderDTO.getFish_id());
-        if(foundFish.isEmpty()){
-            throw new RuntimeException("Fish does not exists");
-        }
-        Fish addfish = foundFish.get();
-        FishOrderDetail fishOrderDetail = new FishOrderDetail();
-        fishOrderDetail.setId(generateOrderDetailId());
-        fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
-        fishOrderDetail.setIsDeleted(false);
-        fishOrderDetail.setFish(addfish);
-        fishOrderDetail.setPrice(createFishOrderDTO.getPrice());
-
-        fishOrderDetailRepository.save(fishOrderDetail);
-
-        Optional<FishOrder> foundFishOrder = orderRepository.findById(createFishOrderDTO.getOrderId());
-
-        if(foundFishOrder.isPresent()){
-            FishOrder fishOrder = foundFishOrder.get();
-            fishOrder.getFishOrderDetails().add(fishOrderDetail);
-            fishOrderDetail.setFishOrder(fishOrder);
-            orderRepository.save(fishOrder);
-        }
-        return fishOrderDetail;
-    }
-
     public FishOrderDetail createFishAndOrderDetail(CreateFishDTO dto) {
         // Create Fish
         Fish newFish = new Fish();
@@ -98,6 +72,8 @@ public class FishOrderDetailService {
             FishOrder fishOrder = foundFishOrder.get();
             fishOrder.getFishOrderDetails().add(fishOrderDetail);
             fishOrderDetail.setFishOrder(fishOrder);
+            fishOrder.setTotal(fishOrder.getTotal() + fishOrderDetail.getPrice());
+
             fishOrderDetailRepository.save(fishOrderDetail);
             orderRepository.save(fishOrder);
         }
@@ -115,19 +91,6 @@ public class FishOrderDetailService {
         throw new RuntimeException("Fish Order Detail does not exist");
     }
 
-    public FishOrderDetail addFishToOrderDetail(String orderDetailID, String fishId){
-        Optional<Fish> findFish= fishRepository.findById(fishId);
-        Optional<FishOrderDetail> findOrderDetail = fishOrderDetailRepository.findById(orderDetailID);
-
-        if(findFish.isPresent() && findOrderDetail.isPresent()){
-            FishOrderDetail fishOrderDetail = findOrderDetail.get();
-            Fish addFish = findFish.get();
-            fishOrderDetail.setFish(addFish);
-            fishOrderDetailRepository.save(fishOrderDetail);
-        }
-
-        return null;
-    }
 
     public FishOrderDetail updateFishInOrderDetail(UpdateFishInOrderDetailDTO fishDTO){
         Optional<FishOrderDetail> foundFishOrderDetail = fishOrderDetailRepository.findById(fishDTO.getOrderDetailId());

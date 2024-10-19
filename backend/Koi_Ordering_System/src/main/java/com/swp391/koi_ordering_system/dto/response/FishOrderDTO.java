@@ -14,14 +14,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FishOrderDTO {
-    private AccountDTO customer;
     private String id;
+    private String bookingId;
     private String farmId;
     private String deliveryAddress;
     private String status;
-    private String paymentStatus;
     private Double total;
-    private String bookingId;
+    private String paymentStatus;
     private List<FishOrderDetailDTO> fishOrderDetails;
     private List<FishPackOrderDetailDTO> fishPackOrderDetails;
 }

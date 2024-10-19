@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateFishPackDTO {
+    private String orderId;
     private String length;
     private String weight;
     private String description;
