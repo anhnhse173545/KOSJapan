@@ -16,6 +16,7 @@ import java.util.Set;
 public class FishOrderDTO {
     private String id;
     private String bookingId;
+    private AccountDTO customer;
     private String farmId;
     private String deliveryAddress;
     private String status;

@@ -26,9 +26,6 @@ public class VarietyService {
         return varietyMapper.toDTO(varietyRepository.save(variety));
     }
 
-
-
-
     public List<VarietyDTO> getAllVarieties() {
         return varietyRepository.findAllByIsDeletedFalse().stream()
                 .map(varietyMapper::toDTO)

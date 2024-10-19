@@ -37,7 +37,7 @@ public class TripPayment {
     private Double amount;
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
