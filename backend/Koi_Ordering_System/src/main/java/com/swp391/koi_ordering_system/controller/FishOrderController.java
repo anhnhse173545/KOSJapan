@@ -50,10 +50,17 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(updateOrder));
     }
 
-    @PutMapping("/{booking_id}/{farm_id}/remove-order-detail-from-order")
-    public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String booking_id,
-                                                                   @PathVariable String farm_id){
-        FishOrder removedOrder = orderService.removeFishOrFishPackDetailInOrder(booking_id, farm_id);
+    @PostMapping("/{order_id}/remove-fish-order-detail-from-order/{fish_order_detail_id}")
+    public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String order_id,
+                                                                   @PathVariable String fish_order_detail_id){
+        FishOrder removedOrder = orderService.removeFishOrderDetailInOrder(order_id, fish_order_detail_id);
+        return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
+    }
+
+    @PostMapping("/{order_id}/remove-pack-order-detail-from-order/{fish_pack_order_detail_id}")
+    public ResponseEntity<FishOrderDTO> removeFishPackOrderDetailFromOrder(@PathVariable String order_id,
+                                                                       @PathVariable String fish_pack_order_detail_id){
+        FishOrder removedOrder = orderService.removeFishPackDetailInOrder(order_id, fish_pack_order_detail_id);
         return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
     }
 

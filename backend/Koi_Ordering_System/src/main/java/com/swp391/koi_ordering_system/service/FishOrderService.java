@@ -62,21 +62,14 @@ public class FishOrderService {
             return list.stream()
                     .map(fishOrderMapper::toDTO)
                     .collect(Collectors.toList());
-        }
+    }
 
-        public List<FishOrderDTO> getAllByBookingId(String bookingId) {
-            List<FishOrder> list = OrderRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
-            return list.stream()
-                    .map(fishOrderMapper::toDTO)
-                    .collect(Collectors.toList());
-        }
-
-//    public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
-//        List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
-//        return list.stream()
-//                .map((FishOrder) -> mapToDTO2(FishOrder))
-//                .collect(Collectors.toList());
-//    }
+    public List<FishOrderDTO> getAllByBookingId(String bookingId) {
+        List<FishOrder> list = OrderRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
+        return list.stream()
+                .map(fishOrderMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     public List<DeliveryStaffOrderDTO> getFishOrderByStatusByDeliveryStaff(String deliveryStaff, String status) {
         List<FishOrder> list = orderRepository.findByBooking_DeliveryStaff_IdAndStatusAndIsDeletedFalse(deliveryStaff, status);
@@ -154,32 +147,41 @@ public class FishOrderService {
         OrderRepository.save(deleteOrder);
     }
 
-    public FishOrder removeFishOrFishPackDetailInOrder(String bookingId, String farmId) {
-        Optional<FishOrder> findOrder = OrderRepository.findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(bookingId, farmId);
+    public FishOrder removeFishOrderDetailInOrder(String orderId, String fishOrderDetail) {
+        Optional<FishOrder> findOrder = OrderRepository.findByIdAndIsDeletedFalse(orderId);
         if (findOrder.isEmpty()) {
             throw new RuntimeException("Fish order not found");
         }
         FishOrder removeOrder = findOrder.get();
-        Optional<FishOrderDetail> findFOD = FODRepository.findFishOrderDetailByFishOrderId(removeOrder.getId());
-        Optional<FishPackOrderDetail> findFPOD = FPODRepository.findByFishOrderId(removeOrder.getId());
-        if (findFOD.isEmpty() && findFPOD.isEmpty()) {
+        Optional<FishOrderDetail> findFOD = FODRepository.findById(fishOrderDetail);
+        if (findFOD.isEmpty()) {
             throw new RuntimeException("There is no Fish Pack or Fish Order Detail in this Order !");
         }
 
-        FishOrderDetail foundFOD = findFOD.get();
-        FishPackOrderDetail foundFPOD = findFPOD.get();
+        FishOrderDetail foundFOD = findFOD.get();;
+        removeOrder.getFishOrderDetails().remove(foundFOD);
+        removeOrder.setTotal(removeOrder.getTotal() - foundFOD.getPrice());
+        FODRepository.delete(foundFOD);
+        OrderRepository.save(removeOrder); // Once remove from Fish Order => deleted
 
-        int indexFOD = removeOrder.getFishOrderDetails().indexOf(foundFOD);
-        int indexFPOD = removeOrder.getFishPackOrderDetails().indexOf(foundFPOD);
+        return OrderRepository.save(removeOrder);
+    }
 
-        removeOrder.getFishOrderDetails().remove(indexFOD);
-        removeOrder.getFishPackOrderDetails().remove(indexFPOD);
+    public FishOrder removeFishPackDetailInOrder(String orderId, String fishPackOrderDetailId) {
+        Optional<FishOrder> findOrder = OrderRepository.findByIdAndIsDeletedFalse(orderId);
+        if (findOrder.isEmpty()) {
+            throw new RuntimeException("Fish order not found");
+        }
+        FishOrder removeOrder = findOrder.get();
+        Optional<FishPackOrderDetail> findFPOD = FPODRepository.findById(fishPackOrderDetailId);
+        if (findFPOD.isEmpty()) {
+            throw new RuntimeException("There is no Fish Pack or Fish Order Detail in this Order !");
+        }
 
-        foundFOD.setFishOrder(removeOrder);
-        foundFPOD.setFishOrder(removeOrder);
-
-        FODRepository.save(foundFOD);
-        FPODRepository.save(foundFPOD);
+        FishPackOrderDetail foundFPOD = findFPOD.get();;
+        removeOrder.getFishPackOrderDetails().remove(foundFPOD);
+        removeOrder.setTotal(removeOrder.getTotal() - foundFPOD.getPrice());
+        FPODRepository.delete(foundFPOD); // Once remove from Fish Order => deleted
 
         return OrderRepository.save(removeOrder);
     }

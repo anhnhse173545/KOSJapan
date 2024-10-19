@@ -83,12 +83,16 @@ public class FishOrderDetailService {
 
     public void deleteFishOrderDetail(String fishOrderDetailId){
         Optional<FishOrderDetail> fishOrderDetail = fishOrderDetailRepository.findById(fishOrderDetailId);
-        if(fishOrderDetail.isPresent()){
-            FishOrderDetail fishOrderDetail1 = fishOrderDetail.get();
-            fishOrderDetail1.setIsDeleted(true);
-            fishOrderDetailRepository.save(fishOrderDetail1);
+        if(fishOrderDetail.isEmpty()){
+            throw new RuntimeException("Fish Order Detail does not exist");
         }
-        throw new RuntimeException("Fish Order Detail does not exist");
+        FishOrderDetail fishOrderDetail1 = fishOrderDetail.get();
+        fishOrderDetail1.setIsDeleted(true);
+        fishOrderDetailRepository.save(fishOrderDetail1);
+
+        FishOrder fishOrder = fishOrderDetail1.getFishOrder();
+        fishOrder.getFishOrderDetails().remove(fishOrderDetail1);
+        orderRepository.save(fishOrder);
     }
 
 
@@ -107,20 +111,12 @@ public class FishOrderDetailService {
             fishOrderDetail1.setFish(updateFish);
             fishOrderDetail1.setPrice(fishDTO.getOrderDetailPrice());
 
-            fishOrderDetailRepository.save(fishOrderDetail1);
-        }
-        return null;
-    }
+            FishOrder fishOrder = fishOrderDetail1.getFishOrder();
+            int index = fishOrder.getFishOrderDetails().indexOf(fishOrderDetail1);
+            fishOrder.getFishOrderDetails().set(index, fishOrderDetail1);
 
-    public FishOrderDetail removeFishFromOrderDetail(String orderDetailId, String fishId){
-        Optional<FishOrderDetail> foundFishOrderDetail = fishOrderDetailRepository.findById(orderDetailId);
-        if(foundFishOrderDetail.isPresent()){
-            FishOrderDetail fishOrderDetail1 = foundFishOrderDetail.get();
-            Optional<Fish> foundFish = fishRepository.findById(fishId);
-            if(foundFish.isEmpty()){
-                throw new RuntimeException("Fish does not exist");
-            }
-            fishOrderDetail1.getFish().setIsDeleted(true);
+            orderRepository.save(fishOrder);
+            fishOrderDetailRepository.save(fishOrderDetail1);
         }
         return null;
     }

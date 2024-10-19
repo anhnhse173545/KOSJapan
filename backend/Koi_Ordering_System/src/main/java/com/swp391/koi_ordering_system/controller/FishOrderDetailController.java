@@ -31,13 +31,6 @@ public class FishOrderDetailController {
         return ResponseEntity.ok(updatedOrderDetail);
     }
 
-    @PutMapping("/{orderDetail_id}/remove-fish-from-order-detail/{fish_id}")
-    public ResponseEntity<FishOrderDetail> removeFishFromOrderDetail(@PathVariable String orderDetail_id,
-                                                                     @PathVariable String fish_id){
-        FishOrderDetail updatedOrderDetail = service.removeFishFromOrderDetail(fish_id, orderDetail_id);
-        return ResponseEntity.ok(updatedOrderDetail);
-    }
-
     @DeleteMapping("/{orderDetail_id}/delete")
     public ResponseEntity<String> deleteOrderDetail(@PathVariable String orderDetail_id){
         service.deleteFishOrderDetail(orderDetail_id);
