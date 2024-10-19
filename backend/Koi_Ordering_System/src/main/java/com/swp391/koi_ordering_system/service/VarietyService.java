@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.service;
 
+import com.swp391.koi_ordering_system.controller.CreateVarietyDTO;
 import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.mapper.VarietyMapper;
 import com.swp391.koi_ordering_system.model.Variety;
@@ -19,11 +20,14 @@ public class VarietyService {
     @Autowired
     private VarietyMapper varietyMapper;
 
-    public VarietyDTO createVariety(VarietyDTO varietyDTO) {
-        Variety variety = varietyMapper.toEntity(varietyDTO);
+    public VarietyDTO createVariety(CreateVarietyDTO createVarietyDTO) {
+        Variety variety = varietyMapper.toEntity(createVarietyDTO);
         variety.setId(generateVarietyId());
         return varietyMapper.toDTO(varietyRepository.save(variety));
     }
+
+
+
 
     public List<VarietyDTO> getAllVarieties() {
         return varietyRepository.findAllByIsDeletedFalse().stream()
