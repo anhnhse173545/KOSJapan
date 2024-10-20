@@ -55,6 +55,7 @@ function App() {
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
+        { path: "/approveQuote/:id", element: <PaidBooking /> },
       ],
     },
 

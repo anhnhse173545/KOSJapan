@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import  { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './ongoing.scss';
 
 function CompleteTripPage() {
   const { id } = useParams(); // Lấy ID từ URL
   const navigate = useNavigate();
-
   // State cho dữ liệu chuyến đi
   const [tripData, setTripData] = useState(null);
   const [loadingTrip, setLoadingTrip] = useState(true);
@@ -33,49 +32,6 @@ function CompleteTripPage() {
   }, [id]);
 
   // Hàm từ chối (thay đổi trạng thái thành "Canceled")
-  const handleReject = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...tripData, status: 'Canceled' }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update status');
-      }
-
-      // Cập nhật trạng thái chuyến đi trong state
-      const updatedTrip = await response.json();
-      setTripData(updatedTrip);
-    } catch (error) {
-      setErrorReject('Error rejecting the trip: ' + error.message);
-    }
-  };
-
-  
-  const handlePay = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...tripData, status: 'Paid Booking' }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update status');
-      }
-
-      // Nếu cập nhật trạng thái thành công, điều hướng đến trang thanh toán
-      navigate(`/paykoi/${id}`);
-    } catch (error) {
-      setErrorPay('Error processing the payment: ' + error.message);
-    }
-  };
 
   // Hàm để render chi tiết đơn đặt hàng cá
   const renderFishOrderDetails = (fishOrderDetails) => (
@@ -214,8 +170,8 @@ function CompleteTripPage() {
 
       {/* Nút từ chối và thanh toán */}
       <div className="action-buttons">
-        <button onClick={handleReject}>Reject</button>
-        <button onClick={handlePay}>Pay</button>
+        
+      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
       </div>
     </div>
   );
