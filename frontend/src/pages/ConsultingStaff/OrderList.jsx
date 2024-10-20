@@ -56,7 +56,7 @@ const OrderList = () => {
   const calculateTotalPrice = (record) => {
     const fishTotal =
       record.fishOrderDetails?.reduce(
-        (total, item) => total + item.fish_price,
+        (total, item) => total + item.price, // Corrected from item.fish_price to item.price
         0
       ) || 0;
     const fishPackTotal =
@@ -279,7 +279,11 @@ const OrderList = () => {
     },
     { title: "Length", dataIndex: ["fish", "length"], key: "length" },
     { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
-    { title: "Price", dataIndex: "fish_price", key: "fish_price" },
+    {
+      title: "Price",
+      dataIndex: "price", // Corrected data index
+      key: "price",
+    },
     {
       title: "Description",
       dataIndex: ["fish", "description"],
@@ -292,9 +296,7 @@ const OrderList = () => {
         <Button
           type="danger"
           icon={<DeleteOutlined />}
-          onClick={
-            () => handleDeleteFishOrderDetail(record.orderId, record.id) // Use record.id for the fishOrderDetailId
-          }
+          onClick={() => handleDeleteFishOrderDetail(record.orderId, record.id)}
         >
           Delete
         </Button>
