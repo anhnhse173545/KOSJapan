@@ -7,13 +7,12 @@ function CustomerRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
  
-
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-              const response = await fetch(`http://localhost:8080/api/booking/sale-staff/AC0002?timestamp=${new Date().getTime()}`);
+                const response = await fetch(`http://localhost:8080/api/booking/sale-staff/AC0002?timestamp=${new Date().getTime()}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -49,7 +48,6 @@ function CustomerRequest() {
         } catch (error) {
             setError(error.message);
         }
-        
     };
 
     if (loading) {
@@ -105,11 +103,21 @@ function CustomerRequest() {
                                     <option value="Canceled">Canceled</option>
                                 </select>
                                 <button onClick={() => handleStatusUpdate(booking)}>Update Status</button>
+
+                                {/* Nút tạo Trip Destination */}
+                                <button 
+                                    className="create-trip-destination-button" 
+                                    onClick={() => navigate(`/tripdestination/${booking.trip.id}`)}
+                                >
+                                    Create Trip Destination
+                                </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            <button onClick={() => navigate(-1)} className="back-button">Back</button>
         </div>
     );
 }

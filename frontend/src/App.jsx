@@ -35,16 +35,9 @@ import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
-
-import ManagerDashboard from "./Manager/ManagerDashboard";
-import DashboardOverview from "./Manager/finals/DashboardOverview";
-import StaffManagerView from "./Manager/finals/StaffManagerView";
-import BookingManagerComponent from "./Manager/finals/booking-manager";
-import { SalesStaffManagementComponent } from "./Manager/finals/sales-staff-management";
-import { ConsultingStaffAssignmentComponent } from "./Manager/finals/consulting-staff-assignment-component";
-import { DeliveryStaffAssignment } from "./Manager/finals/delivery-staff-assignment";
-import { ExtendedQuoteReviewComponent } from "./Manager/finals/extended-quote-review";
-import { DeliveryOrderListComponent } from "./Manager/finals/delivery-order-list";
+import ManagerDashboard from "./pages/Manager/ManagerDashboard";
+import ApproveQuote from "./pages/approveQuote";
+import CreateTripDestination from "./pages/SaleStaff/Tripdestination";
 
 function App() {
   const router = createBrowserRouter([
@@ -64,24 +57,12 @@ function App() {
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
-        { path: "/approveQuote/:id", element: <PaidBooking /> },
+        { path: "/approveQuote/:id", element: <ApproveQuote /> },
+        { path: "/tripdestination/:Tripid", element: <CreateTripDestination /> },
       ],
     },
 
-    {
-      path: "/manager-dashboard",
-      element: <ManagerDashboard />,
-        children: [
-          { path: "dashboard", element: <DashboardOverview /> },
-          { path: "staff-manager", element: <StaffManagerView /> },
-          { path: "booking-manager", element: <BookingManagerComponent /> },
-          { path: "sales-staff-assignment", element: <SalesStaffManagementComponent /> },
-          { path: "consulting-staff-assignment", element: <ConsultingStaffAssignmentComponent /> },
-          { path: "delivery-staff-assignment", element: <DeliveryStaffAssignment /> },
-          { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
-          { path: "delivery-order-list", element: <DeliveryOrderListComponent /> },
-      ],
-    },
+    { path: "/manager-dashboard", element: <ManagerDashboard /> },
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },
