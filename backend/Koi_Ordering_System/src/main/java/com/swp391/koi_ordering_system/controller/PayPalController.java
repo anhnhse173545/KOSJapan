@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Optional;
-
 @Controller
 @RequiredArgsConstructor
 public class PayPalController {
@@ -129,16 +127,6 @@ public class PayPalController {
         }
     }
 
-    private RedirectView getApprovalRedirect(Payment payment) {
-        for (Links link : payment.getLinks()) {
-            if ("approval_url".equals(link.getRel())) {
-                return new RedirectView(link.getHref());
-            }
-        }
-        log.error("Approval URL not found in payment links.");
-        return new RedirectView("/payment/error");
-    }
-
     @GetMapping("/payment/trippayment/success")
     public String tripPaymentSuccess(@RequestParam("paymentId") String paymentId,
                                      @RequestParam("PayerID") String payerID,
@@ -163,6 +151,16 @@ public class PayPalController {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
         return "paymentError";
+    }
+
+    private RedirectView getApprovalRedirect(Payment payment) {
+        for (Links link : payment.getLinks()) {
+            if ("approval_url".equals(link.getRel())) {
+                return new RedirectView(link.getHref());
+            }
+        }
+        log.error("Approval URL not found in payment links.");
+        return new RedirectView("/payment/error");
     }
 
     // Fish Payment

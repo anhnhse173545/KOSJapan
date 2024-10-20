@@ -87,11 +87,10 @@ public class FishOrderDetailService {
             throw new RuntimeException("Fish Order Detail does not exist");
         }
         FishOrderDetail fishOrderDetail1 = fishOrderDetail.get();
-        fishOrderDetail1.setIsDeleted(true);
-        fishOrderDetailRepository.save(fishOrderDetail1);
 
         FishOrder fishOrder = fishOrderDetail1.getFishOrder();
         fishOrder.getFishOrderDetails().remove(fishOrderDetail1);
+        fishOrderDetailRepository.delete(fishOrderDetail1);
         orderRepository.save(fishOrder);
     }
 
