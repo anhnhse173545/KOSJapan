@@ -100,7 +100,7 @@ function CustomerRequest() {
                                     <option value="Requested">Requested</option>
                                     <option value="Approved Quote">Approved Quote</option>
                                     <option value="Paid Booking">Paid Booking</option>
-                                    <option value="On-going">On-Going</option>
+                                    <option value="On-going">On-going</option>
                                     <option value="Completed">Completed</option>
                                     <option value="Canceled">Canceled</option>
                                 </select>
