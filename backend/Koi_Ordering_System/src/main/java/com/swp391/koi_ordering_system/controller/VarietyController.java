@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.CreateVarietyDTO;
 import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.service.VarietyService;
 import org.springframework.beans.factory.annotation.Autowired;

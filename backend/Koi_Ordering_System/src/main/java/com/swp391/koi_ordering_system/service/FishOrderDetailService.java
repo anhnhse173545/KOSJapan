@@ -130,7 +130,7 @@ public class FishOrderDetailService {
 
         fishOrderDetailDTO.setId(fishOrderDetail.getId());
         fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
-        fishOrderDetailDTO.setFish_price(fishOrderDetail.getPrice());
+        fishOrderDetailDTO.setPrice(fishOrderDetail.getPrice());
 
         return fishOrderDetailDTO;
     }
@@ -147,7 +147,7 @@ public class FishOrderDetailService {
 
             fishOrderDetailDTO.setId(fishOrderDetail.getId());
             fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
-            fishOrderDetailDTO.setFish_price(fishOrderDetail.getPrice());
+            fishOrderDetailDTO.setPrice(fishOrderDetail.getPrice());
 
             fishOrderDetailDTOList.add(fishOrderDetailDTO);
         }

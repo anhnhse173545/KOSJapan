@@ -13,5 +13,5 @@ import lombok.Setter;
 public class FishOrderDetailDTO {
     private String id;
     private Fish fish;
-    private Double fish_price;
+    private Double price;
 }
