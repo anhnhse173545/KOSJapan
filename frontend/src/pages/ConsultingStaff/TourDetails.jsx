@@ -1,131 +1,113 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { Button, message, Spin } from "antd";
+import {
+  Button,
+  message,
+  Spin,
+  Typography,
+  Descriptions,
+  Card,
+  List,
+  Collapse,
+} from "antd";
 
-const tripPlanTemplate = `
-Day 1: Tokyo – A Blend of Old and New
-  Morning: Tsukiji Market and Toyosu Market
-  Midday: Tokyo Tower and Modern Art
-  Afternoon: Shibuya Crossing and Shopping
-  Evening: Dining in Golden Gai
-
-Day 2: Kyoto – Timeless Traditions
-  Morning: Fushimi Inari Shrine
-  Midday: Nishiki Market and Lunch
-  Afternoon: Traditional Arts and Green Tea Ceremony
-  Evening: Traditional Japanese Dinner and Ryokan Experience
-
-Day 3: The Mount Fuji Experience
-  Early Morning: Travel to Mount Fuji
-  Midday: Boat Ride and Lunch
-  Afternoon: Hiking and Nature Exploration
-  Evening: Luxury Onsen Ryokan Stay
-
-Day 4: Tokyo Revisited – Cherry Blossoms and Serenity
-  Morning: Meguro River Cherry Blossoms
-  Midday: Lunch and Quirky Convenience Store Experience
-  Afternoon: Cultural Sites and Relaxation
-  Evening: Shibuya Sensory Overload
-
-Day 5: Departure from Narita Airport
-  Morning: Last Minute Shopping and Sightseeing
-  Midday: Reflective Lunch
-  Afternoon: Departure Preparations
-`;
+const { Title, Text } = Typography;
+const { Panel } = Collapse;
 
 const TourDetails = () => {
   const { bookingId } = useParams();
-  const [tourData, setTourData] = useState(null);
+  const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTourData = async () => {
+    const fetchBookingData = async () => {
+      if (!bookingId) {
+        setError("No Booking ID provided.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.get(
           `http://localhost:8080/api/booking/get/${bookingId}`
         );
-        console.log("API Response:", response.data);
-        setTourData(response.data);
-        setLoading(false);
+        setBookingData(response.data);
       } catch (error) {
-        console.error("Error fetching tour data:", error);
         setError(
-          error.message || "An error occurred while fetching tour data."
+          error.response?.data?.message ||
+            error.message ||
+            "An unexpected error occurred."
         );
-        message.error("Failed to load tour details.");
+        message.error("Failed to load booking details.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchTourData();
+    fetchBookingData();
   }, [bookingId]);
 
   const handleExportToPDF = () => {
-    if (!tourData) {
-      message.error("No tour data available to export.");
+    if (!bookingData) {
+      message.error("No booking data available to export.");
       return;
     }
 
     try {
       const doc = new jsPDF();
-      doc.text("Tour Details", 20, 10);
+      doc.text("Booking Details", 20, 10);
 
+      // Booking Information
       doc.autoTable({
-        head: [["Customer", "Start Date", "End Date", "Status"]],
+        head: [["Booking ID", "Customer", "Status", "Created At"]],
         body: [
           [
-            tourData.customer?.name || "N/A",
-            tourData.trip?.startDate?.split("T")[0] || "N/A",
-            tourData.trip?.endDate?.split("T")[0] || "N/A",
-            tourData.status || "N/A",
+            bookingData.id,
+            bookingData.customer.name,
+            bookingData.status,
+            new Date(bookingData.createAt).toLocaleString(),
           ],
         ],
+        startY: 20,
       });
 
-      doc.text("Trip Destinations", 20, 50);
-      const tripDestinations =
-        tourData.trip?.tripDestinations?.map((dest) => [
-          dest.farm?.name || "N/A",
-          dest.farm?.address || "N/A",
-          dest.farm?.phoneNumber || "N/A",
-          dest.farm?.varieties?.map((variety) => variety.name).join(", ") ||
-            "N/A",
-        ]) || [];
+      // Trip Information
+      doc.text("Trip Information", 20, doc.lastAutoTable.finalY + 10);
+      doc.autoTable({
+        head: [["Trip ID", "Start Date", "End Date", "Status", "Price"]],
+        body: [
+          [
+            bookingData.trip.id,
+            new Date(bookingData.trip.startDate).toLocaleString(),
+            new Date(bookingData.trip.endDate).toLocaleString(),
+            bookingData.trip.status,
+            `$${bookingData.trip.price}`,
+          ],
+        ],
+        startY: doc.lastAutoTable.finalY + 15,
+      });
+
+      // Trip Destinations
+      doc.text("Trip Destinations", 20, doc.lastAutoTable.finalY + 10);
+      const destinations = bookingData.trip.tripDestinations.map((dest) => [
+        dest.farm.name,
+        dest.farm.address,
+        dest.farm.phoneNumber,
+        dest.farm.varieties.map((v) => v.name).join(", "),
+      ]);
       doc.autoTable({
         head: [["Farm Name", "Address", "Phone", "Varieties"]],
-        body: tripDestinations,
+        body: destinations,
+        startY: doc.lastAutoTable.finalY + 15,
       });
 
-      doc.text("Fish Orders", 20, doc.lastAutoTable.finalY + 10);
-      tourData.fishOrders?.forEach((order) => {
-        doc.text(
-          `Farm: ${order.farmId || "N/A"}`,
-          20,
-          doc.lastAutoTable.finalY + 20
-        );
-        doc.autoTable({
-          head: [["Fish Variety", "Length (cm)", "Weight (kg)", "Description"]],
-          body:
-            order.fishOrderDetails?.map((detail) => [
-              detail.fish?.variety?.name || "N/A",
-              detail.fish?.length || "N/A",
-              detail.fish?.weight || "N/A",
-              detail.fish?.description || "N/A",
-            ]) || [],
-          startY: doc.lastAutoTable.finalY + 30,
-        });
-      });
+      // Fish Orders
 
-      doc.text("Trip Plan", 20, doc.lastAutoTable.finalY + 30);
-      doc.autoTable({
-        body: tripPlanTemplate.split("\n").map((line) => [line.trim()]),
-      });
-
-      doc.save(`${tourData.customer?.name || "Tour"}_details.pdf`);
+      doc.save(`Booking_${bookingData.id}_details.pdf`);
       message.success("PDF exported successfully.");
     } catch (error) {
       console.error("Error exporting PDF:", error);
@@ -138,63 +120,100 @@ const TourDetails = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <Text type="danger">Error: {error}</Text>;
   }
 
-  if (!tourData) {
-    return <div>No tour details available.</div>;
+  if (!bookingData) {
+    return <Text>No booking details available.</Text>;
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Tour Details</h1>
-      <p>
-        <strong>Customer:</strong> {tourData.customer?.name || "N/A"}
-      </p>
-      <p>
-        <strong>Start Date:</strong>{" "}
-        {tourData.trip?.startDate?.split("T")[0] || "N/A"}
-      </p>
-      <p>
-        <strong>End Date:</strong>{" "}
-        {tourData.trip?.endDate?.split("T")[0] || "N/A"}
-      </p>
-      <p>
-        <strong>Status:</strong> {tourData.status || "N/A"}
-      </p>
+    <div className="p-6">
+      <Title level={2}>Booking Details</Title>
+      <Card className="mb-6">
+        <Descriptions title="General Information" bordered>
+          <Descriptions.Item label="Booking ID">
+            {bookingData.id}
+          </Descriptions.Item>
+          <Descriptions.Item label="Customer Name">
+            {bookingData.customer?.name || "N/A"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Customer Email">
+            {bookingData.customer?.email || "N/A"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            {bookingData.status}
+          </Descriptions.Item>
+          <Descriptions.Item label="Created At">
+            {new Date(bookingData.createAt).toLocaleString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="Description">
+            {bookingData.description || "N/A"}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
 
-      <h2>Trip Destinations</h2>
-      {tourData.trip?.tripDestinations?.map((dest, index) => (
-        <div key={index}>
-          <h3>Farm: {dest.farm?.name || "N/A"}</h3>
-          <p>Address: {dest.farm?.address || "N/A"}</p>
-          <p>Phone: {dest.farm?.phoneNumber || "N/A"}</p>
-          <p>
-            Varieties:{" "}
-            {dest.farm?.varieties?.map((v) => v.name).join(", ") || "N/A"}
-          </p>
-        </div>
-      ))}
+      <Card title="Trip Information" className="mb-6">
+        <Descriptions bordered>
+          <Descriptions.Item label="Trip ID">
+            {bookingData.trip.id}
+          </Descriptions.Item>
+          <Descriptions.Item label="Start Date">
+            {new Date(bookingData.trip.startDate).toLocaleString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="End Date">
+            {new Date(bookingData.trip.endDate).toLocaleString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="Departure Airport">
+            {bookingData.trip.departureAirport}
+          </Descriptions.Item>
+          <Descriptions.Item label="Price">
+            ${bookingData.trip.price}
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            {bookingData.trip.status}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
 
-      <h2>Fish Orders</h2>
-      {tourData.fishOrders?.map((order, index) => (
-        <div key={index}>
-          <h3>Farm ID: {order.farmId || "N/A"}</h3>
-          <ul>
-            {order.fishOrderDetails?.map((detail, detailIndex) => (
-              <li key={detailIndex}>
-                {detail.fish?.variety?.name || "N/A"} - Length:{" "}
-                {detail.fish?.length || "N/A"}cm, Weight:{" "}
-                {detail.fish?.weight || "N/A"}kg, Description:{" "}
-                {detail.fish?.description || "N/A"}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <Card title="Trip Destinations" className="mb-6">
+        <List
+          dataSource={bookingData.trip.tripDestinations}
+          renderItem={(dest) => (
+            <List.Item>
+              <List.Item.Meta
+                title={dest.farm.name}
+                description={
+                  <>
+                    <Text>Address: {dest.farm.address}</Text>
+                    <br />
+                    <Text>Phone: {dest.farm.phoneNumber}</Text>
+                    <br />
+                    <Text>
+                      Varieties:{" "}
+                      {dest.farm.varieties.map((v) => v.name).join(", ")}
+                    </Text>
+                  </>
+                }
+              />
+            </List.Item>
+          )}
+        />
+      </Card>
 
-      <h3>Trip Plan</h3>
-      <pre>{tripPlanTemplate}</pre>
+      <Card title="Payment Information" className="mb-6">
+        <Descriptions bordered>
+          <Descriptions.Item label="Payment ID">
+            {bookingData.tripPayment.id}
+          </Descriptions.Item>
+          <Descriptions.Item label="Payment Method">
+            {bookingData.tripPayment.paymentMethodName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Amount">
+            ${bookingData.tripPayment.amount}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
 
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF

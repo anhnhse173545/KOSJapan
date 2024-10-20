@@ -11,11 +11,16 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<FishOrder, String> {
-    List<FishOrder> findByBookingId(String id);
-    List<FishOrder> findAllByBookingId(String id);
+    List<FishOrder> findAllByIsDeletedFalse();
+    List<FishOrder> findAllByBookingIdAndIsDeletedFalse(String id);
     Optional<FishOrder> findTopByOrderByIdDesc();
     List<FishOrder> findByBookingIdAndFarmId(String bookingId, String farmId);
     Optional<FishOrder> findFishOrderByBookingId(String id);
-    Optional<FishOrder> findFishOrderByBookingIdAndFarmId(String bokingId, String farmId);
-    List<FishOrder> findByBooking_DeliveryStaff_Id(String deliveryStaffId);
+    Optional<FishOrder> findFishOrderByBookingIdAndFarmIdAndIsDeletedFalse(String bookingId, String farmId);
+    Optional<FishOrder> findFishOrderByBookingIdAndFarmId(String bookingId, String farmId);
+    List<FishOrder> findByBooking_ConsultingStaff_IdAndIsDeletedFalse(String consultingStaffId);
+    List<FishOrder> findByBooking_DeliveryStaff_IdAndIsDeletedFalse(String deliveryStaffId);
+    List<FishOrder> findByBooking_Customer_IdAndIsDeletedFalse(String customerId);
+    List<FishOrder> findByBooking_DeliveryStaff_IdAndStatusAndIsDeletedFalse(String deliveryStaffId, String status);
+    Optional<FishOrder> findByIdAndIsDeletedFalse(String id);
 }

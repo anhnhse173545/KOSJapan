@@ -8,7 +8,7 @@ function Header() {
   return (
     <div className="header">
         <div className="header__left">
-        <img onClick={() => navigate("/")} src="https://gudlogo.com/wp-content/uploads/2019/05/logo-ca-Koi-37.png" alt="logo"
+        <img onClick={() => navigate("/")} src="https://png.pngtree.com/png-vector/20220719/ourmid/pngtree-vector-illustration-of-a-koi-fish-yin-yang-concept-design-vector-png-image_37993206.png" alt="logo"
          className="header__logo" 
          width={100}
          />

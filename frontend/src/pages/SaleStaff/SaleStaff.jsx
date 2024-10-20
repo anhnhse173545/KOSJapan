@@ -11,13 +11,13 @@ import { Avatar, Button, Layout, Menu } from "antd";
 import { Link, Route, Routes } from "react-router-dom";
 import SaleStaffHome from "./SaleStaffHome"; // Assuming this component exists
 import CustomerRequest from "./CustomerRequest"; // Assuming this component is where you handle customer requests
-import CreateTripPlan from "./CreateTripPlan";
+
 import ViewTripPlan from "./ViewTripPlan";
 const { Header, Sider, Content } = Layout;
 
 const SaleStaff = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const saleStaffName = "John Doe"; // Replace this with dynamic data from your app context
+  const saleStaffName = "Nguyen Van B"; // Replace this with dynamic data from your app context
 
   return (
     <Layout>
@@ -97,7 +97,7 @@ const SaleStaff = () => {
             {/* Define routes for Sale Staff pages */}
             <Route path="/SaleStaffHome" element={<SaleStaffHome />} />
             <Route path="/CustomerRequest" element={<CustomerRequest />} />
-            <Route path="/create-trip-plan" element={<CreateTripPlan />} />
+
             <Route path="/view-trip-plan" element={<ViewTripPlan />} />
           </Routes>
         </Content>

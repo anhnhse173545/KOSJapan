@@ -12,4 +12,5 @@ public interface TripPaymentRepository extends JpaRepository<TripPayment, String
     List<TripPayment> findAllByIsDeletedFalse();
     Optional<TripPayment> findByIdAndIsDeletedFalse(String id);
     Optional<TripPayment> findTopByOrderByIdDesc();
+    TripPayment findTripPaymentByBookingId(String bookingId);
 }

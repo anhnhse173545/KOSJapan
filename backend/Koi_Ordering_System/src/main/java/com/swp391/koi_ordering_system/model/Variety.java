@@ -28,7 +28,7 @@ public class Variety {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @JsonBackReference(value = "farm-variety")
     @ManyToMany(mappedBy = "varieties")

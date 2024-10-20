@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.dto.response;
 
+import com.swp391.koi_ordering_system.model.Variety;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,7 @@ public class FishPackDTO {
 
     private int quantity;
 
-    private List<FishDTO> listFish;
+    private double price;
+
+    private Variety variety;
 }

@@ -1,245 +1,117 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  message,
-  DatePicker,
-} from "antd";
-import { EditOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
+import React, { useEffect, useState } from 'react';
+import './CustomerRequest.scss';
+import { useNavigate } from 'react-router-dom';
 
-const { Option } = Select;
+function CustomerRequest() {
+    const [bookings, setBookings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+ 
 
-const CustomerRequest = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingCustomer, setEditingCustomer] = useState(null);
-  const [customers, setCustomers] = useState([]);
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  // Fetch customer requests from API
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/booking/sale-staff/AC0002") // Fetch from correct API
-      .then((response) => {
-        setCustomers(response.data); // Set the fetched data
-      })
-      .catch((error) => {
-        console.error("Failed to load customer requests:", error);
-        message.error("Failed to load customer requests");
-      });
-  }, []);
-
-  // Open modal to edit customer
-  const openEditModal = (customer) => {
-    setEditingCustomer(customer);
-    form.setFieldsValue({
-      name: customer.customer.name,
-      email: customer.customer.email,
-      startDate: moment(customer.trip.startDate),
-      endDate: moment(customer.trip.endDate),
-      tripDetails: customer.description, // Use customer.description here
-    });
-    setIsModalVisible(true);
-  };
-
-  // Handle save and update the customer data via API
-  const handleSave = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        const updatedCustomer = {
-          ...editingCustomer,
-          customer: {
-            ...editingCustomer.customer,
-            email: values.email,
-            description: values.tripDetails, // Use this to update the customer description
-          },
-          trip: {
-            ...editingCustomer.trip,
-            startDate: values.startDate.format("YYYY-MM-DD"),
-            endDate: values.endDate.format("YYYY-MM-DD"),
-          },
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+              const response = await fetch(`http://localhost:8080/api/booking/sale-staff/AC0002?timestamp=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setBookings(data);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        // Send the updated customer data to the API using the trip id
-        axios
-          .put(
-            `http://localhost:8080/api/booking/update/${editingCustomer.trip.id}`, // Update using trip.id
-            updatedCustomer
-          )
-          .then(() => {
-            setCustomers((prev) =>
-              prev.map((customer) =>
-                customer.trip.id === editingCustomer.trip.id
-                  ? updatedCustomer
-                  : customer
-              )
-            );
-            setIsModalVisible(false);
-            message.success("Customer details updated successfully!");
-          })
-          .catch((error) => {
-            console.error("Failed to update customer details:", error);
-            message.error("Failed to update customer details.");
-          });
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
+        fetchBookings();
+    }, []);
 
-  const handleCreateTripPlan = (customer) => {
-    navigate("/create-trip-plan", { state: { customer } });
-  };
+    // Handle status change
+    const handleStatusUpdate = async (booking) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/booking/update/${booking.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...booking, status: booking.newStatus }), // Update status
+            });
 
-  const handleViewTripPlan = (customer) => {
-    navigate("/view-trip-plan", { state: { customer } });
-  };
+            if (!response.ok) {
+                throw new Error('Status update failed');
+            }
 
-  const columns = [
-    {
-      title: "Customer Name",
-      dataIndex: ["customer", "name"], // Adjusted for API structure
-      key: "customerName",
-    },
-    {
-      title: "Email",
-      dataIndex: ["customer", "email"], // Email field
-      key: "email",
-    },
-    {
-      title: "Koi Farm",
-      dataIndex: ["trip", "tripDestinations", "0", "farm", "name"], // Adjust to API data structure
-      key: "farm",
-    },
-    {
-      title: "Start Date",
-      dataIndex: ["trip", "startDate"],
-      key: "startDate",
-      render: (date) => moment(date).format("YYYY-MM-DD"), // Format the date
-    },
-    {
-      title: "End Date",
-      dataIndex: ["trip", "endDate"],
-      key: "endDate",
-      render: (date) => moment(date).format("YYYY-MM-DD"),
-    },
-    {
-      title: "Description",
-      dataIndex: "description", // Changed to use the correct description field
-      key: "description",
-    },
-    {
-      title: "Status", // New Status column
-      dataIndex: "status", // Status from API data
-      key: "status",
-      render: (status) => status || "Requested", // Default to 'Requested' if not provided
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => {
-        const status = record.status || "Requested"; // Use status field from API
-        return (
-          <>
-            {status === "Requested" ? (
-              <>
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => openEditModal(record)}
-                  style={{ marginRight: 8 }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => handleCreateTripPlan(record)}
-                  style={{ marginRight: 8 }}
-                >
-                  Create Trip Plan
-                </Button>
-              </>
-            ) : (
-              <Button
-                type="primary"
-                onClick={() => handleViewTripPlan(record)}
-                style={{ marginRight: 8 }}
-              >
-                View Trip Plan
-              </Button>
-            )}
-          </>
-        );
-      },
-    },
-  ];
+            const updatedBooking = await response.json();
+            setBookings(bookings.map(b => (b.id === updatedBooking.id ? updatedBooking : b)));
+        } catch (error) {
+            setError(error.message);
+        }
+        
+    };
 
-  return (
-    <>
-      <h2>Customer Requests</h2>
-      <Table
-        dataSource={customers}
-        columns={columns}
-        rowKey="id"
-        pagination={{ pageSize: 5 }}
-      />
-      <Modal
-        title="Edit Customer Request"
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        onOk={handleSave}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Customer Name"
-            rules={[
-              { required: true, message: "Please enter the customer's name!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, message: "Please enter the email!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="startDate"
-            label="Start Date"
-            rules={[{ required: true, message: "Please select a start date!" }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            name="endDate"
-            label="End Date"
-            rules={[{ required: true, message: "Please select an end date!" }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            name="tripDetails"
-            label="Description"
-            rules={[
-              { required: true, message: "Please enter trip description!" },
-            ]}
-          >
-            <Input.TextArea />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
-  );
-};
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    return (
+        <div className="App">
+            <h1>Customer Booking</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Description</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {bookings.map(booking => (
+                        <tr key={booking.id}>
+                            <td>{booking.id}</td>
+                            <td>{booking.customer.name}</td>
+                            <td>{booking.customer.email}</td>
+                            <td>{booking.description}</td>
+                            <td>{new Date(booking.createAt).toLocaleString()}</td>
+                            <td>{booking.status}</td>
+                            <td>
+                                <button onClick={() => navigate(`/createTrip/${booking.id}`)}>Edit</button>
+                                {/* Dropdown for changing status */}
+                                <select
+                                    value={booking.newStatus || ''} // Use local state for each booking
+                                    onChange={(e) => {
+                                        const updatedBookings = bookings.map(b =>
+                                            b.id === booking.id ? { ...b, newStatus: e.target.value } : b
+                                        );
+                                        setBookings(updatedBookings);
+                                    }}
+                                >
+                                    <option value="">--Change Status--</option>
+                                    <option value="Requested">Requested</option>
+                                    <option value="Approved Quote">Approved Quote</option>
+                                    <option value="Paid Booking">Paid Booking</option>
+                                    <option value="On-Going">On-Going</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Canceled">Canceled</option>
+                                </select>
+                                <button onClick={() => handleStatusUpdate(booking)}>Update Status</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
 
 export default CustomerRequest;

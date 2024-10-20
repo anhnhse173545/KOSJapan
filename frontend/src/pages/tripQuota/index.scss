@@ -1,142 +1,156 @@
-/* Đặt font chữ hiện đại */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f0f2f5;
-  color: #333;
-  line-height: 1.6;
-}
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$background-color: #ecf0f1;
+$text-color: #333;
+$border-color: #bdc3c7;
+$success-color: #2ecc71;
+$danger-color: #e74c3c;
+$card-background: #ffffff;
 
-.quota-details-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-}
-
-h2 {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  color: #1f2d3d;
-  margin-bottom: 30px;
-}
-
-/* Sử dụng grid layout để chia đôi màn hình */
-.customer-sales-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-}
-
-.left-side, .right-side {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Card chứa thông tin */
-.customer-data-card, .staff-data-card {
-  background-color: #fff;
+// Mixins
+@mixin card {
+  background-color: $card-background;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
-h3 {
-  font-size: 22px;
-  color: #007bff;
-  margin-bottom: 15px;
-}
-
-p {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-strong {
-  color: #1f2d3d;
-}
-
-/* Hiệu ứng hover */
-.customer-data-card:hover, .staff-data-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.trip-details, .day-detail {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #eef3f7;
-  border-left: 5px solid #007bff;
-  border-radius: 8px;
-}
-
-.day-detail h3 {
-  font-size: 18px;
-  color: #007bff;
-}
-
-.day-detail p {
-  font-size: 15px;
-}
-
-/* Nút với hiệu ứng đẹp */
-button {
-  cursor: pointer;
-  padding: 12px 25px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
+@mixin button($bg-color) {
+  background-color: $bg-color;
+  color: white;
   border: none;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
 }
 
-.pay-button {
-  background-color: #28a745;
-  color: white;
+// Global styles
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
-.pay-button:hover {
-  background-color: #218838;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+.complete-trip-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  h2 {
+    color: $secondary-color;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+  }
+
+  .details-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .section {
+    @include card;
+
+    h3 {
+      color: $primary-color;
+      border-bottom: 2px solid $primary-color;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 10px;
+
+      strong {
+        font-weight: bold;
+        color: $secondary-color;
+      }
+    }
+  }
+
+  .itinerary-day {
+    border-top: 1px solid $border-color;
+    padding-top: 20px;
+    margin-top: 20px;
+
+    &:first-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    h4 {
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+
+    .koi-varieties {
+      margin-top: 15px;
+
+      h5 {
+        color: $secondary-color;
+        margin-bottom: 10px;
+      }
+
+      .koi-variety {
+        background-color: rgba($primary-color, 0.1);
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+
+    .back-button {
+      @include button($primary-color);
+      font-size: 1rem;
+    }
+  }
 }
 
-.reject-button {
-  background-color: #dc3545;
-  color: white;
+// Loading and error styles
+.loading, .error {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 50px;
+  color: $secondary-color;
 }
 
-.reject-button:hover {
-  background-color: #c82333;
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+.error {
+  color: $danger-color;
 }
 
-/* Button container ở trung tâm */
-.button-group {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 30px;
-}
+// Responsive styles
+@media (max-width: 768px) {
+  .complete-trip-page {
+    padding: 10px;
 
-/* Hình ảnh có hiệu ứng và bo góc */
-.sales-staff-data img {
-  width: 100%;
-  height: auto;
-  margin-top: 10px;
-  border-radius: 8px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    h2 {
+      font-size: 2rem;
+    }
 
-.sales-staff-data img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .details-container {
+      grid-template-columns: 1fr;
+    }
+
+    .section {
+      padding: 15px;
+    }
+  }
 }

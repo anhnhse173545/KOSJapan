@@ -1,18 +1,11 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishOrderDTO;
-import com.swp391.koi_ordering_system.dto.request.UpdateOrderDTO;
 import com.swp391.koi_ordering_system.dto.response.*;
 import com.swp391.koi_ordering_system.model.FishOrder;
-import com.swp391.koi_ordering_system.model.FishOrderDetail;
-import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
-import com.swp391.koi_ordering_system.service.FishOrderDetailService;
 import com.swp391.koi_ordering_system.service.FishOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,10 +35,10 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.getFishOrderByBookingIdAndFarmId(booking_id, farm_id));
     }
 
-    @PostMapping("/{booking_id}/create")
+    @PostMapping("/{booking_id}/{farm_id}/create")
     public ResponseEntity<FishOrderDTO> createFishOrder(@PathVariable String booking_id,
-                                                    @RequestBody CreateOrderDTO createOrderDTO) {
-        FishOrder newOrder = orderService.createFishOrder(booking_id, createOrderDTO);
+                                                    @PathVariable String farm_id) {
+        FishOrder newOrder = orderService.createFishOrder(booking_id, farm_id);
         return ResponseEntity.ok(orderService.mapToDTO2(newOrder));
     }
 
@@ -57,27 +50,17 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(updateOrder));
     }
 
-
-    @PutMapping("/{booking_id}/{farm_id}/add-order-detail-to-order")
-    public ResponseEntity<FishOrderDTO> addFishOrderDetailToOrder(@PathVariable String booking_id,
-                                                              @PathVariable String farm_id,
-                                                              @RequestBody CreateOrderDTO dto){
-        FishOrder addedOrder = orderService.addFishPackOrFishOrderDetailToOrder(booking_id, farm_id, dto);
-        return ResponseEntity.ok(orderService.mapToDTO2(addedOrder));
+    @PostMapping("/{order_id}/remove-fish-order-detail-from-order/{fish_order_detail_id}")
+    public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String order_id,
+                                                                   @PathVariable String fish_order_detail_id){
+        FishOrder removedOrder = orderService.removeFishOrderDetailInOrder(order_id, fish_order_detail_id);
+        return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
     }
 
-    @PutMapping("/{booking_id}/{farm_id}/update-order-detail-in-order")
-    public ResponseEntity<FishOrderDTO> updateFishOrderDetailInOrder(@PathVariable String booking_id,
-                                                                 @PathVariable String farm_id,
-                                                                 @RequestBody UpdateOrderDTO dto){
-        FishOrder updatedOrder = orderService.updateOrder(booking_id, farm_id, dto);
-        return ResponseEntity.ok(orderService.mapToDTO2(updatedOrder));
-    }
-
-    @PutMapping("/{booking_id}/{farm_id}/remove-order-detail-from-order")
-    public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String booking_id,
-                                                                   @PathVariable String farm_id){
-        FishOrder removedOrder = orderService.removeFishOrFishPackDetailInOrder(booking_id, farm_id);
+    @PostMapping("/{order_id}/remove-pack-order-detail-from-order/{fish_pack_order_detail_id}")
+    public ResponseEntity<FishOrderDTO> removeFishPackOrderDetailFromOrder(@PathVariable String order_id,
+                                                                       @PathVariable String fish_pack_order_detail_id){
+        FishOrder removedOrder = orderService.removeFishPackDetailInOrder(order_id, fish_pack_order_detail_id);
         return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
     }
 
@@ -89,8 +72,38 @@ public class FishOrderController {
     }
 
     @GetMapping("/delivery-staff/{deliveryId}")
-    public ResponseEntity<?> getBookingsByCustomerId(@PathVariable String deliveryId) {
-        List<DeliveryStaffOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
+    public ResponseEntity<?> getFishOrderByDeliveryId(@PathVariable String deliveryId) {
+        List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
+        if (fishOrder.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(fishOrder);
+    }
+
+    @GetMapping("/consulting-staff/{consultingId}")
+    public ResponseEntity<?> getFishOrderByConsultingId(@PathVariable String consultingId) {
+        List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByConsultingStaffId(consultingId);
+        if (fishOrder.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(fishOrder);
+    }
+
+    @GetMapping("/delivery-staff/{deliveryId}/{status}")
+    public ResponseEntity<?> getFishOrderByDeliveryIdAndStatus(@PathVariable String deliveryId,
+                                                               @PathVariable String status) {
+        List<FishOrderDTO> list = fishOrderService.getFishOrderByStatusByDeliveryStaff(deliveryId,status);
+        if(list.isEmpty()){
+            return ResponseEntity.status(404).body(new ErrorDTO(404, "Order not found"));
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> getFishOrderByCustomerId(@PathVariable String customerId) {
+        List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByCustomerId(customerId);
         if (fishOrder.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO(404, "Order not found");
             return ResponseEntity.status(404).body(errorDTO);

@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.CreateVarietyDTO;
 import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.service.VarietyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,11 @@ public class VarietyController {
     private VarietyService varietyService;
 
     @PostMapping("/create")
-    public ResponseEntity<VarietyDTO> createVariety(@RequestBody VarietyDTO varietyDTO) {
+    public ResponseEntity<VarietyDTO> createVariety(@RequestBody CreateVarietyDTO varietyDTO) {
         VarietyDTO createdVariety = varietyService.createVariety(varietyDTO);
         return ResponseEntity.ok(createdVariety);
     }
+
 
     @GetMapping("/list")
     public ResponseEntity<List<VarietyDTO>> getAllVarieties() {

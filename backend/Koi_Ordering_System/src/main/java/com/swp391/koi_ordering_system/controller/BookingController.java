@@ -59,9 +59,19 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/customer/{status}")
+    @GetMapping("/status/{status}")
     public ResponseEntity<?> getBookingsByStatus(@PathVariable String status) {
         List<BookingDTO> bookings = bookingService.getBookingsByStatus(status);
+        if (bookings.isEmpty()) {
+            ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
+            return ResponseEntity.status(404).body(errorDTO);
+        }
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/trip-status/{tripStatus}")
+    public ResponseEntity<?> getBookingsByTripStatus(@PathVariable String tripStatus) {
+        List<BookingDTO> bookings = bookingService.getBookingsByTripStatus(tripStatus);
         if (bookings.isEmpty()) {
             ErrorDTO errorDTO = new ErrorDTO(404, "Booking not found");
             return ResponseEntity.status(404).body(errorDTO);

@@ -1,226 +1,429 @@
-import React, { useState } from "react";
-import { Table, Button, message, Badge } from "antd";
-import { useNavigate } from "react-router-dom"; // For navigation
-
-// Initial Data for the Main Table
-const initialData = [
-  {
-    key: "1",
-    tripId: "T001",
-    customer: "John Doe",
-    startDate: "2024-10-01",
-    endDate: "2024-10-05",
-    koiDetails: [
-      {
-        breeder: "Breeder A",
-        date: "2024-10-02",
-        koi: "Koi A",
-        type: "Kohaku",
-        price: 100,
-        paymentMethod: "Credit Card", // Specific to this koi
-        status: "Not Pay Yet", // Specific to this koi
-      },
-      {
-        breeder: "Breeder B",
-        date: "2024-10-03",
-        koi: "Koi B",
-        type: "Sanke",
-        price: 150,
-        paymentMethod: "PayPal", // Specific to this koi
-        status: "Paid", // Specific to this koi
-      },
-    ],
-  },
-  {
-    key: "2",
-    tripId: "T002",
-    customer: "Jane Smith",
-    startDate: "2024-10-03",
-    endDate: "2024-10-06",
-    koiDetails: [
-      {
-        breeder: "Breeder C",
-        date: "2024-10-04",
-        koi: "Koi C",
-        type: "Showa",
-        price: 120,
-        paymentMethod: "PayPal",
-        status: "Paid",
-      },
-    ],
-  },
-  {
-    key: "3",
-    tripId: "T003",
-    customer: "Bob Brown",
-    startDate: "2024-10-01",
-    endDate: "2024-10-05",
-    koiDetails: [
-      {
-        breeder: "Breeder D",
-        date: "2024-10-02",
-        koi: "Koi D",
-        type: "Asagi",
-        price: 110,
-        paymentMethod: "Bank Transfer",
-        status: "Not Pay Yet",
-      },
-    ],
-  },
-];
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Button,
+  message,
+  Badge,
+  Input,
+  Form,
+  Modal,
+  Select,
+} from "antd";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const OrderList = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [farms, setFarms] = useState([]); // To store farm list
+  const [form] = Form.useForm();
+  const [bookingId, setBookingId] = useState("");
+  const [farmId, setFarmId] = useState("");
   const navigate = useNavigate();
-  const handleEditKoi = (updatedKoi) => {
-    // Update Koi details in the main data
-    const updatedData = data.map((trip) => {
-      const updatedKoiDetails = trip.koiDetails.map((koi) => {
-        if (koi.koi === updatedKoi.koi) {
-          return { ...koi, ...updatedKoi }; // Merge updated details
+
+  // Fetch orders data from API
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+      );
+      setData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      message.error("Failed to load order data.");
+      setLoading(false);
+    }
+  };
+  // Fetch farm list from API
+  const fetchFarms = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/farm/list");
+      setFarms(response.data);
+    } catch (error) {
+      console.error("Error fetching farm list:", error);
+      message.error("Failed to load farm data.");
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders(); // Load order data when the component mounts
+    fetchFarms(); // Load farm data when the component mounts
+  }, []);
+  // Calculate total price for each order
+  const calculateTotalPrice = (record) => {
+    const fishTotal =
+      record.fishOrderDetails?.reduce(
+        (total, item) => total + item.price, // Corrected from item.fish_price to item.price
+        0
+      ) || 0;
+    const fishPackTotal =
+      record.fishPackOrderDetails?.reduce(
+        (total, item) => total + item.price,
+        0
+      ) || 0;
+    return fishTotal + fishPackTotal;
+  };
+
+  const handleAddKoi = (orderId, farmId) => {
+    navigate("/add-koi", { state: { orderId, farmId } });
+  };
+  // Handle deleting an order
+  const handleDeleteOrder = async (record) => {
+    try {
+      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/delete`;
+      await axios.delete(url);
+      message.success(`Order with ID ${record.id} has been deleted.`);
+      fetchOrders(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Fish order not found"
+      ) {
+        message.error("Failed to delete order: Fish order not found.");
+      } else {
+        message.error(
+          "Failed to delete order. Please check your network and server."
+        );
+      }
+    }
+  };
+  const handleDeleteFishOrderDetail = (orderId, fishOrderDetailId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this fish order detail?",
+      onOk: async () => {
+        try {
+          const url = `http://localhost:8080/fish-order/${orderId}/remove-fish-order-detail-from-order/${fishOrderDetailId}`;
+          await axios.post(url);
+          message.success("Fish order detail has been deleted.");
+          fetchOrders();
+        } catch (error) {
+          console.error("Error deleting fish order detail:", error);
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish order detail. Please check your network or server."
+          );
         }
-        return koi;
-      });
-      return { ...trip, koiDetails: updatedKoiDetails };
+      },
     });
-    setData(updatedData);
-    message.success("Koi details updated successfully.");
   };
-  const handleAddKoi = (tripId, newKoi) => {
-    const updatedData = data.map((trip) => {
-      if (trip.tripId === tripId) {
-        return { ...trip, koiDetails: [...trip.koiDetails, newKoi] };
+
+  // Function to delete fish pack order detail
+  const handleDeleteFishPackOrderDetail = (orderId, fishPackOrderDetailId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this fish pack order?",
+      onOk: async () => {
+        try {
+          const url = `http://localhost:8080/fish-order/${orderId}/remove-pack-order-detail-from-order/${fishPackOrderDetailId}`;
+          await axios.post(url);
+          message.success("Fish pack order has been deleted.");
+          fetchOrders(); // Refresh the order list after deletion
+        } catch (error) {
+          console.error("Error deleting fish pack order:", error);
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish pack order. Please check your network or server."
+          );
+        }
+      },
+    });
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`
+      );
+      message.success(`Order created with ID: ${response.data.id}`);
+      fetchOrders(); // Refresh the list after creating the order
+    } catch (error) {
+      console.error("Error creating order:", error);
+      if (error.response) {
+        message.error(
+          `Failed to create order: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else {
+        message.error(
+          "Failed to create order. Please check your network and server."
+        );
       }
-      return trip;
-    });
-    setData(updatedData);
+    }
   };
 
-  // Update status to 'Paid' when "Mark as Paid" is clicked
-  const handleMarkAsPaid = (tripKey, koiKey) => {
-    const updatedData = data.map((trip) => {
-      if (trip.key === tripKey) {
-        const updatedKoiDetails = trip.koiDetails.map((koi) => {
-          if (koi.koi === koiKey && koi.status === "Not Pay Yet") {
-            return { ...koi, status: "Paid" };
-          }
-          return koi;
-        });
-        return { ...trip, koiDetails: updatedKoiDetails };
+  // Function to update payment status
+  const handleUpdatePaymentStatus = async (record) => {
+    try {
+      // Construct the API URL dynamically using bookingId and farmId
+      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/update`;
+
+      // Send the PUT request to update payment status
+      const payload = {
+        paymentStatus: "Deposited", // Update to deposited
+      };
+
+      const response = await axios.put(url, payload);
+
+      // Check the response to ensure the update was successful
+      message.success(`Payment status updated for Order ID: ${record.id}`);
+      fetchOrders(); // Refresh the order list after updating the payment status
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Fish order not found"
+      ) {
+        message.error("Failed to update payment status: Fish order not found.");
+      } else if (error.response) {
+        message.error(
+          `Failed to update payment status: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
+      } else {
+        message.error(
+          "Failed to update payment status. Please check your network and server."
+        );
       }
-      return trip;
-    });
-    setData(updatedData);
-    message.success("Koi status changed to Paid.");
+    }
   };
 
-  const handleSendToDelivery = (tripKey, koiKey) => {
-    message.success(`Koi ${koiKey} from trip ID ${tripKey} sent to delivery.`);
-  };
-
-  // Expanded row for each trip (with payment method, status, and mark as paid button)
-  const expandedRowRender = (record) => {
-    const expandedColumns = [
-      { title: "Breeder", dataIndex: "breeder", key: "breeder" },
-      { title: "Date", dataIndex: "date", key: "date" },
-      { title: "Koi", dataIndex: "koi", key: "koi" },
-      { title: "Type", dataIndex: "type", key: "type" },
-      { title: "Price", dataIndex: "price", key: "price" },
-      {
-        title: "Payment Method",
-        dataIndex: "paymentMethod",
-        key: "paymentMethod",
-      },
-      {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (status) => {
-          const statusColor = status === "Paid" ? "success" : "warning";
-          return <Badge status={statusColor} text={status} />;
-        },
-      },
-      {
-        title: "Action",
-        key: "action",
-        render: (_, koiRecord) => (
-          <>
-            <Button
-              type="primary"
-              disabled={koiRecord.status === "Paid"}
-              onClick={() => handleMarkAsPaid(record.key, koiRecord.koi)}
-              style={{ marginRight: 8 }}
-            >
-              {koiRecord.status === "Paid" ? "Paid" : "Mark as Paid"}
-            </Button>
-            <Button
-              type="default"
-              onClick={() => handleSendToDelivery(record.key, koiRecord.koi)}
-              disabled={koiRecord.status !== "Paid"}
-            >
-              Send to Delivery
-            </Button>
-            <Button
-              type="link"
-              onClick={() =>
-                navigate("/koi-details", { state: { koi: koiRecord } })
-              }
-              style={{ marginLeft: 8 }}
-            >
-              More
-            </Button>
-          </>
-        ),
-      },
-    ];
-
-    return (
-      <div>
-        <Table
-          columns={expandedColumns}
-          dataSource={record.koiDetails}
-          pagination={false}
-          rowKey={(row) => row.koi}
-        />
-        <Button
-          type="primary"
-          onClick={() =>
-            navigate("/add-koi", { state: { tripId: record.tripId } })
-          }
-          style={{ marginTop: 16 }}
-        >
-          Add New Koi
-        </Button>
-      </div>
-    );
-  };
-
+  // Table columns with Update Payment Status action
   const columns = [
-    { title: "Trip ID", dataIndex: "tripId", key: "tripId" },
-    { title: "Customer", dataIndex: "customer", key: "customer" },
-    { title: "Start Date", dataIndex: "startDate", key: "startDate" },
-    { title: "End Date", dataIndex: "endDate", key: "endDate" },
+    {
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: "Farm ID",
+      dataIndex: "farmId",
+      key: "farmId",
+      sorter: (a, b) => a.farmId.localeCompare(b.farmId),
+    },
+    {
+      title: "Booking ID",
+      dataIndex: "bookingId",
+      key: "bookingId",
+      sorter: (a, b) => a.bookingId.localeCompare(b.bookingId),
+    },
+    {
+      title: "Payment Status",
+      dataIndex: "paymentStatus",
+      key: "paymentStatus",
+      render: (paymentStatus) => (
+        <Badge
+          status={paymentStatus === "Deposited" ? "success" : "warning"}
+          text={paymentStatus || "Pending"}
+        />
+      ),
+    },
+    {
+      title: "Total Price",
+      key: "total",
+      render: (_, record) => <span>{calculateTotalPrice(record)}</span>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <>
+          <Button
+            type="primary"
+            onClick={() => handleAddKoi(record.id, record.farmId)}
+            style={{ marginRight: 8 }}
+            disabled={record.paymentStatus === "Deposited"}
+          >
+            Add Koi
+          </Button>
+          <Button
+            type="default"
+            onClick={() => handleUpdatePaymentStatus(record)}
+            disabled={record.paymentStatus === "Deposited"}
+            style={{ marginRight: 8 }}
+          >
+            Update Payment Status
+          </Button>
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteOrder(record)}
+          />
+        </>
+      ),
+    },
+  ];
+  const fishColumns = [
+    {
+      title: "Fish Order Detail ID",
+      dataIndex: "id",
+      key: "fishOrderDetailId",
+    },
+    {
+      title: "Fish ID",
+      dataIndex: ["fish", "id"],
+      key: "fishId",
+    },
+    {
+      title: "Variety",
+      dataIndex: ["fish", "variety", "name"],
+      key: "variety",
+    },
+    { title: "Length", dataIndex: ["fish", "length"], key: "length" },
+    { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
     {
       title: "Price",
+      dataIndex: "price", // Corrected data index
       key: "price",
+    },
+    {
+      title: "Description",
+      dataIndex: ["fish", "description"],
+      key: "description",
+    },
+    {
+      title: "Action",
+      key: "action",
       render: (_, record) => (
-        <span>
-          {record.koiDetails.reduce((total, koi) => total + koi.price, 0)}
-        </span>
+        <Button
+          type="danger"
+          icon={<DeleteOutlined />}
+          onClick={() => handleDeleteFishOrderDetail(record.orderId, record.id)}
+        >
+          Delete
+        </Button>
       ),
     },
   ];
 
+  const expandedRowRender = (record) => {
+    return (
+      <div>
+        <h4>Fish Order Details</h4>
+        <Table
+          columns={fishColumns}
+          dataSource={record.fishOrderDetails}
+          pagination={false}
+          rowKey={(row) => row.id}
+        />
+        <h4>Fish Pack Order Details</h4>
+        <Table
+          columns={[
+            {
+              title: "Fish Pack Order ID",
+              dataIndex: "id", // Assuming this field exists in fishPackOrderDetails
+              key: "id",
+            },
+            {
+              title: "Variety",
+              dataIndex: ["fishPack", "variety", "name"], // Assuming the nested path for variety
+              key: "variety",
+            },
+            {
+              title: "Length",
+              dataIndex: ["fishPack", "length"],
+              key: "length",
+            },
+            {
+              title: "Weight",
+              dataIndex: ["fishPack", "weight"],
+              key: "weight",
+            },
+            {
+              title: "Quantity",
+              dataIndex: ["fishPack", "quantity"],
+              key: "quantity",
+            },
+            {
+              title: "Description",
+              dataIndex: ["fishPack", "description"],
+              key: "description",
+            },
+            {
+              title: "Price",
+              dataIndex: "price", // The price directly from fishPackOrderDetails
+              key: "price",
+            },
+            {
+              title: "Action",
+              key: "action",
+              render: (_, fishPackOrderDetail) => (
+                <Button
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    handleDeleteFishPackOrderDetail(
+                      record.id,
+                      fishPackOrderDetail.id
+                    )
+                  }
+                >
+                  Delete
+                </Button>
+              ),
+            },
+          ]}
+          dataSource={record.fishPackOrderDetails}
+          pagination={false}
+          rowKey={(row) => row.id} // Ensure each row has a unique key
+        />
+      </div>
+    );
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <h1>On-Going Order List</h1>
+      <h1 style={{ textAlign: "center" }}>Fish Order List</h1>
+      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+        <Form form={form} layout="inline">
+          <Form.Item label="Booking ID">
+            <Input
+              value={bookingId}
+              onChange={(e) => setBookingId(e.target.value)}
+              placeholder="Enter Booking ID"
+              style={{ width: 200 }}
+            />
+          </Form.Item>
+          <Form.Item label="Farm ID">
+            <Select
+              value={farmId}
+              onChange={(value) => setFarmId(value)}
+              placeholder="Select Farm"
+              style={{ width: 200 }}
+            >
+              {farms.map((farm) => (
+                <Select.Option key={farm.id} value={farm.id}>
+                  {farm.name} ({farm.id})
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" onClick={handleCreateOrder}>
+              Create Order
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+
       <Table
         columns={columns}
         dataSource={data}
         expandable={{
           expandedRowRender: expandedRowRender,
         }}
-        rowKey="tripId" // Make sure each row is uniquely identified by tripId
+        rowKey="id"
+        loading={loading}
+        pagination={{ pageSize: 10 }}
+        style={{ background: "#fff" }}
       />
     </div>
   );

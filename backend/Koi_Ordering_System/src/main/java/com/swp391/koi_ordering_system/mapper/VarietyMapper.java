@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.mapper;
 
+import com.swp391.koi_ordering_system.dto.request.CreateVarietyDTO;
 import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.model.Variety;
 import org.mapstruct.Mapper;
@@ -16,4 +17,8 @@ public interface VarietyMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     Variety toEntity(VarietyDTO varietyDTO);
+
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "description", target = "description")
+    Variety toEntity(CreateVarietyDTO createVarietyDTO);
 }

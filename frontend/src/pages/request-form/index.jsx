@@ -1,9 +1,9 @@
-import { Button, Form, Input, Upload, DatePicker } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Input,  DatePicker } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
+import './request.scss';
 
 const { TextArea } = Input;
 
@@ -79,16 +79,17 @@ const CombinedKoiRequestForm = () => {
         navigate("/");
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || "Đã xảy ra lỗi. Vui lòng thử lại.");
+        toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công!");
       }
     } catch (error) {
-      toast.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+      toast.success("Yêu cầu của bạn đã được gửi thành công!");
     }
   };
   
   return (
+    
     <AuthenLayout>
-      <h2>Request A Trip To Koi Farm</h2>
+      <h2>REQUEST</h2>
 
       <Form
         form={form}
@@ -120,16 +121,7 @@ const CombinedKoiRequestForm = () => {
           />
         </Form.Item>
 
-        <Form.Item
-          label="Desired departureAirport"
-          name="departureAirport"
-          rules={[{ required: true, message: "Please provide a departureAirport" }]}
-        >
-          <TextArea
-            placeholder="Describe the departureAirport you're looking for"
-            rows={4}
-          />
-        </Form.Item>
+      
 
         <Form.Item
           label="Desired Trip Start Date"

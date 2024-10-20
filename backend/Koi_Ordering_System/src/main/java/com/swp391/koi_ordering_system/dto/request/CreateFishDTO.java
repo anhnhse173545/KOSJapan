@@ -14,4 +14,6 @@ public class CreateFishDTO {
     private Double weight;
     private Double length;
     private String description;
+    private String orderId;
+    private Double price;
 }

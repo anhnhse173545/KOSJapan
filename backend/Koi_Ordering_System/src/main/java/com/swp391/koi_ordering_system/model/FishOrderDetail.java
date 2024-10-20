@@ -1,11 +1,21 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.ColumnDefault;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
@@ -14,13 +24,12 @@ import org.hibernate.annotations.ColumnDefault;
 public class FishOrderDetail {
     @Id
     @Column(name = "id", nullable = false, length = 9)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private String id;
 
     @JsonBackReference(value = "fishOrder-fishOrderDetail")
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fish_order_id", nullable = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "fish_order_id")
     private FishOrder fishOrder;
 
     @JsonIgnore
@@ -33,6 +42,6 @@ public class FishOrderDetail {
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
 }

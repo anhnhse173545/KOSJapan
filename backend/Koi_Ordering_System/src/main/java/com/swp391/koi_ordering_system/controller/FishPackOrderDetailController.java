@@ -2,6 +2,7 @@ package com.swp391.koi_ordering_system.controller;
 
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
+import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
 import com.swp391.koi_ordering_system.service.FishPackOrderDetailService;
@@ -33,31 +34,11 @@ public class FishPackOrderDetailController {
         return ResponseEntity.ok(service.getAllFishPackOrderDetailsByOrderId(fish_order_id));
     }
 
-    @GetMapping("/{fish_order_id}/detail")
-    public ResponseEntity<FishPackOrderDetailDTO> findFishPackOrderDetailByOrderId(@PathVariable String fish_order_id) {
-        FishPackOrderDetail foungFPOD = service.findFishPackOrderDetailByOrderId(fish_order_id);
-        return ResponseEntity.ok(service.mapToDTO(foungFPOD));
-    }
 
-    @PostMapping("/{fish_order_id}/create")
-    public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@PathVariable String fish_order_id,
-                                                                            @RequestBody FishPackOrderDetailDTO dto) {
-        FishPackOrderDetail foundFPOD = service.createFishPackOrderDetail(fish_order_id, dto);
-        return ResponseEntity.ok(service.mapToDTO(foundFPOD));
-    }
-
-    @PutMapping("/{fish_order_id}/update")
-    public ResponseEntity<FishPackOrderDetailDTO> updatePackOrderDetail(@PathVariable String fish_order_id,
-                                                                        @RequestBody FishPackOrderDetailDTO dto){
-        FishPackOrderDetail updatedFOD = service.updateFishPackOrderDetail(fish_order_id, dto);
-        return ResponseEntity.ok(service.mapToDTO(updatedFOD));
-    }
-
-    @PutMapping("/{fish_pack_order_id}/add-pack-to-order-detail/{fish_pack_id}")
-    public ResponseEntity<FishPackOrderDetailDTO> addPackToOrderDetail(@PathVariable String fish_pack_order_id,
-                                                                       @PathVariable String fish_pack_id) {
-        FishPackOrderDetail addedfishPackOrderDetail = service.addPackToOrderDetail(fish_pack_order_id, fish_pack_id);
-        return ResponseEntity.ok(service.mapToDTO(addedfishPackOrderDetail));
+    @PostMapping("/create-fish-pack-and-fish-pack-order-detail")
+    public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@RequestBody CreateFishPackDTO createFishPackDTO) {
+        FishPackOrderDetail newFPOD = service.createFishPackAndFishPackOrderDetail(createFishPackDTO);
+        return ResponseEntity.ok(service.mapToDTO(newFPOD));
     }
 
     @PutMapping("/{fish_pack_order_id}/update-pack-in-Order-Detail/{pack_id}")
@@ -66,12 +47,6 @@ public class FishPackOrderDetailController {
                                                                           @RequestBody CreateFishPackDTO dto) {
         FishPackOrderDetail updateFPOD = service.updatePackInOrderDetail(fish_pack_order_id, pack_id, dto);
         return ResponseEntity.ok(service.mapToDTO(updateFPOD));
-    }
-
-    @PutMapping("/{fish_pack_order_id}/remove-pack-out-of-order-detail")
-    public ResponseEntity<FishPackOrderDetailDTO> removePackOutOfOrderDetail(@PathVariable String fish_pack_order_id) {
-        FishPackOrderDetail removedFPOD = service.removeFishPackFromOrderDetail(fish_pack_order_id);
-        return ResponseEntity.ok(service.mapToDTO(removedFPOD));
     }
 
     @DeleteMapping("/{fish_order_id}/delete")

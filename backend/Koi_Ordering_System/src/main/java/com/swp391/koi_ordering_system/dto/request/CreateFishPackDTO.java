@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.dto.request;
 
+import com.swp391.koi_ordering_system.model.Variety;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateFishPackDTO {
+    private String orderId;
+    private String varietyId;
     private String length;
     private String weight;
     private String description;
+    private Integer quantity;
+    private Double packOrderDetailPrice;
 }

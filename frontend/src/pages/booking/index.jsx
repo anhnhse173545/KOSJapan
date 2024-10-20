@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import './index.scss'; // Import CSS file for styling
+import './booking.scss'; // Import CSS file for styling
 
 function PaymentPage() {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ function PaymentPage() {
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Requested', 'Pending Quota', 'On-Going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Requested', 'Approved Quote','Paid Booking','On-Going', 'Completed', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -91,7 +91,7 @@ function PaymentPage() {
                   <button
                     className="details-button"
                     onClick={() => {
-                      if (koi.status === 'Pending Quota') {
+                      if (koi.status === 'Approved Quote') {
                         navigate(`/quota/${koi.id}`);
                       } else if (koi.status === 'Request') {
                         navigate(`/payment/${koi.id}`);
@@ -99,6 +99,8 @@ function PaymentPage() {
                         navigate(`/ongoing/${koi.id}`);
                       } else if (koi.status === 'Completed') {
                         navigate(`/ongoing/${koi.id}`);
+                      } else if (koi.status === 'Paid Booking') {
+                        navigate(`/paidbooking/${koi.id}`);
                       } else {
                         navigate(`/payment/${koi.id}`);
                       }

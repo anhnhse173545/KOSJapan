@@ -40,8 +40,9 @@ public class FishPack {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @OneToMany(mappedBy = "fishPack")
-    private List<Fish> listFish = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "variety_id")
+    private Variety variety;
 
     @JsonManagedReference(value = "fishPack-media")
     @ManyToMany

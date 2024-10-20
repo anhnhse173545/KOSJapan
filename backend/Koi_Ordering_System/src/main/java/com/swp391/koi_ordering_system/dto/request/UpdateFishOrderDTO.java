@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UpdateFishOrderDTO {
     private String delivery_address;
-    private Double total;
     private LocalDateTime arrived_date;
     private String status;
     private String paymentStatus;
