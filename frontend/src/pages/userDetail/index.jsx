@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ngu.css'; // Nhập tệp CSS
+import { useNavigate } from 'react-router-dom';
 
 const UserDetailPage = ({ accountId }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -47,6 +49,7 @@ const UserDetailPage = ({ accountId }) => {
             <p><strong>Email:</strong> {userDetails.email}</p>
             <p><strong>Role:</strong> {userDetails.role}</p>
           </div>
+          <button className="back-button" onClick={() => navigate(-1)}>Back</button>
         </div>
       )}
     </div>

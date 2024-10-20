@@ -1,44 +1,52 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-h1 {
-    text-align: center;
-    color: #333;
-    margin: 20px 0;
-}
-
 .user-detail-container {
     max-width: 600px;
-    margin: 20px auto;
+    margin: 0 auto;
     padding: 20px;
-    background: white;
+    background-color: #f5f5f5;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-image {
-    display: block;
-    margin: 0 auto 20px;
-    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-image {
     width: 150px;
     height: 150px;
+    border-radius: 50%;
     object-fit: cover;
-}
-
-.user-info {
-    padding: 10px;
-}
-
-.user-info p {
+    display: block;
+    margin: 0 auto 20px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-info {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-info p {
     margin: 10px 0;
     font-size: 16px;
-    color: #555;
-}
-
-.user-info strong {
     color: #333;
-}
+  }
+  
+  .user-info strong {
+    font-weight: 600;
+    color: #555;
+    margin-right: 5px;
+  }
+  
+  /* Loading and error states */
+  .user-detail-container > div:only-child {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #666;
+  }
