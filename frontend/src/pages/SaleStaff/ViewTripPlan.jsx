@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './viewtrip.scss'; // Ensure correct path to CSS
 
 const CreateTrip = () => {
-    const { bookingId } = useParams(); // Get bookingId from URL
+    const { id } = useParams(); // Get bookingId from URL
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [departureAirport, setDepartureAirport] = useState('');
@@ -60,7 +60,7 @@ const CreateTrip = () => {
 
         try {
             // Send request using bookingId from URL
-            const response = await fetch(`http://localhost:8080/api/booking/${bookingId}/create-trip`, {
+            const response = await fetch(`http://localhost:8080/api/booking/${id}/create-trip`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
