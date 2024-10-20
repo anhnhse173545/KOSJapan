@@ -241,21 +241,21 @@ public class FishOrderService {
     }
 
     public List<FishOrderDTO> getFishOrdersByDeliveryStaffId(String deliveryStaffId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_Id(deliveryStaffId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_IdAndIsDeletedFalse(deliveryStaffId);
         return fishOrders.stream()
                 .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getFishOrdersByConsultingStaffId(String consultingStaffId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_ConsultingStaff_Id(consultingStaffId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_ConsultingStaff_IdAndIsDeletedFalse(consultingStaffId);
         return fishOrders.stream()
                 .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getFishOrdersByCustomerId(String customerId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_Customer_Id(customerId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_Customer_IdAndIsDeletedFalse(customerId);
         return fishOrders.stream()
                 .map((FishOrder) -> mapToDTO2(FishOrder))
                 .collect(Collectors.toList());

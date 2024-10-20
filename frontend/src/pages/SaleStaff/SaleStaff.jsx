@@ -17,7 +17,7 @@ const { Header, Sider, Content } = Layout;
 
 const SaleStaff = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const saleStaffName = "John Doe"; // Replace this with dynamic data from your app context
+  const saleStaffName = "Nguyen Van B"; // Replace this with dynamic data from your app context
 
   return (
     <Layout>

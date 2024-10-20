@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message, Badge, Input, Form } from "antd";
+import {
+  Table,
+  Button,
+  message,
+  Badge,
+  Input,
+  Form,
+  Modal,
+  Select,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
+
 const OrderList = () => {
-  const [data, setData] = useState([]); // Data fetched from API
-  const [loading, setLoading] = useState(false); // Loading state
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [farms, setFarms] = useState([]); // To store farm list
   const [form] = Form.useForm();
   const [bookingId, setBookingId] = useState("");
   const [farmId, setFarmId] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
   const navigate = useNavigate();
 
   // Fetch orders data from API
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/fish-order/all");
+      const response = await axios.get(
+        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+      );
       setData(response.data);
       setLoading(false);
     } catch (error) {
@@ -25,16 +37,26 @@ const OrderList = () => {
       setLoading(false);
     }
   };
+  // Fetch farm list from API
+  const fetchFarms = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/farm/list");
+      setFarms(response.data);
+    } catch (error) {
+      console.error("Error fetching farm list:", error);
+      message.error("Failed to load farm data.");
+    }
+  };
 
   useEffect(() => {
-    fetchOrders(); // Load data when the component mounts
+    fetchOrders(); // Load order data when the component mounts
+    fetchFarms(); // Load farm data when the component mounts
   }, []);
-
   // Calculate total price for each order
   const calculateTotalPrice = (record) => {
     const fishTotal =
       record.fishOrderDetails?.reduce(
-        (total, item) => total + item.fish_price,
+        (total, item) => total + item.price, // Corrected from item.fish_price to item.price
         0
       ) || 0;
     const fishPackTotal =
@@ -70,19 +92,47 @@ const OrderList = () => {
       }
     }
   };
-  const handleDeleteFishOrderDetail = async (fishOrderDetailId, record) => {
-    try {
-      const url = `http://localhost:8080/fish-order/${record.id}/remove-fish-order-detail-from/${fishOrderDetailId}`;
-      await axios.delete(url);
-      message.success("Fish order detail has been deleted.");
-      fetchOrders(); // Refresh the order list after deletion
-    } catch (error) {
-      console.error("Error deleting fish order detail:", error);
-      message.error("Failed to delete fish order detail.");
-    }
+  const handleDeleteFishOrderDetail = (orderId, fishOrderDetailId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this fish order detail?",
+      onOk: async () => {
+        try {
+          const url = `http://localhost:8080/fish-order/${orderId}/remove-fish-order-detail-from-order/${fishOrderDetailId}`;
+          await axios.post(url);
+          message.success("Fish order detail has been deleted.");
+          fetchOrders();
+        } catch (error) {
+          console.error("Error deleting fish order detail:", error);
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish order detail. Please check your network or server."
+          );
+        }
+      },
+    });
   };
 
-  // Handle creating a new order
+  // Function to delete fish pack order detail
+  const handleDeleteFishPackOrderDetail = (orderId, fishPackOrderDetailId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this fish pack order?",
+      onOk: async () => {
+        try {
+          const url = `http://localhost:8080/fish-order/${orderId}/remove-pack-order-detail-from-order/${fishPackOrderDetailId}`;
+          await axios.post(url);
+          message.success("Fish pack order has been deleted.");
+          fetchOrders(); // Refresh the order list after deletion
+        } catch (error) {
+          console.error("Error deleting fish pack order:", error);
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish pack order. Please check your network or server."
+          );
+        }
+      },
+    });
+  };
+
   const handleCreateOrder = async () => {
     try {
       const response = await axios.post(
@@ -213,6 +263,11 @@ const OrderList = () => {
   ];
   const fishColumns = [
     {
+      title: "Fish Order Detail ID",
+      dataIndex: "id",
+      key: "fishOrderDetailId",
+    },
+    {
       title: "Fish ID",
       dataIndex: ["fish", "id"],
       key: "fishId",
@@ -224,7 +279,11 @@ const OrderList = () => {
     },
     { title: "Length", dataIndex: ["fish", "length"], key: "length" },
     { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
-    { title: "Price", dataIndex: "fish_price", key: "fish_price" },
+    {
+      title: "Price",
+      dataIndex: "price", // Corrected data index
+      key: "price",
+    },
     {
       title: "Description",
       dataIndex: ["fish", "description"],
@@ -233,13 +292,11 @@ const OrderList = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, fishOrderDetail) => (
+      render: (_, record) => (
         <Button
           type="danger"
           icon={<DeleteOutlined />}
-          onClick={() =>
-            handleDeleteFishOrderDetail(fishOrderDetail.id, record)
-          }
+          onClick={() => handleDeleteFishOrderDetail(record.orderId, record.id)}
         >
           Delete
         </Button>
@@ -261,9 +318,14 @@ const OrderList = () => {
         <Table
           columns={[
             {
-              title: "Description",
-              dataIndex: ["fishPack", "description"],
-              key: "description",
+              title: "Fish Pack Order ID",
+              dataIndex: "id", // Assuming this field exists in fishPackOrderDetails
+              key: "id",
+            },
+            {
+              title: "Variety",
+              dataIndex: ["fishPack", "variety", "name"], // Assuming the nested path for variety
+              key: "variety",
             },
             {
               title: "Length",
@@ -275,11 +337,43 @@ const OrderList = () => {
               dataIndex: ["fishPack", "weight"],
               key: "weight",
             },
-            { title: "Price", dataIndex: "price", key: "price" },
+            {
+              title: "Quantity",
+              dataIndex: ["fishPack", "quantity"],
+              key: "quantity",
+            },
+            {
+              title: "Description",
+              dataIndex: ["fishPack", "description"],
+              key: "description",
+            },
+            {
+              title: "Price",
+              dataIndex: "price", // The price directly from fishPackOrderDetails
+              key: "price",
+            },
+            {
+              title: "Action",
+              key: "action",
+              render: (_, fishPackOrderDetail) => (
+                <Button
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    handleDeleteFishPackOrderDetail(
+                      record.id,
+                      fishPackOrderDetail.id
+                    )
+                  }
+                >
+                  Delete
+                </Button>
+              ),
+            },
           ]}
           dataSource={record.fishPackOrderDetails}
           pagination={false}
-          rowKey={(row) => row.id}
+          rowKey={(row) => row.id} // Ensure each row has a unique key
         />
       </div>
     );
@@ -299,14 +393,19 @@ const OrderList = () => {
             />
           </Form.Item>
           <Form.Item label="Farm ID">
-            <Input
+            <Select
               value={farmId}
-              onChange={(e) => setFarmId(e.target.value)}
-              placeholder="Enter Farm ID"
+              onChange={(value) => setFarmId(value)}
+              placeholder="Select Farm"
               style={{ width: 200 }}
-            />
+            >
+              {farms.map((farm) => (
+                <Select.Option key={farm.id} value={farm.id}>
+                  {farm.name} ({farm.id})
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
-
           <Form.Item>
             <Button type="primary" onClick={handleCreateOrder}>
               Create Order
