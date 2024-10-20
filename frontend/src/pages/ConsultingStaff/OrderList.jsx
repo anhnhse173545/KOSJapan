@@ -16,7 +16,9 @@ const OrderList = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/fish-order/all");
+      const response = await axios.get(
+        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+      );
       setData(response.data);
       setLoading(false);
     } catch (error) {
