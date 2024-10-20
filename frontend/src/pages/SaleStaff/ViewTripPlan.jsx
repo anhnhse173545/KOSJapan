@@ -14,8 +14,7 @@ const CreateTrip = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null); // To show success message
     const navigate = useNavigate();
-    const MAX_TRIPS = 100; // Max trip limit
-
+    
     const [existingTripCount, setExistingTripCount] = useState(0);
 
     useEffect(() => {
@@ -35,20 +34,14 @@ const CreateTrip = () => {
         fetchTripCount();
     }, []);
 
-    const generateTripID = (count) => {
-        if (count >= MAX_TRIPS) {
-            throw new Error('Cannot create more trips, limit reached.');
-        }
-        return `TR00${count + 1}`; // Generate new ID
-    };
+   
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form action
 
-        const tripID = generateTripID(existingTripCount); // Create a new trip ID
 
         const tripData = {
-            id: tripID, // Assign new ID to tripData
+            id, // Assign new ID to tripData
             startDate,
             endDate,
             departureAirport,
