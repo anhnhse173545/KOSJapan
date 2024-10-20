@@ -52,7 +52,6 @@ public class FishController {
         return ResponseEntity.ok(newFish);
     }
 
-
     @PutMapping("/{fish_id}/update")
     ResponseEntity<FishDTO> updateFish(@PathVariable String fish_id, @RequestBody CreateFishDTO fishDTO) {
         Fish updateFish = fishService.updateFish(fish_id, fishDTO);
