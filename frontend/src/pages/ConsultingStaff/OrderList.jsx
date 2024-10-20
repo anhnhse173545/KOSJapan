@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -16,19 +18,16 @@ import { DeleteOutlined } from "@ant-design/icons";
 const OrderList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [farms, setFarms] = useState([]); // To store farm list
+  const [farms, setFarms] = useState([]);
   const [form] = Form.useForm();
   const [bookingId, setBookingId] = useState("");
   const [farmId, setFarmId] = useState("");
   const navigate = useNavigate();
 
-  // Fetch orders data from API
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://localhost:8080/fish-order/consulting-staff/AC0004"
-      );
+      const response = await axios.get("http://localhost:8080/fish-order/consulting-staff/AC0004");
       setData(response.data);
       setLoading(false);
     } catch (error) {
@@ -37,7 +36,7 @@ const OrderList = () => {
       setLoading(false);
     }
   };
-  // Fetch farm list from API
+
   const fetchFarms = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/farm/list");
@@ -49,34 +48,28 @@ const OrderList = () => {
   };
 
   useEffect(() => {
-    fetchOrders(); // Load order data when the component mounts
-    fetchFarms(); // Load farm data when the component mounts
+    fetchOrders();
+    fetchFarms();
   }, []);
-  // Calculate total price for each order
+
   const calculateTotalPrice = (record) => {
     const fishTotal =
-      record.fishOrderDetails?.reduce(
-        (total, item) => total + item.price, // Corrected from item.fish_price to item.price
-        0
-      ) || 0;
+      record.fishOrderDetails?.reduce((total, item) => total + item.price, 0) || 0;
     const fishPackTotal =
-      record.fishPackOrderDetails?.reduce(
-        (total, item) => total + item.price,
-        0
-      ) || 0;
+      record.fishPackOrderDetails?.reduce((total, item) => total + item.price, 0) || 0;
     return fishTotal + fishPackTotal;
   };
 
   const handleAddKoi = (orderId, farmId) => {
     navigate("/add-koi", { state: { orderId, farmId } });
   };
-  // Handle deleting an order
+
   const handleDeleteOrder = async (record) => {
     try {
       const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/delete`;
       await axios.delete(url);
       message.success(`Order with ID ${record.id} has been deleted.`);
-      fetchOrders(); // Refresh the list after deletion
+      fetchOrders();
     } catch (error) {
       console.error("Error deleting order:", error);
       if (
@@ -86,13 +79,16 @@ const OrderList = () => {
       ) {
         message.error("Failed to delete order: Fish order not found.");
       } else {
-        message.error(
-          "Failed to delete order. Please check your network and server."
-        );
+        message.error("Failed to delete order. Please check your network and server.");
       }
     }
   };
+
   const handleDeleteFishOrderDetail = (orderId, fishOrderDetailId) => {
+    if (!orderId) {
+      message.error("Invalid order ID. Cannot delete fish order detail.");
+      return;
+    }
     Modal.confirm({
       title: "Are you sure you want to delete this fish order detail?",
       onOk: async () => {
@@ -103,17 +99,18 @@ const OrderList = () => {
           fetchOrders();
         } catch (error) {
           console.error("Error deleting fish order detail:", error);
-          message.error(
-            error.response?.data?.message ||
-              "Failed to delete fish order detail. Please check your network or server."
-          );
+          message.error(error.response?.data?.message ||
+            "Failed to delete fish order detail. Please check your network or server.");
         }
       },
     });
   };
 
-  // Function to delete fish pack order detail
   const handleDeleteFishPackOrderDetail = (orderId, fishPackOrderDetailId) => {
+    if (!orderId) {
+      message.error("Invalid order ID. Cannot delete fish pack order detail.");
+      return;
+    }
     Modal.confirm({
       title: "Are you sure you want to delete this fish pack order?",
       onOk: async () => {
@@ -121,13 +118,11 @@ const OrderList = () => {
           const url = `http://localhost:8080/fish-order/${orderId}/remove-pack-order-detail-from-order/${fishPackOrderDetailId}`;
           await axios.post(url);
           message.success("Fish pack order has been deleted.");
-          fetchOrders(); // Refresh the order list after deletion
+          fetchOrders();
         } catch (error) {
           console.error("Error deleting fish pack order:", error);
-          message.error(
-            error.response?.data?.message ||
-              "Failed to delete fish pack order. Please check your network or server."
-          );
+          message.error(error.response?.data?.message ||
+            "Failed to delete fish pack order. Please check your network or server.");
         }
       },
     });
@@ -135,46 +130,32 @@ const OrderList = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`
-      );
+      const response = await axios.post(`http://localhost:8080/fish-order/${bookingId}/${farmId}/create`);
       message.success(`Order created with ID: ${response.data.id}`);
-      fetchOrders(); // Refresh the list after creating the order
+      fetchOrders();
     } catch (error) {
       console.error("Error creating order:", error);
       if (error.response) {
-        message.error(
-          `Failed to create order: ${
-            error.response.data.message || error.response.statusText
-          }`
-        );
+        message.error(`Failed to create order: ${
+          error.response.data.message || error.response.statusText
+        }`);
       } else {
-        message.error(
-          "Failed to create order. Please check your network and server."
-        );
+        message.error("Failed to create order. Please check your network and server.");
       }
     }
   };
 
-  // Function to update payment status
   const handleUpdatePaymentStatus = async (record) => {
     try {
-      // Construct the API URL dynamically using bookingId and farmId
       const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/update`;
-
-      // Send the PUT request to update payment status
       const payload = {
-        paymentStatus: "Deposited", // Update to deposited
+        paymentStatus: "Deposited",
       };
-
-      const response = await axios.put(url, payload);
-
-      // Check the response to ensure the update was successful
+      await axios.put(url, payload);
       message.success(`Payment status updated for Order ID: ${record.id}`);
-      fetchOrders(); // Refresh the order list after updating the payment status
+      fetchOrders();
     } catch (error) {
       console.error("Error updating payment status:", error);
-
       if (
         error.response &&
         error.response.data &&
@@ -182,20 +163,15 @@ const OrderList = () => {
       ) {
         message.error("Failed to update payment status: Fish order not found.");
       } else if (error.response) {
-        message.error(
-          `Failed to update payment status: ${
-            error.response.data.message || error.response.statusText
-          }`
-        );
+        message.error(`Failed to update payment status: ${
+          error.response.data.message || error.response.statusText
+        }`);
       } else {
-        message.error(
-          "Failed to update payment status. Please check your network and server."
-        );
+        message.error("Failed to update payment status. Please check your network and server.");
       }
     }
   };
 
-  // Table columns with Update Payment Status action
   const columns = [
     {
       title: "Order ID",
@@ -222,8 +198,7 @@ const OrderList = () => {
       render: (paymentStatus) => (
         <Badge
           status={paymentStatus === "Deposited" ? "success" : "warning"}
-          text={paymentStatus || "Pending"}
-        />
+          text={paymentStatus || "Pending"} />
       ),
     },
     {
@@ -240,32 +215,32 @@ const OrderList = () => {
             type="primary"
             onClick={() => handleAddKoi(record.id, record.farmId)}
             style={{ marginRight: 8 }}
-            disabled={record.paymentStatus === "Deposited"}
-          >
+            disabled={record.paymentStatus === "Deposited"}>
             Add Koi
           </Button>
           <Button
             type="default"
             onClick={() => handleUpdatePaymentStatus(record)}
             disabled={record.paymentStatus === "Deposited"}
-            style={{ marginRight: 8 }}
-          >
+            style={{ marginRight: 8 }}>
             Update Payment Status
           </Button>
           <Button
             type="danger"
             icon={<DeleteOutlined />}
-            onClick={() => handleDeleteOrder(record)}
-          />
+            onClick={() => handleDeleteOrder(record)}>
+             
+          </Button>
         </>
       ),
     },
   ];
+
   const fishColumns = [
     {
       title: "Fish Order Detail ID",
       dataIndex: "id",
-      key: "fishOrderDetailId",
+      key: "id",
     },
     {
       title: "Fish ID",
@@ -277,11 +252,19 @@ const OrderList = () => {
       dataIndex: ["fish", "variety", "name"],
       key: "variety",
     },
-    { title: "Length", dataIndex: ["fish", "length"], key: "length" },
-    { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
+    {
+      title: "Length",
+      dataIndex: ["fish", "length"],
+      key: "length",
+    },
+    {
+      title: "Weight",
+      dataIndex: ["fish", "weight"],
+      key: "weight",
+    },
     {
       title: "Price",
-      dataIndex: "price", // Corrected data index
+      dataIndex: "price",
       key: "price",
     },
     {
@@ -292,12 +275,13 @@ const OrderList = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_, fishOrderDetail) => (
         <Button
           type="danger"
           icon={<DeleteOutlined />}
-          onClick={() => handleDeleteFishOrderDetail(record.orderId, record.id)}
-        >
+          onClick={() =>
+            handleDeleteFishOrderDetail(fishOrderDetail.orderId, fishOrderDetail.id)
+          }>
           Delete
         </Button>
       ),
@@ -306,25 +290,24 @@ const OrderList = () => {
 
   const expandedRowRender = (record) => {
     return (
-      <div>
+      (<div>
         <h4>Fish Order Details</h4>
         <Table
           columns={fishColumns}
-          dataSource={record.fishOrderDetails}
+          dataSource={record.fishOrderDetails.map(detail => ({...detail, orderId: record.id}))}
           pagination={false}
-          rowKey={(row) => row.id}
-        />
+          rowKey={(row) => row.id} />
         <h4>Fish Pack Order Details</h4>
         <Table
           columns={[
             {
               title: "Fish Pack Order ID",
-              dataIndex: "id", // Assuming this field exists in fishPackOrderDetails
+              dataIndex: "id",
               key: "id",
             },
             {
               title: "Variety",
-              dataIndex: ["fishPack", "variety", "name"], // Assuming the nested path for variety
+              dataIndex: ["fishPack", "variety", "name"],
               key: "variety",
             },
             {
@@ -349,7 +332,7 @@ const OrderList = () => {
             },
             {
               title: "Price",
-              dataIndex: "price", // The price directly from fishPackOrderDetails
+              dataIndex: "price",
               key: "price",
             },
             {
@@ -360,12 +343,8 @@ const OrderList = () => {
                   type="danger"
                   icon={<DeleteOutlined />}
                   onClick={() =>
-                    handleDeleteFishPackOrderDetail(
-                      record.id,
-                      fishPackOrderDetail.id
-                    )
-                  }
-                >
+                    handleDeleteFishPackOrderDetail(record.id, fishPackOrderDetail.id)
+                  }>
                   Delete
                 </Button>
               ),
@@ -373,14 +352,13 @@ const OrderList = () => {
           ]}
           dataSource={record.fishPackOrderDetails}
           pagination={false}
-          rowKey={(row) => row.id} // Ensure each row has a unique key
-        />
-      </div>
+          rowKey={(row) => row.id} />
+      </div>)
     );
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    (<div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Fish Order List</h1>
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <Form form={form} layout="inline">
@@ -389,16 +367,14 @@ const OrderList = () => {
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
               placeholder="Enter Booking ID"
-              style={{ width: 200 }}
-            />
+              style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="Farm ID">
             <Select
               value={farmId}
               onChange={(value) => setFarmId(value)}
               placeholder="Select Farm"
-              style={{ width: 200 }}
-            >
+              style={{ width: 200 }}>
               {farms.map((farm) => (
                 <Select.Option key={farm.id} value={farm.id}>
                   {farm.name} ({farm.id})
@@ -413,7 +389,6 @@ const OrderList = () => {
           </Form.Item>
         </Form>
       </div>
-
       <Table
         columns={columns}
         dataSource={data}
@@ -423,9 +398,8 @@ const OrderList = () => {
         rowKey="id"
         loading={loading}
         pagination={{ pageSize: 10 }}
-        style={{ background: "#fff" }}
-      />
-    </div>
+        style={{ background: "#fff" }} />
+    </div>)
   );
 };
 

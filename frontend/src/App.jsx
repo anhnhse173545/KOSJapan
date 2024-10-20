@@ -36,15 +36,15 @@ import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
 
-import ManagerDashboard from "./pages/Manager/ManagerDashboard";
-import DashboardOverview from "./pages/Manager/finals/DashboardOverview";
-import StaffManagerView from "./pages/Manager/finals/StaffManagerView";
-import BookingManagerComponent from "./pages/Manager/finals/booking-manager";
-import { SalesStaffManagementComponent } from "./pages/Manager/finals/sales-staff-management";
-import { ConsultingStaffAssignmentComponent } from "./pages/Manager/finals/consulting-staff-assignment-component";
-import { DeliveryStaffAssignment } from "./pages/Manager/finals/delivery-staff-assignment";
-import { ExtendedQuoteReviewComponent } from "./pages/Manager/finals/extended-quote-review";
-import { DeliveryOrderListComponent } from "./pages/Manager/finals/delivery-order-list";
+import ManagerDashboard from "./Manager/ManagerDashboard";
+import DashboardOverview from "./Manager/finals/DashboardOverview";
+import StaffManagerView from "./Manager/finals/StaffManagerView";
+import BookingManagerComponent from "./Manager/finals/booking-manager";
+import { SalesStaffManagementComponent } from "./Manager/finals/sales-staff-management";
+import { ConsultingStaffAssignmentComponent } from "./Manager/finals/consulting-staff-assignment-component";
+import { DeliveryStaffAssignment } from "./Manager/finals/delivery-staff-assignment";
+import { ExtendedQuoteReviewComponent } from "./Manager/finals/extended-quote-review";
+import { DeliveryOrderListComponent } from "./Manager/finals/delivery-order-list";
 
 function App() {
   const router = createBrowserRouter([

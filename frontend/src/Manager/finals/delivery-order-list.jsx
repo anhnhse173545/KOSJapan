@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { OrderTrackingCard } from "../../../components/order-tracking-card"
 import { Loader2, ChevronDown } from "lucide-react"
 import {
   DropdownMenu,
@@ -18,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { OrderTrackingCard } from "@/components/order-tracking-card";
 
 export function DeliveryOrderListComponent() {
   const [staff, setStaff] = useState(null)
