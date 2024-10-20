@@ -9,10 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface TripPaymentMapper {
 
-    @Mapping(source = "paymentMethod.name", target = "paymentMethodName")
     TripPaymentDTO toDTO(TripPayment tripPayment);
 
-    @Mapping(source = "paymentMethodName", target = "paymentMethod.name")
     TripPayment toEntity(TripPaymentDTO tripPaymentDTO);
 
     TripPayment toEntity(CreateTripPaymentDTO tripPaymentDTO);

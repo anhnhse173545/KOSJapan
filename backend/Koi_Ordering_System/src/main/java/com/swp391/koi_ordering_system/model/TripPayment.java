@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,13 +26,12 @@ public class TripPayment {
     @JoinColumn(name = "booking_id")
     private Booking booking;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id")
-    private PaymentMethod paymentMethod;
-
     @CreationTimestamp
-    @Column(name = "create_at")
-    private Instant createAt;
+    @Column(name = "created_at")
+    private LocalDateTime createAt;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
     @Column(name = "amount")
     private Double amount;
