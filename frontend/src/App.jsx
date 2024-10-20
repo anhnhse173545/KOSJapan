@@ -35,6 +35,7 @@ import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
+
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
 
 function App() {
@@ -58,7 +59,21 @@ function App() {
       ],
     },
 
-    { path: "/manager-dashboard", element: <ManagerDashboard /> },
+    {
+      path: "/manager-dashboard",
+      element: <ManagerDashboard />,
+      // children: [
+      //   { path: "dashboard", element: <DashboardOverview /> },
+      //   { path: "staff-manager", element: <StaffManagerView /> },
+      //   { path: "booking-manager", element: <BookingManagerComponent /> },
+      //   { path: "payment-status", element: <PaymentStatusView /> },
+      //   { path: "sales-staff-assignment", element: <SalesStaffManagementComponent /> },
+      //   { path: "consulting-staff-assignment", element: <ConsultingStaffAssignmentComponent /> },
+      //   { path: "delivery-staff-assignment", element: <DeliveryStaffAssignment /> },
+      //   { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
+      //   { path: "delivery-order-list", element: <DeliveryOrderListComponent /> },
+      ],
+    },
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },
