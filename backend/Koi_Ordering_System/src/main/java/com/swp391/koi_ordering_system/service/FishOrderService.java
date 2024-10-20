@@ -50,7 +50,7 @@ public class FishOrderService {
     private AccountRepository AccountRepository;
 
     @Autowired
-    private AccountService AccountService;
+    private FishPaymentService FishPaymentService;
 
     private static final String PREFIX = "PO";
     private static final int ID_PADDING = 4;
@@ -60,14 +60,14 @@ public class FishOrderService {
     public List<FishOrderDTO> getAllFishOrder() {
             List<FishOrder> list = OrderRepository.findAllByIsDeletedFalse();
             return list.stream()
-                    .map(fishOrderMapper::toDTO)
+                    .map((FishOrder) -> mapToDTO2(FishOrder))
                     .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getAllByBookingId(String bookingId) {
         List<FishOrder> list = OrderRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
         return list.stream()
-                .map(fishOrderMapper::toDTO)
+                .map((FishOrder) -> mapToDTO2(FishOrder))
                 .collect(Collectors.toList());
     }
 
@@ -161,8 +161,8 @@ public class FishOrderService {
         FishOrderDetail foundFOD = findFOD.get();;
         removeOrder.getFishOrderDetails().remove(foundFOD);
         removeOrder.setTotal(removeOrder.getTotal() - foundFOD.getPrice());
-        FODRepository.delete(foundFOD);
-        OrderRepository.save(removeOrder); // Once remove from Fish Order => deleted
+        FODRepository.delete(foundFOD); // Once removed form Fish Order => delete
+        OrderRepository.save(removeOrder);
 
         return OrderRepository.save(removeOrder);
     }
@@ -219,6 +219,7 @@ public class FishOrderService {
         dto.setTotal(fishOrder.getTotal());
         dto.setFarmId(fishOrder.getFarm().getId());
         dto.setBookingId(fishOrder.getBooking().getId());
+        dto.setPayment(FishPaymentService.mapToDTO(fishOrder.getFishPayments()));
         dto.setFishOrderDetails(FODService.mapToListDTO(findFOD));
         dto.setFishPackOrderDetails(FPODService.mapToListDTO(findFPOD));
 
@@ -240,30 +241,30 @@ public class FishOrderService {
     }
 
     public List<FishOrderDTO> getFishOrdersByDeliveryStaffId(String deliveryStaffId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_Id(deliveryStaffId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_DeliveryStaff_IdAndIsDeletedFalse(deliveryStaffId);
         return fishOrders.stream()
                 .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getFishOrdersByConsultingStaffId(String consultingStaffId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_ConsultingStaff_Id(consultingStaffId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_ConsultingStaff_IdAndIsDeletedFalse(consultingStaffId);
         return fishOrders.stream()
                 .map(fishOrderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getFishOrdersByCustomerId(String customerId) {
-        List<FishOrder> fishOrders = OrderRepository.findByBooking_Customer_Id(customerId);
+        List<FishOrder> fishOrders = OrderRepository.findByBooking_Customer_IdAndIsDeletedFalse(customerId);
         return fishOrders.stream()
-                .map(fishOrderMapper::toDTO)
+                .map((FishOrder) -> mapToDTO2(FishOrder))
                 .collect(Collectors.toList());
     }
 
     public List<FishOrderDTO> getFishOrderByBookingIdAndFarmId(String bookingId, String farmId) {
         List<FishOrder> list =OrderRepository.findByBookingIdAndFarmId(bookingId, farmId);
         return list.stream()
-                .map(fishOrderMapper::toDTO)
+                .map((FishOrder) -> mapToDTO2(FishOrder))
                 .collect(Collectors.toList());
     }
 

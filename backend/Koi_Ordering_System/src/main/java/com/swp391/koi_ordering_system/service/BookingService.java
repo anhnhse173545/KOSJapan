@@ -98,7 +98,7 @@ public class BookingService {
 
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
-                .map(bookingMapper::toDTO);
+                .map((Booking) -> mapToDTO(Booking));
     }
 
     public List<BookingDTO> getBookingsByCustomerId(String customerId) {

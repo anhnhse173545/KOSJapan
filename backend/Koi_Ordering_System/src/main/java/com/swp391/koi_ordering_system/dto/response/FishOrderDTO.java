@@ -24,6 +24,7 @@ public class FishOrderDTO {
     private String status;
     private Double total;
     private String paymentStatus;
+    private FishPaymentDTO payment;
     private List<FishOrderDetailDTO> fishOrderDetails;
     private List<FishPackOrderDetailDTO> fishPackOrderDetails;
 }
