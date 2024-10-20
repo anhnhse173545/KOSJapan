@@ -9,7 +9,7 @@ const CreateTrip = () => {
     const [departureAirport, setDepartureAirport] = useState('');
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState('On-Going'); // Default status
+    const [status, setStatus] = useState('On-going'); // Default status
     const [tripDestinations, setTripDestinations] = useState(''); // For multiple destinations, this could be an array
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null); // To show success message
