@@ -7,7 +7,7 @@ import com.swp391.koi_ordering_system.model.FishOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class})
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, FishOrderDetailMapper.class})
 public interface FishOrderMapper {
     //@Mapping(source = "fishPackOrderDetails", target = "fishPackOrderDetails")
     @Mapping(source = "booking.consultingStaff", target = "consultingStaff")
