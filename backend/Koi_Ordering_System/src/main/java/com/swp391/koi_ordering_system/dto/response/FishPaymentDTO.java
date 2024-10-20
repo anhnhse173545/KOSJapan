@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class TripPaymentDTO {
+@AllArgsConstructor
+public class FishPaymentDTO {
     private String id;
-    private String paymentMethodName;
-    private double amount;
     private LocalDateTime created_at;
+    private String paymentMethod;
+    private Double amount;
+    private String status;
 }
