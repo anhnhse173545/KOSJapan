@@ -41,7 +41,7 @@ function PaymentPage() {
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/profile" className={`sidebar-link ${location.pathname === '/profile' ? 'active' : ''}`}>
+            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>

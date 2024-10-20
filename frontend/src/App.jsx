@@ -35,9 +35,8 @@ import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
-<<<<<<< HEAD
 import KoiFarmPage from "./pages/koifarmreview";
-=======
+
 import ManagerDashboard from "./Manager/ManagerDashboard";
 import DashboardOverview from "./Manager/finals/DashboardOverview";
 import StaffManagerView from "./Manager/finals/StaffManagerView";
@@ -47,7 +46,8 @@ import { ConsultingStaffAssignmentComponent } from "./Manager/finals/consulting-
 import { DeliveryStaffAssignment } from "./Manager/finals/delivery-staff-assignment";
 import { ExtendedQuoteReviewComponent } from "./Manager/finals/extended-quote-review";
 import { DeliveryOrderListComponent } from "./Manager/finals/delivery-order-list";
->>>>>>> c995cc7a753a90acde5e2315c122f8cdd6106631
+import UserDetailPage from "./pages/userDetail";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -68,6 +68,7 @@ function App() {
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         { path: "/koifarmpage", element: <KoiFarmPage /> },
+        { path: "/userDetail", element: <UserDetailPage /> },
       ],
 
     },
