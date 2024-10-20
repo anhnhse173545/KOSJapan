@@ -99,7 +99,7 @@ function KoiPage() {
                 {koi.status === 'Requested' ? (
                   <button
                     className="details-button"
-                    onClick={() => navigate(`/paykoi`)}
+                    onClick={() => navigate(`/paykoi/${koi.id}`)}
                   >
                     Purchase
                   </button>
