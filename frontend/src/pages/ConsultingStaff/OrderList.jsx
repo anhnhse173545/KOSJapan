@@ -70,6 +70,17 @@ const OrderList = () => {
       }
     }
   };
+  const handleDeleteFishOrderDetail = async (fishOrderDetailId, record) => {
+    try {
+      const url = `http://localhost:8080/fish-order/${record.id}/remove-fish-order-detail-from/${fishOrderDetailId}`;
+      await axios.delete(url);
+      message.success("Fish order detail has been deleted.");
+      fetchOrders(); // Refresh the order list after deletion
+    } catch (error) {
+      console.error("Error deleting fish order detail:", error);
+      message.error("Failed to delete fish order detail.");
+    }
+  };
 
   // Handle creating a new order
   const handleCreateOrder = async () => {
@@ -200,29 +211,43 @@ const OrderList = () => {
       ),
     },
   ];
+  const fishColumns = [
+    {
+      title: "Fish ID",
+      dataIndex: ["fish", "id"],
+      key: "fishId",
+    },
+    {
+      title: "Variety",
+      dataIndex: ["fish", "variety", "name"],
+      key: "variety",
+    },
+    { title: "Length", dataIndex: ["fish", "length"], key: "length" },
+    { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
+    { title: "Price", dataIndex: "fish_price", key: "fish_price" },
+    {
+      title: "Description",
+      dataIndex: ["fish", "description"],
+      key: "description",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, fishOrderDetail) => (
+        <Button
+          type="danger"
+          icon={<DeleteOutlined />}
+          onClick={() =>
+            handleDeleteFishOrderDetail(fishOrderDetail.id, record)
+          }
+        >
+          Delete
+        </Button>
+      ),
+    },
+  ];
 
   const expandedRowRender = (record) => {
-    const fishColumns = [
-      {
-        title: "Fish ID", // Display Fish ID
-        dataIndex: ["fish", "id"], // Access the fish.id field
-        key: "fishId",
-      },
-      {
-        title: "Variety",
-        dataIndex: ["fish", "variety", "name"],
-        key: "variety",
-      },
-      { title: "Length", dataIndex: ["fish", "length"], key: "length" },
-      { title: "Weight", dataIndex: ["fish", "weight"], key: "weight" },
-      { title: "Price", dataIndex: "fish_price", key: "fish_price" },
-      {
-        title: "Description",
-        dataIndex: ["fish", "description"],
-        key: "description",
-      },
-    ];
-
     return (
       <div>
         <h4>Fish Order Details</h4>
