@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './index.scss';
+import './CustomerRequest.scss';
 import { useNavigate } from 'react-router-dom';
 
 function CustomerRequest() {
