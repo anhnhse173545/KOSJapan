@@ -45,10 +45,9 @@ const CreateTrip = () => {
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form action
 
-        const tripID = generateTripID(existingTripCount); // Create a new trip ID
 
         const tripData = {
-            id: tripID, // Assign new ID to tripData
+            id, // Assign new ID to tripData
             startDate,
             endDate,
             departureAirport,

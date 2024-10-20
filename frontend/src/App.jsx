@@ -35,6 +35,7 @@ import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
 import DeliveryStaff from "./pages/DeliveryStaff/DeliveryStaff";
 import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
+import KoiFarmPage from "./pages/koifarmreview";
 
 function App() {
   const router = createBrowserRouter([
@@ -54,6 +55,7 @@ function App() {
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
+        { path: "/koifarmpage", element: <KoiFarmPage /> },
       ],
     },
 

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AuthenLayout from "../../components/auth-layout";
-import './request.scss';
+import './request.css';
 
 const { TextArea } = Input;
 
