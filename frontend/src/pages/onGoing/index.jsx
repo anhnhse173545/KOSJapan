@@ -55,7 +55,7 @@ function CompleteTripPage() {
     }
   };
 
-  // Hàm thanh toán (thay đổi trạng thái thành "Paid Booking" và điều hướng đến /paykoi/${id})
+  
   const handlePay = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
