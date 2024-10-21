@@ -80,7 +80,7 @@ const TourList = () => {
   };
 
   const handleViewDetails = (bookingId) => {
-    navigate(`/tour-details/${bookingId}`);
+    navigate(`tour-details/${bookingId}`);
   };
 
   const columns = [

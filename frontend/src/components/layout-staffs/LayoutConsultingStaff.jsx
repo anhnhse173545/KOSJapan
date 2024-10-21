@@ -14,7 +14,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
-const LayoutStaffs = ({ children }) => {
+const LayoutConsultingStaff = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
@@ -23,20 +23,11 @@ const LayoutStaffs = ({ children }) => {
   const menuItems = useMemo(
     () => [
       {
-        key: "/sale-staff",
-        icon: <HomeOutlined />,
-        label: <Link to="/sale-staff">Sale Staff</Link>,
-      },
-      {
         key: "/consulting-staff",
         icon: <SolutionOutlined />,
         label: <Link to="/consulting-staff">Consulting Staff</Link>,
       },
-      {
-        key: "/delivery-staff",
-        icon: <TruckOutlined />,
-        label: <Link to="/delivery-staff">Delivery Staff</Link>,
-      },
+
       {
         key: "logout",
         icon: <LogoutOutlined />,
@@ -74,4 +65,4 @@ const LayoutStaffs = ({ children }) => {
   );
 };
 
-export default LayoutStaffs;
+export default LayoutConsultingStaff;

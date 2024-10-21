@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -27,7 +27,9 @@ const OrderList = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/fish-order/consulting-staff/AC0004");
+      const response = await axios.get(
+        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+      );
       setData(response.data);
       setLoading(false);
     } catch (error) {
@@ -54,14 +56,18 @@ const OrderList = () => {
 
   const calculateTotalPrice = (record) => {
     const fishTotal =
-      record.fishOrderDetails?.reduce((total, item) => total + item.price, 0) || 0;
+      record.fishOrderDetails?.reduce((total, item) => total + item.price, 0) ||
+      0;
     const fishPackTotal =
-      record.fishPackOrderDetails?.reduce((total, item) => total + item.price, 0) || 0;
+      record.fishPackOrderDetails?.reduce(
+        (total, item) => total + item.price,
+        0
+      ) || 0;
     return fishTotal + fishPackTotal;
   };
 
   const handleAddKoi = (orderId, farmId) => {
-    navigate("/add-koi", { state: { orderId, farmId } });
+    navigate("add-koi", { state: { orderId, farmId } });
   };
 
   const handleDeleteOrder = async (record) => {
@@ -79,7 +85,9 @@ const OrderList = () => {
       ) {
         message.error("Failed to delete order: Fish order not found.");
       } else {
-        message.error("Failed to delete order. Please check your network and server.");
+        message.error(
+          "Failed to delete order. Please check your network and server."
+        );
       }
     }
   };
@@ -99,8 +107,10 @@ const OrderList = () => {
           fetchOrders();
         } catch (error) {
           console.error("Error deleting fish order detail:", error);
-          message.error(error.response?.data?.message ||
-            "Failed to delete fish order detail. Please check your network or server.");
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish order detail. Please check your network or server."
+          );
         }
       },
     });
@@ -121,8 +131,10 @@ const OrderList = () => {
           fetchOrders();
         } catch (error) {
           console.error("Error deleting fish pack order:", error);
-          message.error(error.response?.data?.message ||
-            "Failed to delete fish pack order. Please check your network or server.");
+          message.error(
+            error.response?.data?.message ||
+              "Failed to delete fish pack order. Please check your network or server."
+          );
         }
       },
     });
@@ -130,17 +142,23 @@ const OrderList = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const response = await axios.post(`http://localhost:8080/fish-order/${bookingId}/${farmId}/create`);
+      const response = await axios.post(
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`
+      );
       message.success(`Order created with ID: ${response.data.id}`);
       fetchOrders();
     } catch (error) {
       console.error("Error creating order:", error);
       if (error.response) {
-        message.error(`Failed to create order: ${
-          error.response.data.message || error.response.statusText
-        }`);
+        message.error(
+          `Failed to create order: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
       } else {
-        message.error("Failed to create order. Please check your network and server.");
+        message.error(
+          "Failed to create order. Please check your network and server."
+        );
       }
     }
   };
@@ -163,11 +181,15 @@ const OrderList = () => {
       ) {
         message.error("Failed to update payment status: Fish order not found.");
       } else if (error.response) {
-        message.error(`Failed to update payment status: ${
-          error.response.data.message || error.response.statusText
-        }`);
+        message.error(
+          `Failed to update payment status: ${
+            error.response.data.message || error.response.statusText
+          }`
+        );
       } else {
-        message.error("Failed to update payment status. Please check your network and server.");
+        message.error(
+          "Failed to update payment status. Please check your network and server."
+        );
       }
     }
   };
@@ -198,7 +220,8 @@ const OrderList = () => {
       render: (paymentStatus) => (
         <Badge
           status={paymentStatus === "Deposited" ? "success" : "warning"}
-          text={paymentStatus || "Pending"} />
+          text={paymentStatus || "Pending"}
+        />
       ),
     },
     {
@@ -215,22 +238,23 @@ const OrderList = () => {
             type="primary"
             onClick={() => handleAddKoi(record.id, record.farmId)}
             style={{ marginRight: 8 }}
-            disabled={record.paymentStatus === "Deposited"}>
+            disabled={record.paymentStatus === "Deposited"}
+          >
             Add Koi
           </Button>
           <Button
             type="default"
             onClick={() => handleUpdatePaymentStatus(record)}
             disabled={record.paymentStatus === "Deposited"}
-            style={{ marginRight: 8 }}>
+            style={{ marginRight: 8 }}
+          >
             Update Payment Status
           </Button>
           <Button
             type="danger"
             icon={<DeleteOutlined />}
-            onClick={() => handleDeleteOrder(record)}>
-             
-          </Button>
+            onClick={() => handleDeleteOrder(record)}
+          ></Button>
         </>
       ),
     },
@@ -280,8 +304,12 @@ const OrderList = () => {
           type="danger"
           icon={<DeleteOutlined />}
           onClick={() =>
-            handleDeleteFishOrderDetail(fishOrderDetail.orderId, fishOrderDetail.id)
-          }>
+            handleDeleteFishOrderDetail(
+              fishOrderDetail.orderId,
+              fishOrderDetail.id
+            )
+          }
+        >
           Delete
         </Button>
       ),
@@ -290,13 +318,17 @@ const OrderList = () => {
 
   const expandedRowRender = (record) => {
     return (
-      (<div>
+      <div>
         <h4>Fish Order Details</h4>
         <Table
           columns={fishColumns}
-          dataSource={record.fishOrderDetails.map(detail => ({...detail, orderId: record.id}))}
+          dataSource={record.fishOrderDetails.map((detail) => ({
+            ...detail,
+            orderId: record.id,
+          }))}
           pagination={false}
-          rowKey={(row) => row.id} />
+          rowKey={(row) => row.id}
+        />
         <h4>Fish Pack Order Details</h4>
         <Table
           columns={[
@@ -343,8 +375,12 @@ const OrderList = () => {
                   type="danger"
                   icon={<DeleteOutlined />}
                   onClick={() =>
-                    handleDeleteFishPackOrderDetail(record.id, fishPackOrderDetail.id)
-                  }>
+                    handleDeleteFishPackOrderDetail(
+                      record.id,
+                      fishPackOrderDetail.id
+                    )
+                  }
+                >
                   Delete
                 </Button>
               ),
@@ -352,13 +388,14 @@ const OrderList = () => {
           ]}
           dataSource={record.fishPackOrderDetails}
           pagination={false}
-          rowKey={(row) => row.id} />
-      </div>)
+          rowKey={(row) => row.id}
+        />
+      </div>
     );
   };
 
   return (
-    (<div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px" }}>
       <h1 style={{ textAlign: "center" }}>Fish Order List</h1>
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <Form form={form} layout="inline">
@@ -367,14 +404,16 @@ const OrderList = () => {
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
               placeholder="Enter Booking ID"
-              style={{ width: 200 }} />
+              style={{ width: 200 }}
+            />
           </Form.Item>
           <Form.Item label="Farm ID">
             <Select
               value={farmId}
               onChange={(value) => setFarmId(value)}
               placeholder="Select Farm"
-              style={{ width: 200 }}>
+              style={{ width: 200 }}
+            >
               {farms.map((farm) => (
                 <Select.Option key={farm.id} value={farm.id}>
                   {farm.name} ({farm.id})
@@ -398,8 +437,9 @@ const OrderList = () => {
         rowKey="id"
         loading={loading}
         pagination={{ pageSize: 10 }}
-        style={{ background: "#fff" }} />
-    </div>)
+        style={{ background: "#fff" }}
+      />
+    </div>
   );
 };
 

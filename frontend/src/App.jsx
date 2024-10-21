@@ -27,9 +27,9 @@ import KoiDetails from "./pages/ConsultingStaff/KoiDetails";
 import OrderList from "./pages/ConsultingStaff/OrderList"; // Renamed to avoid conflict
 import TourDetails from "./pages/ConsultingStaff/TourDetails";
 import TourList from "./pages/ConsultingStaff/TourList";
- import SaleStaffHome from "./pages/SaleStaff/temp/SaleStaffHome";
+import SaleStaffHome from "./pages/SaleStaff/temp/SaleStaffHome";
 
- import PaidBooking from "./pages/paidBooking";
+import PaidBooking from "./pages/paidBooking";
 import CreateTrip from "./pages/SaleStaff/temp/ViewTripPlan";
 import KoiFarmPage from "./pages/koifarmreview";
 
@@ -40,15 +40,13 @@ import BookingManagerComponent from "./pages/Manager/finals/booking-manager";
 import { SalesStaffManagementComponent } from "./pages/Manager/finals/SalesStaffAssign";
 import { ConsultingStaffAssignmentComponent } from "./pages/Manager/finals/ConsultingStaffAssgn";
 import { ExtendedQuoteReviewComponent } from "./pages/Manager/finals/QuoteReview";
- import UserDetailPage from "./pages/userDetail";
+import UserDetailPage from "./pages/userDetail";
 import { DeliveryStaffDashboard } from "./pages/DeliveryStaff/DeliveryStaffDashboard";
 import DeliveryOrderListComponent from "./pages/DeliveryStaff/DeliveryOrderList";
 import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAssign";
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
-import CustomerRequestJsx from "./pages/SaleStaff/pages/CustomerRequest";
- 
 
 function App() {
   const router = createBrowserRouter([
@@ -71,7 +69,6 @@ function App() {
         { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/userDetail", element: <UserDetailPage /> },
       ],
-
     },
 
     {
@@ -81,10 +78,19 @@ function App() {
         { path: "dashboard", element: <DashboardOverview /> },
         { path: "staff-manager", element: <StaffManagerView /> },
         { path: "booking-manager", element: <BookingManagerComponent /> },
-        { path: "sales-staff-assignment", element: <SalesStaffManagementComponent /> },
-        { path: "consulting-staff-assignment", element: <ConsultingStaffAssignmentComponent /> },
-        { path: "delivery-staff-assignment", element: <DeliveryStaffAssignment /> },
-        { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> }, 
+        {
+          path: "sales-staff-assignment",
+          element: <SalesStaffManagementComponent />,
+        },
+        {
+          path: "consulting-staff-assignment",
+          element: <ConsultingStaffAssignmentComponent />,
+        },
+        {
+          path: "delivery-staff-assignment",
+          element: <DeliveryStaffAssignment />,
+        },
+        { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
       ],
     },
 
@@ -95,11 +101,20 @@ function App() {
         { path: "dashboard", element: <DashboardOverview /> },
         { path: "staff-manager", element: <StaffManagerView /> },
         { path: "booking-manager", element: <BookingManagerComponent /> },
-        { path: "sales-staff-assignment", element: <SalesStaffManagementComponent /> },
-        { path: "consulting-staff-assignment", element: <ConsultingStaffAssignmentComponent /> },
-        { path: "delivery-staff-assignment", element: <DeliveryStaffAssignment /> },
+        {
+          path: "sales-staff-assignment",
+          element: <SalesStaffManagementComponent />,
+        },
+        {
+          path: "consulting-staff-assignment",
+          element: <ConsultingStaffAssignmentComponent />,
+        },
+        {
+          path: "delivery-staff-assignment",
+          element: <DeliveryStaffAssignment />,
+        },
         { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
-       ],
+      ],
     },
     {
       path: "/ds-dashboard",
@@ -112,27 +127,45 @@ function App() {
       path: "/ss-dashboard",
       element: <SalesStaffDashboard />,
       children: [
-        { path: "my-tripplans", element: <CustomerRequestJsx /> },
-        { path: "view-tripplans/:bookingId", element: <ViewTripPlanComponent /> },
+        { path: "my-tripplans", element: <CustomerRequest /> },
+        {
+          path: "view-tripplans/:bookingId",
+          element: <ViewTripPlanComponent />,
+        },
+      ],
+    },
+    {
+      path: "/cs-dashboard",
+      element: <ConsultingStaff />,
+      children: [
+        { path: "h", element: <ConsultingStaffHome /> }, // Default home page
+        { path: "tour-list", element: <TourList /> },
+
+        { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
+
+        { path: "order-list", element: <OrderList /> },
+        { path: "order-list/add-koi", element: <AddKoi /> },
+
+        { path: "koi-details", element: <KoiDetails /> },
       ],
     },
 
-    { path: "/consulting-staff", element: <ConsultingStaff /> },
-    { path: "/sale-staff", element: <SaleStaff /> },
+    // { path: "/consulting-staff", element: <ConsultingStaff /> },
+    // { path: "/sale-staff", element: <SaleStaff /> },
     // { path: "/delivery-staff", element: <DeliveryStaff /> },
-    { path: "/", element: <ConsultingStaffHome /> },
-    { path: "/TourList", element: <TourList /> },
-    { path: "/OrderList", element: <OrderList /> },
-    { path: "/koi-details", element: <KoiDetails /> },
-    { path: "/add-koi", element: <AddKoi /> },
-    { path: "/tour-details/:bookingId", element: <TourDetails /> },
+    // { path: "/", element: <ConsultingStaffHome /> },
+    // { path: "/TourList", element: <TourList /> },
+    // { path: "/OrderList", element: <OrderList /> },
+    // { path: "/koi-details", element: <KoiDetails /> },
+    // { path: "/add-koi", element: <AddKoi /> },
+    // { path: "/tour-details/:bookingId", element: <TourDetails /> },
     // { path: "/", element: <DeliveryStaffHome /> },
     // { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
     // { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
-    { path: "/SaleStaffHome", element: <SaleStaffHome /> },
-    { path: "/CustomerRequest", element: <CustomerRequest /> },
+    // { path: "/SaleStaffHome", element: <SaleStaffHome /> },
+    // { path: "/CustomerRequest", element: <CustomerRequest /> },
 
-    { path: "/createTrip/:id", element: <CreateTrip /> },
+    // { path: "/createTrip/:id", element: <CreateTrip /> },
   ]);
   return <RouterProvider router={router} />;
 }
