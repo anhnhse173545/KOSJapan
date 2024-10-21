@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, message, Select, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../../styles/TourList.css";
+
 const { Option } = Select;
 
 const TourList = () => {
