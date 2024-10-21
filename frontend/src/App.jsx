@@ -138,17 +138,11 @@ function App() {
       path: "/cs-dashboard",
       element: <ConsultingStaff />,
       children: [
-        { path: "", element: <ConsultingStaffHome /> }, // Default home page
-        {
-          path: "tour-list",
-          element: <TourList />,
-          children: [
-            {
-              path: "tour-details/:bookingId",
-              element: <TourDetails />,
-            }, // Dynamic route
-          ],
-        },
+        { path: "home", element: <ConsultingStaffHome /> }, // Default home page
+        { path: "tour-list", element: <TourList /> },
+
+        { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
+
         {
           path: "order-list",
           element: <OrderList />,
@@ -159,7 +153,7 @@ function App() {
     },
 
     // { path: "/consulting-staff", element: <ConsultingStaff /> },
-    { path: "/sale-staff", element: <SaleStaff /> },
+    // { path: "/sale-staff", element: <SaleStaff /> },
     // { path: "/delivery-staff", element: <DeliveryStaff /> },
     // { path: "/", element: <ConsultingStaffHome /> },
     // { path: "/TourList", element: <TourList /> },
@@ -170,10 +164,10 @@ function App() {
     // { path: "/", element: <DeliveryStaffHome /> },
     // { path: "/DeliveryOrderList", element: <DeliveryOrderList /> },
     // { path: "/TrackingOrder/:orderId", element: <TrackingOrder /> },
-    { path: "/SaleStaffHome", element: <SaleStaffHome /> },
-    { path: "/CustomerRequest", element: <CustomerRequest /> },
+    // { path: "/SaleStaffHome", element: <SaleStaffHome /> },
+    // { path: "/CustomerRequest", element: <CustomerRequest /> },
 
-    { path: "/createTrip/:id", element: <CreateTrip /> },
+    // { path: "/createTrip/:id", element: <CreateTrip /> },
   ]);
   return <RouterProvider router={router} />;
 }
