@@ -10,7 +10,7 @@ import {
 import { Avatar, Button, Layout, Menu } from "antd";
 import { Link, Route, Routes } from "react-router-dom";
 import SaleStaffHome from "./SaleStaffHome"; // Assuming this component exists
-import CustomerRequest from "./CustomerRequest"; // Assuming this component is where you handle customer requests
+import CustomerRequest from "../pages/CustomerRequest"; // Assuming this component is where you handle customer requests
 
 import ViewTripPlan from "./ViewTripPlan";
 const { Header, Sider, Content } = Layout;

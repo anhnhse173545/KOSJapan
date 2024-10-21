@@ -37,7 +37,7 @@ export default function SalesStaffDashboard() {
   const fetchStaffDetails = async () => {
     try {
       // Assuming the sales staff has a different account ID, adjust as needed
-      const response = await fetch("http://localhost:8080/accounts/AC0004/detail")
+      const response = await fetch("http://localhost:8080/accounts/AC0002/detail")
       if (!response.ok) throw new Error('Failed to fetch staff details')
       const data = await response.json()
       console.log("Staff details:", data)
@@ -56,7 +56,7 @@ export default function SalesStaffDashboard() {
 
   const navItems = [
     { name: 'My Trip Plans', icon: <BarChart className="h-5 w-5" />, path: '/ss-dashboard/my-tripplans' },
-    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans' },
+    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans/:tripId' },
     { name: 'Quotes', icon: <FileText className="h-5 w-5" />, path: '/sales-staff/quotes' },
     { name: 'Orders', icon: <Briefcase className="h-5 w-5" />, path: '/sales-staff/orders' },
     { name: 'Commission', icon: <DollarSign className="h-5 w-5" />, path: '/sales-staff/commission' },
