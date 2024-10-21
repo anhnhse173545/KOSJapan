@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -9,24 +9,41 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, theme } from "antd";
-import { Link, Route, Routes } from "react-router-dom"; // Import routing components
-import ConsultingStaffHome from "./ConsultingStaffHome";
-import TourList from "./TourList";
-import TourDetails from "./TourDetails"; // Import the new TourDetails component
-import KoiDetails from "./KoiDetails";
-import OrderList from "./OrderList";
-import AddKoi from "./AddKoi";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
 const ConsultingStaff = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [userName, setUserName] = useState("Loading..."); // State to hold fetched user name
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const navigate = useNavigate(); // Use navigate hook
 
-  const userName = "John Doe"; // Replace with the actual user's name from your app state or context
+  useEffect(() => {
+    // Fetch user details from the API when the component mounts
+    const fetchUserName = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/accounts/AC0004/detail"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setUserName(data.name); // Assuming the API response has a `name` field
+      } catch (error) {
+        console.error("Failed to fetch user details:", error);
+        setUserName("Error fetching name");
+      }
+    };
 
+    fetchUserName();
+  }, []);
+  const handleLogout = () => {
+    navigate("/login"); // Redirect to the login page
+  };
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -42,7 +59,7 @@ const ConsultingStaff = () => {
           <Avatar size={64} icon={<UserOutlined />} />
           {!collapsed && (
             <span style={{ color: "white", marginTop: "10px" }}>
-              {userName}
+              {userName} {/* Render the fetched user name here */}
             </span>
           )}
         </div>
@@ -54,23 +71,24 @@ const ConsultingStaff = () => {
             {
               key: "1",
               icon: <HomeOutlined />,
-              label: <Link to="/">Home</Link>, // Link for Home
+              label: <Link to="/cs-dashboard">Home</Link>,
             },
             {
               key: "2",
               icon: <UnorderedListOutlined />,
-              label: <Link to="/TourList">Tour List</Link>, // Link for List Tour
+              label: <Link to="/cs-dashboard/tour-list">Tour List</Link>,
             },
             {
               key: "3",
               icon: <PlusOutlined />,
-              label: <Link to="/OrderList">Order List</Link>, // Link for Add New Order
+              label: <Link to="/cs-dashboard/order-list">Order List</Link>,
             },
             {
               key: "4",
               icon: <LogoutOutlined />,
               label: "Log Out",
               style: { marginTop: "auto" },
+              onClick: handleLogout, // Attach the handleLogout function
             },
           ]}
         />
@@ -102,19 +120,7 @@ const ConsultingStaff = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Routes>
-            {/* Define routes for each page */}
-            <Route
-              path="/"
-              element={<ConsultingStaffHome userName={userName} />}
-            />
-            <Route path="/TourList" element={<TourList />} />
-            <Route path="/OrderList" element={<OrderList />} />
-            <Route path="/koi-details" element={<KoiDetails />} />
-            <Route path="/add-koi" element={<AddKoi />} />
-            <Route path="/tour-details/:bookingId" element={<TourDetails />} />
-            {/* New Route for Tour Details */}
-          </Routes>
+          <Outlet /> {/* Render nested routes here */}
         </Content>
       </Layout>
     </Layout>
