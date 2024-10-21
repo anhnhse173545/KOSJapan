@@ -252,7 +252,7 @@ function CreateTripForm({ onTripCreated, bookingId }) {
   );
 }
 
-export function CustomerRequestJsx() {
+export default function CustomerRequestJsx() {
   const [bookings, setBookings] = useState([])
   const [filteredBookings, setFilteredBookings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -448,14 +448,14 @@ export function CustomerRequestJsx() {
                   <TableCell>{booking.trip ? booking.trip.status : 'No Trip'}</TableCell>
                   <TableCell>
                     <div className="flex flex-col space-y-2">
-                      {booking.trip ? (
+                      {/* {booking.trip ? ( */}
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigate(`/ss-dashboard/view-tripplans/${booking.trip.id}`)}>
+                          onClick={() => navigate(`/ss-dashboard/view-tripplans/${booking.id}`)}>
                           View Trip
                         </Button>
-                      ) : (
+                      {/* ) : ( */}
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
@@ -470,7 +470,7 @@ export function CustomerRequestJsx() {
                             <CreateTripForm onTripCreated={handleTripCreated} bookingId={booking.id} />
                           </DialogContent>
                         </Dialog>
-                      )}
+                      {/* )} */}
                       {booking.trip && (
                         <>
                           <Select
