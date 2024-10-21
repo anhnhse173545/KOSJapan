@@ -47,6 +47,7 @@ import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAss
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
+import CustomerRequestJsx from "./pages/SaleStaff/pages/CustomerRequest";
  
 
 function App() {
@@ -111,8 +112,8 @@ function App() {
       path: "/ss-dashboard",
       element: <SalesStaffDashboard />,
       children: [
-        { path: "my-tripplans", element: <CustomerRequest /> },
-        { path: "view-tripplans/:tripId", element: <ViewTripPlanComponent /> },
+        { path: "my-tripplans", element: <CustomerRequestJsx /> },
+        { path: "view-tripplans/:bookingId", element: <ViewTripPlanComponent /> },
       ],
     },
 

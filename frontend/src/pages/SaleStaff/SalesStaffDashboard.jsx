@@ -56,7 +56,7 @@ export default function SalesStaffDashboard() {
 
   const navItems = [
     { name: 'My Trip Plans', icon: <BarChart className="h-5 w-5" />, path: '/ss-dashboard/my-tripplans' },
-    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans/:tripId' },
+    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans/:bookingId' },
     { name: 'Quotes', icon: <FileText className="h-5 w-5" />, path: '/sales-staff/quotes' },
     { name: 'Orders', icon: <Briefcase className="h-5 w-5" />, path: '/sales-staff/orders' },
     { name: 'Commission', icon: <DollarSign className="h-5 w-5" />, path: '/sales-staff/commission' },
