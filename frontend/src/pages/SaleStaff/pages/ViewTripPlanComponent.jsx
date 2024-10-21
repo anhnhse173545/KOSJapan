@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 import { Calendar, DollarSign, MapPin, Loader2, AlertCircle, Plus, Pencil, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function ViewTripPlanComponent() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
+  const [booking, setBooking] = useState(null)
   const [trip, setTrip] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -47,11 +48,12 @@ export default function ViewTripPlanComponent() {
       fetchTripData()
       fetchFarms()
       fetchVarieties()
+      fetchBooking()
     } else {
       setError('No booking ID provided')
       setLoading(false)
     }
-  }, [bookingId])
+  }, [bookingId], [booking])
 
   const fetchTripData = async () => {
     try {
@@ -105,6 +107,23 @@ export default function ViewTripPlanComponent() {
     }
   }
 
+  const fetchBooking = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/booking/${bookingId}`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      setBooking(data)
+    } catch (err) {
+      console.error('Error fetching booking:', err)
+      toast({
+        title: "Error",
+        description: "Failed to fetch booking",
+        variant: "destructive",
+      })
+    }
+  }
   const handleCreateDestination = async (newDestination) => {
     try {
       if (!trip || !trip.id) {
@@ -123,7 +142,7 @@ export default function ViewTripPlanComponent() {
 
       console.log('Request body:', JSON.stringify(requestBody, null, 2))
 
-      const response = await fetch(`http://localhost:8080/api/trip-destination/${trip.id}/create`, {
+      const response = await fetch(`http://localhost:8080/api/trip-destination/${booking.trip.id}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
