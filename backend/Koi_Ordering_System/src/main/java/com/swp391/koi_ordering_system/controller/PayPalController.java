@@ -116,7 +116,7 @@ public class PayPalController {
     }
 
     @GetMapping("/payment/trippayment/success")
-    private String tripPaymentSuccess(@RequestParam("paymentId") String paymentId,
+    public RedirectView tripPaymentSuccess(@RequestParam("paymentId") String paymentId,
                                      @RequestParam("PayerID") String payerID,
                                      @RequestParam("booking_id") String booking_Id) {
         try {
@@ -128,7 +128,7 @@ public class PayPalController {
                 tripPaymentService.updateTripPaymentUsingPayPal(booking_Id);
 
                 if ("approved".equals(payment.getState())) {
-                    return "paymentSuccess";
+                    return new RedirectView("http://localhost:5173/payment"); // Change PORT if needed
                 }
             } else {
                 log.error("Trip payment not found for bookingId: {}", booking_Id);
@@ -138,7 +138,7 @@ public class PayPalController {
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
-        return "paymentError";
+        return new RedirectView("http://localhost:5173/payment"); // Change PORT if needed
     }
 
     // Fish Payment
@@ -202,7 +202,7 @@ public class PayPalController {
     }
 
     @GetMapping("/payment/fishpayment/success")
-    private String fishPaymentSuccess(@RequestParam("paymentId") String paymentId,
+    private RedirectView fishPaymentSuccess(@RequestParam("paymentId") String paymentId,
                                      @RequestParam("PayerID") String payerID,
                                      @RequestParam("order_id") String order_id) {
         try {
@@ -214,7 +214,7 @@ public class PayPalController {
                 fishPaymentService.updateFishPaymentUsingPayPal(order_id);
 
                 if ("approved".equals(payment.getState())) {
-                    return "paymentSuccess";
+                    return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
                 }
             } else {
                 log.error("Trip payment not found for orderId: {}", order_id);
@@ -224,7 +224,7 @@ public class PayPalController {
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
-        return "paymentError";
+        return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
     }
 
     @GetMapping("/payment/cancel")
