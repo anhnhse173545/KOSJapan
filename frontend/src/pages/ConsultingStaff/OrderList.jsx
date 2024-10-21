@@ -67,7 +67,7 @@ const OrderList = () => {
   };
 
   const handleAddKoi = (orderId, farmId) => {
-    navigate("/add-koi", { state: { orderId, farmId } });
+    navigate("add-koi", { state: { orderId, farmId } });
   };
 
   const handleDeleteOrder = async (record) => {

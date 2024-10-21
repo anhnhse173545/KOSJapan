@@ -138,16 +138,14 @@ function App() {
       path: "/cs-dashboard",
       element: <ConsultingStaff />,
       children: [
-        { path: "", element: <ConsultingStaffHome /> }, // Default home page
+        { path: "h", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
 
-        {
-          path: "order-list",
-          element: <OrderList />,
-          children: [{ path: "add-koi", element: <AddKoi /> }],
-        },
+        { path: "order-list", element: <OrderList /> },
+        { path: "order-list/add-koi", element: <AddKoi /> },
+
         { path: "koi-details", element: <KoiDetails /> },
       ],
     },
