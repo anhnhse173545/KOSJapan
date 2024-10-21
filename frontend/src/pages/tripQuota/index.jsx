@@ -168,10 +168,10 @@ function CompleteTripPage() {
         <button className="back-button" onClick={() => navigate(-1)}>Back</button>
 
         {/* Pay Button */}
-        <button className="pay-button" onClick={handlePay}>Pay</button>
+        <button className="back-button" onClick={handlePay}>Pay</button>
 
         {/* Reject Button */}
-        <button className="reject-button" onClick={handleReject}>Reject</button>
+        <button className="back-button" onClick={handleReject}>Reject</button>
 
         {/* Error Messages if Actions Fail */}
         {errorReject && <p className="error-message">{errorReject}</p>}
