@@ -143,7 +143,10 @@ function App() {
           path: "tour-list",
           element: <TourList />,
           children: [
-            { path: "tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
+            {
+              path: "tour-details/:bookingId",
+              element: <TourDetails />,
+            }, // Dynamic route
           ],
         },
         {
@@ -158,7 +161,7 @@ function App() {
     // { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },
     // { path: "/delivery-staff", element: <DeliveryStaff /> },
-    { path: "/", element: <ConsultingStaffHome /> },
+    // { path: "/", element: <ConsultingStaffHome /> },
     // { path: "/TourList", element: <TourList /> },
     // { path: "/OrderList", element: <OrderList /> },
     // { path: "/koi-details", element: <KoiDetails /> },
