@@ -8,13 +8,14 @@ import {
   ChevronLeft,
   LogOut,
   Bell,
-  Package,
-  Truck,
-  MapPin,
-  ClipboardList,
+  BarChart,
+  Users,
+  FileText,
+  DollarSign,
   Calendar,
   Menu,
-} from 'lucide-react';
+  Briefcase,
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function DeliveryStaffDashboard() {
+export default function SalesStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true)
   const [staff, setStaff] = useState(null)
   const [error, setError] = useState(null)
@@ -35,7 +36,8 @@ export function DeliveryStaffDashboard() {
 
   const fetchStaffDetails = async () => {
     try {
-      const response = await fetch("http://localhost:8080/accounts/AC0003/detail")
+      // Assuming the sales staff has a different account ID, adjust as needed
+      const response = await fetch("http://localhost:8080/accounts/AC0004/detail")
       if (!response.ok) throw new Error('Failed to fetch staff details')
       const data = await response.json()
       console.log("Staff details:", data)
@@ -53,11 +55,12 @@ export function DeliveryStaffDashboard() {
   }, [])
 
   const navItems = [
-    { name: 'My Deliveries', icon: <Package className="h-5 w-5" />, path: '/ds-dashboard/my-deliveries' },
-    { name: 'Route Planner', icon: <Truck className="h-5 w-5" />, path: '/delivery-staff/route-planner' },
-    { name: 'Delivery Map', icon: <MapPin className="h-5 w-5" />, path: '/delivery-staff/delivery-map' },
-    { name: 'Order Details', icon: <ClipboardList className="h-5 w-5" />, path: '/delivery-staff/order-details' },
-    { name: 'Schedule', icon: <Calendar className="h-5 w-5" />, path: '/delivery-staff/schedule' },
+    { name: 'My Trip Plans', icon: <BarChart className="h-5 w-5" />, path: '/ss-dashboard/my-tripplans' },
+    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans' },
+    { name: 'Quotes', icon: <FileText className="h-5 w-5" />, path: '/sales-staff/quotes' },
+    { name: 'Orders', icon: <Briefcase className="h-5 w-5" />, path: '/sales-staff/orders' },
+    { name: 'Commission', icon: <DollarSign className="h-5 w-5" />, path: '/sales-staff/commission' },
+    { name: 'Schedule', icon: <Calendar className="h-5 w-5" />, path: '/sales-staff/schedule' },
   ]
 
   const handleLogout = () => {
@@ -67,7 +70,7 @@ export function DeliveryStaffDashboard() {
   }
 
   return (
-    (<div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Navigation Sidebar */}
       <nav
         className={`flex flex-col justify-between bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out ${
@@ -113,9 +116,7 @@ export function DeliveryStaffDashboard() {
             isNavExpanded ? (
               <div className="flex items-center space-x-3">
                 <Avatar>
-                  <AvatarImage
-                    src={staff.avatar || "/placeholder.svg?height=32&width=32"}
-                    alt={staff.name} />
+                  <AvatarImage src={staff.avatar || "/placeholder.svg?height=32&width=32"} alt={staff.name} />
                   <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
@@ -132,9 +133,7 @@ export function DeliveryStaffDashboard() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="w-full h-auto py-2">
                     <Avatar>
-                      <AvatarImage
-                        src={staff.avatar || "/placeholder.svg?height=32&width=32"}
-                        alt={staff.name} />
+                      <AvatarImage src={staff.avatar || "/placeholder.svg?height=32&width=32"} alt={staff.name} />
                       <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Open user menu</span>
@@ -161,7 +160,7 @@ export function DeliveryStaffDashboard() {
           className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-10">
           <div
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Delivery Staff Dashboard</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Sales Staff Dashboard</h1>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
                 <Bell className="h-5 w-5" />
@@ -179,6 +178,6 @@ export function DeliveryStaffDashboard() {
           </div>
         </main>
       </div>
-    </div>)
-  );
+    </div>
+  )
 }

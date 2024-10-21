@@ -19,18 +19,18 @@ import KoiPage from "./pages/mykoi";
 import KoiDetailPage from "./pages/detailFish";
 import KoiPayPage from "./pages/paykoi";
 import ConsultingStaff from "./pages/ConsultingStaff/ConsultingStaff";
-import SaleStaff from "./pages/SaleStaff/SaleStaff";
-import CustomerRequest from "./pages/SaleStaff/CustomerRequest";
+import SaleStaff from "./pages/SaleStaff/temp/SaleStaff";
+// import CustomerRequest from "./pages/SaleStaff/CustomerRequest";
 import AddKoi from "./pages/ConsultingStaff/AddKoi";
 import ConsultingStaffHome from "./pages/ConsultingStaff/ConsultingStaffHome";
 import KoiDetails from "./pages/ConsultingStaff/KoiDetails";
 import OrderList from "./pages/ConsultingStaff/OrderList"; // Renamed to avoid conflict
 import TourDetails from "./pages/ConsultingStaff/TourDetails";
 import TourList from "./pages/ConsultingStaff/TourList";
- import SaleStaffHome from "./pages/SaleStaff/SaleStaffHome";
+ import SaleStaffHome from "./pages/SaleStaff/temp/SaleStaffHome";
 
  import PaidBooking from "./pages/paidBooking";
-import CreateTrip from "./pages/SaleStaff/ViewTripPlan";
+import CreateTrip from "./pages/SaleStaff/temp/ViewTripPlan";
 import KoiFarmPage from "./pages/koifarmreview";
 
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
@@ -44,6 +44,9 @@ import { ExtendedQuoteReviewComponent } from "./pages/Manager/finals/QuoteReview
 import { DeliveryStaffDashboard } from "./pages/DeliveryStaff/DeliveryStaffDashboard";
 import DeliveryOrderListComponent from "./pages/DeliveryStaff/DeliveryOrderList";
 import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAssign";
+import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
+import CustomerRequest from "./pages/SaleStaff/temp/CustomerRequest";
+import { ViewTripComponent } from "./pages/SaleStaff/temp/ViewTripComponent";
  
 
 function App() {
@@ -104,13 +107,14 @@ function App() {
         { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
       ],
     },
-    // {
-    //   path: "/ss-dashboard",
-    //   element: <SaleStaffDashboard />,
-    //   children: [
-    //     { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
-    //   ],
-    // },
+    {
+      path: "/ss-dashboard",
+      element: <SalesStaffDashboard />,
+      children: [
+        { path: "my-tripplans", element: <CustomerRequest /> },
+        { path: "view-tripplans", element: <ViewTripComponent /> },
+      ],
+    },
 
     { path: "/consulting-staff", element: <ConsultingStaff /> },
     { path: "/sale-staff", element: <SaleStaff /> },

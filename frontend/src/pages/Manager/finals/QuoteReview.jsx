@@ -31,7 +31,7 @@ export function ExtendedQuoteReviewComponent() {
 
   const fetchQuotes = useCallback(async () => {
     setIsLoading(true);
-    const statuses = ['Pending', 'Redo', 'Approved'];
+    const statuses = ['Pending', 'Redo', 'Approved', 'Approved Quote'];
     let allQuotes = [];
     let errors = [];
 
@@ -79,20 +79,48 @@ export function ExtendedQuoteReviewComponent() {
     setExpandedQuoteId(expandedQuoteId === quoteId ? null : quoteId)
   }
 
-  const handleApprove = async (quoteId) => {
+  const handleApproveQuote = async (quoteId) => {
     try {
       const quote = quotes.find(q => q.id === quoteId);
       if (!quote) {
         throw new Error('Quote not found');
       }
-      const newStatus = quote.trip.status === "Approved" ? "Pending" : "Approved";
-      console.log(`handle${newStatus} called for quote:`, quoteId);
+      const newStatus = "Approved Quote";
+      console.log(`handleApproveQuote called for quote:`, quoteId);
 
-      // Update both trip and booking status
+      // Update booking status
       await api.put(`/api/booking/update/${quoteId}`, {
         status: newStatus
       });
 
+      setQuotes(prevQuotes => prevQuotes.map(q => 
+        q.id === quoteId ? {...q, status: newStatus} : q));
+
+      toast({
+        title: "Success",
+        description: `Quote has been approved.`,
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error approving quote:', error);
+      toast({
+        title: "Error",
+        description: "Failed to approve quote. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  const handleApproveTrip = async (quoteId) => {
+    try {
+      const quote = quotes.find(q => q.id === quoteId);
+      if (!quote) {
+        throw new Error('Quote not found');
+      }
+      const newStatus = "Approved";
+      console.log(`handleApproveTrip called for quote:`, quoteId);
+
+      // Update only trip status
       await api.put(`/api/trip/update/${quote.trip.id}`, {
         startDate: quote.trip.startDate,
         endDate: quote.trip.endDate,
@@ -103,18 +131,18 @@ export function ExtendedQuoteReviewComponent() {
       });
 
       setQuotes(prevQuotes => prevQuotes.map(q => 
-        q.id === quoteId ? {...q, status: newStatus, trip: {...q.trip, status: newStatus}} : q));
+         q.id === quoteId ? {...q, trip: {...q.trip, status: newStatus}} : q));
 
       toast({
         title: "Success",
-        description: `Quote has been ${newStatus === "Approved" ? "approved" : "un-approved"}.`,
+        description: `Trip has been approved.`,
         variant: "default",
       });
     } catch (error) {
-      console.error('Error updating quote:', error);
+      console.error('Error approving trip:', error);
       toast({
         title: "Error",
-        description: "Failed to update quote. Please try again.",
+        description: "Failed to approve trip. Please try again.",
         variant: "destructive",
       });
     }
@@ -126,14 +154,10 @@ export function ExtendedQuoteReviewComponent() {
       if (!quote) {
         throw new Error('Quote not found');
       }
-      const newStatus = quote.trip.status === "Redo" ? "Pending" : "Redo";
-      console.log(`handle${newStatus} called for quote:`, quoteId);
+      const newStatus = "Redo";
+      console.log(`handleRedo called for quote:`, quoteId);
 
-      // Update both trip and booking status
-      await api.put(`/api/booking/update/${quoteId}`, {
-        status: newStatus
-      });
-
+      // Update only trip status
       await api.put(`/api/trip/update/${quote.trip.id}`, {
         startDate: quote.trip.startDate,
         endDate: quote.trip.endDate,
@@ -143,19 +167,19 @@ export function ExtendedQuoteReviewComponent() {
         status: newStatus
       });
     
-      setQuotes(prevQuotes => prevQuotes.map(q => 
-        q.id === quoteId ? {...q, status: newStatus, trip: {...q.trip, status: newStatus}} : q));
+       setQuotes(prevQuotes => prevQuotes.map(q => 
+         q.id === quoteId ? {...q, trip: {...q.trip, status: newStatus}} : q));
     
       toast({
         title: "Success",
-        description: `Quote has been ${newStatus === "Redo" ? "set to Redo" : "set back to Pending"} status.`,
+        description: `Trip has been set to Redo status.`,
         variant: "default",
       });
     } catch (error) {
-      console.error('Error updating quote:', error);
+      console.error('Error updating trip status:', error);
       toast({
         title: "Error",
-        description: "Failed to update quote status. Please try again.",
+        description: "Failed to update trip status. Please try again.",
         variant: "destructive",
       });
     }
@@ -348,11 +372,14 @@ export function ExtendedQuoteReviewComponent() {
                               </Card>
                             </CardContent>
                             <CardFooter className="flex justify-end space-x-4">
-                              <Button variant="destructive" onClick={() => handleRedo(quote.id)}>
-                                Redo Quote
-                              </Button>
-                              <Button variant="default" onClick={() => handleApprove(quote.id)}>
+                              <Button variant="default" onClick={() => handleApproveQuote(quote.id)}>
                                 Approve Quote
+                              </Button>
+                              <Button variant="default" onClick={() => handleApproveTrip(quote.id)}>
+                                Approve Trip
+                              </Button>
+                              <Button variant="destructive" onClick={() => handleRedo(quote.id)}>
+                                Redo Trip
                               </Button>
                             </CardFooter>
                           </Card>
