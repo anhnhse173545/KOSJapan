@@ -128,7 +128,10 @@ function App() {
       element: <SalesStaffDashboard />,
       children: [
         { path: "my-tripplans", element: <CustomerRequest /> },
-        { path: "view-tripplans/:tripId", element: <ViewTripPlanComponent /> },
+        {
+          path: "view-tripplans/:bookingId",
+          element: <ViewTripPlanComponent />,
+        },
       ],
     },
     {

@@ -37,10 +37,10 @@ const bookingStatusOptions = [
 ]
 
 const tripStatusOptions = [
-  "Not Started",
-  "In Progress",
+  "Pending",
+  "Approved",
   "Completed",
-  "Canceled"
+  "On-going"
 ]
 
 const formSchema = z.object({
@@ -83,7 +83,7 @@ function CreateTripForm({ onTripCreated, bookingId }) {
   async function onSubmit(values) {
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/booking/${values.bookingId}/create-trip`, {
+      const response = await fetch(`http://localhost:8080/api/booking/${values.bookingId}/create-trip`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

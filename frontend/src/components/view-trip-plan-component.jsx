@@ -31,7 +31,7 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function ViewTripPlanComponent() {
+export function ViewTripPlanComponentComponent() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
   const [trip, setTrip] = useState(null)

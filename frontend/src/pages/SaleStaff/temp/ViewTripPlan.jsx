@@ -35,12 +35,7 @@ const CreateTrip = () => {
         fetchTripCount();
     }, []);
 
-    const generateTripID = (count) => {
-        if (count >= MAX_TRIPS) {
-            throw new Error('Cannot create more trips, limit reached.');
-        }
-        return `TR00${count + 1}`; // Generate new ID
-    };
+   
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form action

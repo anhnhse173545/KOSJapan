@@ -14,13 +14,17 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-@Controller
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
 @RequiredArgsConstructor
 public class PayPalController {
 
@@ -38,112 +42,96 @@ public class PayPalController {
 
     private static final Logger log = LoggerFactory.getLogger(PayPalController.class);
     private final PayPalService payPalService;
-
-    @GetMapping("/PayPal")
-    public String index() {
-        return "index";
-    }
-
-    @GetMapping("/TripPayment")
-    public String indexTripPayment() {
-        return "TripIndex";
-    }
-
-    @GetMapping("/FishPayment")
-    public String indexFishPayment() {
-        return "FishIndex";
-    }
-
-    @GetMapping("/FishPayment/update")
-    public String indexUpdateFishPayment() {
-        return "FishIndex2";
-    }
-
-    @PostMapping("/payment/create")
-    public RedirectView createPayment(@RequestParam("method") String method ,
-                                      @RequestParam("currency") String currency,
-                                      @RequestParam("amount") String amount,
-                                      @RequestParam("description") String description){
-        try {
-            String cancelURl = "http://localhost:8080/payment/cancel";
-            String successURL = "http://localhost:8080/payment/success";
-
-            Payment payment = payPalService.createPayment(
-                    Double.valueOf(amount), currency,
-                    method, "Sale", description,
-                    cancelURl, successURL);
-
-            for(Links link : payment.getLinks()){
-                if(link.getRel().equals("approval_url")){
-                    return new RedirectView(link.getHref());
-                }
-            }
-
-        }
-        catch (PayPalRESTException e) {
-            log.error("Error Occurred: ", e);
-        }
-
-        return new RedirectView("/payment/error");
-    }
-
-    @GetMapping("/payment/success")
-    public String paymentSuccess(@RequestParam("paymentId") String paymentId,
-                                 @RequestParam("PayerID") String PayerID) {
-        try {
-            Payment payment = payPalService.executePayment(paymentId, PayerID);
-            if(payment.getState().equals("approved")){
-                return "paymentSuccess";
-            }
-        }
-        catch (PayPalRESTException e) {
-            log.error("Error Occurred: ", e);
-        }
-        return "paymentSuccess";
-    }
-
-    // Trip Payment
-    @PostMapping("/payment/create-trippayment")
-    public RedirectView createTripPayment(@RequestParam("method") String method,
-                                          @RequestParam("currency") String currency,
-                                          @RequestParam("description") String description,
-                                          @RequestParam("bookingId") String bookingId) {
-        TripPayment tripPayment = tripPaymentService.createTripPaymentUsingPayPal(bookingId);
+    
+//    @PostMapping("/payment/create")
+//    public RedirectView createPayment(@RequestParam("method") String method ,
+//                                      @RequestParam("currency") String currency,
+//                                      @RequestParam("amount") String amount,
+//                                      @RequestParam("description") String description){
+//        try {
+//            String cancelURl = "http://localhost:8080/payment/cancel";
+//            String successURL = "http://localhost:8080/payment/success";
+//
+//            Payment payment = payPalService.createPayment(
+//                    Double.valueOf(amount), currency,
+//                    method, "Sale", description,
+//                    cancelURl, successURL);
+//
+//            for(Links link : payment.getLinks()){
+//                if(link.getRel().equals("approval_url")){
+//                    return new RedirectView(link.getHref());
+//                }
+//            }
+//
+//        }
+//        catch (PayPalRESTException e) {
+//            log.error("Error Occurred: ", e);
+//        }
+//
+//        return new RedirectView("/payment/error");
+//    }
+//
+//    @GetMapping("/payment/success")
+//    public String paymentSuccess(@RequestParam("paymentId") String paymentId,
+//                                 @RequestParam("PayerID") String PayerID) {
+//        try {
+//            Payment payment = payPalService.executePayment(paymentId, PayerID);
+//            if(payment.getState().equals("approved")){
+//                return "paymentSuccess";
+//            }
+//        }
+//        catch (PayPalRESTException e) {
+//            log.error("Error Occurred: ", e);
+//        }
+//        return "paymentSuccess";
+//    }
+    
+    @PostMapping("{booking_id}/payment/api/create-trippayment")
+    public ResponseEntity<?> createAPITripPayment(@PathVariable String booking_id) {
+        TripPayment tripPayment = tripPaymentService.createTripPaymentUsingPayPal(booking_id);
         String cancelUrl = "http://localhost:8080/payment/cancel";
-        String successUrl = "http://localhost:8080/payment/trippayment/success?bookingId=" + bookingId;
+        String successUrl = "http://localhost:8080/payment/trippayment/success?booking_id=" + booking_id;
 
         try {
             Payment payment = payPalService.createPayment(
-                    tripPayment.getAmount(), currency, method, "Sale", description,
+                    tripPayment.getAmount(), "USD", "PayPal", "Sale", "TripPayment",
                     cancelUrl, successUrl);
 
-            return getApprovalRedirect(payment);
+            String approvalUrl = payment.getLinks().stream()
+                    .filter(link -> "approval_url".equals(link.getRel()))
+                    .findFirst()
+                    .map(Links::getHref)
+                    .orElseThrow(() -> new RuntimeException("Approval URL not found"));
+
+            Map<String, String> response = new HashMap<>();
+            response.put("approvalUrl", approvalUrl);
+            return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", bookingId, e.getMessage());
-            return new RedirectView("/payment/error");
+            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", booking_id, e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
-            return new RedirectView("/payment/error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred."));
         }
     }
 
     @GetMapping("/payment/trippayment/success")
-    public String tripPaymentSuccess(@RequestParam("paymentId") String paymentId,
+    private String tripPaymentSuccess(@RequestParam("paymentId") String paymentId,
                                      @RequestParam("PayerID") String payerID,
-                                     @RequestParam("bookingId") String bookingId) {
+                                     @RequestParam("booking_id") String booking_Id) {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerID);
 
-            TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(bookingId);
+            TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(booking_Id);
 
             if (tripPayment != null) {
-                tripPaymentService.updateTripPaymentUsingPayPal(bookingId);
+                tripPaymentService.updateTripPaymentUsingPayPal(booking_Id);
 
                 if ("approved".equals(payment.getState())) {
                     return "paymentSuccess";
                 }
             } else {
-                log.error("Trip payment not found for bookingId: {}", bookingId);
+                log.error("Trip payment not found for bookingId: {}", booking_Id);
             }
         } catch (PayPalRESTException e) {
             log.error("PayPal REST Exception occurred while executing paymentId {}: {}", paymentId, e.getMessage());
@@ -153,85 +141,83 @@ public class PayPalController {
         return "paymentError";
     }
 
-    private RedirectView getApprovalRedirect(Payment payment) {
-        for (Links link : payment.getLinks()) {
-            if ("approval_url".equals(link.getRel())) {
-                return new RedirectView(link.getHref());
-            }
-        }
-        log.error("Approval URL not found in payment links.");
-        return new RedirectView("/payment/error");
-    }
-
     // Fish Payment
-    @PostMapping("/payment/create-fishpayment")
-    public RedirectView createFishPayment(@RequestParam("method") String method,
-                                          @RequestParam("currency") String currency,
-                                          @RequestParam("description") String description,
-                                          @RequestParam("orderId") String orderId) {
-        FishPayment fishPayment = fishPaymentService.createFishPaymentUsingPayPal(orderId);
+    @PostMapping("/{order_id}/payment/api/create-fishpayment")
+    public ResponseEntity<?> createAPIFishPayment(@PathVariable String order_id) {
+        FishPayment fishPayment = fishPaymentService.createFishPaymentUsingPayPal(order_id);
         String cancelUrl = "http://localhost:8080/payment/cancel";
-        String successUrl = "http://localhost:8080/payment/fishpayment/success?orderId=" + orderId;
+        String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
             Payment payment = payPalService.createPayment(
-                    fishPayment.getAmount(), currency, method, "Sale", description,
+                    fishPayment.getAmount()/2, "USD", "PayPal", "Sale", "First Fish Payment",
                     cancelUrl, successUrl);
 
-            return getApprovalRedirect(payment);
+            String approvalUrl = payment.getLinks().stream()
+                    .filter(link -> "approval_url".equals(link.getRel()))
+                    .findFirst()
+                    .map(Links::getHref)
+                    .orElseThrow(() -> new RuntimeException("Approval URL not found"));
+
+            Map<String, String> response = new HashMap<>();
+            response.put("approvalUrl", approvalUrl);
+            return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", orderId, e.getMessage());
-            return new RedirectView("/payment/error");
+            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
-            return new RedirectView("/payment/error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred."));
         }
     }
 
-    @PostMapping("/payment/update-fishpayment")
-    public RedirectView updateFishPayment(@RequestParam("method") String method,
-                                          @RequestParam("currency") String currency,
-                                          @RequestParam("description") String description,
-                                          @RequestParam("orderId") String orderId) {
-        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(orderId);
-        if(fishPayment == null){
-            throw new RuntimeException("Fish payment not found");
-        }
+    @PostMapping("/{order_id}/payment/api/update-fishpayment")
+    public ResponseEntity<?> updateAPIFishPayment(@PathVariable String order_id) {
+        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+
         String cancelUrl = "http://localhost:8080/payment/cancel";
-        String successUrl = "http://localhost:8080/payment/fishpayment/success?orderId=" + orderId;
+        String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
             Payment payment = payPalService.createPayment(
-                    fishPayment.getAmount(), currency, method, "Sale", description,
+                    fishPayment.getAmount()/2, "USD", "PayPal", "Sale", "First Fish Payment",
                     cancelUrl, successUrl);
 
-            return getApprovalRedirect(payment);
+            String approvalUrl = payment.getLinks().stream()
+                    .filter(link -> "approval_url".equals(link.getRel()))
+                    .findFirst()
+                    .map(Links::getHref)
+                    .orElseThrow(() -> new RuntimeException("Approval URL not found"));
+
+            Map<String, String> response = new HashMap<>();
+            response.put("approvalUrl", approvalUrl);
+            return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", orderId, e.getMessage());
-            return new RedirectView("/payment/error");
+            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
-            return new RedirectView("/payment/error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred."));
         }
     }
 
     @GetMapping("/payment/fishpayment/success")
-    public String fishPaymentSuccess(@RequestParam("paymentId") String paymentId,
+    private String fishPaymentSuccess(@RequestParam("paymentId") String paymentId,
                                      @RequestParam("PayerID") String payerID,
-                                     @RequestParam("orderId") String orderId) {
+                                     @RequestParam("order_id") String order_id) {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerID);
 
-            FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(orderId);
+            FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
 
             if (fishPayment != null) {
-                fishPaymentService.updateFishPaymentUsingPayPal(orderId);
+                fishPaymentService.updateFishPaymentUsingPayPal(order_id);
 
                 if ("approved".equals(payment.getState())) {
                     return "paymentSuccess";
                 }
             } else {
-                log.error("Trip payment not found for orderId: {}", orderId);
+                log.error("Trip payment not found for orderId: {}", order_id);
             }
         } catch (PayPalRESTException e) {
             log.error("PayPal REST Exception occurred while executing paymentId {}: {}", paymentId, e.getMessage());
@@ -242,12 +228,12 @@ public class PayPalController {
     }
 
     @GetMapping("/payment/cancel")
-    public String paymentCancel(){
+    private String paymentCancel(){
         return "paymentCancel";
     }
 
     @GetMapping("/payment/error")
-    public String paymentError(){
+    private String paymentError(){
         return "paymentError";
     }
 }

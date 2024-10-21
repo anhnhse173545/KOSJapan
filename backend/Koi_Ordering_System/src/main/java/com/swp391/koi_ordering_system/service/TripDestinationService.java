@@ -44,6 +44,11 @@ public class TripDestinationService {
         tripDestination.setId(generateTripDestinationId());
         tripDestination.setTrip(trip);
         tripDestination.setFarm(farm);
+        tripDestinationRepository.save(tripDestination);
+
+        trip.getTripDestinations().add(tripDestination);
+        tripRepository.save(trip);
+
         return tripDestinationRepository.save(tripDestination);
     }
 

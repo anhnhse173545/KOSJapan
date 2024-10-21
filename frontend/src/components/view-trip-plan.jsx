@@ -1,10 +1,10 @@
-'use client';;
+'use client';
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'next/navigation'
 import { format } from 'date-fns'
-import { Calendar, DollarSign, MapPin } from 'lucide-react'
+import { Calendar, DollarSign, MapPin, Loader2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -18,9 +18,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-export function ViewTripPlan() {
+export function ViewTripPlanComponent() {
   const { tripId } = useParams()
-  const navigate = useNavigate()
   const [trip, setTrip] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -28,7 +27,7 @@ export function ViewTripPlan() {
   useEffect(() => {
     const fetchTripData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/trips/${tripId}`)
+        const response = await fetch(`/api/booking/${tripId}/trip`)
         if (!response.ok) {
           throw new Error('Failed to fetch trip data')
         }
@@ -46,7 +45,11 @@ export function ViewTripPlan() {
   }, [tripId])
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      (<div className="flex justify-center items-center h-screen">
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...
+              </div>)
+    );
   }
 
   if (error) {
@@ -107,36 +110,40 @@ export function ViewTripPlan() {
           <CardTitle className="text-xl font-bold">Trip Destinations</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableCaption>A list of destinations for this trip.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {trip.destinations.map((destination) => (
-                <TableRow key={destination.id}>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <MapPin className="mr-2 h-4 w-4" />
-                      {destination.name}
-                    </div>
-                  </TableCell>
-                  <TableCell>{destination.description}</TableCell>
-                  <TableCell>{format(new Date(destination.startDate), 'PP')}</TableCell>
-                  <TableCell>{format(new Date(destination.endDate), 'PP')}</TableCell>
+          {trip.destinations && trip.destinations.length > 0 ? (
+            <Table>
+              <TableCaption>A list of destinations for this trip.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Start Date</TableHead>
+                  <TableHead>End Date</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {trip.destinations.map((destination) => (
+                  <TableRow key={destination.id}>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        {destination.name}
+                      </div>
+                    </TableCell>
+                    <TableCell>{destination.description}</TableCell>
+                    <TableCell>{format(new Date(destination.startDate), 'PP')}</TableCell>
+                    <TableCell>{format(new Date(destination.endDate), 'PP')}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center">No destinations found for this trip.</div>
+          )}
         </CardContent>
       </Card>
       <div className="flex justify-end">
-        <Button onClick={() => navigate(-1)} variant="outline">Back to Bookings</Button>
+        <Button onClick={() => window.history.back()} variant="outline">Back to Bookings</Button>
       </div>
     </div>)
   );

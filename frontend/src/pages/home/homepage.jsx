@@ -1,14 +1,15 @@
 'use client'
 
 import "./index.css"
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChevronRight, MapPin, Star, Calendar, Users, DollarSign } from 'lucide-react'
+import { useNavigate } from "react-router-dom"
 
 export function HomepageComponent() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
-
+  const navigate = useNavigate();
   const testimonials = [
     { name: "Tanaka Yuki", comment: "KOSJapan helped me find the perfect Koi for my pond. Their expertise is unmatched!" },
     { name: "John Smith", comment: "The farm tour was an incredible experience. I learned so much about Koi breeding." },
@@ -44,7 +45,9 @@ export function HomepageComponent() {
           <p className="text-xl sm:text-2xl mb-8 max-w-2xl !text-white">Embark on an unforgettable journey through Japan's most prestigious Koi farms</p>
           <Button
             size="lg"
-            className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+            className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+            onClick={() => navigate("/koifarmpage")}
+            >
             Explore Koi Farms
           </Button>
         </div>
@@ -202,7 +205,8 @@ export function HomepageComponent() {
           <Button
             size="lg"
             variant="outline"
-            className="bg-white text-red-600 hover:bg-gray-100 text-lg px-8 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+            className="bg-white text-red-600 hover:bg-gray-100 text-lg px-8 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+            onClick={() => navigate("/contact")}>
             Book a Farm Tour
           </Button>
         </div>

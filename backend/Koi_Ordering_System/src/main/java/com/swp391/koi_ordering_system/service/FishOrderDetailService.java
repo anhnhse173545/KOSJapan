@@ -128,7 +128,7 @@ public class FishOrderDetailService {
         }
 
         fishOrderDetailDTO.setId(fishOrderDetail.getId());
-        fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
+        fishOrderDetailDTO.setFish(fishService.mapToDTO(fishOrderDetail.getFish()));
         fishOrderDetailDTO.setPrice(fishOrderDetail.getPrice());
 
         return fishOrderDetailDTO;
@@ -145,7 +145,7 @@ public class FishOrderDetailService {
             FishOrderDetailDTO fishOrderDetailDTO = new FishOrderDetailDTO();
 
             fishOrderDetailDTO.setId(fishOrderDetail.getId());
-            fishOrderDetailDTO.setFish(fishOrderDetail.getFish());
+            fishOrderDetailDTO.setFish(fishService.mapToDTO(fishOrderDetail.getFish()));
             fishOrderDetailDTO.setPrice(fishOrderDetail.getPrice());
 
             fishOrderDetailDTOList.add(fishOrderDetailDTO);
