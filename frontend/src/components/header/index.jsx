@@ -17,11 +17,13 @@ function Header() {
             <li onClick={() => navigate("/payment")}>My Booking</li>
             <li onClick={() => navigate("/contact")}>Request</li>
             <li onClick={() => navigate("/koifarmpage")}>Koi Farm</li>
+            <li onClick={() => navigate("/")}>Koi Fish</li>
+            <li onClick={() => navigate("/")}>About Us</li>
          </ul>
         </div>
          {/* space */}
         <div className="header__right">
-            <div className="header__cart">
+            <div className="header__cart" onClick={() => navigate("/mykoi")}>
                 <span className="number"></span>
             </div>
             <div className="header__account">
