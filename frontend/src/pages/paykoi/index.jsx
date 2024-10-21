@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import './index.scss'; // CSS chung cho toàn ứng dụng
+import './index.css'; // CSS chung cho toàn ứng dụng
 
 function KoiPayPage() {
   return (

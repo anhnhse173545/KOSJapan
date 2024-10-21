@@ -1,4 +1,4 @@
-'use client';
+// import '../styles/index.css'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { format, isValid, parseISO } from 'date-fns'

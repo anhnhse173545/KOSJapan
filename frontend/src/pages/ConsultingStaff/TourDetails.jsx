@@ -200,7 +200,7 @@ const TourDetails = () => {
           )}
         />
       </Card>
-
+      {/* 
       <Card title="Payment Information" className="mb-6">
         <Descriptions bordered>
           <Descriptions.Item label="Payment ID">
@@ -213,7 +213,7 @@ const TourDetails = () => {
             ${bookingData.tripPayment.amount}
           </Descriptions.Item>
         </Descriptions>
-      </Card>
+      </Card> */}
 
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF

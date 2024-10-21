@@ -41,7 +41,7 @@ function PaymentPage() {
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/profile" className={`sidebar-link ${location.pathname === '/profile' ? 'active' : ''}`}>
+            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>
@@ -61,7 +61,7 @@ function PaymentPage() {
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Requested', 'Approved Quote','Paid Booking','On-Going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Requested', 'Approved Quote','Paid Booking','On-going', 'Completed', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -95,7 +95,7 @@ function PaymentPage() {
                         navigate(`/quota/${koi.id}`);
                       } else if (koi.status === 'Request') {
                         navigate(`/payment/${koi.id}`);
-                      } else if (koi.status === 'On-Going') {
+                      } else if (koi.status === 'On-going') {
                         navigate(`/ongoing/${koi.id}`);
                       } else if (koi.status === 'Completed') {
                         navigate(`/ongoing/${koi.id}`);
