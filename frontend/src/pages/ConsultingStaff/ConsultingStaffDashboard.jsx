@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function DeliveryStaffDashboard() {
+export default function ConsultingStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true)
   const [staff, setStaff] = useState(null)
   const [error, setError] = useState(null)

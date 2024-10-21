@@ -47,6 +47,7 @@ import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAss
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
+import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -136,7 +137,7 @@ function App() {
     },
     {
       path: "/cs-dashboard",
-      element: <ConsultingStaff />,
+      element: <ConsultingStaffDashboard />,
       children: [
         { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
