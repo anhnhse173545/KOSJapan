@@ -138,7 +138,7 @@ function App() {
       path: "/cs-dashboard",
       element: <ConsultingStaff />,
       children: [
-        { path: "h", element: <ConsultingStaffHome /> }, // Default home page
+        { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
