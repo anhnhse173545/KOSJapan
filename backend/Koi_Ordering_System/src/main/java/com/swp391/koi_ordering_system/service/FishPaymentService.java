@@ -53,11 +53,16 @@ public class FishPaymentService {
 
     public void updateFishPaymentUsingPayPal(String orderId){
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(orderId);
+        FishOrder fishOrder = orderRepository.findById(orderId).get();
         if(fishPayment.getStatus().equals("Pending")){
             fishPayment.setStatus("Deposited");
+            fishOrder.setStatus("Delivering");
+            orderRepository.save(fishOrder);
         }
         else if(fishPayment.getStatus().equals("Deposited")){
             fishPayment.setStatus("Paid Full");
+            fishOrder.setStatus("Completed");
+            orderRepository.save(fishOrder);
         }
         fishPaymentRepository.save(fishPayment);
     }
