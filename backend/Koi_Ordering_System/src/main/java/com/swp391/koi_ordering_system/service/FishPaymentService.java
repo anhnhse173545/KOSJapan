@@ -21,6 +21,7 @@ public class FishPaymentService {
     @Autowired
     private OrderRepository orderRepository;
 
+
     private static final String PREFIX = "FP";
     private static final int ID_PADDING = 4;
 
@@ -46,6 +47,7 @@ public class FishPaymentService {
 
         fishPaymentRepository.save(fishPayment);
         fishOrder.setFishPayments(fishPayment);
+        fishOrder.setPaymentStatus(fishPayment.getStatus());
         orderRepository.save(fishOrder);
 
         return fishPaymentRepository.save(fishPayment);
@@ -57,13 +59,16 @@ public class FishPaymentService {
         if(fishPayment.getStatus().equals("Pending")){
             fishPayment.setStatus("Deposited");
             fishOrder.setStatus("Delivering");
+            fishOrder.setPaymentStatus(fishPayment.getStatus());
             orderRepository.save(fishOrder);
         }
         else if(fishPayment.getStatus().equals("Deposited")){
             fishPayment.setStatus("Paid Full");
             fishOrder.setStatus("Completed");
+            fishOrder.setPaymentStatus(fishPayment.getStatus());
             orderRepository.save(fishOrder);
         }
+        orderRepository.save(fishOrder);
         fishPaymentRepository.save(fishPayment);
     }
 
