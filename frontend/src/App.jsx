@@ -49,6 +49,8 @@ import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 // import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
+import PaymentTripPage from "./pages/paykoi";
+import PaymentTripPageFull from "./pages/paykoifinished";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -67,11 +69,12 @@ function App() {
         { path: "/onGoing/:id", element: <OnGoingPage /> },
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
-        { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
+        { path: "/paykoi50/:id", element: <PaymentTripPage /> },
+        { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
       ],
     },
 

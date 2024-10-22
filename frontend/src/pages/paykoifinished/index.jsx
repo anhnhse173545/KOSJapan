@@ -2,7 +2,7 @@ import  { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const PaymentTripPage = () => {
+const PaymentTripPageFull = () => {
   const { id } = useParams(); // lấy bookingid từ URL
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ const PaymentTripPage = () => {
   useEffect(() => {
     const createTripPayment = async () => {
       try {
-        const response = await axios.post(`http://localhost:8080/${id}/payment/api/create-fishpayment`);
+        const response = await axios.post(`http://localhost:8080/${id}/payment/api/update-fishpayment`);
         const approvalUrl = response.data.approvalUrl;
 
         if (approvalUrl) {
@@ -31,4 +31,4 @@ const PaymentTripPage = () => {
   return null; // Chúng ta không cần render gì vì đã chuyển hướng
 };
 
-export default PaymentTripPage;
+export default PaymentTripPageFull;

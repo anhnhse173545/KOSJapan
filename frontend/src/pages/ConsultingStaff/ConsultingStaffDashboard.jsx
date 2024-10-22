@@ -14,6 +14,7 @@ import {
   ClipboardList,
   Calendar,
   Menu,
+  Home,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -56,13 +57,18 @@ export default function ConsultingStaffDashboard() {
 
   const navItems = [
     {
+      name: "Home",
+      icon: <Home className="h-5 w-5" />, // Add the Home icon here
+      path: "/cs-dashboard", // Set the path to the root
+    },
+    {
       name: "Tour List",
-      icon: <Package className="h-5 w-5" />,
+      icon: <MapPin className="h-5 w-5" />,
       path: "/cs-dashboard/tour-list",
     },
     {
       name: "Order List",
-      icon: <Truck className="h-5 w-5" />,
+      icon: <ClipboardList className="h-5 w-5" />,
       path: "/cs-dashboard/order-list",
     },
   ];

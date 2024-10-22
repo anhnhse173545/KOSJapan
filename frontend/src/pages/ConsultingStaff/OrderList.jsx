@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
+import "../../styles/Consulting/OrderList.css";
 
 const OrderList = () => {
   const [data, setData] = useState([]);
@@ -396,23 +397,23 @@ const OrderList = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>Fish Order List</h1>
-      <div style={{ marginBottom: "20px", textAlign: "center" }}>
-        <Form form={form} layout="inline">
-          <Form.Item label="Booking ID">
+      <h1 className="order-list-header">Fish Order List</h1>
+      <div className="order-form-container">
+        <Form form={form} layout="inline" className="order-form">
+          <Form.Item label="Booking ID" className="order-form-item">
             <Input
               value={bookingId}
               onChange={(e) => setBookingId(e.target.value)}
               placeholder="Enter Booking ID"
-              style={{ width: 200 }}
+              style={{ width: 250 }}
             />
           </Form.Item>
-          <Form.Item label="Farm ID">
+          <Form.Item label="Farm ID" className="order-form-item">
             <Select
               value={farmId}
               onChange={(value) => setFarmId(value)}
               placeholder="Select Farm"
-              style={{ width: 200 }}
+              style={{ width: 250 }}
             >
               {farms.map((farm) => (
                 <Select.Option key={farm.id} value={farm.id}>
@@ -421,13 +422,14 @@ const OrderList = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item>
+          <Form.Item className="order-form-item">
             <Button type="primary" onClick={handleCreateOrder}>
               Create Order
             </Button>
           </Form.Item>
         </Form>
       </div>
+
       <Table
         columns={columns}
         dataSource={data}
