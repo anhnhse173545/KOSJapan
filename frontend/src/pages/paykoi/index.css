@@ -1,39 +1,19 @@
+.payment-trip-page {
+  text-align: center;
+  margin: 50px;
+}
 
-  
-  .tab.active {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .details-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .fake-payment-page {
-    text-align: center;
-    padding: 50px;
-  }
-  
-  .qr-image {
-    width: 300px;
-    height: 300px;
-  }
-  
-  .back-button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-  
-  .back-button:hover {
-    background-color: #0056b3;
-  }
-  
+.payment-button {
+  background-color: #0070ba;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.payment-button:hover {
+  background-color: #005f9a;
+}

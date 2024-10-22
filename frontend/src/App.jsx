@@ -49,6 +49,7 @@ import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
+import PaymentTripPage from "./pages/paykoi";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,6 +72,7 @@ function App() {
         { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
+        { path: "/paykoi50", element: <PaymentTripPage /> },
       ],
     },
 

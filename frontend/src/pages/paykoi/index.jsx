@@ -1,26 +1,45 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import { Link } from 'react-router-dom';
-import './index.css'; // CSS chung cho toàn ứng dụng
+const PaymentTripPage = () => {
+  const { orderId } = useParams(); // Lấy order ID từ URL
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Để điều hướng
 
-function KoiPayPage() {
+  const handlePayment = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Gọi API để tạo thanh toán
+      const response = await axios.post(`http://localhost:8080/${orderId}/payment/api/create-fishpayment`);
+
+      // Lấy URL chuyển hướng từ phản hồi
+      const { approvalUrl } = response.data;
+
+      // Chuyển hướng đến PayPal
+      window.location.href = approvalUrl;
+    } catch (err) {
+      setError('Failed to create payment. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="fake-payment-page">
-      <h1>Purchase your KOI bill</h1>
-      <p>Please scan the QR code below to pay:</p>
-      <img
-        src="https://qrcode-gen.com/images/qrcode-default.png"
-        alt="QR Code"
-        className="qr-image"
-      />
-      
-      <p>After scanning the code, your order will be processed!</p>
+    <div className="payment-trip-page">
+      <h1>Payment for Order ID: {orderId}</h1>
 
-      {/* Nút để quay lại trang chính hoặc trang thanh toán */}
-      <Link to="/mykoi" className="back-button">
-       back
-      </Link>
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <button onClick={handlePayment} className="payment-button">
+        Proceed to PayPal
+      </button>
     </div>
   );
-}
+};
 
-export default KoiPayPage;
+export default PaymentTripPage;
