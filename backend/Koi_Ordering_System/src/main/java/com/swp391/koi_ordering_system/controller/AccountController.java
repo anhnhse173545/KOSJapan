@@ -34,11 +34,11 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountByRole(role));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody CreateAccountDTO accountDTO) {
-        Account newAccount = accountService.createAccount(accountDTO);
-        return ResponseEntity.ok(accountService.mapToDTO(newAccount));
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<AccountDTO> createAccount(@RequestBody CreateAccountDTO accountDTO) {
+//        Account newAccount = accountService.createAccount(accountDTO);
+//        return ResponseEntity.ok(accountService.mapToDTO(newAccount));
+//    }
 
     @PutMapping("/{account_id}/update")
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable String account_id,
