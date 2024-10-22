@@ -49,6 +49,7 @@ import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
+import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -130,7 +131,11 @@ function App() {
       path: "/ss-dashboard",
       element: <SalesStaffDashboard />,
       children: [
-        { path: "my-tripplans", element: <CustomerRequest /> },
+        { path: "customer-request", element: <CustomerRequest /> },
+        {
+          path: "create-trip/:bookingId",
+          element: <CreateTripForm />,
+        },
         {
           path: "view-tripplans/:bookingId",
           element: <ViewTripPlanComponent />,
