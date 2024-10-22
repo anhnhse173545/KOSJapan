@@ -48,6 +48,7 @@ import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
 import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
+import TripPaymentPage from "./pages/paytrip";
 
 function App() {
   const router = createBrowserRouter([
@@ -69,6 +70,7 @@ function App() {
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/userDetail", element: <UserDetailPage /> },
+        { path: "/paytrip", element: <TripPaymentPage /> },
       ],
     },
 
@@ -139,7 +141,7 @@ function App() {
       path: "/cs-dashboard",
       element: <ConsultingStaffDashboard />,
       children: [
-        { path: "h", element: <ConsultingStaffHome /> }, // Default home page
+        { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route

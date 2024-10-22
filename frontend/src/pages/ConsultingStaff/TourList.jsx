@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, message, Select, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../../styles/Consulting/TourList.css";
 
 const { Option } = Select;
 
@@ -171,9 +172,10 @@ const TourList = () => {
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="tour-list-container">
       <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-        <h1>Customer Tour List</h1>
+        <h1 className="tour-list-header">Customer Tour List</h1>{" "}
+        {/* Apply the class here */}
         <Table
           columns={columns}
           dataSource={tourData}

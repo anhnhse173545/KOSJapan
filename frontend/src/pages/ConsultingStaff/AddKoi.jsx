@@ -87,7 +87,7 @@ const AddKoi = () => {
       message.success(
         "Fish, Fish Packs, and order details created successfully!"
       );
-      navigate("/OrderList");
+      navigate("/cs-dashboard/order-list");
     } catch (error) {
       console.error(
         "Error creating fish, fish packs, and order details:",
