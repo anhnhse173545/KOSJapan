@@ -14,18 +14,23 @@ function KoiPage() {
   useEffect(() => {
     const fetchKoiPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/booking/list'); // Thay bằng API thật của bạn
+        const response = await fetch(`http://localhost:8080/fish-order/customer/AC0007`);
         const data = await response.json();
-        setKoiPayments(data);
+        if (Array.isArray(data)) {
+          setKoiPayments(data);
+        } else {
+          throw new Error('Invalid data structure');
+        }
       } catch (err) {
         setError('Failed to fetch koi payments');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchKoiPayments();
   }, []);
+  
 
   const filteredPayments = koiPayments.filter((payment) =>
     selectedStatus === 'All' ? true : payment.status === selectedStatus
@@ -68,11 +73,11 @@ function KoiPage() {
           <button className={`tab ${selectedStatus === 'All' ? 'active' : ''}`} onClick={() => setSelectedStatus('All')}>
             All
           </button>
-          <button className={`tab ${selectedStatus === 'Requested' ? 'active' : ''}`} onClick={() => setSelectedStatus('Requested')}>
-          Requested
+          <button className={`tab ${selectedStatus === 'Pending' ? 'active' : ''}`} onClick={() => setSelectedStatus('Pending')}>
+          Pending
           </button>
-          <button className={`tab ${selectedStatus === 'On-Going' ? 'active' : ''}`} onClick={() => setSelectedStatus('On-Going')}>
-          On-Going
+          <button className={`tab ${selectedStatus === 'On-going' ? 'active' : ''}`} onClick={() => setSelectedStatus('On-going')}>
+          On-going
           </button>
           <button className={`tab ${selectedStatus === 'Delivered' ? 'active' : ''}`} onClick={() => setSelectedStatus('Delivered')}>
           Delivered
@@ -92,16 +97,17 @@ function KoiPage() {
                 <p>{koi.koi}</p>
                 {koi.quantity && <p>Quantity: {koi.quantity}</p>}
                 {koi.size && <p>Size: {koi.size} cm</p>}
-                <p className="Id Trip">{koi.id}</p>
-                <p className="status">{koi.status}</p>
+                <p className="Id Trip">Koi ID: {koi.id}</p>
+                <p className="Id Farm">Farm ID: {koi.farmId}</p>
+                <p className="status">Status: {koi.status}</p>
                 <p className="price">{koi.price}</p>
 
-                {koi.status === 'Requested' ? (
+                {koi.status === 'Pending' ? (
                   <button
                     className="details-button"
-                    onClick={() => navigate(`/paykoi/${koi.id}`)}
+                    onClick={() => navigate(`/mykoi/${koi.id}`)}
                   >
-                    Purchase
+                    See Details
                   </button>
                 ) : (
                   <button

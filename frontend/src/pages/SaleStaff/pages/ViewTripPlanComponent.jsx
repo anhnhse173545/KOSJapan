@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
 import { Calendar, DollarSign, MapPin, Loader2, AlertCircle, Plus, Pencil, Trash2 } from 'lucide-react'
@@ -28,12 +28,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function ViewTripPlanComponent() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
+  const { toast } = useToast()
+  const [booking, setBooking] = useState(null)
   const [trip, setTrip] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -44,44 +46,54 @@ export default function ViewTripPlanComponent() {
 
   useEffect(() => {
     if (bookingId) {
-      fetchTripData()
-      fetchFarms()
-      fetchVarieties()
+      Promise.all([
+        fetchTripData(),
+        fetchFarms(),
+        fetchVarieties(),
+        fetchBooking()
+      ]).finally(() => setLoading(false))
     } else {
       setError('No booking ID provided')
       setLoading(false)
     }
   }, [bookingId])
 
+  const handleApiResponse = async (response, errorMessage) => {
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `${errorMessage}: ${response.status}`);
+      } else {
+        const text = await response.text();
+        console.error(`Unexpected response:`, text);
+        throw new Error(`${errorMessage}: Unexpected response from server`);
+      }
+    }
+    return response.json();
+  }
+
   const fetchTripData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/booking/${bookingId}/trip`)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
+      const response = await fetch(`/api/booking/${bookingId}/trip`)
+      const data = await handleApiResponse(response, 'Error fetching trip data')
       setTrip(data)
     } catch (err) {
-      setError('Error fetching trip data. Please try again later.')
       console.error('Error fetching trip data:', err)
-    } finally {
-      setLoading(false)
+      setError(err.message)
     }
   }
 
   const fetchFarms = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/farm/list')
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
+      const response = await fetch('/api/farm/list')
+      const data = await handleApiResponse(response, 'Error fetching farms')
       setFarms(data)
     } catch (err) {
       console.error('Error fetching farms:', err)
       toast({
         title: "Error",
-        description: "Failed to fetch farms",
+        description: err.message,
         variant: "destructive",
       })
     }
@@ -89,17 +101,29 @@ export default function ViewTripPlanComponent() {
 
   const fetchVarieties = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/variety/list')
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
+      const response = await fetch('/api/variety/list')
+      const data = await handleApiResponse(response, 'Error fetching varieties')
       setVarieties(data)
     } catch (err) {
       console.error('Error fetching varieties:', err)
       toast({
         title: "Error",
-        description: "Failed to fetch varieties",
+        description: err.message,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const fetchBooking = async () => {
+    try {
+      const response = await fetch(`/api/booking/${bookingId}`)
+      const data = await handleApiResponse(response, 'Error fetching booking')
+      setBooking(data)
+    } catch (err) {
+      console.error('Error fetching booking:', err)
+      toast({
+        title: "Error",
+        description: err.message,
         variant: "destructive",
       })
     }
@@ -121,9 +145,7 @@ export default function ViewTripPlanComponent() {
         description: newDestination.description,
       }
 
-      console.log('Request body:', JSON.stringify(requestBody, null, 2))
-
-      const response = await fetch(`http://localhost:8080/api/trip-destination/${trip.id}/create`, {
+      const response = await fetch(`/api/trip-destination/${trip.id}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,13 +153,7 @@ export default function ViewTripPlanComponent() {
         body: JSON.stringify(requestBody),
       })
 
-      const responseData = await response.json()
-      console.log('Response:', JSON.stringify(responseData, null, 2))
-
-      if (!response.ok) {
-        throw new Error(responseData.message || `HTTP error! status: ${response.status}`)
-      }
-
+      await handleApiResponse(response, 'Error creating destination')
       await fetchTripData()
       toast({
         title: "Success",
@@ -147,7 +163,7 @@ export default function ViewTripPlanComponent() {
       console.error('Error creating destination:', err)
       toast({
         title: "Error",
-        description: err.message || "Failed to create destination. Check console for details.",
+        description: err.message,
         variant: "destructive",
       })
     }
@@ -155,23 +171,18 @@ export default function ViewTripPlanComponent() {
 
   const handleUpdateDestination = async (updatedDestination) => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/trip-destination/${updatedDestination.id}/update`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            farmId: parseInt(updatedDestination.farm.id, 10),
-            visitDate: updatedDestination.visitDate,
-            description: updatedDestination.description,
-          }),
-        }
-      )
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      const response = await fetch(`/api/trip-destination/${updatedDestination.id}/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          farmId: parseInt(updatedDestination.farm.id, 10),
+          visitDate: updatedDestination.visitDate,
+          description: updatedDestination.description,
+        }),
+      })
+      await handleApiResponse(response, 'Error updating destination')
       await fetchTripData()
       toast({
         title: "Success",
@@ -181,7 +192,7 @@ export default function ViewTripPlanComponent() {
       console.error('Error updating destination:', err)
       toast({
         title: "Error",
-        description: "Failed to update destination",
+        description: err.message,
         variant: "destructive",
       })
     }
@@ -189,12 +200,10 @@ export default function ViewTripPlanComponent() {
 
   const handleDeleteDestination = async (destinationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/trip-destination/${destinationId}/delete`, {
+      const response = await fetch(`/api/trip-destination/${destinationId}/delete`, {
         method: 'DELETE',
       })
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      await handleApiResponse(response, 'Error deleting destination')
       await fetchTripData()
       toast({
         title: "Success",
@@ -204,7 +213,7 @@ export default function ViewTripPlanComponent() {
       console.error('Error deleting destination:', err)
       toast({
         title: "Error",
-        description: "Failed to delete destination",
+        description: err.message,
         variant: "destructive",
       })
     }
@@ -304,14 +313,12 @@ export default function ViewTripPlanComponent() {
                     e.preventDefault()
                     const formData = new FormData(e.currentTarget)
                     const destinationData = {
-                      farmId: formData.get('farmId') || '',
+                      farmId: formData.get('farmId'),
                       visitDate: formData.get('visitDate'),
                       description: formData.get('description'),
                     }
                     if (editingDestination) {
-                      handleUpdateDestination(
-                        { ...editingDestination, ...destinationData, farm: { ...editingDestination.farm, id: parseInt(destinationData.farmId, 10) } }
-                      )
+                      handleUpdateDestination({ ...editingDestination, ...destinationData })
                     } else {
                       handleCreateDestination(destinationData)
                     }
@@ -324,15 +331,8 @@ export default function ViewTripPlanComponent() {
                       </Label>
                       <Select
                         name="farmId"
-                        defaultValue={editingDestination?.farm?.id?.toString() || undefined}
-                        required
-                        onValueChange={(value) => {
-                          // This ensures the form's farmId value is updated when a selection is made
-                          const farmIdInput = document.querySelector('input[name="farmId"]');
-                          if (farmIdInput) {
-                            farmIdInput.value = value;
-                          }
-                        }}>
+                        defaultValue={editingDestination?.farm?.id?.toString()}
+                        required>
                         <SelectTrigger className="col-span-3">
                           <SelectValue placeholder="Select a farm" />
                         </SelectTrigger>
@@ -410,6 +410,7 @@ export default function ViewTripPlanComponent() {
                           onClick={() => {
                             setEditingDestination(destination)
                             setIsDialogOpen(true)
+                          
                           }}>
                           <Pencil className="h-4 w-4" />
                         </Button>
