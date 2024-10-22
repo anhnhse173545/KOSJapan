@@ -32,8 +32,9 @@ function KoiPage() {
   }, []);
   
 
-  const filteredPayments = koiPayments.filter((payment) =>
-    selectedStatus === 'All' ? true : payment.status === selectedStatus
+  // Lọc các đơn hàng dựa theo trạng thái được chọn
+  const filteredPayments = koiPayments.filter((koi) =>
+    selectedStatus === 'All' ? true : koi.paymentStatus === selectedStatus
   );
 
   if (loading) {
@@ -50,7 +51,7 @@ function KoiPage() {
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/profile" className={`sidebar-link ${location.pathname === '/profile' ? 'active' : ''}`}>
+            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>
@@ -70,31 +71,18 @@ function KoiPage() {
       {/* Phần hiển thị thanh tabs để lọc */}
       <div className="payment-section">
         <div className="status-tabs">
-          <button className={`tab ${selectedStatus === 'All' ? 'active' : ''}`} onClick={() => setSelectedStatus('All')}>
-            All
-          </button>
-          <button className={`tab ${selectedStatus === 'Pending' ? 'active' : ''}`} onClick={() => setSelectedStatus('Pending')}>
-          Pending
-          </button>
-          <button className={`tab ${selectedStatus === 'Deposited' ? 'active' : ''}`} onClick={() => setSelectedStatus('Deposited')}>
-          Deposited
-          </button>
-          <button className={`tab ${selectedStatus === 'In Transit' ? 'active' : ''}`} onClick={() => setSelectedStatus('In Transit')}>
-          In Transit
-          </button>
-          <button className={`tab ${selectedStatus === 'Delivering' ? 'active' : ''}`} onClick={() => setSelectedStatus('Delivering')}>
-          Delivering
-          </button>
-          <button className={`tab ${selectedStatus === 'Completed' ? 'active' : ''}`} onClick={() => setSelectedStatus('Completed')}>
-          Completed
-          </button>
-
-          <button className={`tab ${selectedStatus === 'Canceled' ? 'active' : ''}`} onClick={() => setSelectedStatus('Canceled')}>
-            Canceled
-          </button>
+          {['All', 'Pending', 'Deposited', 'In Transit', 'Delivering', 'Paid Full', 'Canceled'].map((status) => (
+            <button
+              key={status}
+              className={`tab ${selectedStatus === status ? 'active' : ''}`}
+              onClick={() => setSelectedStatus(status)}
+            >
+              {status}
+            </button>
+          ))}
         </div>
 
-        {/* Phần hiển thị danh sách các payment dựa trên bộ lọc */}
+        {/* Phần hiển thị danh sách các payments dựa trên bộ lọc */}
         <div className="payment-list">
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
@@ -106,24 +94,16 @@ function KoiPage() {
                 {koi.size && <p>Size: {koi.size} cm</p>}
                 <p className="Id Trip">Koi ID: {koi.id}</p>
                 <p className="Id Farm">Farm ID: {koi.farmId}</p>
-                <p className="status">Status: {koi.status}</p>
-                <p className="price">{koi.price}</p>
+                
+                {/* Chỉ hiển thị koi.paymentStatus */}
+                <p className="status">Status: {koi.paymentStatus}</p>
 
-                {koi.status === 'Pending' ? (
-                  <button
-                    className="details-button"
-                    onClick={() => navigate(`/mykoi/${koi.id}`)}
-                  >
-                    See Details
-                  </button>
-                ) : (
-                  <button
-                    className="details-button"
-                    onClick={() => navigate(`/mykoi/${koi.id}`)}
-                  >
-                    See Details
-                  </button>
-                )}
+                <button
+                  className="details-button"
+                  onClick={() => navigate(`/mykoi/${koi.id}`)}
+                >
+                  See Details
+                </button>
               </div>
             </div>
           ))}

@@ -50,6 +50,7 @@ import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
+import PaymentTripPageFull from "./pages/paykoifinished";
 
 function App() {
   const router = createBrowserRouter([
@@ -72,6 +73,7 @@ function App() {
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
+        { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
       ],
     },
 
