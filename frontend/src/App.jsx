@@ -67,12 +67,11 @@ function App() {
         { path: "/onGoing/:id", element: <OnGoingPage /> },
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
-        { path: "/paykoi/:id", element: <KoiPayPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
-        { path: "/paykoi50", element: <PaymentTripPage /> },
+        { path: "/paykoi50/:id", element: <PaymentTripPage /> },
       ],
     },
 

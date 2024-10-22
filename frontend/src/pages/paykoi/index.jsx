@@ -1,45 +1,34 @@
-import React, { useState } from 'react';
+import  { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
 
 const PaymentTripPage = () => {
-  const { orderId } = useParams(); // Lấy order ID từ URL
-  const [loading, setLoading] = useState(false);
+  const { id } = useParams(); // lấy bookingid từ URL
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Để điều hướng
+  
+  useEffect(() => {
+    const createTripPayment = async () => {
+      try {
+        const response = await axios.post(`http://localhost:8080/${id}/payment/api/create-fishpayment`);
+        const approvalUrl = response.data.approvalUrl;
 
-  const handlePayment = async () => {
-    setLoading(true);
-    setError(null);
+        if (approvalUrl) {
+          window.location.href = approvalUrl; // chuyển hướng tới PayPal
+        }
+      } catch (err) {
+        setError('Đã xảy ra lỗi khi tạo thanh toán.');
+        setLoading(false);
+      }
+    };
 
-    try {
-      // Gọi API để tạo thanh toán
-      const response = await axios.post(`http://localhost:8080/${orderId}/payment/api/create-fishpayment`);
+    createTripPayment();
+  }, [id]);
 
-      // Lấy URL chuyển hướng từ phản hồi
-      const { approvalUrl } = response.data;
+  if (loading) return <div>Loading Payment...</div>;
+  if (error) return <div>{error}</div>;
 
-      // Chuyển hướng đến PayPal
-      window.location.href = approvalUrl;
-    } catch (err) {
-      setError('Failed to create payment. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="payment-trip-page">
-      <h1>Payment for Order ID: {orderId}</h1>
-
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      <button onClick={handlePayment} className="payment-button">
-        Proceed to PayPal
-      </button>
-    </div>
-  );
+  return null; // Chúng ta không cần render gì vì đã chuyển hướng
 };
 
 export default PaymentTripPage;
