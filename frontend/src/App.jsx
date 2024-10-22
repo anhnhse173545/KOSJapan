@@ -46,10 +46,10 @@ import DeliveryOrderListComponent from "./pages/DeliveryStaff/DeliveryOrderList"
 import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAssign";
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
-import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
+// import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
-import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
+// import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -132,14 +132,14 @@ function App() {
       element: <SalesStaffDashboard />,
       children: [
         { path: "customer-request", element: <CustomerRequest /> },
-        {
-          path: "create-trip/:bookingId",
-          element: <CreateTripForm />,
-        },
-        {
-          path: "view-tripplans/:bookingId",
-          element: <ViewTripPlanComponent />,
-        },
+        // {
+        //   path: "create-trip/:bookingId",
+        //   element: <CreateTripForm />,
+        // },
+        // {
+        //   path: "view-tripplans/:bookingId",
+        //   element: <ViewTripPlanComponent />,
+        // },
       ],
     },
     {
