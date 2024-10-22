@@ -86,9 +86,15 @@ public class TripPaymentService {
 
     public void updateTripPaymentUsingPayPal(String bookingId){
         TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(bookingId);
-
+        Optional<Booking> findbooking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
+        if (findbooking.isEmpty()) {
+            throw new RuntimeException("Booking not found");
+        }
+        Booking booking = findbooking.get();
+        booking.setStatus("Paid Booking");
         tripPayment.setStatus("Paid Full");
 
+        bookingRepository.save(booking);
         tripPaymentRepository.save(tripPayment);
     }
 

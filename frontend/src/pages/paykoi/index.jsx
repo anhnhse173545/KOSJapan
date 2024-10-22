@@ -1,26 +1,34 @@
+import  { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-import { Link } from 'react-router-dom';
-import './index.scss'; // CSS chung cho toàn ứng dụng
+const PaymentTripPage = () => {
+  const { id } = useParams(); // lấy bookingid từ URL
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const createTripPayment = async () => {
+      try {
+        const response = await axios.post(`http://localhost:8080/${id}/payment/api/create-fishpayment`);
+        const approvalUrl = response.data.approvalUrl;
 
-function KoiPayPage() {
-  return (
-    <div className="fake-payment-page">
-      <h1>Purchase your KOI bill</h1>
-      <p>Please scan the QR code below to pay:</p>
-      <img
-        src="https://qrcode-gen.com/images/qrcode-default.png"
-        alt="QR Code"
-        className="qr-image"
-      />
-      
-      <p>After scanning the code, your order will be processed!</p>
+        if (approvalUrl) {
+          window.location.href = approvalUrl; // chuyển hướng tới PayPal
+        }
+      } catch (err) {
+        setError('Đã xảy ra lỗi khi tạo thanh toán.');
+        setLoading(false);
+      }
+    };
 
-      {/* Nút để quay lại trang chính hoặc trang thanh toán */}
-      <Link to="/mykoi" className="back-button">
-       back
-      </Link>
-    </div>
-  );
-}
+    createTripPayment();
+  }, [id]);
 
-export default KoiPayPage;
+  if (loading) return <div>Loading Payment...</div>;
+  if (error) return <div>{error}</div>;
+
+  return null; // Chúng ta không cần render gì vì đã chuyển hướng
+};
+
+export default PaymentTripPage;

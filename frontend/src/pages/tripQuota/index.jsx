@@ -57,27 +57,78 @@ function CompleteTripPage() {
   };
 
   // Handle pay (change status to "Paid Booking" and navigate to /paykoi/${id})
-  const handlePay = async () => {
+ // Handle pay (create payment and update status to "Paid Booking")
+const handlePay = async () => {
+  try {
+    // Gọi API tạo thanh toán
+    const response = await fetch(`http://localhost:8080/${id}/payment/api/create-trippayment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create payment');
+    }
+
+    const data = await response.json();
+    
+    // Kiểm tra nếu có approvalUrl trong phản hồi
+    if (data.approvalUrl) {
+      // Sau khi tạo thanh toán thành công, cập nhật trạng thái đơn hàng
+      const updateStatusResponse = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...tripData, status: 'Paid Booking' }), // Cập nhật status thành "Paid Booking"
+      });
+
+      if (!updateStatusResponse.ok) {
+        throw new Error('Failed to update booking status to Paid Booking');
+      }
+
+      // Chuyển hướng tới trang PayPal
+      window.location.href = data.approvalUrl;
+    } else {
+      throw new Error('No approval URL received');
+    }
+  } catch (error) {
+    setErrorPay('Error processing the payment: ' + error.message);
+  }
+};
+
+
+  //
+
+  const updateBookingStatus = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...tripData, status: 'Paid Booking' }),
+        body: JSON.stringify({ status: 'Paid Booking' }),
       });
-
+  
       if (!response.ok) {
-        throw new Error('Failed to update status');
+        throw new Error('Failed to update booking status');
       }
-
-      // If the status update is successful, navigate to the payment page
-      navigate(`/paykoi/${id}`);
+  
+      const updatedBooking = await response.json();
+      console.log('Booking updated successfully:', updatedBooking);
     } catch (error) {
-      setErrorPay('Error processing the payment: ' + error.message);
+      console.error('Error updating booking status:', error);
     }
   };
-
+  
+  // Gọi hàm updateBookingStatus sau khi thanh toán thành công
+  const handlePaymentSuccess = async () => {
+    await updateBookingStatus();
+    // Điều hướng hoặc xử lý thêm nếu cần
+    navigate(`/thank-you/${id}`); // Điều hướng tới trang cảm ơn hoặc tương tự
+  };
   // Loading and error handling for both APIs
   if (loadingTrip) {
     return <div>Loading data...</div>;
@@ -168,10 +219,10 @@ function CompleteTripPage() {
         <button className="back-button" onClick={() => navigate(-1)}>Back</button>
 
         {/* Pay Button */}
-        <button className="pay-button" onClick={handlePay}>Pay</button>
+        <button className="back-button" onClick={handlePay}>Pay</button>
 
         {/* Reject Button */}
-        <button className="reject-button" onClick={handleReject}>Reject</button>
+        <button className="back-button" onClick={handleReject}>Reject</button>
 
         {/* Error Messages if Actions Fail */}
         {errorReject && <p className="error-message">{errorReject}</p>}

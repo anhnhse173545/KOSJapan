@@ -12,6 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FishOrderDetailDTO {
     private String id;
-    private Fish fish;
+    private FishDTO fish;
     private Double price;
 }
