@@ -3,6 +3,7 @@ package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.CreateAccountDTO;
 import com.swp391.koi_ordering_system.dto.response.AccountDTO;
+import com.swp391.koi_ordering_system.mapper.AccountMapper;
 import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
@@ -18,13 +19,16 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private AccountMapper accountMapper;
+
     private static final String PREFIX = "AC";
     private static final int ID_PADDING = 4;
 
     public List<AccountDTO> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         return accounts.stream()
-                .map((Account) -> mapToDTO(Account))
+                .map(accountMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -36,8 +40,16 @@ public class AccountService {
     public List<AccountDTO> getAccountByRole(String role) {
         List<Account> accounts = accountRepository.findAccountsByRole(role);
         return accounts.stream()
-                .map((Account) -> mapToDTO(Account))
+                .map(accountMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Account getAccountByPhone(String phone) {
+        Account account = accountRepository.findByPhone(phone);
+        if (account == null) {
+            throw new RuntimeException("Account with phone number " + phone + " not found");
+        }
+        return account;
     }
 
     public Account createAccount(CreateAccountDTO accountDTO) {
@@ -74,7 +86,6 @@ public class AccountService {
         acc.setPassword(accountDTO.getPassword());
         acc.setPhone(accountDTO.getPhone());
         acc.setAddress(accountDTO.getAddress());
-        acc.setProfileImg(accountDTO.getProfile_image());
         acc.setRole(accountDTO.getRole());
 
         return accountRepository.save(acc);
@@ -100,7 +111,6 @@ public class AccountService {
         accountDTO.setName(account.getName());
         accountDTO.setEmail(account.getEmail());
         accountDTO.setPhone(account.getPhone());
-        accountDTO.setProfile_image(account.getProfileImg());
         accountDTO.setRole(account.getRole());
 
         return accountDTO;
