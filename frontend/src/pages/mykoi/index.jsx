@@ -76,12 +76,19 @@ function KoiPage() {
           <button className={`tab ${selectedStatus === 'Pending' ? 'active' : ''}`} onClick={() => setSelectedStatus('Pending')}>
           Pending
           </button>
-          <button className={`tab ${selectedStatus === 'On-going' ? 'active' : ''}`} onClick={() => setSelectedStatus('On-going')}>
-          On-going
+          <button className={`tab ${selectedStatus === 'Deposited' ? 'active' : ''}`} onClick={() => setSelectedStatus('Deposited')}>
+          Deposited
           </button>
-          <button className={`tab ${selectedStatus === 'Delivered' ? 'active' : ''}`} onClick={() => setSelectedStatus('Delivered')}>
-          Delivered
+          <button className={`tab ${selectedStatus === 'In Transit' ? 'active' : ''}`} onClick={() => setSelectedStatus('In Transit')}>
+          In Transit
           </button>
+          <button className={`tab ${selectedStatus === 'Delivering' ? 'active' : ''}`} onClick={() => setSelectedStatus('Delivering')}>
+          Delivering
+          </button>
+          <button className={`tab ${selectedStatus === 'Completed' ? 'active' : ''}`} onClick={() => setSelectedStatus('Completed')}>
+          Completed
+          </button>
+
           <button className={`tab ${selectedStatus === 'Canceled' ? 'active' : ''}`} onClick={() => setSelectedStatus('Canceled')}>
             Canceled
           </button>
