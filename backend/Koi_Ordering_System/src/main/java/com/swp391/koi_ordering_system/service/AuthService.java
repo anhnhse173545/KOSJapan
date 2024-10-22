@@ -49,6 +49,7 @@ public class AuthService {
         account.setName(registerRequestDTO.getName());
         account.setEmail(registerRequestDTO.getEmail());
         account.setAddress(registerRequestDTO.getAddress());
+        account.setRole(registerRequestDTO.getRole());
 
         accountRepository.save(account);
     }

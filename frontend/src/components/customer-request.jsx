@@ -87,7 +87,6 @@ function CreateTripForm({ onTripCreated, bookingId }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           startDate: values.startDate.toISOString(),
