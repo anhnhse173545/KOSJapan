@@ -51,6 +51,7 @@ import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDas
 import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
 import PaymentTripPageFull from "./pages/paykoifinished";
+import OrderListComponent from "./components/order-list";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -78,28 +79,7 @@ function App() {
       ],
     },
 
-    {
-      path: "/manager-dashboard",
-      element: <ManagerDashboard />,
-      children: [
-        { path: "dashboard", element: <DashboardOverview /> },
-        { path: "staff-manager", element: <StaffManagerView /> },
-        { path: "booking-manager", element: <BookingManagerComponent /> },
-        {
-          path: "sales-staff-assignment",
-          element: <SalesStaffManagementComponent />,
-        },
-        {
-          path: "consulting-staff-assignment",
-          element: <ConsultingStaffAssignmentComponent />,
-        },
-        {
-          path: "delivery-staff-assignment",
-          element: <DeliveryStaffAssignment />,
-        },
-        { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
-      ],
-    },
+    
 
     {
       path: "/manager-dashboard",
@@ -151,10 +131,13 @@ function App() {
       children: [
         { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
+        
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
 
         { path: "order-list", element: <OrderList /> },
+        // { path: "order-list", element: <OrderListComponent /> },
+
         { path: "order-list/add-koi", element: <AddKoi /> },
 
         { path: "koi-details", element: <KoiDetails /> },
