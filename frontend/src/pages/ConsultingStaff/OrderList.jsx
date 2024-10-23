@@ -20,9 +20,11 @@ const OrderList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [farms, setFarms] = useState([]);
+  const [bookings, setBookings] = useState([]); // State to store booking data
   const [form] = Form.useForm();
-  const [bookingId, setBookingId] = useState("");
-  const [farmId, setFarmId] = useState("");
+  const [bookingId, setBookingId] = useState(""); // Selected booking ID
+  const [farmId, setFarmId] = useState(""); // Selected farm ID
+  const [deliveryAddress, setDeliveryAddress] = useState(""); // Delivery address
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -50,9 +52,39 @@ const OrderList = () => {
     }
   };
 
+  // Fetch bookings
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/booking/consulting-staff/AC0004"
+      );
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching booking list:", error);
+      message.error("Failed to load booking data.");
+    }
+  };
+
+  // Fetch data on component mount
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          "http://localhost:8080/fish-order/consulting-staff/AC0004"
+        );
+        console.log("Response data:", response.data); // Add this line to inspect the data
+        setData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        message.error("Failed to load order data.");
+        setLoading(false);
+      }
+    };
     fetchOrders();
     fetchFarms();
+    fetchBookings(); // Fetch bookings when component loads
   }, []);
 
   const calculateTotalPrice = (record) => {
@@ -143,11 +175,18 @@ const OrderList = () => {
 
   const handleCreateOrder = async () => {
     try {
+      const payload = {
+        deliveryAddress, // Include the delivery address in the payload
+      };
+
+      // API request to create the order
       const response = await axios.post(
-        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`
+        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
+        payload
       );
+
       message.success(`Order created with ID: ${response.data.id}`);
-      fetchOrders();
+      fetchOrders(); // Refresh orders list after successful creation
     } catch (error) {
       console.error("Error creating order:", error);
       if (error.response) {
@@ -201,19 +240,30 @@ const OrderList = () => {
       dataIndex: "id",
       key: "id",
       sorter: (a, b) => a.id - b.id,
+      width: 100, // Narrower
     },
     {
       title: "Farm ID",
       dataIndex: "farmId",
       key: "farmId",
       sorter: (a, b) => a.farmId.localeCompare(b.farmId),
+      width: 120, // Narrower
     },
     {
       title: "Booking ID",
       dataIndex: "bookingId",
       key: "bookingId",
       sorter: (a, b) => a.bookingId.localeCompare(b.bookingId),
+      width: 120, // Narrower
     },
+    {
+      title: "Delivery Address",
+      dataIndex: "deliveryAddress",
+      key: "deliveryAddress",
+      render: (deliveryAddress) => deliveryAddress || "N/A",
+      width: 275,
+    },
+
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
@@ -224,15 +274,18 @@ const OrderList = () => {
           text={paymentStatus || "Pending"}
         />
       ),
+      width: 150, // Adjust as needed
     },
     {
       title: "Total Price",
       key: "total",
       render: (_, record) => <span>{calculateTotalPrice(record)}</span>,
+      width: 150, // Adjust as needed
     },
     {
       title: "Action",
       key: "action",
+      width: 180, // Narrow the Action column
       render: (_, record) => (
         <>
           <Button
@@ -255,7 +308,7 @@ const OrderList = () => {
             type="danger"
             icon={<DeleteOutlined />}
             onClick={() => handleDeleteOrder(record)}
-          ></Button>
+          />
         </>
       ),
     },
@@ -269,12 +322,12 @@ const OrderList = () => {
     },
     {
       title: "Fish ID",
-      dataIndex: ["fish", "id"],
+      dataIndex: ["fish", "fish_id"], // Corrected field for Fish ID
       key: "fishId",
     },
     {
       title: "Variety",
-      dataIndex: ["fish", "variety", "name"],
+      dataIndex: ["fish", "fish_variety_name"], // Corrected field for Variety name
       key: "variety",
     },
     {
@@ -400,14 +453,23 @@ const OrderList = () => {
       <h1 className="order-list-header">Fish Order List</h1>
       <div className="order-form-container">
         <Form form={form} layout="inline" className="order-form">
+          {/* Booking ID Select */}
           <Form.Item label="Booking ID" className="order-form-item">
-            <Input
+            <Select
               value={bookingId}
-              onChange={(e) => setBookingId(e.target.value)}
-              placeholder="Enter Booking ID"
+              onChange={(value) => setBookingId(value)}
+              placeholder="Select Booking ID"
               style={{ width: 250 }}
-            />
+            >
+              {bookings.map((booking) => (
+                <Select.Option key={booking.id} value={booking.id}>
+                  {booking.id}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
+
+          {/* Farm ID Select */}
           <Form.Item label="Farm ID" className="order-form-item">
             <Select
               value={farmId}
@@ -422,6 +484,17 @@ const OrderList = () => {
               ))}
             </Select>
           </Form.Item>
+
+          {/* Delivery Address Input */}
+          <Form.Item label="Delivery Address" className="order-form-item">
+            <Input
+              value={deliveryAddress}
+              onChange={(e) => setDeliveryAddress(e.target.value)}
+              placeholder="Enter Delivery Address"
+              style={{ width: 250 }}
+            />
+          </Form.Item>
+
           <Form.Item className="order-form-item">
             <Button type="primary" onClick={handleCreateOrder}>
               Create Order

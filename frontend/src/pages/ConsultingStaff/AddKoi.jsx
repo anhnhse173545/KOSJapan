@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Space, Select } from "antd";
+import { Form, Input, InputNumber, Button, message, Space, Select } from "antd"; // Import InputNumber
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
+import "../../styles/Consulting/AddKoi.css";
 const { Option } = Select;
 
 const AddKoi = () => {
@@ -45,7 +45,6 @@ const AddKoi = () => {
     setLoading(true);
 
     try {
-      // Add individual fish
       for (const fishOrderDetail of values.fishOrderDetails || []) {
         const payload = {
           variety_id: fishOrderDetail.variety_id,
@@ -56,15 +55,12 @@ const AddKoi = () => {
           price: fishOrderDetail.price,
         };
 
-        console.log("Fish Payload to send:", payload);
-
         await axios.post(
           "http://localhost:8080/order-detail/create-fish-and-order-detail",
           payload
         );
       }
 
-      // Add fish packs
       for (const fishPackOrderDetail of values.fishPackOrderDetails || []) {
         const payload = {
           orderId: orderId,
@@ -75,8 +71,6 @@ const AddKoi = () => {
           quantity: fishPackOrderDetail.quantity,
           packOrderDetailPrice: fishPackOrderDetail.packOrderDetailPrice,
         };
-
-        console.log("Fish Pack Payload to send:", payload);
 
         await axios.post(
           "http://localhost:8080/Koi-pack-Order-detail/create-fish-pack-and-fish-pack-order-detail",
@@ -89,30 +83,17 @@ const AddKoi = () => {
       );
       navigate("/cs-dashboard/order-list");
     } catch (error) {
-      console.error(
-        "Error creating fish, fish packs, and order details:",
-        error
-      );
-
       let errorMessage =
         "Failed to create fish, fish packs, and order details: ";
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         errorMessage +=
           error.response.data?.message ||
           error.response.data ||
           error.response.statusText;
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
       } else if (error.request) {
-        // The request was made but no response was received
         errorMessage +=
           "No response received from server. Please check your network connection.";
-        console.error("Request:", error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         errorMessage += error.message;
       }
 
@@ -160,9 +141,16 @@ const AddKoi = () => {
                     name={[name, "length"]}
                     fieldKey={[fieldKey, "length"]}
                     label="Length (cm)"
-                    rules={[{ required: true, message: "Please enter Length" }]}
+                    rules={[
+                      { required: true, message: "Please enter Length" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Length must be positive",
+                      },
+                    ]}
                   >
-                    <Input placeholder="Length" type="number" />
+                    <InputNumber placeholder="Length" />
                   </Form.Item>
 
                   <Form.Item
@@ -170,9 +158,16 @@ const AddKoi = () => {
                     name={[name, "weight"]}
                     fieldKey={[fieldKey, "weight"]}
                     label="Weight (kg)"
-                    rules={[{ required: true, message: "Please enter Weight" }]}
+                    rules={[
+                      { required: true, message: "Please enter Weight" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Weight must be positive",
+                      },
+                    ]}
                   >
-                    <Input placeholder="Weight" type="number" />
+                    <InputNumber placeholder="Weight" />
                   </Form.Item>
 
                   <Form.Item
@@ -189,9 +184,16 @@ const AddKoi = () => {
                     name={[name, "price"]}
                     fieldKey={[fieldKey, "price"]}
                     label="Price"
-                    rules={[{ required: true, message: "Please enter Price" }]}
+                    rules={[
+                      { required: true, message: "Please enter Price" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Price must be positive",
+                      },
+                    ]}
                   >
-                    <Input placeholder="Price" type="number" />
+                    <InputNumber placeholder="Price" />
                   </Form.Item>
 
                   <MinusCircleOutlined onClick={() => remove(name)} />
@@ -244,9 +246,16 @@ const AddKoi = () => {
                     name={[name, "length"]}
                     fieldKey={[fieldKey, "length"]}
                     label="Length (cm)"
-                    rules={[{ required: true, message: "Please enter Length" }]}
+                    rules={[
+                      { required: true, message: "Please enter Length" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Length must be positive",
+                      },
+                    ]}
                   >
-                    <Input placeholder="Length" type="number" />
+                    <InputNumber placeholder="Length" />
                   </Form.Item>
 
                   <Form.Item
@@ -254,9 +263,16 @@ const AddKoi = () => {
                     name={[name, "weight"]}
                     fieldKey={[fieldKey, "weight"]}
                     label="Weight (kg)"
-                    rules={[{ required: true, message: "Please enter Weight" }]}
+                    rules={[
+                      { required: true, message: "Please enter Weight" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Weight must be positive",
+                      },
+                    ]}
                   >
-                    <Input placeholder="Weight" type="number" />
+                    <InputNumber placeholder="Weight" />
                   </Form.Item>
 
                   <Form.Item
@@ -275,21 +291,31 @@ const AddKoi = () => {
                     label="Quantity"
                     rules={[
                       { required: true, message: "Please enter Quantity" },
+                      {
+                        type: "number",
+                        min: 1,
+                        message: "Quantity must be at least 1",
+                      },
                     ]}
                   >
-                    <Input placeholder="Quantity" type="number" />
+                    <InputNumber placeholder="Quantity" />
                   </Form.Item>
 
                   <Form.Item
                     {...restField}
                     name={[name, "packOrderDetailPrice"]}
                     fieldKey={[fieldKey, "packOrderDetailPrice"]}
-                    label="Pack Price"
+                    label="Price"
                     rules={[
-                      { required: true, message: "Please enter Pack Price" },
+                      { required: true, message: "Please enter Price" },
+                      {
+                        type: "number",
+                        min: 0,
+                        message: "Price must be positive",
+                      },
                     ]}
                   >
-                    <Input placeholder="Pack Price" type="number" />
+                    <InputNumber placeholder="Price" />
                   </Form.Item>
 
                   <MinusCircleOutlined onClick={() => remove(name)} />
@@ -311,7 +337,7 @@ const AddKoi = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading}>
-            Submit Fish and Fish Pack Details
+            Submit
           </Button>
         </Form.Item>
       </Form>
