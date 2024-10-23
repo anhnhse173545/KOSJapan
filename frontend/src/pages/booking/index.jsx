@@ -61,7 +61,7 @@ function PaymentPage() {
       {/* Status Tabs */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Requested', 'Approved Quote','Paid Booking','On-going', 'Completed', 'Canceled'].map((status) => (
+          {['All', 'Requested', 'Approved Quote','Paid Booking','On-going','Order Prepare', 'Completed', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -94,15 +94,17 @@ function PaymentPage() {
                       if (koi.status === 'Approved Quote') {
                         navigate(`/quota/${koi.id}`);
                       } else if (koi.status === 'Request') {
-                        navigate(`/payment/${koi.id}`);
+                        navigate(`/request/${koi.id}`);
                       } else if (koi.status === 'On-going') {
                         navigate(`/ongoing/${koi.id}`);
                       } else if (koi.status === 'Completed') {
                         navigate(`/ongoing/${koi.id}`);
                       } else if (koi.status === 'Paid Booking') {
-                        navigate(`/paidbooking/${koi.id}`);
+                        navigate(`/ongoing/${koi.id}`);
+                      } else if (koi.status === 'Order Prepare') {
+                        navigate(`/ongoing/${koi.id}`);
                       } else {
-                        navigate(`/payment/${koi.id}`);
+                        navigate(`/request/${koi.id}`);
                       }
                     }}
                   >

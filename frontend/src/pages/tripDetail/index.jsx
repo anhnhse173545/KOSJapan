@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import "./index.scss";
+import "./tripdetail.css";
 
 function PaymentDetailsPage() {
   const { id } = useParams(); // Get the ID from the URL

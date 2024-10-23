@@ -106,6 +106,20 @@ function CompleteTripPage() {
           <div className="section">No sales staff information available.</div>
         )}
 
+
+        {tripData.consultingStaff ? (
+          <div className="section">
+            <h3>Consulting Staff Information</h3>
+            <p><strong>ID:</strong> {tripData.saleStaff.id}</p>
+            <p><strong>Name:</strong> {tripData.saleStaff.name}</p>
+            <p><strong>Email:</strong> {tripData.saleStaff.email || 'N/A'}</p>
+            <p><strong>Phone:</strong> {tripData.saleStaff.phone || 'N/A'}</p>
+          </div>
+        ) : (
+          <div className="section">No Consulting staff information available.</div>
+        )}
+
+
         {/* Thông tin chuyến đi */}
         {tripData.trip ? (
           <div className="section">
