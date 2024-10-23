@@ -46,10 +46,12 @@ import DeliveryOrderListComponent from "./pages/DeliveryStaff/DeliveryOrderList"
 import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAssign";
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
-import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
+// import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
+import PaymentTripPageFull from "./pages/paykoifinished";
+// import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -72,6 +74,7 @@ function App() {
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
+        { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
       ],
     },
 
@@ -131,11 +134,15 @@ function App() {
       path: "/ss-dashboard",
       element: <SalesStaffDashboard />,
       children: [
-        { path: "my-tripplans", element: <CustomerRequest /> },
-        {
-          path: "view-tripplans/:bookingId",
-          element: <ViewTripPlanComponent />,
-        },
+        { path: "customer-request", element: <CustomerRequest /> },
+        // {
+        //   path: "create-trip/:bookingId",
+        //   element: <CreateTripForm />,
+        // },
+        // {
+        //   path: "view-tripplans/:bookingId",
+        //   element: <ViewTripPlanComponent />,
+        // },
       ],
     },
     {
