@@ -441,7 +441,7 @@ const CreateOrEditTripModal = ({ isOpen, onClose, booking, onTripCreated, showDe
   );
 }
 
-export default function CustomerRequestManagement() {
+export function CustomerRequestManagementComponent() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)

@@ -46,10 +46,13 @@ import DeliveryOrderListComponent from "./pages/DeliveryStaff/DeliveryOrderList"
 import { DeliveryStaffAssignment } from "./pages/Manager/finals/DeliveryStaffAssign";
 import SalesStaffDashboard from "./pages/SaleStaff/SalesStaffDashboard";
 import CustomerRequest from "./pages/SaleStaff/pages/CustomerRequest";
-import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
+// import ViewTripPlanComponent from "./pages/SaleStaff/pages/ViewTripPlanComponent";
 import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDashboard";
 import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
+import PaymentTripPageFull from "./pages/paykoifinished";
+import OrderListComponent from "./components/order-list";
+// import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -72,31 +75,11 @@ function App() {
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
+        { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
       ],
     },
 
-    {
-      path: "/manager-dashboard",
-      element: <ManagerDashboard />,
-      children: [
-        { path: "dashboard", element: <DashboardOverview /> },
-        { path: "staff-manager", element: <StaffManagerView /> },
-        { path: "booking-manager", element: <BookingManagerComponent /> },
-        {
-          path: "sales-staff-assignment",
-          element: <SalesStaffManagementComponent />,
-        },
-        {
-          path: "consulting-staff-assignment",
-          element: <ConsultingStaffAssignmentComponent />,
-        },
-        {
-          path: "delivery-staff-assignment",
-          element: <DeliveryStaffAssignment />,
-        },
-        { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
-      ],
-    },
+    
 
     {
       path: "/manager-dashboard",
@@ -131,11 +114,15 @@ function App() {
       path: "/ss-dashboard",
       element: <SalesStaffDashboard />,
       children: [
-        { path: "my-tripplans", element: <CustomerRequest /> },
-        {
-          path: "view-tripplans/:bookingId",
-          element: <ViewTripPlanComponent />,
-        },
+        { path: "customer-request", element: <CustomerRequest /> },
+        // {
+        //   path: "create-trip/:bookingId",
+        //   element: <CreateTripForm />,
+        // },
+        // {
+        //   path: "view-tripplans/:bookingId",
+        //   element: <ViewTripPlanComponent />,
+        // },
       ],
     },
     {
@@ -144,10 +131,13 @@ function App() {
       children: [
         { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
+        
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
 
         { path: "order-list", element: <OrderList /> },
+        // { path: "order-list", element: <OrderListComponent /> },
+
         { path: "order-list/add-koi", element: <AddKoi /> },
 
         { path: "koi-details", element: <KoiDetails /> },
