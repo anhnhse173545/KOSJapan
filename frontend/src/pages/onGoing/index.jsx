@@ -1,18 +1,16 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import './ongoing.scss';
+import { User, Mail, Phone, Calendar, MapPin, DollarSign, Tag, Briefcase, Plane, Fish, ArrowLeft } from 'lucide-react';
 
-function CompleteTripPage() {
-  const { id } = useParams(); // Lấy ID từ URL
+export default function CompleteTripPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  // State cho dữ liệu chuyến đi
   const [tripData, setTripData] = useState(null);
   const [loadingTrip, setLoadingTrip] = useState(true);
   const [errorTrip, setErrorTrip] = useState(null);
-  const [errorReject, setErrorReject] = useState(null); // Xử lý lỗi cho hành động từ chối
-  const [errorPay, setErrorPay] = useState(null); // Xử lý lỗi cho hành động thanh toán
+  const [errorReject, setErrorReject] = useState(null);
+  const [errorPay, setErrorPay] = useState(null);
 
-  // Fetch dữ liệu chuyến đi dựa trên ID từ URL
   useEffect(() => {
     fetch(`http://localhost:8080/api/booking/get/${id}`)
       .then((response) => {
@@ -31,22 +29,18 @@ function CompleteTripPage() {
       });
   }, [id]);
 
-  // Hàm từ chối (thay đổi trạng thái thành "Canceled")
-
-  // Hàm để render chi tiết đơn đặt hàng cá
   const renderFishOrderDetails = (fishOrderDetails) => (
-    <div className="fish-order-section">
-      <h3>Fish Orders</h3>
+    <div className="space-y-4">
       {fishOrderDetails.map((order) => (
-        <div key={order.id} className="fish-order">
-          <h4>Order ID: {order.id}</h4>
+        <div key={order.id} className="bg-white p-4 rounded-lg shadow">
+          <h4 className="text-lg font-semibold mb-2">Order ID: {order.id}</h4>
           {order.fishOrderDetails.map((detail) => (
-            <div key={detail.id}>
-              <p><strong>Fish Variety:</strong> {detail.fish.variety.name}</p>
-              <p><strong>Description:</strong> {detail.fish.description}</p>
-              <p><strong>Length:</strong> {detail.fish.length} cm</p>
-              <p><strong>Weight:</strong> {detail.fish.weight} kg</p>
-              <p><strong>Price:</strong> ${detail.fish_price}</p>
+            <div key={detail.id} className="ml-4 space-y-1">
+              <p><span className="font-medium">Fish Variety:</span> {detail.fish.fish_variety_name}</p>
+              <p><span className="font-medium">Description:</span> {detail.fish.description}</p>
+              <p><span className="font-medium">Length:</span> {detail.fish.length} cm</p>
+              <p><span className="font-medium">Weight:</span> {detail.fish.weight} kg</p>
+              <p><span className="font-medium">Price:</span> ${detail.price}</p>
             </div>
           ))}
         </div>
@@ -54,141 +48,165 @@ function CompleteTripPage() {
     </div>
   );
 
-  // Hàm để render chi tiết gói cá
   const renderFishPackOrderDetails = (fishPackOrderDetails) => (
-    <div className="fish-pack-order-section">
-      <h3>Fish Pack Orders</h3>
+    <div className="space-y-4">
       {fishPackOrderDetails.map((pack) => (
-        <div key={pack.id}>
-          <h4>Fish Pack ID: {pack.id}</h4>
-          <p><strong>Description:</strong> {pack.fishPack.description}</p>
-          <p><strong>Quantity:</strong> {pack.fishPack.quantity}</p>
-          <p><strong>Price:</strong> ${pack.price}</p>
+        <div key={pack.id} className="bg-white p-4 rounded-lg shadow">
+          <h4 className="text-lg font-semibold mb-2">Fish Pack ID: {pack.id}</h4>
+          <p><span className="font-medium">Description:</span> {pack.fishPack.description}</p>
+          <p><span className="font-medium">Quantity:</span> {pack.fishPack.quantity}</p>
+          <p><span className="font-medium">Price:</span> ${pack.price}</p>
         </div>
       ))}
     </div>
   );
 
-  // Kiểm tra trạng thái loading và lỗi
   if (loadingTrip) {
-    return <div>Loading data...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-gray-700">Loading data...</div>
+      </div>
+    );
   }
 
   if (errorTrip) {
-    return <div>Error loading trip data: {errorTrip.message}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-red-600">Error loading trip data: {errorTrip.message}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="complete-trip-page">
-      <h2>Booking Details for ID: {id}</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-blue-600 text-white p-6">
+          <h2 className="text-3xl font-bold">Booking Details for ID: {id}</h2>
+        </div>
+        
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-xl font-semibold mb-4 flex items-center">
+              <User className="mr-2 text-blue-600" />
+              Customer Information
+            </h3>
+            <p><span className="font-medium">Name:</span> {tripData.customer.name}</p>
+            <p><span className="font-medium">Email:</span> {tripData.customer.email || 'N/A'}</p>
+            <p><span className="font-medium">Phone:</span> {tripData.customer.phone || 'N/A'}</p>
+            <p><span className="font-medium">Description:</span> {tripData.description}</p>
+            <p><span className="font-medium">Created At:</span> {new Date(tripData.createAt).toLocaleString()}</p>
+          </div>
 
-      <div className="details-container">
-        {/* Thông tin khách hàng */}
-        <div className="section">
-          <h3>Customer Information</h3>
-          <p><strong>Name:</strong> {tripData.customer.name}</p>
-          <p><strong>Email:</strong> {tripData.customer.email || 'N/A'}</p>
-          <p><strong>Phone:</strong> {tripData.customer.phone || 'N/A'}</p>
-          <p><strong>Description:</strong> {tripData.description}</p>
-          <p><strong>Created At:</strong> {new Date(tripData.createAt).toLocaleString()}</p>
+          {tripData.saleStaff && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Briefcase className="mr-2 text-blue-600" />
+                Sales Staff Information
+              </h3>
+              <p><span className="font-medium">ID:</span> {tripData.saleStaff.id}</p>
+              <p><span className="font-medium">Name:</span> {tripData.saleStaff.name}</p>
+              <p><span className="font-medium">Email:</span> {tripData.saleStaff.email || 'N/A'}</p>
+              <p><span className="font-medium">Phone:</span> {tripData.saleStaff.phone || 'N/A'}</p>
+            </div>
+          )}
+
+          {tripData.consultingStaff && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Briefcase className="mr-2 text-blue-600" />
+                Consulting Staff Information
+              </h3>
+              <p><span className="font-medium">ID:</span> {tripData.consultingStaff.id}</p>
+              <p><span className="font-medium">Name:</span> {tripData.consultingStaff.name}</p>
+              <p><span className="font-medium">Email:</span> {tripData.consultingStaff.email || 'N/A'}</p>
+              <p><span className="font-medium">Phone:</span> {tripData.consultingStaff.phone || 'N/A'}</p>
+            </div>
+          )}
+
+          {tripData.trip && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Plane className="mr-2 text-blue-600" />
+                Trip Information
+              </h3>
+              <p><span className="font-medium">Trip ID:</span> {tripData.trip.id}</p>
+              <p><span className="font-medium">Start Date:</span> {new Date(tripData.trip.startDate).toLocaleString()}</p>
+              <p><span className="font-medium">End Date:</span> {new Date(tripData.trip.endDate).toLocaleString()}</p>
+              <p><span className="font-medium">Departure Airport:</span> {tripData.trip.departureAirport}</p>
+              <p><span className="font-medium">Description:</span> {tripData.trip.description || 'N/A'}</p>
+              <p><span className="font-medium">Price:</span> ${tripData.trip.price}</p>
+              <p><span className="font-medium">Status:</span> {tripData.trip.status}</p>
+            </div>
+          )}
+
+          {tripData.trip.tripDestinations && tripData.trip.tripDestinations.length > 0 && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <MapPin className="mr-2 text-blue-600" />
+                Itinerary
+              </h3>
+              {tripData.trip.tripDestinations.map((destination, index) => (
+                <div key={index} className="mb-4 p-4 bg-white rounded-md shadow">
+                  <h4 className="font-semibold">Destination {index + 1}</h4>
+                  <p><span className="font-medium">Farm Name:</span> {destination.farm.name}</p>
+                  <p><span className="font-medium">Farm Address:</span> {destination.farm.address}</p>
+                  <p><span className="font-medium">Phone Number:</span> {destination.farm.phoneNumber || 'N/A'}</p>
+                  <div className="mt-2">
+                    <h5 className="font-medium">Koi Varieties:</h5>
+                    {destination.farm.varieties && destination.farm.varieties.length > 0 ? (
+                      destination.farm.varieties.map((variety) => (
+                        <div key={variety.id} className="ml-4">
+                          <p><span className="font-medium">Variety:</span> {variety.name}</p>
+                          <p><span className="font-medium">Description:</span> {variety.description}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No koi varieties available for this farm.</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tripData.fishOrders && tripData.fishOrders.length > 0 && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Fish className="mr-2 text-blue-600" />
+                Fish Orders
+              </h3>
+              {renderFishOrderDetails(tripData.fishOrders)}
+            </div>
+          )}
+
+          {tripData.fishOrders && tripData.fishOrders.length > 0 && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center">
+                <Fish className="mr-2 text-blue-600" />
+                Fish Pack Orders
+              </h3>
+              {renderFishPackOrderDetails(tripData.fishOrders.flatMap(order => order.fishPackOrderDetails))}
+            </div>
+          )}
         </div>
 
-        {/* Thông tin nhân viên bán hàng */}
-        {tripData.saleStaff ? (
-          <div className="section">
-            <h3>Sales Staff Information</h3>
-            <p><strong>ID:</strong> {tripData.saleStaff.id}</p>
-            <p><strong>Name:</strong> {tripData.saleStaff.name}</p>
-            <p><strong>Email:</strong> {tripData.saleStaff.email || 'N/A'}</p>
-            <p><strong>Phone:</strong> {tripData.saleStaff.phone || 'N/A'}</p>
+        {(errorReject || errorPay) && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 mx-6" role="alert">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{errorReject || errorPay}</span>
           </div>
-        ) : (
-          <div className="section">No sales staff information available.</div>
         )}
 
-
-        {tripData.consultingStaff ? (
-          <div className="section">
-            <h3>Consulting Staff Information</h3>
-            <p><strong>ID:</strong> {tripData.saleStaff.id}</p>
-            <p><strong>Name:</strong> {tripData.saleStaff.name}</p>
-            <p><strong>Email:</strong> {tripData.saleStaff.email || 'N/A'}</p>
-            <p><strong>Phone:</strong> {tripData.saleStaff.phone || 'N/A'}</p>
-          </div>
-        ) : (
-          <div className="section">No Consulting staff information available.</div>
-        )}
-
-
-        {/* Thông tin chuyến đi */}
-        {tripData.trip ? (
-          <div className="section">
-            <h3>Trip Information</h3>
-            <p><strong>Trip ID:</strong> {tripData.trip.id}</p>
-            <p><strong>Start Date:</strong> {new Date(tripData.trip.startDate).toLocaleString()}</p>
-            <p><strong>End Date:</strong> {new Date(tripData.trip.endDate).toLocaleString()}</p>
-            <p><strong>Departure Airport:</strong> {tripData.trip.departureAirport}</p>
-            <p><strong>Description:</strong> {tripData.trip.description || 'N/A'}</p>
-            <p><strong>Price:</strong> ${tripData.trip.price}</p>
-            <p><strong>Status:</strong> {tripData.trip.status}</p>
-          </div>
-        ) : (
-          <div className="section">No trip information available.</div>
-        )}
-
-        {/* Lịch trình (Điểm đến chuyến đi) */}
-        {tripData.trip.tripDestinations && tripData.trip.tripDestinations.length > 0 ? (
-          <div className="section">
-            <h3>Itinerary</h3>
-            {tripData.trip.tripDestinations.map((destination, index) => (
-              <div key={index} className="itinerary-day">
-                <h4>Destination {index + 1}</h4>
-                <p><strong>Farm Name:</strong> {destination.farm.name}</p>
-                <p><strong>Farm Address:</strong> {destination.farm.address}</p>
-                <p><strong>Phone Number:</strong> {destination.farm.phoneNumber || 'N/A'}</p>
-
-                <div className="varieties">
-                  <h5>Koi Varieties:</h5>
-                  {destination.farm.varieties && destination.farm.varieties.length > 0 ? (
-                    destination.farm.varieties.map((variety) => (
-                      <div key={variety.id}>
-                        <p><strong>Variety:</strong> {variety.name}</p>
-                        <p><strong>Description:</strong> {variety.description}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No koi varieties available for this farm.</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="section">No itinerary data available.</div>
-        )}
-
-        {/* Hiển thị chi tiết đơn đặt hàng cá */}
-        {tripData.fishOrders && tripData.fishOrders.length > 0 && (
-          renderFishOrderDetails(tripData.fishOrders)
-        )}
-
-        {/* Hiển thị chi tiết gói cá */}
-        {tripData.fishOrders && tripData.fishOrders.length > 0 && 
-          renderFishPackOrderDetails(tripData.fishOrders.flatMap(order => order.fishPackOrderDetails))
-        }
-      </div>
-
-      {/* Hiển thị thông báo lỗi nếu có */}
-      {errorReject && <div className="error">{errorReject}</div>}
-      {errorPay && <div className="error">{errorPay}</div>}
-
-      {/* Nút từ chối và thanh toán */}
-      <div className="action-buttons">
-        
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+        <div className="bg-gray-100 px-6 py-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Back
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-
-export default CompleteTripPage;
