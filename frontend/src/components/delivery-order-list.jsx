@@ -1,5 +1,4 @@
-'use client';
-
+'use client';;
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,7 +21,7 @@ import { OrderTrackingCard } from "@/components/order-tracking-card"
 
 const fishOrderStatuses = ['Deposited', 'In Transit', 'Delivering', 'Completed'];
 
-export default function DeliveryOrderListComponent() {
+export function DeliveryOrderList() {
   const [staff, setStaff] = useState(null)
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -52,24 +51,10 @@ export default function DeliveryOrderListComponent() {
 
       setLoading(true)
       try {
-        const [staffBookingsResponse, orderPrepareResponse] = await Promise.all([
-          fetch(`http://localhost:8080/api/booking/delivery-staff/${staff.id}`),
-          fetch(`http://localhost:8080/api/booking/status/Order%20Prepare`)
-        ])
-
-        if (!staffBookingsResponse.ok || !orderPrepareResponse.ok) {
-          throw new Error('Failed to fetch bookings')
-        }
-
-        const staffBookings = await staffBookingsResponse.json()
-        const orderPrepareBookings = await orderPrepareResponse.json()
-
-        // Combine and filter the results
-        const combinedBookings = staffBookings.filter(booking => 
-          orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id)
-        )
-
-        setBookings(combinedBookings)
+        const response = await fetch(`http://localhost:8080/api/booking/delivery-staff/${staff.id}`)
+        if (!response.ok) throw new Error('Failed to fetch bookings')
+        const data = await response.json()
+        setBookings(data)
       } catch (error) {
         console.error("Failed to fetch bookings:", error)
         setError("Failed to load bookings. Please try again later.")
@@ -139,17 +124,17 @@ export default function DeliveryOrderListComponent() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      (<div className="flex justify-center items-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
+      </div>)
     );
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-5">Order Prepare List for {staff?.name}</h1>
+    (<div className="container mx-auto py-10">
+      <h1 className="text-2xl font-bold mb-5">Delivery Order List for {staff?.name}</h1>
       {bookings.length === 0 ? (
-        <p>No 'Order Prepare' bookings found for this delivery staff.</p>
+        <p>No bookings found for this delivery staff.</p>
       ) : (
         <div className="space-y-8">
           {bookings.map((booking) => (
@@ -168,7 +153,7 @@ export default function DeliveryOrderListComponent() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem onSelect={() => handleUpdateBookingStatus(booking.id, 'Order Prepare')}>
-                        Order Prepare
+                        In Progress
                       </DropdownMenuItem>
                       <DropdownMenuItem onSelect={() => handleUpdateBookingStatus(booking.id, 'Completed')}>
                         Completed
@@ -203,7 +188,7 @@ export default function DeliveryOrderListComponent() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="outline" size="sm">
-                                {order.status} <ChevronDown className="ml-2 h-4 w-4" />
+                                {order.status } <ChevronDown className="ml-2 h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
@@ -245,6 +230,6 @@ export default function DeliveryOrderListComponent() {
           <OrderTrackingCard order={selectedOrder} onClose={() => setShowTrackingCard(false)} />
         </div>
       )}
-    </div>
+    </div>)
   );
 }
