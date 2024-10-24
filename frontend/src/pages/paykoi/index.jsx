@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -6,29 +6,38 @@ const PaymentTripPage = () => {
   const { id } = useParams(); // lấy bookingid từ URL
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const createTripPayment = async () => {
       try {
+        // Gửi yêu cầu POST tới API để tạo thanh toán
         const response = await axios.post(`http://localhost:8080/${id}/payment/api/create-fishpayment`);
-        const approvalUrl = response.data.approvalUrl;
+        console.log(response.data); // Kiểm tra dữ liệu trả về từ API
+
+        const approvalUrl = response.data.approvalUrl; // Lấy approval URL từ response
 
         if (approvalUrl) {
-          window.location.href = approvalUrl; // chuyển hướng tới PayPal
+          setLoading(false); // Ngừng trạng thái loading
+          window.location.href = approvalUrl; // Chuyển hướng đến PayPal
+        } else {
+          setError('Không tìm thấy approval URL.');
+          setLoading(false); // Ngừng loading khi có lỗi
         }
       } catch (err) {
-        setError('Loading........');
-        setLoading(false);
+        console.error('Lỗi khi tạo thanh toán:', err); // Kiểm tra chi tiết lỗi
+        setError('Đã xảy ra lỗi khi tạo thanh toán.');
+        setLoading(false); // Ngừng loading khi có lỗi
       }
     };
 
-    createTripPayment();
+    createTripPayment(); // Gọi hàm tạo thanh toán khi component render
   }, [id]);
 
+  // Hiển thị khi đang loading hoặc có lỗi
   if (loading) return <div>Loading Payment...</div>;
   if (error) return <div>{error}</div>;
 
-  return null; // Chúng ta không cần render gì vì đã chuyển hướng
+  return null; // Không cần render gì vì đã chuyển hướng
 };
 
 export default PaymentTripPage;
