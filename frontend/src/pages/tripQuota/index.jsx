@@ -1,20 +1,16 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, User, Mail, Phone, Calendar, MapPin, DollarSign, Tag, Briefcase, Plane, Fish } from 'lucide-react';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './index.scss';
-
-function CompleteTripPage() {
-  const { id } = useParams(); // Get booking ID from URL
+export default function CompleteTripPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // State for trip data
   const [tripData, setTripData] = useState(null);
   const [loadingTrip, setLoadingTrip] = useState(true);
   const [errorTrip, setErrorTrip] = useState(null);
-  const [errorReject, setErrorReject] = useState(null); // Error handling for reject action
-  const [errorPay, setErrorPay] = useState(null); // Error handling for pay action
+  const [errorReject, setErrorReject] = useState(null);
+  const [errorPay, setErrorPay] = useState(null);
 
-  // Fetch trip data based on the ID from the URL
   useEffect(() => {
     fetch(`http://localhost:8080/api/booking/get/${id}`)
       .then((response) => {
@@ -33,7 +29,6 @@ function CompleteTripPage() {
       });
   }, [id]);
 
-  // Handle reject (change status to "Canceled")
   const handleReject = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
@@ -48,7 +43,6 @@ function CompleteTripPage() {
         throw new Error('Failed to update status');
       }
 
-      // Update trip status in state
       const updatedTrip = await response.json();
       setTripData(updatedTrip);
     } catch (error) {
@@ -56,180 +50,205 @@ function CompleteTripPage() {
     }
   };
 
-  // Handle pay (change status to "Paid Booking" and navigate to /paykoi/${id})
- // Handle pay (create payment and update status to "Paid Booking")
-const handlePay = async () => {
-  try {
-    // Gọi API tạo thanh toán
-    const response = await fetch(`http://localhost:8080/${id}/payment/api/create-trippayment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create payment');
-    }
-
-    const data = await response.json();
-    
-    // Kiểm tra nếu có approvalUrl trong phản hồi
-    if (data.approvalUrl) {
-      // Sau khi tạo thanh toán thành công, cập nhật trạng thái đơn hàng
-      const updateStatusResponse = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...tripData, status: 'Paid Booking' }), // Cập nhật status thành "Paid Booking"
-      });
-
-      if (!updateStatusResponse.ok) {
-        throw new Error('Failed to update booking status to Paid Booking');
-      }
-
-      // Chuyển hướng tới trang PayPal
-      window.location.href = data.approvalUrl;
-    } else {
-      throw new Error('No approval URL received');
-    }
-  } catch (error) {
-    setErrorPay('Error processing the payment: ' + error.message);
-  }
-};
-
-
-  //
-
-  const updateBookingStatus = async () => {
+  const handlePay = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:8080/${id}/payment/api/create-trippayment`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: 'Paid Booking' }),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Failed to update booking status');
+        throw new Error('Failed to create payment');
       }
-  
-      const updatedBooking = await response.json();
-      console.log('Booking updated successfully:', updatedBooking);
+
+      const data = await response.json();
+      
+      if (data.approvalUrl) {
+        const updateStatusResponse = await fetch(`http://localhost:8080/api/booking/update/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...tripData, status: 'Paid Booking' }),
+        });
+
+        if (!updateStatusResponse.ok) {
+          throw new Error('Failed to update booking status to Paid Booking');
+        }
+
+        window.location.href = data.approvalUrl;
+      } else {
+        throw new Error('No approval URL received');
+      }
     } catch (error) {
-      console.error('Error updating booking status:', error);
+      setErrorPay('Error processing the payment: ' + error.message);
     }
   };
-  
-  // Gọi hàm updateBookingStatus sau khi thanh toán thành công
-  const handlePaymentSuccess = async () => {
-    await updateBookingStatus();
-    // Điều hướng hoặc xử lý thêm nếu cần
-    navigate(`/thank-you/${id}`); // Điều hướng tới trang cảm ơn hoặc tương tự
-  };
-  // Loading and error handling for both APIs
+
   if (loadingTrip) {
-    return <div>Loading data...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-gray-700">Loading trip data...</div>
+      </div>
+    );
   }
 
   if (errorTrip) {
-    return <div>Error loading trip data: {errorTrip.message}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-red-600">Error loading trip data: {errorTrip.message}</div>
+      </div>
+    );
   }
 
-  return (
-    <div className="complete-trip-page">
-      <h2>Booking Details for ID: {id}</h2>
+  const renderSection = (title, icon, content) => (
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h3 className="text-xl font-semibold mb-4 flex items-center">
+        {icon}
+        <span className="ml-2">{title}</span>
+      </h3>
+      {content}
+    </div>
+  );
 
-      <div className="details-container">
-        {/* Display Customer Information */}
-        <div className="section">
-          <h3>Customer Information</h3>
-          <p><strong>Name:</strong> {tripData.customer.name}</p>
-          <p><strong>Email:</strong> {tripData.customer.email || 'N/A'}</p>
-          <p><strong>Phone:</strong> {tripData.customer.phone || 'N/A'}</p>
-          <p><strong>Description:</strong> {tripData.description}</p>
-          <p><strong>Created At:</strong> {tripData.createAt}</p>
+  const renderFishOrderDetails = (fishOrderDetails) => (
+    <div>
+      {fishOrderDetails.map((order) => (
+        <div key={order.id} className="mb-4 p-4 bg-gray-50 rounded-md">
+          <h4 className="font-medium mb-2">Order ID: {order.id}</h4>
+          {order.fishOrderDetails.map((detail) => (
+            <div key={detail.id} className="ml-4 mb-2">
+              <p><span className="font-medium">Fish Variety:</span> {detail.fish.name}</p>
+              <p><span className="font-medium">Description:</span> {detail.fish.description}</p>
+              <p><span className="font-medium">Length:</span> {detail.fish.length} cm</p>
+              <p><span className="font-medium">Weight:</span> {detail.fish.weight} kg</p>
+              <p><span className="font-medium">Price:</span> ${detail.price}</p>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderFishPackOrderDetails = (fishPackOrderDetails) => (
+    <div>
+      {fishPackOrderDetails.map((pack) => (
+        <div key={pack.id} className="mb-4 p-4 bg-gray-50 rounded-md">
+          <h4 className="font-medium mb-2">Fish Pack ID: {pack.id}</h4>
+          <p><span className="font-medium">Description:</span> {pack.fishPack.description}</p>
+          <p><span className="font-medium">Quantity:</span> {pack.fishPack.quantity}</p>
+          <p><span className="font-medium">Price:</span> ${pack.price}</p>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-blue-600 text-white p-6">
+          <h2 className="text-3xl font-bold">Booking Details</h2>
+          <p className="text-blue-200">Order ID: {id}</p>
+        </div>
+        
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {renderSection("Customer Information", <User className="text-blue-600" />, (
+            <div className="space-y-2">
+              <p><span className="font-medium">Name:</span> {tripData.customer.name}</p>
+              <p><span className="font-medium">Email:</span> {tripData.customer.email || 'N/A'}</p>
+              <p><span className="font-medium">Phone:</span> {tripData.customer.phone || 'N/A'}</p>
+              <p><span className="font-medium">Description:</span> {tripData.description}</p>
+              <p><span className="font-medium">Created At:</span> {new Date(tripData.createAt).toLocaleString()}</p>
+            </div>
+          ))}
+
+          {tripData.saleStaff && renderSection("Sales Staff Information", <Briefcase className="text-blue-600" />, (
+            <div className="space-y-2">
+              <p><span className="font-medium">ID:</span> {tripData.saleStaff.id}</p>
+              <p><span className="font-medium">Name:</span> {tripData.saleStaff.name}</p>
+              <p><span className="font-medium">Email:</span> {tripData.saleStaff.email || 'N/A'}</p>
+              <p><span className="font-medium">Phone:</span> {tripData.saleStaff.phone || 'N/A'}</p>
+            </div>
+          ))}
+
+          {tripData.trip && renderSection("Trip Information", <Plane className="text-blue-600" />, (
+            <div className="space-y-2">
+              <p><span className="font-medium">Trip ID:</span> {tripData.trip.id}</p>
+              <p><span className="font-medium">Start Date:</span> {new Date(tripData.trip.startDate).toLocaleString()}</p>
+              <p><span className="font-medium">End Date:</span> {new Date(tripData.trip.endDate).toLocaleString()}</p>
+              <p><span className="font-medium">Departure Airport:</span> {tripData.trip.departureAirport}</p>
+              <p><span className="font-medium">Description:</span> {tripData.trip.description || 'N/A'}</p>
+              <p><span className="font-medium">Price:</span> ${tripData.trip.price}</p>
+              <p><span className="font-medium">Status:</span> {tripData.trip.status}</p>
+            </div>
+          ))}
+
+          {tripData.trip.tripDestinations && tripData.trip.tripDestinations.length > 0 && renderSection("Itinerary", <MapPin className="text-blue-600" />, (
+            <div>
+              {tripData.trip.tripDestinations.map((destination, index) => (
+                <div key={index} className="mb-4 p-4 bg-gray-50 rounded-md">
+                  <h4 className="font-medium mb-2">Destination {index + 1}</h4>
+                  <p><span className="font-medium">Farm Name:</span> {destination.farm.name}</p>
+                  <p><span className="font-medium">Farm Address:</span> {destination.farm.address}</p>
+                  <p><span className="font-medium">Phone Number:</span> {destination.farm.phoneNumber || 'N/A'}</p>
+                  <div className="mt-2">
+                    <h5 className="font-medium">Koi Varieties:</h5>
+                    {destination.farm.varieties && destination.farm.varieties.length > 0 ? (
+                      destination.farm.varieties.map((variety) => (
+                        <div key={variety.id} className="ml-4">
+                          <p><span className="font-medium">Variety:</span> {variety.name}</p>
+                          <p><span className="font-medium">Description:</span> {variety.description}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No koi varieties available for this farm.</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+
+          {tripData.fishOrders && tripData.fishOrders.length > 0 && renderSection("Fish Orders", <Fish className="text-blue-600" />, renderFishOrderDetails(tripData.fishOrders))}
+
+          {tripData.fishOrders && tripData.fishOrders.length > 0 && renderSection("Fish Pack Orders", <Fish className="text-blue-600" />, renderFishPackOrderDetails(tripData.fishOrders.flatMap(order => order.fishPackOrderDetails)))}
         </div>
 
-        {/* Display Sales Staff Information */}
-        {tripData.saleStaff ? (
-          <div className="section">
-            <h3>Sales Staff Information</h3>
-            <p><strong>ID:</strong> {tripData.saleStaff.id}</p>
-            <p><strong>Name:</strong> {tripData.saleStaff.name}</p>
-            <p><strong>Email:</strong> {tripData.saleStaff.email || 'N/A'}</p>
-            <p><strong>Phone:</strong> {tripData.saleStaff.phone || 'N/A'}</p>
+        {(errorReject || errorPay) && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 mx-6" role="alert">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{errorReject || errorPay}</span>
           </div>
-        ) : (
-          <div className="section">No sales staff information available.</div>
         )}
 
-        {/* Display Trip Details */}
-        {tripData.trip ? (
-          <div className="section">
-            <h3>Trip Information</h3>
-            <p><strong>Trip ID:</strong> {tripData.trip.id}</p>
-            <p><strong>Start Date:</strong> {tripData.trip.startDate}</p>
-            <p><strong>End Date:</strong> {tripData.trip.endDate}</p>
-            <p><strong>Departure Airport:</strong> {tripData.trip.departureAirport}</p>
-            <p><strong>Description:</strong> {tripData.trip.description || 'N/A'}</p>
-            <p><strong>Price:</strong> ${tripData.trip.price}</p>
-            <p><strong>Status:</strong> {tripData.trip.status}</p>
+        <div className="bg-gray-50 px-6 py-4 flex justify-between items-center">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-300 ease-in-out"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Back
+          </button>
+          <div>
+            <button
+              onClick={handlePay}
+              className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 ease-in-out mr-2"
+            >
+              <DollarSign className="mr-2" size={20} />
+              Pay
+            </button>
+            <button
+              onClick={handleReject}
+              className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
+            >
+              <Tag className="mr-2" size={20} />
+              Reject
+            </button>
           </div>
-        ) : (
-          <div className="section">No trip information available.</div>
-        )}
-
-        {/* Display Itinerary (Trip Destinations) */}
-        {tripData.tripDestinations && tripData.tripDestinations.length > 0 ? (
-          <div className="section">
-            <h3>Itinerary</h3>
-            {tripData.tripDestinations.map((destination, index) => (
-              <div key={index} className="itinerary-day">
-                <h4>Day {index + 1}</h4>
-                <p><strong>Visit Date:</strong> {destination.visitDate || 'N/A'}</p>
-                <p><strong>Farm Name:</strong> {destination.farm.name}</p>
-                <p><strong>Farm Address:</strong> {destination.farm.address}</p>
-
-                <div className="koi-varieties">
-                  <h5>Koi Varieties:</h5>
-                  {destination.farm.varieties && destination.farm.varieties.length > 0 ? (
-                    destination.farm.varieties.map((variety, varIndex) => (
-                      <div key={varIndex} className="koi-variety">
-                        <p><strong>Variety:</strong> {variety.name}</p>
-                        <p><strong>Description:</strong> {variety.description}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No koi varieties available for this farm.</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="section">No itinerary data available.</div>
-        )}
-      </div>
-
-      <div className="button-group">
-        {/* Back Button */}
-        <button className="back-button" onClick={() => navigate(-1)}>Back</button>
-
-        {/* Pay Button */}
-        <button className="back-button" onClick={handlePay}>Pay</button>
-
-        {/* Reject Button */}
-        <button className="back-button" onClick={handleReject}>Reject</button>
-
-        {/* Error Messages if Actions Fail */}
-        {errorReject && <p className="error-message">{errorReject}</p>}
-        {errorPay && <p className="error-message">{errorPay}</p>}
+        </div>
       </div>
     </div>
   );
 }
-
-export default CompleteTripPage;

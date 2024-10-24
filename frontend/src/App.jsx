@@ -68,7 +68,7 @@ function App() {
         { path: "/register", element: <Register /> },
         { path: "/login", element: <Login /> },
         { path: "/payment", element: <PaymentPage /> },
-        { path: "/payment/:id", element: <PaymentDetailsPage /> },
+        { path: "/request/:id", element: <PaymentDetailsPage /> },
         { path: "/quota/:id", element: <QuotaDetailsPage /> },
         { path: "/onGoing/:id", element: <OnGoingPage /> },
         { path: "/mykoi", element: <KoiPage /> },

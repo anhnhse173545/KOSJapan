@@ -1,156 +1,194 @@
-
-$primary-color: #3498db;
-$secondary-color: #2c3e50;
-$background-color: #ecf0f1;
-$text-color: #333;
-$border-color: #bdc3c7;
-$success-color: #2ecc71;
-$danger-color: #e74c3c;
-$card-background: #ffffff;
-
-// Mixins
-@mixin card {
-  background-color: $card-background;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #f4f7f9;
+  --text-color: #34495e;
+  --border-color: #e0e6ed;
+  --card-background: #ffffff;
+  --error-color: #e74c3c;
 }
 
-@mixin button($bg-color) {
-  background-color: $bg-color;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: darken($bg-color, 10%);
-  }
-}
-
-// Global styles
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: $background-color;
-  color: $text-color;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
   line-height: 1.6;
-  margin: 0;
-  padding: 0;
 }
 
 .complete-trip-page {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
 
-  h2 {
-    color: $secondary-color;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5rem;
+h2 {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+h2::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 4px;
+  background-color: var(--secondary-color);
+  margin: 1rem auto 0;
+}
+
+.details-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.section {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+p {
+  margin-bottom: 0.75rem;
+}
+
+strong {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.fish-order-section,
+.fish-pack-order-section {
+  margin-top: 2rem;
+}
+
+.fish-order,
+.fish-pack-order-section > div {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.fish-order:hover,
+.fish-pack-order-section > div:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.back-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.error-message {
+  color: var(--error-color);
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid var(--error-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.itinerary-day {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.itinerary-day:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.varieties {
+  margin-top: 1rem;
+}
+
+.varieties h5 {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .complete-trip-page {
+    padding: 1rem;
   }
 
   .details-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .section {
-    @include card;
-
-    h3 {
-      color: $primary-color;
-      border-bottom: 2px solid $primary-color;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-    }
-
-    p {
-      margin-bottom: 10px;
-
-      strong {
-        font-weight: bold;
-        color: $secondary-color;
-      }
-    }
-  }
-
-  .itinerary-day {
-    border-top: 1px solid $border-color;
-    padding-top: 20px;
-    margin-top: 20px;
-
-    &:first-child {
-      border-top: none;
-      padding-top: 0;
-      margin-top: 0;
-    }
-
-    h4 {
-      color: $primary-color;
-      margin-bottom: 15px;
-    }
-
-    .koi-varieties {
-      margin-top: 15px;
-
-      h5 {
-        color: $secondary-color;
-        margin-bottom: 10px;
-      }
-
-      .koi-variety {
-        background-color: rgba($primary-color, 0.1);
-        border-radius: 4px;
-        padding: 10px;
-        margin-bottom: 10px;
-      }
-    }
+    grid-template-columns: 1fr;
   }
 
   .button-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
+    flex-direction: column;
+  }
 
-    .back-button {
-      @include button($primary-color);
-      font-size: 1rem;
-    }
+  .back-button {
+    width: 100%;
   }
 }
 
-// Loading and error styles
-.loading, .error {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-top: 50px;
-  color: $secondary-color;
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .back-button,
+  .fish-order,
+  .fish-pack-order-section > div,
+  .itinerary-day {
+    transition: none;
+  }
 }
 
-.error {
-  color: $danger-color;
-}
-
-// Responsive styles
-@media (max-width: 768px) {
-  .complete-trip-page {
-    padding: 10px;
-
-    h2 {
-      font-size: 2rem;
-    }
-
-    .details-container {
-      grid-template-columns: 1fr;
-    }
-
-    .section {
-      padding: 15px;
-    }
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #0000ff;
+    --secondary-color: #008000;
+    --text-color: #000000;
+    --border-color: #000000;
+    --card-background: #ffffff;
+    --error-color: #ff0000;
   }
 }

@@ -1,20 +1,19 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import "./index.scss";
+import { ArrowLeft, User, Mail, Phone, FileText, Calendar, Tag } from 'lucide-react';
 
-function PaymentDetailsPage() {
-  const { id } = useParams(); // Get the ID from the URL
+export default function PaymentDetailsPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
   
   const [paymentDetails, setPaymentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch payment details from API
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/booking/get/${id}`); 
+        const response = await fetch(`http://localhost:8080/api/booking/get/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch payment details');
         }
@@ -28,39 +27,99 @@ function PaymentDetailsPage() {
     };
 
     fetchPaymentDetails();
-  }, [id]); // Dependency array ensures this runs when `id` changes
+  }, [id]);
 
-  // Handle loading state
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-gray-700">Loading...</div>
+      </div>
+    );
   }
 
-  // Handle error state
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-red-600">Error: {error}</div>
+      </div>
+    );
   }
 
-  // If paymentDetails is still null (though it shouldn't be if fetching is successful)
   if (!paymentDetails) {
-    return <div>Order not found</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-gray-700">Order not found</div>
+      </div>
+    );
   }
 
   return (
-    <div className="payment-details-page">
-      <h2>Payment Details for Order ID: {paymentDetails.id}</h2>
-      <div className="details-container">
-        <img src={paymentDetails.img} alt={paymentDetails.name} className="payment-image" />
-        <p><strong>Name:</strong> {paymentDetails.customer.name}</p>
-        <p><strong>Email:</strong> {paymentDetails.customer.email}</p>
-        <p><strong>Phone:</strong> {paymentDetails.customer.phone}</p>
-        <p><strong>Description:</strong> {paymentDetails.description}</p>
-        <p><strong>Create At:</strong> {paymentDetails.createAt}</p>
-        <p><strong>Status:</strong> {paymentDetails.status}</p>
-        
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-4xl">
+        <div className="bg-blue-600 text-white p-6">
+          <h2 className="text-3xl font-bold">Payment Details</h2>
+          <p className="text-blue-200">Order ID: {paymentDetails.id}</p>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <User className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Name</p>
+                  <p className="font-semibold">{paymentDetails.customer.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Mail className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-semibold">{paymentDetails.customer.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Phone className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-semibold">{paymentDetails.customer.phone}</p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <FileText className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Description</p>
+                  <p className="font-semibold">{paymentDetails.description || 'N/A'}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Calendar className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Created At</p>
+                  <p className="font-semibold">{new Date(paymentDetails.createAt).toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Tag className="text-blue-600" />
+                <div>
+                  <p className="text-sm text-gray-500">Status</p>
+                  <p className="font-semibold">{paymentDetails.status}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-50 px-6 py-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Back
+          </button>
+        </div>
       </div>
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
     </div>
   );
 }
-
-export default PaymentDetailsPage;

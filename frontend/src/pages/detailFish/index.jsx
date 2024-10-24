@@ -5,7 +5,7 @@ import './detail.css';
 
 function KoiDetailPage() {
   const { id } = useParams();
-  const [koi, setKoi] = useState([]);
+  const [koi, setKoi] = useState(null);  // Chỉ lưu trữ 1 order
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -27,9 +27,14 @@ function KoiDetailPage() {
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`);
-        setKoi(response.data);
+        const order = response.data.find(order => order.id === id);  // Lấy đơn hàng theo id từ URL
+        if (order) {
+          setKoi(order);  // Lưu trữ đơn hàng cụ thể
+        } else {
+          setError('Koi order not found');
+        }
       } catch (err) {
-        setError('Koi not found or failed to load data');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -46,51 +51,49 @@ function KoiDetailPage() {
     return <div>{error}</div>;
   }
 
-  if (!koi.length) {
+  if (!koi) {
     return <div>Koi not found</div>;
   }
 
   return (
     <div className="koi-detail-page">
-      <h1>Koi ID List</h1>
+      <h1>Koi Detail</h1>
   
-      {/* Hiển thị thông tin chi tiết cho từng cá koi */}
-      {koi.map(order => (
-        order.fishOrderDetails.map(orderDetail => (
-          <div key={orderDetail.fish.fish_id} className="fish-detail">
-            <img 
-              src={getRandomImage()} 
-              alt={orderDetail.fish.fish_variety_name} 
-              className="koi-image" 
-            />
-            <p><strong>Koi ID:</strong> {orderDetail.fish.fish_id}</p>
-            <p><strong>Giống cá:</strong> {orderDetail.fish.fish_variety_name}</p>
-            <p><strong>Chiều dài:</strong> {orderDetail.fish.length} cm</p>
-            <p><strong>Trọng lượng:</strong> {orderDetail.fish.weight} kg</p>
-            <p><strong>Mô tả:</strong> {orderDetail.fish.description}</p>
-            <p><strong>Giá:</strong> ${orderDetail.price}</p>
+      {/* Hiển thị thông tin chi tiết cho cá koi đầu tiên trong đơn hàng */}
+      {koi.fishOrderDetails.map(orderDetail => (
+        <div key={orderDetail.fish.fish_id} className="fish-detail">
+          <img 
+            src={getRandomImage()} 
+            alt={orderDetail.fish.fish_variety_name} 
+            className="koi-image" 
+          />
+          <p><strong>Koi ID:</strong> {orderDetail.fish.fish_id}</p>
+          <p><strong>Giống cá:</strong> {orderDetail.fish.fish_variety_name}</p>
+          <p><strong>Chiều dài:</strong> {orderDetail.fish.length} cm</p>
+          <p><strong>Trọng lượng:</strong> {orderDetail.fish.weight} kg</p>
+          <p><strong>Mô tả:</strong> {orderDetail.fish.description}</p>
+          <p><strong>Giá:</strong> ${orderDetail.price}</p>
   
-            {/* Hiển thị nút Purchase nếu trạng thái là Pending */}
-            {order.paymentStatus === 'Pending' && (
-              <button 
-                className="purchase-button" 
-                onClick={() => navigate(`/paykoi50/${order.id}`)}
-              >
-                Purchase
-              </button>
-            )}
+          {/* Hiển thị nút Purchase nếu trạng thái là Pending */}
+          {koi.paymentStatus === 'Pending' && (
+            <button 
+              className="purchase-button" 
+              onClick={() => navigate(`/paykoi50/${koi.id}`)}
+            >
+              Purchase
+            </button>
+          )}
   
-            {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
-            {order.paymentStatus === 'Delivering' && (
-              <button 
-                className="purchase-button" 
-                onClick={() => navigate(`/paykoi100/${order.id}`)}
-              >
-                Finish Payment
-              </button>
-            )}
-          </div>
-        ))
+          {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
+          {koi.paymentStatus === 'Delivering' && (
+            <button 
+              className="purchase-button" 
+              onClick={() => navigate(`/paykoi100/${koi.id}`)}
+            >
+              Finish Payment
+            </button>
+          )}
+        </div>
       ))}
   
       <Link to="/mykoi" className="back-button">
@@ -98,7 +101,6 @@ function KoiDetailPage() {
       </Link>
     </div>
   );
-  
 }
 
 export default KoiDetailPage;
