@@ -24,9 +24,9 @@ const PaymentTripPage = () => {
           setLoading(false); // Ngừng loading khi có lỗi
         }
       } catch (err) {
-        console.error('Lỗi khi tạo thanh toán:', err); // Kiểm tra chi tiết lỗi
-        setError('Đã xảy ra lỗi khi tạo thanh toán.');
-        setLoading(false); // Ngừng loading khi có lỗi
+        console.error('Loading.......', err); 
+        setError('Loadingggggggg');
+        setLoading(false); 
       }
     };
 
