@@ -71,7 +71,7 @@ function KoiPage() {
       {/* Phần hiển thị thanh tabs để lọc */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Pending', 'Deposited', 'In Transit', 'Delivering', 'Paid Full', 'Canceled'].map((status) => (
+          {['All', 'Pending', 'Deposited', 'In Transit', 'Delivering', 'Paid Full', 'Rejected'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
