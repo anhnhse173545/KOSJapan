@@ -52,6 +52,9 @@ import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
 import PaymentTripPageFull from "./pages/paykoifinished";
 import OrderListComponent from "./components/order-list";
+import FarmCrud from "./pages/Manager/finals/FarmCrud";
+import VarietyCrud from "./pages/Manager/finals/VarietyCrud";
+import { OrderDetailsComponent } from "./pages/DeliveryStaff/OrderDetails";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -101,6 +104,8 @@ function App() {
           element: <DeliveryStaffAssignment />,
         },
         { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
+        { path: "farm-control", element: <FarmCrud /> },
+        { path: "variety-control", element: <VarietyCrud /> },
       ],
     },
     {
@@ -108,6 +113,7 @@ function App() {
       element: <DeliveryStaffDashboard />,
       children: [
         { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
+        { path: "my-deliveries/order-details/:orderId", element: <OrderDetailsComponent /> },
       ],
     },
     {
