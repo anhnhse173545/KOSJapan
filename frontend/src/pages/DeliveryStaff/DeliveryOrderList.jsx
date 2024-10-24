@@ -65,7 +65,6 @@ export default function DeliveryOrderListComponent() {
         const staffBookings = await staffBookingsResponse.json()
         const orderPrepareBookings = await orderPrepareResponse.json()
 
-        // Combine and filter the results
         const combinedBookings = staffBookings.filter(booking => 
           orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id)
         )
@@ -101,7 +100,9 @@ export default function DeliveryOrderListComponent() {
 
       setBookings(prevBookings =>
         prevBookings.map(booking =>
-          booking.id === bookingId ? { ...booking, status: newStatus } : booking))
+          booking.id === bookingId ? { ...booking, status: newStatus } : booking
+        )
+      )
     } catch (error) {
       console.error("Failed to update booking status:", error)
     }
@@ -109,6 +110,9 @@ export default function DeliveryOrderListComponent() {
 
   const handleUpdateFishOrderStatus = async (bookingId, farmId, orderId, newStatus) => {
     try {
+      const booking = bookings.find(b => b.id === bookingId)
+      if (!booking) throw new Error('Booking not found')
+
       const response = await fetch(`http://localhost:8080/fish-order/${bookingId}/${farmId}/update`, {
         method: 'PUT',
         headers: {
@@ -116,20 +120,26 @@ export default function DeliveryOrderListComponent() {
         },
         body: JSON.stringify({
           status: newStatus,
-          delivery_address: "",
+          delivery_address: booking.customer.address,
           arrived_date: new Date().toISOString(),
-          paymentStatus: ""
+          paymentStatus: 'Deposited' // Assuming this is the correct initial status
         }),
       })
 
       if (!response.ok) throw new Error('Failed to update fish order status')
 
       setBookings(prevBookings =>
-        prevBookings.map(booking => ({
-          ...booking,
-          fishOrders: booking.fishOrders.map(order =>
-            order.id === orderId ? { ...order, status: newStatus } : order),
-        })))
+        prevBookings.map(booking =>
+          booking.id === bookingId
+            ? {
+                ...booking,
+                fishOrders: booking.fishOrders.map(order =>
+                  order.id === orderId ? { ...order, status: newStatus } : order
+                ),
+              }
+            : booking
+        )
+      )
     } catch (error) {
       console.error("Failed to update fish order status:", error)
     }
