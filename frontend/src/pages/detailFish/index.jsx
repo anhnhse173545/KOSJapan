@@ -16,15 +16,15 @@ export default function KoiDetailPage() {
 
   const koiImages = [
     'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
-    '/placeholder.svg?height=400&width=600',
-    '/placeholder.svg?height=400&width=600',
-    '/placeholder.svg?height=400&width=600',
+    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
+    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
+    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
   ]
 
   const fishPackImages = [
-    '/placeholder.svg?height=300&width=400',
-    '/placeholder.svg?height=300&width=400',
-    '/placeholder.svg?height=300&width=400',
+    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
+    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
+    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
   ]
 
   const getRandomImage = (images) => {
