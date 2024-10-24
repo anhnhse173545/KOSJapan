@@ -1,106 +1,155 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './detail.css';
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { ChevronLeft, Loader2 } from 'lucide-react'
+import { useParams, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
-function KoiDetailPage() {
-  const { id } = useParams();
-  const [koi, setKoi] = useState(null);  // Chỉ lưu trữ 1 order
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+export default function KoiDetailPage() {
+  const { id } = useParams()
+  const [koi, setKoi] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const koiImages = [
-    'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcYR8TZ9R0bWOZrBIx-TJgw7VjeYfgfRvrBIvxKxzTL13pPx5gaW4phyt0ZWvHc0AdAO8&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAHjvobHvucSmw9JochLMhfjX-XpCvXf3hQO_nQpawKrlqWnd3nEjk4qrCQRRjgVOfNc0&usqp=CAU',
-    'https://static.chotot.com/storage/chotot-kinhnghiem/c2c/2021/04/92de3bb8-ca-koi-showa.png',
-  ];
+    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
+    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
+    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
+    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
+  ]
 
-  const getRandomImage = () => {
-    const randomIndex = Math.floor(Math.random() * koiImages.length);
-    return koiImages[randomIndex];
-  };
+  const fishPackImages = [
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
+  ]
+
+  const getRandomImage = (images) => {
+    const randomIndex = Math.floor(Math.random() * images.length)
+    return images[randomIndex]
+  }
 
   useEffect(() => {
     const fetchKoi = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`);
-        const order = response.data.find(order => order.id === id);  // Lấy đơn hàng theo id từ URL
+        setLoading(true)
+        const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`)
+        const order = response.data.find(order => order.id === id)
         if (order) {
-          setKoi(order);  // Lưu trữ đơn hàng cụ thể
+          setKoi(order)
         } else {
-          setError('Koi order not found');
+          setError('Koi order not found')
         }
       } catch (err) {
-        setError('Failed to load data');
+        setError('Failed to load data')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchKoi();
-  }, [id]);
+    fetchKoi()
+  }, [id])
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-center text-red-500">{error}</div>
   }
 
   if (!koi) {
-    return <div>Koi not found</div>;
+    return <div className="text-center">Koi not found</div>
   }
 
   return (
-    <div className="koi-detail-page">
-      <h1>Koi Detail</h1>
-  
-      {/* Hiển thị thông tin chi tiết cho cá koi đầu tiên trong đơn hàng */}
-      {koi.fishOrderDetails.map(orderDetail => (
-        <div key={orderDetail.fish.fish_id} className="fish-detail">
-          <img 
-            src={getRandomImage()} 
-            alt={orderDetail.fish.fish_variety_name} 
-            className="koi-image" 
-          />
-          <p><strong>Koi ID:</strong> {orderDetail.fish.fish_id}</p>
-          <p><strong>Giống cá:</strong> {orderDetail.fish.fish_variety_name}</p>
-          <p><strong>Chiều dài:</strong> {orderDetail.fish.length} cm</p>
-          <p><strong>Trọng lượng:</strong> {orderDetail.fish.weight} kg</p>
-          <p><strong>Mô tả:</strong> {orderDetail.fish.description}</p>
-          <p><strong>Giá:</strong> ${orderDetail.price}</p>
-  
-          {/* Hiển thị nút Purchase nếu trạng thái là Pending */}
-          {koi.paymentStatus === 'Pending' && (
-            <button 
-              className="purchase-button" 
-              onClick={() => navigate(`/paykoi50/${koi.id}`)}
-            >
-              Purchase
-            </button>
-          )}
-  
-          {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
-          {koi.paymentStatus === 'Delivering' && (
-            <button 
-              className="purchase-button" 
-              onClick={() => navigate(`/paykoi100/${koi.id}`)}
-            >
-              Finish Payment
-            </button>
-          )}
-        </div>
-      ))}
-  
-      <Link to="/mykoi" className="back-button">
-        Back
-      </Link>
-    </div>
-  );
-}
+    <div className="container mx-auto px-4 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold text-center mb-8">Koi Detail</h1>
 
-export default KoiDetailPage;
+        {koi.fishOrderDetails.map((orderDetail, index) => (
+          <motion.div
+            key={orderDetail.fish.fish_id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>{orderDetail.fish.fish_variety_name}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-6">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                  <img
+                    src={getRandomImage(koiImages)}
+                    alt={orderDetail.fish.fish_variety_name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <p><span className="font-semibold">Koi ID:</span> {orderDetail.fish.fish_id}</p>
+                  <p><span className="font-semibold">Length:</span> {orderDetail.fish.length} cm</p>
+                  <p><span className="font-semibold">Weight:</span> {orderDetail.fish.weight} kg</p>
+                  <p><span className="font-semibold">Description:</span> {orderDetail.fish.description}</p>
+                  <p><span className="font-semibold">Price:</span> ${orderDetail.price}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+
+        {koi.fishPackOrderDetails && koi.fishPackOrderDetails.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: koi.fishOrderDetails.length * 0.1 }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Fish Pack Details</h2>
+            {koi.fishPackOrderDetails.map((packDetail, index) => (
+              <Card key={packDetail.id} className="mb-4">
+                <CardHeader>
+                  <CardTitle>Pack ID: {packDetail.fishPack.id}</CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                    <img
+                      src={getRandomImage(fishPackImages)}
+                      alt={`Fish Pack ${packDetail.fishPack.id}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <p><span className="font-semibold">Length:</span> {packDetail.fishPack.length}</p>
+                    <p><span className="font-semibold">Weight:</span> {packDetail.fishPack.weight}</p>
+                    <p><span className="font-semibold">Description:</span> {packDetail.fishPack.description}</p>
+                    <p><span className="font-semibold">Quantity:</span> {packDetail.fishPack.quantity}</p>
+                    <p><span className="font-semibold">Price:</span> ${packDetail.price}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </motion.div>
+        )}
+
+        <div className="mt-8 text-center">
+          <Link to="/mykoi">
+            <Button variant="outline">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to My Koi
+            </Button>
+          </Link>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
