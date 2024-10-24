@@ -9,6 +9,7 @@ import com.swp391.koi_ordering_system.model.Farm;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,7 @@ public class FarmService {
 
     public FarmDTO updateFarm(String farmId, UpdateFarmDTO updateFarmDTO) {
         Farm farm = farmRepository.findByIdAndIsDeletedFalse(farmId)
-                .orElseThrow(() -> new RuntimeException("Farm not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Farm not found"));
 
         if (updateFarmDTO.getName() != null) {
             farm.setName(updateFarmDTO.getName());
@@ -67,9 +68,6 @@ public class FarmService {
             farm.setPhoneNumber(updateFarmDTO.getPhoneNumber());
         }
 
-        if (updateFarmDTO.getImage() != null) {
-            farm.setImage(updateFarmDTO.getImage());
-        }
 
         Farm updatedFarm = farmRepository.save(farm);
         return farmMapper.toDTO(updatedFarm);
@@ -117,7 +115,7 @@ public class FarmService {
         farmDTO.setName(farm.getName());
         farmDTO.setAddress(farm.getAddress());
         farmDTO.setPhoneNumber(farm.getPhoneNumber());
-        farmDTO.setImage(farm.getImage());
+
 
         Set<Variety> varieties = farm.getVarieties();
         Set<VarietyDTO> varietyDTOS = new HashSet<>();

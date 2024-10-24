@@ -27,7 +27,7 @@ public class Fish {
     private Variety variety;
 
     @Column(name = "length")
-    private Double length;
+    private Double length ;
 
     @Column(name = "weight")
     private Double weight;

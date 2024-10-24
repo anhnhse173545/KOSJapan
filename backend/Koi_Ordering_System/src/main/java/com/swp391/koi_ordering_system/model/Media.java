@@ -1,6 +1,7 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,13 +25,18 @@ public class Media {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "type")
     private String type;
 
+    @JsonIgnore
     @JsonBackReference(value = "fish-media")
     @ManyToMany(mappedBy = "medias")
     private Set<Fish> fishes;
 
+    @JsonIgnore
     @JsonBackReference(value = "fishPack-media")
     @ManyToMany(mappedBy = "medias")
     private Set<FishPack> fishPacks;
