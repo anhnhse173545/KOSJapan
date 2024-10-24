@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { ChevronLeft, Loader2 } from 'lucide-react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,7 @@ export default function KoiDetailPage() {
   const [koi, setKoi] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
+  const navigate = useNavigate();
   const koiImages = [
     'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
     'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
@@ -148,6 +148,25 @@ export default function KoiDetailPage() {
               Back to My Koi
             </Button>
           </Link>
+
+          {koi.paymentStatus === 'Pending' && (
+            <button 
+              className="purchase-button" 
+              onClick={() => navigate(`/paykoi50/${koi.id}`)}
+            >
+              Purchase
+            </button>
+          )}
+  
+          {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
+          {koi.paymentStatus === 'Delivering' && (
+            <button 
+              className="purchase-button" 
+              onClick={() => navigate(`/paykoi100/${koi.id}`)}
+            >
+              Finish Payment
+            </button>
+          )}
         </div>
       </motion.div>
     </div>
