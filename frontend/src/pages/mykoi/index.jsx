@@ -27,15 +27,18 @@ function KoiPage() {
         setLoading(false);
       }
     };
-  
+
     fetchKoiPayments();
   }, []);
-  
 
   // Lọc các đơn hàng dựa theo trạng thái được chọn
-  const filteredPayments = koiPayments.filter((koi) =>
-    selectedStatus === 'All' ? true : koi.paymentStatus === selectedStatus
-  );
+  const filteredPayments = koiPayments.filter((koi) => {
+    if (selectedStatus === 'All') return true;
+    if (selectedStatus === 'Deposited' || selectedStatus === 'Paid Full') {
+      return koi.paymentStatus === selectedStatus;
+    }
+    return koi.status === selectedStatus;
+  });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -86,7 +89,11 @@ function KoiPage() {
         <div className="payment-list">
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
-              <img src={koi.img || 'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg'} alt={koi.koi} className="koi-image" />
+              <img
+                src={koi.img || 'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg'}
+                alt={koi.koi}
+                className="koi-image"
+              />
               <div className="payment-details">
                 <h3>{koi.name}</h3>
                 <p>{koi.koi}</p>
@@ -94,9 +101,13 @@ function KoiPage() {
                 {koi.size && <p>Size: {koi.size} cm</p>}
                 <p className="Id Trip">Koi ID: {koi.id}</p>
                 <p className="Id Farm">Farm ID: {koi.farmId}</p>
-                
-                {/* Chỉ hiển thị koi.paymentStatus */}
-                <p className="status">Status: {koi.paymentStatus}</p>
+
+                {/* Hiển thị paymentStatus nếu là "Deposited" hoặc "Paid Full", nếu không thì hiển thị status */}
+                <p className="status">
+                  Status: {koi.paymentStatus === 'Deposited' || koi.paymentStatus === 'Paid Full'
+                    ? koi.paymentStatus
+                    : koi.status}
+                </p>
 
                 <button
                   className="details-button"
