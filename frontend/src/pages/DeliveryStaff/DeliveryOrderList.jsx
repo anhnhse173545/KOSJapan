@@ -19,8 +19,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { OrderTrackingCard } from "@/components/order-tracking-card"
+import { Link } from "react-router-dom"
 
-const fishOrderStatuses = ['Deposited', 'In Transit', 'Delivering', 'Completed'];
+const fishOrderStatuses = ['Deposited', 'In Transit', 'Delivering', 'Completed']
 
 export default function DeliveryOrderListComponent() {
   const [staff, setStaff] = useState(null)
@@ -106,14 +107,19 @@ export default function DeliveryOrderListComponent() {
     }
   }
 
-  const handleUpdateFishOrderStatus = async (orderId, newStatus) => {
+  const handleUpdateFishOrderStatus = async (bookingId, farmId, orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/fish-order/update/${orderId}`, {
+      const response = await fetch(`http://localhost:8080/fish-order/${bookingId}/${farmId}/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({
+          status: newStatus,
+          delivery_address: "",
+          arrived_date: new Date().toISOString(),
+          paymentStatus: ""
+        }),
       })
 
       if (!response.ok) throw new Error('Failed to update fish order status')
@@ -130,11 +136,11 @@ export default function DeliveryOrderListComponent() {
   }
 
   const formatTotal = (total) => {
-    return `$${Math.abs(total).toFixed(2)}`;
+    return `$${Math.abs(total).toFixed(2)}`
   }
 
   if (error) {
-    return <p className="text-center mt-4 text-red-500">{error}</p>;
+    return <p className="text-center mt-4 text-red-500">{error}</p>
   }
 
   if (loading) {
@@ -142,7 +148,7 @@ export default function DeliveryOrderListComponent() {
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-    );
+    )
   }
 
   return (
@@ -203,14 +209,14 @@ export default function DeliveryOrderListComponent() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="outline" size="sm">
-                                {order.status} <ChevronDown className="ml-2 h-4 w-4" />
+                                {order.status || 'Select Status'} <ChevronDown className="ml-2 h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                               {fishOrderStatuses.map((status) => (
                                 <DropdownMenuItem
                                   key={status}
-                                  onSelect={() => handleUpdateFishOrderStatus(order.id, status)}>
+                                  onSelect={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, status)}>
                                   {status}
                                 </DropdownMenuItem>
                               ))}
@@ -224,9 +230,11 @@ export default function DeliveryOrderListComponent() {
                         </TableCell>
                         <TableCell>{formatTotal(order.total)}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="outline" size="sm" onClick={() => handleTrackOrder(order)}>
-                            Track Order
-                          </Button>
+                          <Link to={`order-details/${order.id}`}>
+                            <Button variant="outline" size="sm" onClick={() => handleTrackOrder(order)}>
+                              Track Order
+                            </Button>
+                          </Link>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -246,5 +254,5 @@ export default function DeliveryOrderListComponent() {
         </div>
       )}
     </div>
-  );
+  )
 }

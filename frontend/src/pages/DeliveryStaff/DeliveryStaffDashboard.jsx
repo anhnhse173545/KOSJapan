@@ -54,7 +54,7 @@ export function DeliveryStaffDashboard() {
 
   const navItems = [
     { name: 'My Deliveries', icon: <Package className="h-5 w-5" />, path: '/ds-dashboard/my-deliveries' },
-    { name: 'Route Planner', icon: <Truck className="h-5 w-5" />, path: '/delivery-staff/route-planner' },
+    // { name: 'Order Details', icon: <Truck className="h-5 w-5" />, path: '/ds-dashboard/order-details/:orderId' },
     { name: 'Delivery Map', icon: <MapPin className="h-5 w-5" />, path: '/delivery-staff/delivery-map' },
     { name: 'Order Details', icon: <ClipboardList className="h-5 w-5" />, path: '/delivery-staff/order-details' },
     { name: 'Schedule', icon: <Calendar className="h-5 w-5" />, path: '/delivery-staff/schedule' },
