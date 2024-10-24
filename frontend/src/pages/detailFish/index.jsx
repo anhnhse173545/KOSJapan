@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { ChevronLeft, Loader2 } from 'lucide-react'
+import { ChevronLeft, Loader2, CreditCard } from 'lucide-react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
@@ -9,21 +9,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function KoiDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [koi, setKoi] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const navigate = useNavigate();
+
   const koiImages = [
     'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
-    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
-    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
-    'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNGC9HP0kvPVjRmDosz7w_OwVSLdTEhI0ISVS4U8jsc8BDkahQ',
+    '/placeholder.svg?height=400&width=600',
+    '/placeholder.svg?height=400&width=600',
+    '/placeholder.svg?height=400&width=600',
   ]
 
   const fishPackImages = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1ov_wUi9FJ6yw4YjuBfD7bJDYZOmbCeE_A&s/placeholder.svg?height=300&width=400',
+    '/placeholder.svg?height=300&width=400',
+    '/placeholder.svg?height=300&width=400',
+    '/placeholder.svg?height=300&width=400',
   ]
 
   const getRandomImage = (images) => {
@@ -141,32 +142,33 @@ export default function KoiDetailPage() {
           </motion.div>
         )}
 
-        <div className="mt-8 text-center">
-          <Link to="/mykoi">
-            <Button variant="outline">
+        <div className="mt-8 space-y-4">
+          {koi.paymentStatus === 'Pending' && (
+            <Button 
+              className="w-full"
+              onClick={() => navigate(`/paykoi50/${koi.id}`)}
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              Purchase
+            </Button>
+          )}
+
+          {koi.paymentStatus === 'Delivering' && (
+            <Button 
+              className="w-full"
+              onClick={() => navigate(`/paykoi100/${koi.id}`)}
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              Finish Payment
+            </Button>
+          )}
+
+          <Link to="/mykoi" className="block text-center">
+            <Button variant="outline" className="w-full">
               <ChevronLeft className="w-4 h-4 mr-2" />
               Back to My Koi
             </Button>
           </Link>
-
-          {koi.paymentStatus === 'Pending' && (
-            <button 
-              className="purchase-button" 
-              onClick={() => navigate(`/paykoi50/${koi.id}`)}
-            >
-              Purchase
-            </button>
-          )}
-  
-          {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
-          {koi.paymentStatus === 'Delivering' && (
-            <button 
-              className="purchase-button" 
-              onClick={() => navigate(`/paykoi100/${koi.id}`)}
-            >
-              Finish Payment
-            </button>
-          )}
         </div>
       </motion.div>
     </div>
