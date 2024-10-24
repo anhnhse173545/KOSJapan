@@ -17,7 +17,7 @@ const PaymentTripPage = () => {
           window.location.href = approvalUrl; // chuyển hướng tới PayPal
         }
       } catch (err) {
-        setError('Đã xảy ra lỗi khi tạo thanh toán.');
+        setError('Loading........');
         setLoading(false);
       }
     };
