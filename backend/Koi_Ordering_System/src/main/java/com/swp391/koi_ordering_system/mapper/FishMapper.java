@@ -14,14 +14,27 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface FishMapper {
 
-
     @Mapping(source = "id", target = "fish_id")
     @Mapping(source = "variety.name", target = "fish_variety_name")
-
+    @Mapping(source = "medias", target = "mediaUrls", qualifiedByName = "mediaToUrls")
     FishDTO toDTO(Fish fish);
 
     @Mapping(source = "fish_id", target = "id")
     @Mapping(source = "fish_variety_name", target = "variety.name")
-    
+    @Mapping(source = "mediaUrls", target = "medias", qualifiedByName = "urlsToMedia")
     Fish toEntity(FishDTO fishDTO);
+
+    @Named("mediaToUrls")
+    default List<String> mediaToUrls(Set<Media> medias) {
+        return medias.stream().map(Media::getUrl).collect(Collectors.toList());
+    }
+
+    @Named("urlsToMedia")
+    default Set<Media> urlsToMedia(List<String> mediaUrls) {
+        return mediaUrls.stream().map(url -> {
+            Media media = new Media();
+            media.setUrl(url);
+            return media;
+        }).collect(Collectors.toSet());
+    }
 }

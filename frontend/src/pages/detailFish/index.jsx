@@ -153,7 +153,7 @@ export default function KoiDetailPage() {
             </Button>
           )}
 
-          {koi.paymentStatus === 'Delivering' && (
+          {koi.status === 'Delivering' && (
             <Button 
               className="w-full"
               onClick={() => navigate(`/paykoi100/${koi.id}`)}

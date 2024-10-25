@@ -28,4 +28,6 @@ public class FishPackDTO {
     private double price;
 
     private Variety variety;
+
+    private List<String> mediaUrls;
 }

@@ -8,11 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {FishMapper.class})
 public interface FishOrderDetailMapper {
 
-
     @Mapping(source = "fish", target = "fish")
     @Mapping(source = "price", target = "price")
     FishOrderDetailDTO toDTO(FishOrderDetail fishOrderDetail);
-
 
     @Mapping(source = "fish", target = "fish")
     @Mapping(source = "price", target = "price")

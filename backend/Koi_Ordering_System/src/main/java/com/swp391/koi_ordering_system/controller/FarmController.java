@@ -9,6 +9,7 @@ import com.swp391.koi_ordering_system.service.FarmService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class FarmController {
 //        return ResponseEntity.ok(farmService.createFarm(farm));
 //    }
 
+    @PreAuthorize("hasRole('Manager')")
     @PostMapping("/create")
     public ResponseEntity<FarmDTO> createFarm(@Valid @RequestBody CreateFarmDTO createFarmDTO) {
         Farm farm = farmMapper.toEntity(createFarmDTO);
@@ -48,6 +50,7 @@ public class FarmController {
         return ResponseEntity.ok(farm);
     }
 
+    @PreAuthorize("hasRole('Manager')")
     @PutMapping("/update/{id}")
     public ResponseEntity<FarmDTO> updatedFarm(@PathVariable String id, @Valid @RequestBody UpdateFarmDTO updateFarmDTO) {
         FarmDTO updatedFarm = farmService.updateFarm(id, updateFarmDTO);
@@ -57,12 +60,14 @@ public class FarmController {
         return ResponseEntity.ok(updatedFarm);
     }
 
+    @PreAuthorize("hasRole('Manager')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteFarm(@PathVariable String id) {
         farmService.deleteFarm(id);
         return ResponseEntity.ok("Farm deleted successfully");
     }
 
+    @PreAuthorize("hasRole('Manager')")
     @PostMapping("/{farmId}/add-variety/{varietyId}")
     public ResponseEntity<Farm> addVarietyToFarm(@PathVariable String farmId, @PathVariable String varietyId) {
         Farm updatedFarm = farmService.addVarietyToFarm(farmId, varietyId);

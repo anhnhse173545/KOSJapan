@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.swp391.koi_ordering_system.dto.request.ForgetPasswordDTO;
 import com.swp391.koi_ordering_system.dto.request.LoginRequestDTO;
 import com.swp391.koi_ordering_system.dto.request.RegisterRequestDTO;
 import com.swp391.koi_ordering_system.dto.request.TokenRefreshRequestDTO;
@@ -53,6 +54,12 @@ public class    AuthController {
     public ResponseEntity<TokenRefreshResponseDTO> refreshToken(@RequestBody TokenRefreshRequestDTO request) {
         TokenRefreshResponseDTO response = authService.refreshToken(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+        String newPassword = authService.getPassword(forgetPasswordDTO);
+        return ResponseEntity.ok(newPassword);
     }
 
     @GetMapping("/me")
