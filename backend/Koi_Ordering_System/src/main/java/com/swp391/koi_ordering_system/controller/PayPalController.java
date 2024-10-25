@@ -91,7 +91,7 @@ public class PayPalController {
     @PostMapping("{booking_id}/payment/api/create-trippayment")
     public ResponseEntity<?> createAPITripPayment(@PathVariable String booking_id) {
         TripPayment tripPayment = tripPaymentService.createTripPaymentUsingPayPal(booking_id);
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/trippayment/cancel?booking_id=" + booking_id;
         String successUrl = "http://localhost:8080/payment/trippayment/success?booking_id=" + booking_id;
 
         try {
@@ -147,7 +147,7 @@ public class PayPalController {
     @PostMapping("/{order_id}/payment/api/create-fishpayment")
     public ResponseEntity<?> createAPIFishPayment(@PathVariable String order_id) {
         FishPayment fishPayment = fishPaymentService.createFishPaymentUsingPayPal(order_id);
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/fishpayment/cancel?order_id=" + order_id;
         String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
@@ -177,7 +177,7 @@ public class PayPalController {
     public ResponseEntity<?> updateAPIFishPayment(@PathVariable String order_id) {
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
 
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/fishpayment/cancel?order_id=" + order_id;
         String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
@@ -267,8 +267,19 @@ public class PayPalController {
         }
     }
 
-    @GetMapping("/payment/cancel")
-    private String paymentCancel(){
+    @GetMapping("/fishpayment/cancel")
+    private String fishpaymentCancel(@RequestParam("order_id") String order_id){
+        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+        fishPayment.setStatus("CANCELLED");
+        fishPaymentRepository.save(fishPayment);
+        return "paymentCancel";
+    }
+
+    @GetMapping("/trippayment/cancel")
+    private String trippaymentCancel(@RequestParam("booking_id") String booking_id){
+        TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(booking_id);
+        tripPayment.setStatus("CANCELLED");
+        tripPaymentRepository.save(tripPayment);
         return "paymentCancel";
     }
 
