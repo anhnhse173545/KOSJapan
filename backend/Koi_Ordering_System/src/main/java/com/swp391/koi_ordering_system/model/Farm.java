@@ -1,8 +1,6 @@
 package com.swp391.koi_ordering_system.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,8 +31,12 @@ public class Farm {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "description")
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "media_id")
+    private Media image;
 
     @JsonManagedReference(value = "farm-variety")
     @ManyToMany

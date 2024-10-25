@@ -33,7 +33,7 @@ public class Account implements UserDetails {
     private String name;
 
     @Column(name = "role")
-    private String role;
+    private String role = "Customer";
 
     @Column(name="email")
     private String email;
@@ -44,8 +44,9 @@ public class Account implements UserDetails {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "profile_image")
-    private String profileImg;
+    @ManyToOne
+    @JoinColumn(name = "media_id")
+    private Media profileImg;
 
     @ColumnDefault("false")
     @Column(name = "is_deleted")

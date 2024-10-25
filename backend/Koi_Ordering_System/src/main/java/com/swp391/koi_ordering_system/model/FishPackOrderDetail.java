@@ -20,7 +20,7 @@ public class FishPackOrderDetail {
 
     @JsonBackReference(value = "fishPack-fishPackOrderDetail")
     @ManyToOne
-    @JoinColumn(name = "fish_order_id", nullable = true)
+    @JoinColumn(name = "fish_order_id")
     private FishOrder fishOrder;
 
     @ManyToOne

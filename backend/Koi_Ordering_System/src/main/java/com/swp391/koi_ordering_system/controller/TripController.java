@@ -31,6 +31,7 @@ public class TripController {
     @Autowired
     private TripMapper tripMapper;
 
+    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff')")
     @PostMapping("/create")
     public ResponseEntity<TripDTO> createTrip(@Valid @RequestBody CreateTripDTO createTripDTO) {
         Trip trip = tripMapper.toEntity(createTripDTO);

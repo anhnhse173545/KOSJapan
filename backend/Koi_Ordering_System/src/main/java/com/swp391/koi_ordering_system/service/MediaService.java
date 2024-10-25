@@ -1,133 +1,147 @@
-// package com.swp391.koi_ordering_system.service;
+package com.swp391.koi_ordering_system.service;
 
-// import com.swp391.koi_ordering_system.model.*;
-// import com.swp391.koi_ordering_system.repository.*;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.core.io.Resource;
-// import org.springframework.core.io.UrlResource;
-// import org.springframework.http.HttpHeaders;
-// import org.springframework.http.MediaType;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.stereotype.Service;
-// import org.springframework.web.multipart.MultipartFile;
+import com.swp391.koi_ordering_system.model.*;
+import com.swp391.koi_ordering_system.repository.*;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-// import java.io.File;
-// import java.io.IOException;
-// import java.net.MalformedURLException;
-// import java.nio.file.Files;
-// import java.nio.file.Path;
-// import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-// @Service
-// public class MediaService {
+@Service
+public class MediaService {
 
-//     @Autowired
-//     private MediaRepository mediaRepository;
+    @Autowired
+    private MediaRepository mediaRepository;
 
-//     @Autowired
-//     private FarmRepository farmRepository;
+    @Autowired
+    private FarmRepository farmRepository;
 
-//     @Autowired
-//     private AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
-//     @Autowired
-//     private FishRepository fishRepository;
+    @Autowired
+    private FishRepository fishRepository;
 
-//     @Autowired
-//     private FishPackRepository fishPackRepository;
+    @Autowired
+    private FishPackRepository fishPackRepository;
 
-//     private static final String MEDIA_FOLDER = "D:\\Upload\\medias\\";
+    private static final String MEDIA_FOLDER = "D:\\Upload\\medias\\";
 
-//     public Media uploadMedia(MultipartFile file) throws IOException {
-//         File uploadFolder = new File(MEDIA_FOLDER);
-//         if (!uploadFolder.exists()) {
-//             uploadFolder.mkdirs();
-//         }
+    private String getFolderPathForEntity(String entity) {
+        switch (entity) {
+            case "farm":
+                return MEDIA_FOLDER + "farm\\";
+            case "account":
+                return MEDIA_FOLDER + "account\\";
+            case "fish":
+                return MEDIA_FOLDER + "fish\\";
+            case "fish_pack":
+                return MEDIA_FOLDER + "fish_pack\\";
+            default:
+                throw new RuntimeException("Unknown entity type");
+        }
+    }
 
-//         String originalFileName = file.getOriginalFilename();
-//         if (originalFileName == null || originalFileName.isEmpty()) {
-//             throw new IOException("File name is missing");
-//         }
-//         Path filePath = Paths.get(MEDIA_FOLDER + originalFileName);
-//         int count = 1;
-//         while (Files.exists(filePath)) {
-//             String newFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) +
-//                     "_" + count++ + originalFileName.substring(originalFileName.lastIndexOf('.'));
-//             filePath = Paths.get(MEDIA_FOLDER + newFileName);
-//         }
-//         Files.write(filePath, file.getBytes());
+    public Media uploadMedia(MultipartFile file, String entity) throws IOException {
+        String folderPath = getFolderPathForEntity(entity);
+        File uploadFolder = new File(folderPath);
+        if (!uploadFolder.exists()) {
+            uploadFolder.mkdirs();
+        }
 
-//         Media media = new Media();
-//         media.setId(generateMediaId());
-//         media.setName(filePath.getFileName().toString()); // Save the new file name
-//         media.setType(file.getContentType());
-//         String publicUrl = "http://localhost:8080/media/" + filePath.getFileName().toString();
-//         media.setUrl(publicUrl);
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            throw new IOException("File name is missing");
+        }
+        Path filePath = Paths.get(folderPath + originalFileName);
+        int count = 1;
+        while (Files.exists(filePath)) {
+            String newFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) +
+                    "_" + count++ + originalFileName.substring(originalFileName.lastIndexOf('.'));
+            filePath = Paths.get(folderPath + newFileName);
+        }
+        Files.write(filePath, file.getBytes());
 
-//         return mediaRepository.save(media);
-//     }
+        Media media = new Media();
+        media.setId(generateMediaId());
+        media.setName(filePath.getFileName().toString()); // Save the new file name
+        media.setType(file.getContentType());
+        String publicUrl = "http://localhost:8080/media/" + entity + "/" + filePath.getFileName().toString();
+        media.setUrl(publicUrl);
 
-//     public Farm uploadFarmImage(String farmId, MultipartFile file) throws IOException {
-//         Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new RuntimeException("Farm not found"));
-//         Media media = uploadMedia(file);
-//         farm.setImage(media);
-//         return farmRepository.save(farm);
-//     }
+        return mediaRepository.save(media);
+    }
 
-//     public Account uploadAccountImage(String accountId, MultipartFile file) throws IOException {
-//         Account account = accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException("Account not found"));
-//         Media media = uploadMedia(file);
-//         account.setProfileImg(media);
-//         return accountRepository.save(account);
-//     }
+    public Farm uploadFarmImage(String farmId, MultipartFile file) throws IOException {
+        Farm farm = farmRepository.findById(farmId).orElseThrow(() -> new RuntimeException("Farm not found"));
+        Media media = uploadMedia(file, "farm");
+        farm.setImage(media);
+        return farmRepository.save(farm);
+    }
 
-//     public Fish uploadFishImage(String fishId, MultipartFile file) throws IOException {
-//         Fish fish = fishRepository.findById(fishId)
-//                 .orElseThrow(() -> new RuntimeException("Fish not found"));
-//         Media media = uploadMedia(file);
-//         fish.getMedias().add(media);
-//         return fishRepository.save(fish);
-//     }
+    public Account uploadAccountImage(String accountId, MultipartFile file) throws IOException {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new RuntimeException("Account not found"));
+        Media media = uploadMedia(file, "account");
+        account.setProfileImg(media);
+        return accountRepository.save(account);
+    }
 
-//     public FishPack uploadFishPackImage(String fishPackId, MultipartFile file) throws IOException {
-//         FishPack fishPack = fishPackRepository.findById(fishPackId)
-//                 .orElseThrow(() -> new RuntimeException("Fish Pack not found"));
-//         Media media = uploadMedia(file);
-//         fishPack.getMedias().add(media);
-//         return fishPackRepository.save(fishPack);
-//     }
+    public Fish uploadFishImage(String fishId, MultipartFile file) throws IOException {
+        Fish fish = fishRepository.findById(fishId)
+                .orElseThrow(() -> new RuntimeException("Fish not found"));
+        Media media = uploadMedia(file, "fish");
+        fish.getMedias().add(media);
+        return fishRepository.save(fish);
+    }
 
-//     public ResponseEntity<Resource> getMedia(String filename) {
-//         try {
-//             Media media = mediaRepository.findByUrl("http://localhost:8080/media/" + filename)
-//                     .orElseThrow(() -> new RuntimeException("Media not found"));
+    public FishPack uploadFishPackImage(String fishPackId, MultipartFile file) throws IOException {
+        FishPack fishPack = fishPackRepository.findById(fishPackId)
+                .orElseThrow(() -> new EntityNotFoundException("Fish Pack not found"));
+        Media media = uploadMedia(file, "fish_pack");
+        fishPack.getMedias().add(media);
+        return fishPackRepository.save(fishPack);
+    }
 
-//             Path filePath = Paths.get(MEDIA_FOLDER + filename);
-//             Resource resource = new UrlResource(filePath.toUri());
+    public ResponseEntity<Resource> getMedia(String entity, String filename) {
+        try {
+            String folderPath = getFolderPathForEntity(entity);
+            Media media = mediaRepository.findByUrl("http://localhost:8080/media/" + entity + "/" + filename)
+                    .orElseThrow(() -> new EntityNotFoundException("Media not found"));
 
-//             if (resource.exists() || resource.isReadable()) {
-//                 return ResponseEntity.ok()
-//                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-//                         .contentType(MediaType.parseMediaType(media.getType()))
-//                         .body(resource);
-//             } else {
-//                 throw new RuntimeException("Could not read the file!");
-//             }
-//         } catch (MalformedURLException e) {
-//             throw new RuntimeException("Error: " + e.getMessage());
-//         }
-//     }
+            Path filePath = Paths.get(folderPath + filename);
+            Resource resource = new UrlResource(filePath.toUri());
 
-//     public Media getMediaById(String mediaId) {
-//         return mediaRepository.findById(mediaId)
-//                 .orElseThrow(() -> new RuntimeException("Media not found"));
-//     }
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .contentType(MediaType.parseMediaType(media.getType()))
+                        .body(resource);
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
 
-//     private String generateMediaId() {
-//         String lastMediaId = mediaRepository.findTopByOrderByIdDesc()
-//                 .map(Media::getId)
-//                 .orElse("ME0000");
-//         int nextId = Integer.parseInt(lastMediaId.substring(2)) + 1;
-//         return String.format("ME%04d", nextId);
-//     }
-// }
+    private String generateMediaId() {
+        String lastMediaId = mediaRepository.findTopByOrderByIdDesc()
+                .map(Media::getId)
+                .orElse("ME0000");
+        int nextId = Integer.parseInt(lastMediaId.substring(2)) + 1;
+        return String.format("ME%04d", nextId);
+    }
+}
+

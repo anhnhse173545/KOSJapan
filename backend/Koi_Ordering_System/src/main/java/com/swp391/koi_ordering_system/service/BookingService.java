@@ -14,7 +14,12 @@ import com.swp391.koi_ordering_system.repository.AccountRepository;
 import com.swp391.koi_ordering_system.repository.BookingRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -51,6 +56,9 @@ public class BookingService {
     private AccountService accountService;
 
     @Autowired
+    private AuthService authService;
+
+    @Autowired
     private TripPaymentService tripPaymentService;
 
     @Autowired
@@ -59,7 +67,7 @@ public class BookingService {
     public Booking createBooking(String cusId, CreateBookingDTO dto) {
         Optional<Account> acc = accountRepository.findById(cusId);
         if (acc.isEmpty()) {
-            throw new RuntimeException("Account not found");
+            throw new EntityNotFoundException("Account not found");
         }
         Account assignAccount = acc.get();
         Booking booking = new Booking();
@@ -67,19 +75,12 @@ public class BookingService {
         booking.setId(generateBookingId());
         booking.setCustomer(assignAccount);
         booking.setDescription(dto.getDescription());
-        booking.setStatus("Requested");
 
         return bookingRepository.save(booking);
     }
 
     public List<BookingDTO> getAllBooking() {
         return bookingRepository.findAllByIsDeletedFalse().stream()
-                .map(bookingMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookingDTO> getBookingsByStatusRequested() {
-        return bookingRepository.findByStatusAndIsDeletedFalse("requested").stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -98,7 +99,7 @@ public class BookingService {
 
     public Optional<BookingDTO> getBookingById(String id) {
         return bookingRepository.findByIdAndIsDeletedFalse(id)
-                .map((Booking) -> mapToDTO(Booking));
+                .map(bookingMapper::toDTO);
     }
 
     public List<BookingDTO> getBookingsByCustomerId(String customerId) {
@@ -129,32 +130,80 @@ public class BookingService {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
+        Set<String> salesStatuses = Set.of("Requested", "Pending Quote", "Approved Quote", "Paid Booking", "Cancelled");
+        Set<String> consultingStatuses = Set.of("On-going", "Order Prepare");
+        Set<String> deliveryStatuses = Set.of("Completed");
+        String customerStatuses = "Cancelled";
+
+        boolean isCustomer = authService.isRole("ROLE_Customer");
+
+        boolean isManager = authService.isRole("ROLE_Manager");
+
+        boolean isSalesStaff = authService.isRole("ROLE_Sales_Staff");
+
+        boolean isConsultingStaff = authService.isRole("ROLE_Consulting_Staff");
+
+        boolean isDeliveryStaff = authService.isRole("ROLE_Delivery_Staff");
+
+
         if (updateBookingDTO.getTripId() != null) {
+            if (!isManager && !isSalesStaff) {
+                throw new AccessDeniedException("Unauthorized to update trip");
+            }
             Trip trip = tripRepository.findByIdAndIsDeletedFalse(updateBookingDTO.getTripId())
-                    .orElseThrow(() -> new RuntimeException("Trip not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Trip not found"));
             booking.setTrip(trip);
         }
 
         if (updateBookingDTO.getSaleStaffId() != null) {
+            if (!isManager) {
+                throw new AccessDeniedException("Unauthorized to update sale staff");
+            }
             Account saleStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getSaleStaffId(), "Sales Staff")
-                    .orElseThrow(() -> new RuntimeException("Sales staff not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Sales staff not found"));
             booking.setSaleStaff(saleStaff);
         }
 
         if (updateBookingDTO.getConsultingStaffId() != null) {
+            if (!isManager) {
+                throw new AccessDeniedException("Unauthorized to update consulting staff");
+            }
             Account consultingStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getConsultingStaffId(), "Consulting Staff")
-                    .orElseThrow(() -> new RuntimeException("Consulting staff not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Consulting staff not found"));
             booking.setConsultingStaff(consultingStaff);
         }
 
         if (updateBookingDTO.getDeliveryStaffId() != null) {
+            if (!isManager) {
+                throw new AccessDeniedException("Unauthorized to update delivery staff");
+            }
             Account deliveryStaff = accountRepository.findByIdAndIsDeletedFalseAndRole(updateBookingDTO.getDeliveryStaffId(), "Delivery Staff")
-                    .orElseThrow(() -> new RuntimeException("Delivery staff not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Delivery staff not found"));
             booking.setDeliveryStaff(deliveryStaff);
         }
 
-        booking.setDescription(updateBookingDTO.getDescription());
-        booking.setStatus(updateBookingDTO.getStatus());
+        if (updateBookingDTO.getDescription() != null) {
+            if (!isManager && !isCustomer) {
+                throw new AccessDeniedException("Unauthorized to update description");
+            }
+            booking.setDescription(updateBookingDTO.getDescription());
+        }
+
+        if (updateBookingDTO.getStatus() != null) {
+            if (isManager) {
+                booking.setStatus(updateBookingDTO.getStatus());
+            } else if (isCustomer && updateBookingDTO.getStatus().equals(customerStatuses)) {
+                booking.setStatus(updateBookingDTO.getStatus());
+            } else if (isSalesStaff && salesStatuses.contains(updateBookingDTO.getStatus())) {
+                booking.setStatus(updateBookingDTO.getStatus());
+            } else if (isConsultingStaff && consultingStatuses.contains(updateBookingDTO.getStatus())) {
+                booking.setStatus(updateBookingDTO.getStatus());
+            } else if (isDeliveryStaff && deliveryStatuses.contains(updateBookingDTO.getStatus())) {
+                booking.setStatus(updateBookingDTO.getStatus());
+            } else {
+                throw new AccessDeniedException("Unauthorized to update status");
+            }
+        }
 
         return bookingMapper.toDTO(bookingRepository.save(booking));
     }
@@ -170,7 +219,7 @@ public class BookingService {
 
     public TripDTO createTripForBooking(String bookingId, CreateTripDTO createTripDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
 
         Trip trip = tripMapper.toEntity(createTripDTO);
         trip.setBooking(booking);
@@ -186,49 +235,17 @@ public class BookingService {
         return tripRepository.findByBookingIdAndBookingIsDeletedFalse(bookingId);
     }
 
-    public List<BookingDTO> getBookingsByStatusAndCustomerIdForSaleStaff(String customerId) {
-        if (!accountRepository.findByIdAndIsDeletedFalseAndRole(customerId, "Customer").isPresent()) {
-            throw new RuntimeException("Customer not found");
-        }
-        List<String> statuses = List.of("Requested", "Waiting For Approved", "Approved", "Declined");
-        return bookingRepository.findByStatusInAndCustomerIdAndIsDeletedFalse(statuses, customerId).stream()
-                .map(bookingMapper::toDTO)
-                .collect(Collectors.toList());
-    }
 
-    public List<BookingDTO> getBookingsByStatusForSaleStaff() {
-        List<String> statuses = List.of("Requested", "Pending", "Approved");
-        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
-                .map(bookingMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookingDTO> getBookingsByStatusForSaleStaffByCustomer() {
-        List<String> statuses = List.of("Requested", "Pending", "Approved");
-        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
-                .map(bookingMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookingDTO> getBookingsByStatusForConsultingStaff() {
-        List<String> statuses = List.of("Confirmed", "Ongoing");
-        return bookingRepository.findByStatusInAndIsDeletedFalse(statuses).stream()
-                .map(bookingMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public Booking updateOrderToBooking(String bookingId, String orderId){
+    public Booking updateOrderToBooking(String bookingId, String orderId) {
         Optional<Booking> booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
         Optional<FishOrder> findOrder = fishOrderRepo.findFishOrderByBookingId(bookingId);
         Optional<FishOrder> order = fishOrderRepo.findById(orderId);
         if (booking.isEmpty()) {
-            throw new RuntimeException("Booking not found");
-        }
-        else if (findOrder.isEmpty()) {
-            throw new RuntimeException("Order In Booking not found");
-        }
-        else if(order.isEmpty()){
-            throw new RuntimeException("Order not found");
+            throw new EntityNotFoundException("Booking not found");
+        } else if (findOrder.isEmpty()) {
+            throw new EntityNotFoundException("Order In Booking not found");
+        } else if (order.isEmpty()) {
+            throw new EntityNotFoundException("Order not found");
         }
         Booking sameBooking = booking.get();
         FishOrder oldOrder = findOrder.get();
@@ -242,14 +259,13 @@ public class BookingService {
         return bookingRepository.save(sameBooking);
     }
 
-    public Booking removeOrderFromBooking(String bookingId, String orderId){
+    public Booking removeOrderFromBooking(String bookingId, String orderId) {
         Optional<Booking> booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId);
         Optional<FishOrder> order = fishOrderRepo.findById(orderId);
         if (booking.isEmpty()) {
-            throw new RuntimeException("Booking not found");
-        }
-        else if (order.isEmpty()) {
-            throw new RuntimeException("Order not found");
+            throw new EntityNotFoundException("Booking not found");
+        } else if (order.isEmpty()) {
+            throw new EntityNotFoundException("Order not found");
         }
         Booking sameBooking = booking.get();
         FishOrder removeOrder = order.get();
@@ -264,7 +280,7 @@ public class BookingService {
     public BookingDTO mapToDTO(Booking booking) {
         BookingDTO bookingDTO = new BookingDTO();
 
-        if(booking == null){
+        if (booking == null) {
             return null;
         }
 
