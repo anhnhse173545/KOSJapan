@@ -241,7 +241,7 @@ public class PayPalController {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Fish payment not found for order ID: " + order_id));
         }
 
-        String saleId = fishPayment.getSaleId(); // Assuming you have stored the sale ID in your TripPayment entity
+        String saleId = fishPayment.getSaleId();
         String amount = String.format(Locale.US, "%.2f", fishPayment.getAmount()/2);
 
         try {
@@ -251,7 +251,7 @@ public class PayPalController {
             // Check if the refund was successful
             if ("completed".equals(detailedRefund.getState())) {
                 // Update the trip payment status if needed
-                fishPayment.setStatus("REFUNDED");
+                fishPayment.setStatus("Refunded");
                 fishPaymentRepository.save(fishPayment);
 
                 return ResponseEntity.ok(Collections.singletonMap("message", "Refund successful"));
@@ -270,7 +270,7 @@ public class PayPalController {
     @GetMapping("/fishpayment/cancel")
     private String fishpaymentCancel(@RequestParam("order_id") String order_id){
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
-        fishPayment.setStatus("CANCELLED");
+        fishPayment.setStatus("Cancel Payment");
         fishPaymentRepository.save(fishPayment);
         return "paymentCancel";
     }
@@ -278,7 +278,7 @@ public class PayPalController {
     @GetMapping("/trippayment/cancel")
     private String trippaymentCancel(@RequestParam("booking_id") String booking_id){
         TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(booking_id);
-        tripPayment.setStatus("CANCELLED");
+        tripPayment.setStatus("Cancel Payment");
         tripPaymentRepository.save(tripPayment);
         return "paymentCancel";
     }
