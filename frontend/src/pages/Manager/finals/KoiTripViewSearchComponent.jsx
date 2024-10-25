@@ -6,12 +6,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Loader2, Search, Calendar, Plane, DollarSign, MapPin } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Loader2, Search, Calendar, Plane, DollarSign, X } from "lucide-react"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api/trip'
@@ -25,22 +22,16 @@ export function KoiTripViewSearchComponent() {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('startDate')
   const [sortOrder, setSortOrder] = useState('asc')
-  const [farmFilters, setFarmFilters] = useState([])
-  const [varietyFilters, setVarietyFilters] = useState([])
+  const [selectedFarms, setSelectedFarms] = useState([])
+  const [selectedVarieties, setSelectedVarieties] = useState([])
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [dateRange, setDateRange] = useState({ start: '', end: '' })
-  const [availableFarms, setAvailableFarms] = useState([])
-  const [availableVarieties, setAvailableVarieties] = useState([])
-  const [openFarmSelect, setOpenFarmSelect] = useState(false)
-  const [openVarietySelect, setOpenVarietySelect] = useState(false)
+  const [allFarms, setAllFarms] = useState([])
+  const [allVarieties, setAllVarieties] = useState([])
 
   useEffect(() => {
     fetchTrips()
   }, [])
-
-  useEffect(() => {
-    filterAndSortTrips()
-  }, [trips, searchTerm, sortBy, sortOrder, farmFilters, varietyFilters, priceRange, dateRange])
 
   const fetchTrips = async () => {
     setLoading(true)
@@ -48,6 +39,7 @@ export function KoiTripViewSearchComponent() {
     try {
       const response = await api.get('/list')
       setTrips(response.data)
+      setFilteredTrips(response.data)
       updateAvailableFilters(response.data)
     } catch (err) {
       setError('An error occurred while loading the trip list.')
@@ -66,15 +58,31 @@ export function KoiTripViewSearchComponent() {
         dest.farm.varieties.forEach(variety => varieties.add(variety.name))
       })
     })
-    setAvailableFarms(Array.from(farms))
-    setAvailableVarieties(Array.from(varieties))
+    setAllFarms(Array.from(farms))
+    setAllVarieties(Array.from(varieties))
   }
 
-  const filterAndSortTrips = () => {
-    let filtered = [...trips]
+  const handleSearch = (e) => {
+    e.preventDefault()
+    applyFilters()
+  }
+
+  const resetFilters = () => {
+    setSearchTerm('')
+    setSortBy('startDate')
+    setSortOrder('asc')
+    setSelectedFarms([])
+    setSelectedVarieties([])
+    setPriceRange([0, 10000])
+    setDateRange({ start: '', end: '' })
+    setFilteredTrips(trips)
+  }
+
+  const applyFilters = () => {
+    let result = [...trips]
 
     if (searchTerm) {
-      filtered = filtered.filter((trip) =>
+      result = result.filter((trip) =>
         trip.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.departureAirport.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.tripDestinations.some(dest => 
@@ -82,48 +90,37 @@ export function KoiTripViewSearchComponent() {
           dest.farm.address.toLowerCase().includes(searchTerm.toLowerCase())))
     }
 
-    if (farmFilters.length > 0) {
-      filtered = filtered.filter(trip =>
-        trip.tripDestinations.some(dest => farmFilters.includes(dest.farm.name)))
+    if (selectedFarms.length > 0) {
+      result = result.filter(trip =>
+        trip.tripDestinations.some(dest => selectedFarms.includes(dest.farm.name)))
     }
 
-    if (varietyFilters.length > 0) {
-      filtered = filtered.filter(trip =>
+    if (selectedVarieties.length > 0) {
+      result = result.filter(trip =>
         trip.tripDestinations.some(dest => 
-          dest.farm.varieties.some(variety => varietyFilters.includes(variety.name))))
+          dest.farm.varieties.some(variety => selectedVarieties.includes(variety.name))))
     }
 
-    filtered = filtered.filter(trip => trip.price >= priceRange[0] && trip.price <= priceRange[1])
+    result = result.filter(trip => trip.price >= priceRange[0] && trip.price <= priceRange[1])
 
     if (dateRange.start && dateRange.end) {
-      filtered = filtered.filter(trip => 
+      result = result.filter(trip => 
         new Date(trip.startDate) >= new Date(dateRange.start) && 
         new Date(trip.endDate) <= new Date(dateRange.end))
     }
 
-    filtered.sort((a, b) => {
+    result.sort((a, b) => {
       if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1
       if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1
       return 0
     })
 
-    setFilteredTrips(filtered)
+    setFilteredTrips(result)
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    filterAndSortTrips()
-  }
-
-  const resetFilters = () => {
-    setSearchTerm('')
-    setSortBy('startDate')
-    setSortOrder('asc')
-    setFarmFilters([])
-    setVarietyFilters([])
-    setPriceRange([0, 10000])
-    setDateRange({ start: '', end: '' })
-  }
+  useEffect(() => {
+    applyFilters()
+  }, [searchTerm, sortBy, sortOrder, selectedFarms, selectedVarieties, priceRange, dateRange])
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -134,249 +131,203 @@ export function KoiTripViewSearchComponent() {
   }
 
   return (
-    (<div className="container mx-auto p-2 sm:p-4">
-      <h1 className="text-2xl font-bold mb-4">Koi Buying Trips</h1>
-      <form onSubmit={handleSearch} className="mb-6 space-y-4">
-        <div className="flex gap-2">
-          <div className="flex-grow">
-            <Label htmlFor="search" className="sr-only">Search</Label>
-            <Input
-              id="search"
-              type="search"
-              placeholder="Search by description, airport, or farm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} />
-          </div>
-          <Button type="submit">
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <Label htmlFor="sortBy">Sort By</Label>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger id="sortBy">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="startDate">Start Date</SelectItem>
-                <SelectItem value="price">Price</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="sortOrder">Sort Order</Label>
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger id="sortOrder">
-                <SelectValue placeholder="Sort order" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="asc">Ascending</SelectItem>
-                <SelectItem value="desc">Descending</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Farm Filters</Label>
-            <Popover open={openFarmSelect} onOpenChange={setOpenFarmSelect}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openFarmSelect}
-                  className="w-full justify-between">
-                  {farmFilters.length > 0
-                    ? `${farmFilters.length} selected`
-                    : "Select farms..."}
-                  <X
-                    className="ml-2 h-4 w-4 shrink-0 opacity-50"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setFarmFilters([])
-                    }} />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search farms..." />
-                  <CommandEmpty>No farm found.</CommandEmpty>
-                  <CommandGroup>
-                    {availableFarms.map((farm) => (
-                      <CommandItem
-                        key={farm}
-                        onSelect={() => {
-                          setFarmFilters((prev) =>
-                            prev.includes(farm)
-                              ? prev.filter((f) => f !== farm)
-                              : [...prev, farm])
-                        }}>
-                        <div
-                          className={`mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary ${
-                            farmFilters.includes(farm)
-                              ? "bg-primary text-primary-foreground"
-                              : "opacity-50 [&_svg]:invisible"
-                          }`}>
-                          <X className="h-4 w-4" />
-                        </div>
+    (<div className="container mx-auto p-4 flex flex-col md:flex-row gap-6">
+      {/* Left sidebar for filters */}
+      <div className="w-full md:w-1/4 space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSearch} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="search">Search</Label>
+                <Input
+                  id="search"
+                  type="search"
+                  placeholder="Search trips..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sort">Sort by</Label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger id="sort">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="startDate">Start Date</SelectItem>
+                    <SelectItem value="price">Price</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="order">Sort order</Label>
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger id="order">
+                    <SelectValue placeholder="Sort order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                    <SelectItem value="desc">Descending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Farms</Label>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {allFarms.map((farm) => (
+                    <div key={farm} className="flex items-center">
+                      <Checkbox
+                        id={`farm-${farm}`}
+                        checked={selectedFarms.includes(farm)}
+                        onCheckedChange={(checked) => {
+                          setSelectedFarms(checked
+                            ? [...selectedFarms, farm]
+                            : selectedFarms.filter((f) => f !== farm))
+                        }} />
+                      <label
+                        htmlFor={`farm-${farm}`}
+                        className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         {farm}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div>
-            <Label>Variety Filters</Label>
-            <Popover open={openVarietySelect} onOpenChange={setOpenVarietySelect}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openVarietySelect}
-                  className="w-full justify-between">
-                  {varietyFilters.length > 0
-                    ? `${varietyFilters.length} selected`
-                    : "Select varieties..."}
-                  <X
-                    className="ml-2 h-4 w-4 shrink-0 opacity-50"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setVarietyFilters([])
-                    }} />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search varieties..." />
-                  <CommandEmpty>No variety found.</CommandEmpty>
-                  <CommandGroup>
-                    {availableVarieties.map((variety) => (
-                      <CommandItem
-                        key={variety}
-                        onSelect={() => {
-                          setVarietyFilters((prev) =>
-                            prev.includes(variety)
-                              ? prev.filter((v) => v !== variety)
-                              : [...prev, variety])
-                        }}>
-                        <div
-                          className={`mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary ${
-                            varietyFilters.includes(variety)
-                              ? "bg-primary text-primary-foreground"
-                              : "opacity-50 [&_svg]:invisible"
-                          }`}>
-                          <X className="h-4 w-4" />
-                        </div>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Koi Varieties</Label>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {allVarieties.map((variety) => (
+                    <div key={variety} className="flex items-center">
+                      <Checkbox
+                        id={`variety-${variety}`}
+                        checked={selectedVarieties.includes(variety)}
+                        onCheckedChange={(checked) => {
+                          setSelectedVarieties(checked
+                            ? [...selectedVarieties, variety]
+                            : selectedVarieties.filter((v) => v !== variety))
+                        }} />
+                      <label
+                        htmlFor={`variety-${variety}`}
+                        className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         {variety}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Price Range</Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={priceRange[0]}
+                    onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                    className="w-full" />
+                  <span>to</span>
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                    className="w-full" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={dateRange.start}
+                  onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date</Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={dateRange.end}
+                  onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
+              </div>
+              <Button type="submit" className="w-full">
+                <Search className="h-4 w-4 mr-2" />
+                Apply Filters
+              </Button>
+              <Button type="button" variant="outline" onClick={resetFilters} className="w-full">
+                Reset Filters
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+      {/* Main content area */}
+      <div className="w-full md:w-3/4 space-y-6">
+        <h1 className="text-3xl font-bold">Koi Buying Trips</h1>
+        {error && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
-        </div>
-        <div>
-          <Label>Price Range</Label>
-          <Slider
-            min={0}
-            max={10000}
-            step={100}
-            value={priceRange}
-            onValueChange={setPriceRange} />
-          <div className="flex justify-between text-sm text-gray-500">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="startDate">Start Date</Label>
-            <Input
-              id="startDate"
-              type="date"
-              value={dateRange.start}
-              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} />
-          </div>
-          <div>
-            <Label htmlFor="endDate">End Date</Label>
-            <Input
-              id="endDate"
-              type="date"
-              value={dateRange.end}
-              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
-          </div>
-        </div>
-        <Button type="button" variant="outline" onClick={resetFilters}>
-          Reset Filters
-        </Button>
-      </form>
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      {loading ? (
-        <div className="flex justify-center">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      ) : filteredTrips.length > 0 ? (
-        <div className="space-y-4">
-          {filteredTrips.map((trip) => (
-            <Card key={trip.id}>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-center">
+        ) : filteredTrips.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {filteredTrips.map((trip) => (
+              <Card key={trip.id} className="flex flex-col">
+                <CardHeader>
                   <CardTitle className="text-lg">{trip.description}</CardTitle>
-                  <span className="text-sm text-gray-500">ID: {trip.id}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1 text-gray-500" />
-                    <p>{formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <p>{formatDate(trip.startDate)} - {formatDate(trip.endDate)}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <Plane className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <p>{trip.departureAirport}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <p className="font-semibold">${trip.price.toLocaleString()}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <p>{trip.tripDestinations.map(dest => dest.farm.name).join(', ')}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center">
-                    <Plane className="h-4 w-4 mr-1 text-gray-500" />
-                    <p>{trip.departureAirport}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <DollarSign className="h-4 w-4 mr-1 text-gray-500" />
-                    <p>${trip.price.toLocaleString()}</p>
-                  </div>
-                  <Badge>{trip.status}</Badge>
-                </div>
-                <Accordion type="single" collapsible className="w-full mt-4">
-                  <AccordionItem value="destinations">
-                    <AccordionTrigger>Trip Destinations ({trip.tripDestinations.length})</AccordionTrigger>
-                    <AccordionContent>
-                      {trip.tripDestinations.map((destination) => (
-                        <div key={destination.id} className="mb-4 p-4 bg-gray-50 rounded-lg">
-                          <h4 className="font-semibold mb-2">{destination.farm.name}</h4>
-                          <p className="text-sm text-gray-600 mb-1">{formatDate(destination.visitDate)}</p>
-                          <p className="text-sm mb-2">{destination.description}</p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {destination.farm.varieties.map((variety) => (
-                              <Badge key={variety.id} variant="outline" className="text-xs">
-                                {variety.name}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
+                  <div className="mt-4">
+                    <p className="text-sm font-semibold mb-2">Koi Varieties:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from(new Set(
+                        trip.tripDestinations.flatMap(dest => dest.farm.varieties.map(v => v.name))
+                      )).slice(0, 3).map((variety) => (
+                        <Badge key={variety} variant="secondary">
+                          {variety}
+                        </Badge>
                       ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <p>No trips found.</p>
-      )}
+                      {trip.tripDestinations.flatMap(dest => dest.farm.varieties).length > 3 && (
+                        <Badge variant="outline">+{trip.tripDestinations.flatMap(dest => dest.farm.varieties).length - 3} more</Badge>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="text-center py-6">
+              <p className="text-muted-foreground">No trips found.</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>)
   );
 }
