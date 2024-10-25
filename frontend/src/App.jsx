@@ -55,6 +55,9 @@ import OrderListComponent from "./components/order-list";
 import FarmCrud from "./pages/Manager/finals/FarmCrud";
 import VarietyCrud from "./pages/Manager/finals/VarietyCrud";
 import { OrderDetailsComponent } from "./pages/DeliveryStaff/OrderDetails";
+import { FarmImageUpload } from "./components/farm-image-upload";
+import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSearchComponent";
+import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -74,7 +77,8 @@ function App() {
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
-        { path: "/koifarmpage", element: <KoiFarmPage /> },
+        // { path: "/koifarmpage", element: <KoiFarmPage /> },
+        { path: "/koifarmpage", element: <KoiFarmViewSearchComponent /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
@@ -88,7 +92,7 @@ function App() {
       path: "/manager-dashboard",
       element: <ManagerDashboard />,
       children: [
-        { path: "dashboard", element: <DashboardOverview /> },
+        { path: "dashboard", element: <FarmImageUpload /> },
         { path: "staff-manager", element: <StaffManagerView /> },
         { path: "booking-manager", element: <BookingManagerComponent /> },
         {
@@ -106,6 +110,8 @@ function App() {
         { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
         { path: "farm-control", element: <FarmCrud /> },
         { path: "variety-control", element: <VarietyCrud /> },
+        { path: "farm-view", element: <KoiFarmViewSearchComponent /> },
+        { path: "trip-view", element: <KoiTripViewSearchComponent /> },
       ],
     },
     {

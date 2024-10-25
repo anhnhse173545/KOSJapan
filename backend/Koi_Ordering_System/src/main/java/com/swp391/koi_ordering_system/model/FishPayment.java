@@ -35,6 +35,9 @@ public class FishPayment {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "sale_id")
+    private String saleId;
+
     @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;

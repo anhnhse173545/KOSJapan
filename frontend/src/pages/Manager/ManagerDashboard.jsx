@@ -32,6 +32,8 @@ export default function ManagerDashboard() {
     { name: 'Delivery Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/delivery-staff-assignment' },
     { name: 'Farm Control', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/farm-control' },
     { name: 'Variety Control', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/variety-control' },
+    { name: 'Farm View', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/farm-view' },
+    { name: 'Trip View', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/trip-view' },
   ]
 
   return (

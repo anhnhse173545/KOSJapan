@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.paypal.api.payments.DetailedRefund;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -89,7 +91,7 @@ public class PayPalController {
     @PostMapping("{booking_id}/payment/api/create-trippayment")
     public ResponseEntity<?> createAPITripPayment(@PathVariable String booking_id) {
         TripPayment tripPayment = tripPaymentService.createTripPaymentUsingPayPal(booking_id);
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/trippayment/cancel?booking_id=" + booking_id;
         String successUrl = "http://localhost:8080/payment/trippayment/success?booking_id=" + booking_id;
 
         try {
@@ -145,7 +147,7 @@ public class PayPalController {
     @PostMapping("/{order_id}/payment/api/create-fishpayment")
     public ResponseEntity<?> createAPIFishPayment(@PathVariable String order_id) {
         FishPayment fishPayment = fishPaymentService.createFishPaymentUsingPayPal(order_id);
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/fishpayment/cancel?order_id=" + order_id;
         String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
@@ -163,7 +165,7 @@ public class PayPalController {
             response.put("approvalUrl", approvalUrl);
             return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", order_id, e.getMessage());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
@@ -175,7 +177,7 @@ public class PayPalController {
     public ResponseEntity<?> updateAPIFishPayment(@PathVariable String order_id) {
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
 
-        String cancelUrl = "http://localhost:8080/payment/cancel";
+        String cancelUrl = "http://localhost:8080/fishpayment/cancel?order_id=" + order_id;
         String successUrl = "http://localhost:8080/payment/fishpayment/success?order_id=" + order_id;
 
         try {
@@ -193,7 +195,7 @@ public class PayPalController {
             response.put("approvalUrl", approvalUrl);
             return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", order_id, e.getMessage());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
@@ -212,6 +214,10 @@ public class PayPalController {
 
             if (fishPayment != null) {
                 fishPaymentService.updateFishPaymentUsingPayPal(order_id);
+                fishPayment.setSaleId(payment.getTransactions().get(0)
+                        .getRelatedResources().get(0)
+                        .getSale().getId());
+                fishPaymentRepository.save(fishPayment);
 
                 if ("approved".equals(payment.getState())) {
                     return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
@@ -227,8 +233,53 @@ public class PayPalController {
         return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
     }
 
-    @GetMapping("/payment/cancel")
-    private String paymentCancel(){
+    @PostMapping("/{order_id}/api/refund")
+    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) {
+        // Retrieve the trip payment details to get the sale ID
+        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+        if (fishPayment == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Fish payment not found for order ID: " + order_id));
+        }
+
+        String saleId = fishPayment.getSaleId();
+        String amount = String.format(Locale.US, "%.2f", fishPayment.getAmount()/2);
+
+        try {
+            // Call the service to process the refund
+            DetailedRefund detailedRefund = payPalService.refundPayment(saleId, amount);
+
+            // Check if the refund was successful
+            if ("completed".equals(detailedRefund.getState())) {
+                // Update the trip payment status if needed
+                fishPayment.setStatus("Refunded");
+                fishPaymentRepository.save(fishPayment);
+
+                return ResponseEntity.ok(Collections.singletonMap("message", "Refund successful"));
+            } else {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Refund not completed: " + detailedRefund.getState()));
+            }
+        } catch (PayPalRESTException e) {
+            log.error("PayPal REST Exception occurred while refunding payment for order Id {}: {}", order_id, e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Unexpected error occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred."));
+        }
+    }
+
+    @GetMapping("/fishpayment/cancel")
+    private String fishpaymentCancel(@RequestParam("order_id") String order_id){
+        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+        fishPayment.setStatus("Cancel Payment");
+        fishPaymentRepository.save(fishPayment);
+        return "paymentCancel";
+    }
+
+    @GetMapping("/trippayment/cancel")
+    private String trippaymentCancel(@RequestParam("booking_id") String booking_id){
+        TripPayment tripPayment = tripPaymentRepository.findTripPaymentByBookingId(booking_id);
+        tripPayment.setStatus("Cancel Payment");
+        tripPaymentRepository.save(tripPayment);
         return "paymentCancel";
     }
 
