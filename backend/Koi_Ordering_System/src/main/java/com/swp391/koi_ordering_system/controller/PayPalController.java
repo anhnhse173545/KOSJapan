@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.controller;
 
+import com.paypal.api.payments.DetailedRefund;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -163,7 +165,7 @@ public class PayPalController {
             response.put("approvalUrl", approvalUrl);
             return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", order_id, e.getMessage());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
@@ -193,7 +195,7 @@ public class PayPalController {
             response.put("approvalUrl", approvalUrl);
             return ResponseEntity.ok(response);
         } catch (PayPalRESTException e) {
-            log.error("PayPal REST Exception occurred while creating payment for bookingId {}: {}", order_id, e.getMessage());
+            log.error("PayPal REST Exception occurred while creating payment for orderId {}: {}", order_id, e.getMessage());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
@@ -212,6 +214,10 @@ public class PayPalController {
 
             if (fishPayment != null) {
                 fishPaymentService.updateFishPaymentUsingPayPal(order_id);
+                fishPayment.setSaleId(payment.getTransactions().get(0)
+                        .getRelatedResources().get(0)
+                        .getSale().getId());
+                fishPaymentRepository.save(fishPayment);
 
                 if ("approved".equals(payment.getState())) {
                     return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
@@ -225,6 +231,40 @@ public class PayPalController {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
         return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
+    }
+
+    @PostMapping("/{order_id}/api/refund")
+    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) {
+        // Retrieve the trip payment details to get the sale ID
+        FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+        if (fishPayment == null) {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Fish payment not found for order ID: " + order_id));
+        }
+
+        String saleId = fishPayment.getSaleId(); // Assuming you have stored the sale ID in your TripPayment entity
+        String amount = String.format(Locale.US, "%.2f", fishPayment.getAmount()/2);
+
+        try {
+            // Call the service to process the refund
+            DetailedRefund detailedRefund = payPalService.refundPayment(saleId, amount);
+
+            // Check if the refund was successful
+            if ("completed".equals(detailedRefund.getState())) {
+                // Update the trip payment status if needed
+                fishPayment.setStatus("REFUNDED");
+                fishPaymentRepository.save(fishPayment);
+
+                return ResponseEntity.ok(Collections.singletonMap("message", "Refund successful"));
+            } else {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Refund not completed: " + detailedRefund.getState()));
+            }
+        } catch (PayPalRESTException e) {
+            log.error("PayPal REST Exception occurred while refunding payment for order Id {}: {}", order_id, e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Unexpected error occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred."));
+        }
     }
 
     @GetMapping("/payment/cancel")

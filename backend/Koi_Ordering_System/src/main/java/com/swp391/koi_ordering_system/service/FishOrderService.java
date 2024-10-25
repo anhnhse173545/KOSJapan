@@ -92,7 +92,6 @@ public class FishOrderService {
         Booking booking = findBooking.get();
         FishOrder newFishOrder = new FishOrder();
 
-
         Instant instant = Instant.now();
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 
@@ -103,7 +102,7 @@ public class FishOrderService {
         newFishOrder.setTotal(0.00);
         newFishOrder.setBooking(booking);
         Account account = newFishOrder.getBooking().getCustomer();
-        newFishOrder.setDeliveryAddress(newFishOrder.getBooking().getCustomer().getAddress());
+        newFishOrder.setDeliveryAddress(account.getAddress());
         newFishOrder.setFarm(farm);
         newFishOrder.setIsDeleted(false);
         newFishOrder.setFishPackOrderDetails(null);

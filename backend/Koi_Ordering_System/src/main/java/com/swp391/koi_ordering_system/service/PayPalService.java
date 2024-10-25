@@ -55,4 +55,19 @@ public class PayPalService {
 
         return payment.execute(apiContext, execution);
     }
+
+    public DetailedRefund refundPayment(String saleId, String amount) throws PayPalRESTException {
+        Sale sale = new Sale();
+        sale.setId(saleId);
+
+        RefundRequest refundRequest = new RefundRequest();
+        Amount refundAmount = new Amount();
+
+        refundAmount.setTotal(amount);
+        refundAmount.setCurrency("USD");
+        refundRequest.setAmount(refundAmount);
+
+        DetailedRefund detailedRefund = sale.refund(apiContext, refundRequest);
+        return detailedRefund;
+    }
 }
