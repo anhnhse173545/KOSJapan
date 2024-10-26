@@ -117,6 +117,8 @@ const TourList = () => {
         { text: "On-going", value: "On-going" },
         { text: "Paid Booking", value: "Paid Booking" },
         { text: "Order Prepare", value: "Order Prepare" },
+        { text: "Booking", value: "Booking" },
+        { text: "Cancelled Booking", value: "Cancelled Booking" },
       ],
       onFilter: (value, record) => record.bookingStatus.includes(value),
       render: (text, record) => (
@@ -130,6 +132,8 @@ const TourList = () => {
           <Option value="On-going">On-going</Option>
           <Option value="Paid Booking">Paid Booking</Option>
           <Option value="Order Prepare">Order Prepare</Option>
+          <Option value="Booking">Booking</Option>
+          <Option value="Cancelled Booking">Cancelled Booking</Option>
         </Select>
       ),
     },
