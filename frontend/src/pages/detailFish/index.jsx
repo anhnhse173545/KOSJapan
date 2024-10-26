@@ -53,6 +53,26 @@ export default function KoiDetailPage() {
     fetchKoi()
   }, [id])
 
+  const handleReject = async () => {
+    try {
+      const apiUrl = `http://localhost:8080/fish-order/${koi.id}/${koi.farmId}/update`
+      const updatedData =
+        koi.paymentStatus === 'Deposited'
+          ? { paymentStatus: 'Rejected' }
+          : { status: 'Rejected' }
+      
+      await axios.put(apiUrl, updatedData)
+      if (updatedData.paymentStatus) {
+        setKoi(prev => ({ ...prev, paymentStatus: 'Rejected' }))
+      } else {
+        setKoi(prev => ({ ...prev, status: 'Rejected' }))
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error)
+      setError('Failed to update status')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -109,40 +129,17 @@ export default function KoiDetailPage() {
           </motion.div>
         ))}
 
-        {koi.fishPackOrderDetails && koi.fishPackOrderDetails.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: koi.fishOrderDetails.length * 0.1 }}
-          >
-            <h2 className="text-2xl font-bold mb-4">Fish Pack Details</h2>
-            {koi.fishPackOrderDetails.map((packDetail, index) => (
-              <Card key={packDetail.id} className="mb-4">
-                <CardHeader>
-                  <CardTitle>Pack ID: {packDetail.fishPack.id}</CardTitle>
-                </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                    <img
-                      src={getRandomImage(fishPackImages)}
-                      alt={`Fish Pack ${packDetail.fishPack.id}`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <p><span className="font-semibold">Length:</span> {packDetail.fishPack.length}</p>
-                    <p><span className="font-semibold">Weight:</span> {packDetail.fishPack.weight}</p>
-                    <p><span className="font-semibold">Description:</span> {packDetail.fishPack.description}</p>
-                    <p><span className="font-semibold">Quantity:</span> {packDetail.fishPack.quantity}</p>
-                    <p><span className="font-semibold">Price:</span> ${packDetail.price}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </motion.div>
-        )}
-
         <div className="mt-8 space-y-4">
+          {['Pending', 'Deposited', 'In Transit', 'Delivering'].includes(koi.status) && (
+            <Button 
+              className="w-full"
+              variant="destructive"
+              onClick={handleReject}
+            >
+              Rejected
+            </Button>
+          )}
+
           {koi.paymentStatus === 'Pending' && (
             <Button 
               className="w-full"
