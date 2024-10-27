@@ -8,14 +8,29 @@ body {
   background: transparent;
 }
 
-/* Form container */
-.ant-form {
+/* Cover container full-screen background */
+.cover-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-image: url("https://i.ytimg.com/vi/FlTkL-L8OQQ/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGFggZShlMA8=&rs=AOn4CLAKWb5dQ3CRfDNrwJ6-s36QLNOWTw");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+/* Overlay to make the form background slightly transparent */
+.overlay {
+  background-color: rgba(255, 255, 255, 0.8);
   max-width: 600px;
-  margin: 0 auto;
+  margin: auto;
   padding: 2rem;
-  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 /* Form title */
@@ -27,7 +42,7 @@ h2 {
   margin-bottom: 2rem;
 }
 
-/* Form items */
+/* Input fields and other styles */
 .ant-form-item {
   margin-bottom: 1.5rem;
 }
@@ -37,7 +52,6 @@ h2 {
   color: #333;
 }
 
-/* Input fields */
 .ant-input,
 .ant-input-textarea {
   border-radius: 4px;
@@ -45,24 +59,11 @@ h2 {
   transition: all 0.3s;
 }
 
-.ant-input:hover,
-.ant-input-textarea:hover {
-  border-color: #40a9ff;
-}
-
-.ant-input:focus,
-.ant-input-textarea:focus {
-  border-color: #1890ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-}
-
-/* Date picker */
 .ant-picker {
   width: 100%;
   border-radius: 4px;
 }
 
-/* Submit button */
 .ant-btn-primary {
   width: 100%;
   height: 40px;
@@ -71,24 +72,4 @@ h2 {
   border-radius: 4px;
   background-color: #1890ff;
   border-color: #1890ff;
-  text-shadow: none;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
-  transition: all 0.3s;
-}
-
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
-  background-color: #40a9ff;
-  border-color: #40a9ff;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .ant-form {
-    padding: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.75rem;
-  }
 }

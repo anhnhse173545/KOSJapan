@@ -55,7 +55,7 @@ export default function KoiDetailPage() {
 
   const handleReject = async () => {
     try {
-      const apiUrl = `http://localhost:8080/fish-order/${koi.id}/${koi.farmId}/update`
+      const apiUrl = `http://localhost:8080/fish-order/${koi.bookingId}/${koi.farmId}/update`
       const updatedData =
         koi.paymentStatus === 'Deposited'
           ? { paymentStatus: 'Rejected' }
