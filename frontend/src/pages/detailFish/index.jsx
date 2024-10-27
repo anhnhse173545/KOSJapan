@@ -16,8 +16,8 @@ export default function KoiDetailPage() {
   const [notification, setNotification] = useState(''); // New state for notification
 
   const koiImages = [
-    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
-    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s',
+    'https://t4.ftcdn.net/jpg/05/75/48/57/360_F_575485756_WSQ6ZzqMhD0JnPcEupxyKikKKCE5p5jo.jpg',
     // ... other images
   ];
 
