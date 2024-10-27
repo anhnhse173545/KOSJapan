@@ -4,11 +4,76 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const API_BASE_URL = 'http://localhost:8080';
 
-export function FarmCrud() {
+const MultiSelect = ({ options, selected, onChange, placeholder }) => {
+  const [open, setOpen] = useState(false)
+
+  // Ensure options is always an array
+  const safeOptions = Array.isArray(options) ? options : []
+
+  // Ensure selected is always an array
+  const safeSelected = Array.isArray(selected) ? selected : []
+
+  return (
+    (<Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between">
+          {safeSelected.length > 0
+            ? `${safeSelected.length} selected`
+            : placeholder}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-full p-0">
+        <Command>
+          <CommandInput placeholder="Search varieties..." />
+          <CommandEmpty>No variety found.</CommandEmpty>
+          <CommandGroup>
+            {safeOptions.map((option) => (
+              <CommandItem
+                key={option.value}
+                onSelect={() => {
+                  onChange(safeSelected.includes(option.value)
+                    ? safeSelected.filter((item) => item !== option.value)
+                    : [...safeSelected, option.value])
+                  setOpen(true)
+                }}>
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    safeSelected.includes(option.value) ? "opacity-100" : "opacity-0"
+                  )} />
+                {option.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>)
+  );
+}
+
+export function FarmCrudComponent() {
   const [farms, setFarms] = useState([])
   const [varieties, setVarieties] = useState([])
   const [currentFarm, setCurrentFarm] = useState({
@@ -19,7 +84,7 @@ export function FarmCrud() {
     isDeleted: false,
     varieties: []
   })
-  const [selectedVarietyId, setSelectedVarietyId] = useState('')
+  const [selectedVarietyIds, setSelectedVarietyIds] = useState([])
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
@@ -65,24 +130,21 @@ export function FarmCrud() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      const farmData = { ...currentFarm, varieties: selectedVarietyIds }
       const url = isEditing ? `${API_BASE_URL}/api/farm/update/${currentFarm.id}` : `${API_BASE_URL}/api/farm/create`
       const method = isEditing ? 'PUT' : 'POST'
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentFarm)
+        body: JSON.stringify(farmData)
       })
       if (!response.ok) throw new Error('Failed to save farm')
-      
-      if (selectedVarietyId) {
-        await handleAddVariety(isEditing ? currentFarm.id : response.json().id)
-      }
       
       await fetchFarms()
       setCurrentFarm(
         { id: '', name: '', address: '', phoneNumber: '', isDeleted: false, varieties: [] }
       )
-      setSelectedVarietyId('')
+      setSelectedVarietyIds([])
       setIsEditing(false)
       toast({
         title: "Success",
@@ -99,6 +161,7 @@ export function FarmCrud() {
 
   const handleEdit = (farm) => {
     setCurrentFarm(farm)
+    setSelectedVarietyIds(farm.varieties.map(v => v.id))
     setIsEditing(true)
   }
 
@@ -116,26 +179,6 @@ export function FarmCrud() {
       toast({
         title: "Error",
         description: "Failed to delete farm",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const handleAddVariety = async (farmId) => {
-    if (!farmId || !selectedVarietyId) return
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/farm/${farmId}/add-variety/${selectedVarietyId}`, {
-        method: 'POST',
-      })
-      if (!response.ok) throw new Error('Failed to add variety to farm')
-      toast({
-        title: "Success",
-        description: "Variety added to farm successfully",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add variety to farm",
         variant: "destructive",
       })
     }
@@ -167,16 +210,11 @@ export function FarmCrud() {
               onChange={handleInputChange}
               placeholder="Phone Number"
               required />
-            <Select value={selectedVarietyId} onValueChange={setSelectedVarietyId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Variety" />
-              </SelectTrigger>
-              <SelectContent>
-                {varieties.map((variety) => (
-                  <SelectItem key={variety.id} value={variety.id}>{variety.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={varieties.map(v => ({ label: v.name, value: v.id }))}
+              selected={selectedVarietyIds}
+              onChange={setSelectedVarietyIds}
+              placeholder="Select Varieties" />
             <Button type="submit">{isEditing ? 'Update' : 'Create'} Farm</Button>
           </form>
         </CardContent>
