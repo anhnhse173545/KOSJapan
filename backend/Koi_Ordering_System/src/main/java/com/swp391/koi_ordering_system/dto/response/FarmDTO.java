@@ -1,5 +1,6 @@
 package com.swp391.koi_ordering_system.dto.response;
 
+import com.swp391.koi_ordering_system.model.Media;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,9 @@ public class FarmDTO {
     private String address;
     private String phoneNumber;
     private String name;
-    private String image;
+    private String description;
     private Set<VarietyDTO> varieties;
+    private String mediaUrl;
 
 
 }

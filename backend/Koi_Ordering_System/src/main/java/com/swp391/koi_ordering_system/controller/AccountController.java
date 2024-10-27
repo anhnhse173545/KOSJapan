@@ -9,6 +9,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @PreAuthorize("hasRole('Manager')")
     @GetMapping("/all")
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
@@ -29,6 +31,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountById(account_id));
     }
 
+    @PreAuthorize("hasRole('Manager')")
     @GetMapping("/{role}/all")
     public ResponseEntity<List<AccountDTO>> getAllAccountsByRole(@PathVariable String role) {
         return ResponseEntity.ok(accountService.getAccountByRole(role));
@@ -39,6 +42,7 @@ public class AccountController {
 //        Account newAccount = accountService.createAccount(accountDTO);
 //        return ResponseEntity.ok(accountService.mapToDTO(newAccount));
 //    }
+
 
     @PutMapping("/{account_id}/update")
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable String account_id,

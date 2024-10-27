@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+//@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -34,23 +34,23 @@ public class SecurityConfig {
 
     }
 
-    //@Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //             .cors(cors -> cors.disable())
-    //             .authorizeHttpRequests(authorize -> authorize
-    //                     .requestMatchers("/api/auth/**").permitAll()
-    //                     .requestMatchers("/forgot-password/**").permitAll()
-    //                     .requestMatchers("/swagger-ui/**").permitAll()
-    //                     .requestMatchers("/swagger-ui.html").permitAll()
-    //                     .requestMatchers("/v3/api-docs/**").permitAll()
-    //                     .anyRequest().authenticated()
-    //             )
-    //             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //             .csrf(csrf -> csrf.disable())
-    //             .addFilterBefore(jwtAuthenticationFIlter, UsernamePasswordAuthenticationFilter.class);
-    //     return http.build();
-    // }
+//    @Bean
+//     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//         http
+//                 .cors(cors -> cors.disable())
+//                 .authorizeHttpRequests(authorize -> authorize
+//                         .requestMatchers("/api/auth/**").permitAll()
+//                         .requestMatchers("/forgot-password/**").permitAll()
+//                         .requestMatchers("/swagger-ui/**").permitAll()
+//                         .requestMatchers("/swagger-ui.html").permitAll()
+//                         .requestMatchers("/v3/api-docs/**").permitAll()
+//                         .anyRequest().authenticated()
+//                 )
+//                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                 .csrf(csrf -> csrf.disable())
+//                 .addFilterBefore(jwtAuthenticationFIlter, UsernamePasswordAuthenticationFilter.class);
+//         return http.build();
+//     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

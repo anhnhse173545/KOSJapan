@@ -15,6 +15,7 @@ import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.TripDestinationRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,6 +37,9 @@ public class TripService {
 
     @Autowired
     private TripDestinationService tripDestinationService;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private TripMapper tripMapper;
@@ -71,27 +75,67 @@ public class TripService {
         Trip trip = tripRepository.findByIdAndIsDeletedFalse(tripId)
                 .orElseThrow(() -> new RuntimeException("Trip not found"));
 
+        Set<String> salesStatuses = Set.of("Pending");
+        Set<String> consultingStatuses = Set.of("On-going", "Completed");
+
+        boolean isCustomer = authService.isRole("ROLE_Customer");
+
+//        boolean isManager = authService.isRole("ROLE_Manager");
+        boolean isManager = true;
+
+        boolean isSalesStaff = authService.isRole("ROLE_Sales_Staff");
+
+        boolean isConsultingStaff = authService.isRole("ROLE_Consulting_Staff");
+
+        boolean isDeliveryStaff = authService.isRole("ROLE_Delivery_Staff");
+
         if (updateTripDTO.getStartDate() != null) {
+            if (!isManager && !isSalesStaff ) {
+                throw new AccessDeniedException("Unauthorized to update start date");
+            }
             trip.setStartDate(updateTripDTO.getStartDate());
         }
 
         if (updateTripDTO.getEndDate() != null) {
+            if (!isManager && !isSalesStaff ) {
+                throw new AccessDeniedException("Unauthorized to update end date");
+            }
             trip.setEndDate(updateTripDTO.getEndDate());
         }
 
         if (updateTripDTO.getDepartureAirport() != null) {
+            if (!isManager && !isSalesStaff ) {
+                throw new AccessDeniedException("Unauthorized to update departure airport");
+            }
             trip.setDepartureAirport(updateTripDTO.getDepartureAirport());
         }
         if (updateTripDTO.getDescription() != null) {
+            if (!isManager && !isSalesStaff ) {
+                throw new AccessDeniedException("Unauthorized to update description");
+            }
             trip.setDescription(updateTripDTO.getDescription());
         }
 
         if (updateTripDTO.getPrice() != null) {
+            if (!isManager && !isSalesStaff ) {
+                throw new AccessDeniedException("Unauthorized to update price");
+            }
             trip.setPrice(updateTripDTO.getPrice());
         }
 
         if (updateTripDTO.getStatus() != null) {
-            trip.setStatus(updateTripDTO.getStatus());
+            if (isManager) {
+                trip.setStatus(updateTripDTO.getStatus());
+            }
+            else if (isSalesStaff && salesStatuses.contains(updateTripDTO.getStatus())) {
+                trip.setStatus(updateTripDTO.getStatus());
+            }
+            else if (isConsultingStaff && consultingStatuses.contains(updateTripDTO.getStatus())) {
+                trip.setStatus(updateTripDTO.getStatus());
+            }
+            else {
+                throw new AccessDeniedException("Unauthorized to update status");
+            }
         }
 
         Trip updatedTrip = tripRepository.save(trip);

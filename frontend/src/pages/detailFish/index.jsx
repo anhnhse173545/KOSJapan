@@ -1,25 +1,29 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import './detail.css';
+import { ChevronLeft, Loader2, CreditCard } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-function KoiDetailPage() {
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function KoiDetailPage() {
   const { id } = useParams();
-  const [koi, setKoi] = useState([]);
+  const navigate = useNavigate();
+  const [koi, setKoi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [notification, setNotification] = useState(''); // New state for notification
 
   const koiImages = [
-    'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcYR8TZ9R0bWOZrBIx-TJgw7VjeYfgfRvrBIvxKxzTL13pPx5gaW4phyt0ZWvHc0AdAO8&usqp=CAU',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAHjvobHvucSmw9JochLMhfjX-XpCvXf3hQO_nQpawKrlqWnd3nEjk4qrCQRRjgVOfNc0&usqp=CAU',
-    'https://static.chotot.com/storage/chotot-kinhnghiem/c2c/2021/04/92de3bb8-ca-koi-showa.png',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s',
+    'https://t4.ftcdn.net/jpg/05/75/48/57/360_F_575485756_WSQ6ZzqMhD0JnPcEupxyKikKKCE5p5jo.jpg',
+    // ... other images
   ];
 
-  const getRandomImage = () => {
-    const randomIndex = Math.floor(Math.random() * koiImages.length);
-    return koiImages[randomIndex];
+  const getRandomImage = (images) => {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
   };
 
   useEffect(() => {
@@ -27,9 +31,14 @@ function KoiDetailPage() {
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`);
-        setKoi(response.data);
+        const order = response.data.find(order => order.id === id);
+        if (order) {
+          setKoi(order);
+        } else {
+          setError('Koi order not found');
+        }
       } catch (err) {
-        setError('Koi not found or failed to load data');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -38,67 +47,113 @@ function KoiDetailPage() {
     fetchKoi();
   }, [id]);
 
+  const handleReject = async () => {
+    try {
+      const apiUrl = `http://localhost:8080/fish-order/${koi.bookingId}/${koi.farmId}/update`;
+      
+      // Set both paymentStatus and status to 'Rejected'
+      const updatedData = {
+        paymentStatus: 'Rejected',
+        status: 'Rejected',
+      };
+  
+      await axios.put(apiUrl, updatedData);
+      
+      // Update both states in the koi object
+      setKoi(prev => ({ ...prev, paymentStatus: 'Rejected', status: 'Rejected' }));
+  
+      // Set notification message
+      setNotification('Koi order has been rejected successfully.');
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      setError('Failed to update status');
+    }
+  };
+  
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
-  if (!koi.length) {
-    return <div>Koi not found</div>;
+  if (!koi) {
+    return <div className="text-center">Koi not found</div>;
   }
 
   return (
-    <div className="koi-detail-page">
-      <h1>Koi ID List</h1>
-  
-      {/* Hiển thị thông tin chi tiết cho từng cá koi */}
-      {koi.map(order => (
-        order.fishOrderDetails.map(orderDetail => (
-          <div key={orderDetail.fish.fish_id} className="fish-detail">
-            <img 
-              src={getRandomImage()} 
-              alt={orderDetail.fish.fish_variety_name} 
-              className="koi-image" 
-            />
-            <p><strong>Koi ID:</strong> {orderDetail.fish.fish_id}</p>
-            <p><strong>Giống cá:</strong> {orderDetail.fish.fish_variety_name}</p>
-            <p><strong>Chiều dài:</strong> {orderDetail.fish.length} cm</p>
-            <p><strong>Trọng lượng:</strong> {orderDetail.fish.weight} kg</p>
-            <p><strong>Mô tả:</strong> {orderDetail.fish.description}</p>
-            <p><strong>Giá:</strong> ${orderDetail.price}</p>
-  
-            {/* Hiển thị nút Purchase nếu trạng thái là Pending */}
-            {order.paymentStatus === 'Pending' && (
-              <button 
-                className="purchase-button" 
-                onClick={() => navigate(`/paykoi50/${order.id}`)}
-              >
-                Purchase
-              </button>
-            )}
-  
-            {/* Hiển thị nút Finish Payment nếu trạng thái là Delivering */}
-            {order.paymentStatus === 'Delivering' && (
-              <button 
-                className="purchase-button" 
-                onClick={() => navigate(`/paykoi100/${order.id}`)}
-              >
-                Finish Payment
-              </button>
-            )}
+    <div className="container mx-auto px-4 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold text-center mb-8">Koi Detail</h1>
+
+        {/* Notification Message */}
+        {notification && (
+          <div className="bg-green-500 text-white p-4 rounded mb-4 text-center">
+            {notification}
           </div>
-        ))
-      ))}
-  
-      <Link to="/mykoi" className="back-button">
-        Back
-      </Link>
+        )}
+
+        {koi.fishOrderDetails.map((orderDetail, index) => (
+          <motion.div
+            key={orderDetail.fish.fish_id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>{orderDetail.fish.fish_variety_name}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-6">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                  <img
+                    src={getRandomImage(koiImages)}
+                    alt={orderDetail.fish.fish_variety_name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <p><span className="font-semibold">Koi ID:</span> {orderDetail.fish.fish_id}</p>
+                  <p><span className="font-semibold">Length:</span> {orderDetail.fish.length} cm</p>
+                  <p><span className="font-semibold">Weight:</span> {orderDetail.fish.weight} kg</p>
+                  <p><span className="font-semibold">Description:</span> {orderDetail.fish.description}</p>
+                  <p><span className="font-semibold">Price:</span> ${orderDetail.price}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+
+        <div className="mt-8 space-y-4">
+          {['Pending', 'Deposited', 'In Transit', 'Delivering'].includes(koi.status) && (
+            <Button 
+              className="w-full"
+              variant="destructive"
+              onClick={handleReject}
+            >
+              Rejected
+            </Button>
+          )}
+
+          {/* Other buttons... */}
+          <Link to="/mykoi" className="block text-center">
+            <Button variant="outline" className="w-full">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back to My Koi
+            </Button>
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
-  
 }
-
-export default KoiDetailPage;

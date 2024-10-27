@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.model.Fish;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class FishService {
         newFish.setId(generateFishId());
         Variety variety = varietyRepository.findById(varietyId).get();
         if(variety == null){
-            throw new RuntimeException("Variety id not found");
+            throw new EntityNotFoundException("Variety id not found");
         }
         newFish.setVariety(variety);
         newFish.setLength(fish.getLength());

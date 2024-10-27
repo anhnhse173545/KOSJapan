@@ -31,6 +31,7 @@ public class BookingController {
     private BookingMapper bookingMapper;
 
 
+    @PreAuthorize("hasRole('Customer')")
     @PostMapping("/{customer_id}/create")
     public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO,
                                                     @PathVariable String customer_id) {
@@ -38,15 +39,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
+
+    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
     @GetMapping("/list")
     public ResponseEntity<List<BookingDTO>> getAllBooking() {
         return ResponseEntity.ok(bookingService.getAllBooking());
-    }
-
-    @GetMapping("/requested")
-    public ResponseEntity<List<BookingDTO>> getBookingsByStatusRequested() {
-        List<BookingDTO> bookings = bookingService.getBookingsByStatusRequested();
-        return ResponseEntity.ok(bookings);
     }
 
     @GetMapping("/customer/{customerId}")
@@ -89,6 +86,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
+    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
     @PutMapping("/update/{id}")
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id, @Valid @RequestBody UpdateBookingDTO updateBookingDTO) {
         BookingDTO updatedBookingDTO = bookingService.updateBooking(id, updateBookingDTO);
@@ -104,6 +102,7 @@ public class BookingController {
         return ResponseEntity.ok("Booking deleted successfully");
     }
 
+    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff')")
     @PostMapping("/{bookingId}/create-trip")
     public ResponseEntity<TripDTO> createTripForBooking(@PathVariable String bookingId, @Valid @RequestBody CreateTripDTO createTripDTO) {
         TripDTO createdTrip = bookingService.createTripForBooking(bookingId, createTripDTO);
@@ -120,30 +119,17 @@ public class BookingController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-    @GetMapping("/sale-staff")
-    public ResponseEntity<List<BookingDTO>> getBookingsByStatusRequestedPendingApproved() {
-        List<BookingDTO> bookings = bookingService.getBookingsByStatusForSaleStaff();
-        return ResponseEntity.ok(bookings);
-    }
-
-    @GetMapping("/consulting-staff")
-    public ResponseEntity<List<BookingDTO>> getBookingsByStatusConfirmedOngoing() {
-        List<BookingDTO> bookings = bookingService.getBookingsByStatusForConsultingStaff();
-        return ResponseEntity.ok(bookings);
-    }
-
-    @GetMapping("/sale-staff-customer/{customerId}")
-    public ResponseEntity<?> getBookingsByStatusAndCustomerId(
-            @PathVariable String customerId) {
-        try {
-            List<BookingDTO> bookings = bookingService.getBookingsByStatusAndCustomerIdForSaleStaff(customerId);
-            return ResponseEntity.ok(bookings);
-        } catch (RuntimeException e) {
-            ErrorDTO errorDTO = new ErrorDTO(404, "Customer not found");
-            return ResponseEntity.status(404).body(errorDTO);
-        }
-    }
+//    @GetMapping("/sale-staff-customer/{customerId}")
+//    public ResponseEntity<?> getBookingsByStatusAndCustomerId(
+//            @PathVariable String customerId) {
+//        try {
+//            List<BookingDTO> bookings = bookingService.getBookingsByStatusAndCustomerIdForSaleStaff(customerId);
+//            return ResponseEntity.ok(bookings);
+//        } catch (RuntimeException e) {
+//            ErrorDTO errorDTO = new ErrorDTO(404, "Customer not found");
+//            return ResponseEntity.status(404).body(errorDTO);
+//        }
+//    }
 
     @PreAuthorize("hasRole('Sale_Staff') or hasRole('Manager')")
     @GetMapping("/sale-staff/{saleStaffId}")
@@ -156,6 +142,8 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+
+    @PreAuthorize("hasRole('Consulting_Staff') or hasRole('Manager')")
     @GetMapping("/consulting-staff/{consultingStaffId}")
     public ResponseEntity<?> getBookingsByConsultingStaffId(@PathVariable String consultingStaffId) {
         List<BookingDTO> bookings = bookingService.getBookingsByConsultingStaffId(consultingStaffId);
@@ -166,6 +154,7 @@ public class BookingController {
         return ResponseEntity.ok(bookings);
     }
 
+    @PreAuthorize("hasRole('Delivery_Staff') or hasRole('Manager')")
     @GetMapping("/delivery-staff/{deliveryStaffId}")
     public ResponseEntity<?> getBookingsByDeliveryStaffId(@PathVariable String deliveryStaffId) {
         List<BookingDTO> bookings = bookingService.getBookingsByDeliveryStaffId(deliveryStaffId);
@@ -201,6 +190,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.mapToDTO(removedBooking));
     }
 
+    @PreAuthorize("hasRole('Sale_Staff') or hasRole('Manager')")
     @GetMapping("/sale-staff/{saleStaffId}/customer/{customerId}")
     public ResponseEntity<List<BookingDTO>> getBookingsBySaleStaffIdAndCustomerId(
             @PathVariable String saleStaffId, @PathVariable String customerId) {

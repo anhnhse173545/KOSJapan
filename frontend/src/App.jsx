@@ -1,10 +1,6 @@
 import {
   createBrowserRouter,
   RouterProvider,
-  Link,
-  Routes,
-  Route,
-  BrowserRouter,
 } from "react-router-dom";
 import Layout from "./components/layout";
 import CombinedKoiRequestForm from "./pages/request-form";
@@ -17,9 +13,6 @@ import OnGoingPage from "./pages/onGoing";
 import { HomepageComponent } from "./pages/home/homepage";
 import KoiPage from "./pages/mykoi";
 import KoiDetailPage from "./pages/detailFish";
-import KoiPayPage from "./pages/paykoi";
-import ConsultingStaff from "./pages/ConsultingStaff/ConsultingStaff";
-import SaleStaff from "./pages/SaleStaff/temp/SaleStaff";
 // import CustomerRequest from "./pages/SaleStaff/CustomerRequest";
 import AddKoi from "./pages/ConsultingStaff/AddKoi";
 import ConsultingStaffHome from "./pages/ConsultingStaff/ConsultingStaffHome";
@@ -27,14 +20,11 @@ import KoiDetails from "./pages/ConsultingStaff/KoiDetails";
 import OrderList from "./pages/ConsultingStaff/OrderList"; // Renamed to avoid conflict
 import TourDetails from "./pages/ConsultingStaff/TourDetails";
 import TourList from "./pages/ConsultingStaff/TourList";
-import SaleStaffHome from "./pages/SaleStaff/temp/SaleStaffHome";
+
 
 import PaidBooking from "./pages/paidBooking";
-import CreateTrip from "./pages/SaleStaff/temp/ViewTripPlan";
-import KoiFarmPage from "./pages/koifarmreview";
 
 import ManagerDashboard from "./pages/Manager/ManagerDashboard";
-import DashboardOverview from "./pages/Manager/finals/DashboardOverview";
 import StaffManagerView from "./pages/Manager/finals/StaffManagerView";
 import BookingManagerComponent from "./pages/Manager/finals/booking-manager";
 import { SalesStaffManagementComponent } from "./pages/Manager/finals/SalesStaffAssign";
@@ -51,7 +41,12 @@ import ConsultingStaffDashboard from "./pages/ConsultingStaff/ConsultingStaffDas
 import TripPaymentPage from "./pages/paytrip";
 import PaymentTripPage from "./pages/paykoi";
 import PaymentTripPageFull from "./pages/paykoifinished";
-import OrderListComponent from "./components/order-list";
+import FarmCrud from "./pages/Manager/finals/FarmCrud";
+import VarietyCrud from "./pages/Manager/finals/VarietyCrud";
+import { OrderDetailsComponent } from "./pages/DeliveryStaff/OrderDetails";
+import { FarmImageUpload } from "./components/farm-image-upload";
+import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSearchComponent";
+import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -65,13 +60,14 @@ function App() {
         { path: "/register", element: <Register /> },
         { path: "/login", element: <Login /> },
         { path: "/payment", element: <PaymentPage /> },
-        { path: "/payment/:id", element: <PaymentDetailsPage /> },
+        { path: "/request/:id", element: <PaymentDetailsPage /> },
         { path: "/quota/:id", element: <QuotaDetailsPage /> },
         { path: "/onGoing/:id", element: <OnGoingPage /> },
         { path: "/mykoi", element: <KoiPage /> },
         { path: "/mykoi/:id", element: <KoiDetailPage /> },
         { path: "/paidbooking/:id", element: <PaidBooking /> },
-        { path: "/koifarmpage", element: <KoiFarmPage /> },
+        // { path: "/koifarmpage", element: <KoiFarmPage /> },
+        { path: "/koifarmpage", element: <KoiFarmViewSearchComponent /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
@@ -85,7 +81,7 @@ function App() {
       path: "/manager-dashboard",
       element: <ManagerDashboard />,
       children: [
-        { path: "dashboard", element: <DashboardOverview /> },
+        { path: "dashboard", element: <FarmImageUpload /> },
         { path: "staff-manager", element: <StaffManagerView /> },
         { path: "booking-manager", element: <BookingManagerComponent /> },
         {
@@ -101,6 +97,10 @@ function App() {
           element: <DeliveryStaffAssignment />,
         },
         { path: "quotes-review", element: <ExtendedQuoteReviewComponent /> },
+        { path: "farm-control", element: <FarmCrud /> },
+        { path: "variety-control", element: <VarietyCrud /> },
+        { path: "farm-view", element: <KoiFarmViewSearchComponent /> },
+        { path: "trip-view", element: <KoiTripViewSearchComponent /> },
       ],
     },
     {
@@ -108,6 +108,7 @@ function App() {
       element: <DeliveryStaffDashboard />,
       children: [
         { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
+        { path: "my-deliveries/order-details/:orderId", element: <OrderDetailsComponent /> },
       ],
     },
     {
