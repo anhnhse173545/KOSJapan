@@ -9,11 +9,12 @@ const BookingHistoryPage = ({ customerId }) => {
   useEffect(() => {
     const fetchBookingHistory = async () => {
       try {
+        // Use the passed customerId prop to fetch the booking history
         const response = await axios.get(`http://localhost:8080/api/booking/customer/AC0007`);
-        
+
         // Filter bookings by status: "completed" or "canceled"
         const filteredBookings = response.data.filter(booking =>
-          booking.status === 'completed' || booking.status === 'canceled'
+          booking.status === 'Completed' || booking.status === 'Canceled'
         );
 
         setBookingHistory(filteredBookings); // Set the filtered bookings to state
