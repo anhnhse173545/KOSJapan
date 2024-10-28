@@ -1,72 +1,90 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { ChevronLeft, Loader2, CreditCard } from 'lucide-react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ChevronLeft, Loader2, CreditCard } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function KoiDetailPage() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [koi, setKoi] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [koi, setKoi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(''); // New state for notification
 
   const koiImages = [
-    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-dgrOuDD7ggYB2igDa3ANE2SVnAZ7ft.png',
-    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
-    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
-    'https://cecilieo.com/content/images/wordpress/2020/11/koi-fish-reference-photo-2.jpg/placeholder.svg?height=400&width=600',
-  ]
-
-  const fishPackImages = [
-    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
-    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
-    'https://smithcreekfishfarm.com/cdn/shop/files/kolubek-livestock-fish-shipped-koi-packages-shipped-free-koi-fish-assortment-3-12-pack-shipped-standard-or-butterfly-fins-44441180864809_1024x.jpg?v=1706511776/placeholder.svg?height=300&width=400',
-  ]
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s',
+    'https://t4.ftcdn.net/jpg/05/75/48/57/360_F_575485756_WSQ6ZzqMhD0JnPcEupxyKikKKCE5p5jo.jpg',
+    // ... other images
+  ];
 
   const getRandomImage = (images) => {
-    const randomIndex = Math.floor(Math.random() * images.length)
-    return images[randomIndex]
-  }
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  };
 
   useEffect(() => {
     const fetchKoi = async () => {
       try {
-        setLoading(true)
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`)
-        const order = response.data.find(order => order.id === id)
+        setLoading(true);
+        const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`);
+        const order = response.data.find(order => order.id === id);
         if (order) {
-          setKoi(order)
+          setKoi(order);
         } else {
-          setError('Koi order not found')
+          setError('Koi order not found');
         }
       } catch (err) {
-        setError('Failed to load data')
+        setError('Failed to load data');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchKoi()
-  }, [id])
+    fetchKoi();
+  }, [id]);
+
+  const handleReject = async () => {
+    try {
+      const apiUrl = `http://localhost:8080/fish-order/${koi.bookingId}/${koi.farmId}/update`;
+      
+      // Set both paymentStatus and status to 'Rejected'
+      const updatedData = {
+        paymentStatus: 'Rejected',
+        status: 'Rejected',
+      };
+  
+      await axios.put(apiUrl, updatedData);
+      
+      // Update both states in the koi object
+      setKoi(prev => ({ ...prev, paymentStatus: 'Rejected', status: 'Rejected' }));
+  
+      // Set notification message
+      setNotification('Koi order has been rejected successfully.');
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      setError('Failed to update status');
+    }
+  };
+  
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
   if (!koi) {
-    return <div className="text-center">Koi not found</div>
+    return <div className="text-center">Koi not found</div>;
   }
 
   return (
@@ -77,6 +95,13 @@ export default function KoiDetailPage() {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-bold text-center mb-8">Koi Detail</h1>
+
+        {/* Notification Message */}
+        {notification && (
+          <div className="bg-green-500 text-white p-4 rounded mb-4 text-center">
+            {notification}
+          </div>
+        )}
 
         {koi.fishOrderDetails.map((orderDetail, index) => (
           <motion.div
@@ -109,60 +134,18 @@ export default function KoiDetailPage() {
           </motion.div>
         ))}
 
-        {koi.fishPackOrderDetails && koi.fishPackOrderDetails.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: koi.fishOrderDetails.length * 0.1 }}
-          >
-            <h2 className="text-2xl font-bold mb-4">Fish Pack Details</h2>
-            {koi.fishPackOrderDetails.map((packDetail, index) => (
-              <Card key={packDetail.id} className="mb-4">
-                <CardHeader>
-                  <CardTitle>Pack ID: {packDetail.fishPack.id}</CardTitle>
-                </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                    <img
-                      src={getRandomImage(fishPackImages)}
-                      alt={`Fish Pack ${packDetail.fishPack.id}`}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <p><span className="font-semibold">Length:</span> {packDetail.fishPack.length}</p>
-                    <p><span className="font-semibold">Weight:</span> {packDetail.fishPack.weight}</p>
-                    <p><span className="font-semibold">Description:</span> {packDetail.fishPack.description}</p>
-                    <p><span className="font-semibold">Quantity:</span> {packDetail.fishPack.quantity}</p>
-                    <p><span className="font-semibold">Price:</span> ${packDetail.price}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </motion.div>
-        )}
-
         <div className="mt-8 space-y-4">
-          {koi.paymentStatus === 'Pending' && (
+          {['Pending', 'Deposited', 'In Transit', 'Delivering'].includes(koi.status) && (
             <Button 
               className="w-full"
-              onClick={() => navigate(`/paykoi50/${koi.id}`)}
+              variant="destructive"
+              onClick={handleReject}
             >
-              <CreditCard className="w-4 h-4 mr-2" />
-              Purchase
+              Rejected
             </Button>
           )}
 
-          {koi.status === 'Delivering' && (
-            <Button 
-              className="w-full"
-              onClick={() => navigate(`/paykoi100/${koi.id}`)}
-            >
-              <CreditCard className="w-4 h-4 mr-2" />
-              Finish Payment
-            </Button>
-          )}
-
+          {/* Other buttons... */}
           <Link to="/mykoi" className="block text-center">
             <Button variant="outline" className="w-full">
               <ChevronLeft className="w-4 h-4 mr-2" />
@@ -172,5 +155,5 @@ export default function KoiDetailPage() {
         </div>
       </motion.div>
     </div>
-  )
+  );
 }
