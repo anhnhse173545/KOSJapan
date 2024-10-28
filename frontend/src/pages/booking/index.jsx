@@ -55,11 +55,6 @@ function PaymentPage() {
               My Koi Fish
             </Link>
           </li>
-          <li>
-            <Link to="/history" className={`sidebar-link ${location.pathname === '/history' ? 'active' : ''}`}>
-            Order History
-            </Link>
-          </li>
         </ul>
       </div>
 
