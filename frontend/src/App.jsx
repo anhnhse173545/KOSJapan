@@ -47,6 +47,7 @@ import { OrderDetailsComponent } from "./pages/DeliveryStaff/OrderDetails";
 import { FarmImageUpload } from "./components/farm-image-upload";
 import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSearchComponent";
 import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
+import { HomepageGuest } from "./pages/homeguest";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
       element: <Layout />,
       children: [
         { path: "/", element: <HomepageComponent /> },
+        { path: "/guest", element: <HomepageGuest /> },
         { path: "/contact", element: <CombinedKoiRequestForm /> },
         { path: "/register", element: <Register /> },
         { path: "/login", element: <Login /> },
