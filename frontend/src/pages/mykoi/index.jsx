@@ -68,6 +68,11 @@ function KoiPage() {
               My Koi
             </Link>
           </li>
+          <li>
+            <Link to="/" className={`sidebar-link ${location.pathname === '/' ? 'active' : ''}`}>
+            Order History
+            </Link>
+          </li>
         </ul>
       </div>
 

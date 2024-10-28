@@ -44,6 +44,7 @@ import { FarmImageUpload } from "./components/farm-image-upload";
 import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSearchComponent";
 import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
 import { HomepageGuest } from "./pages/homeguest";
+import BookingHistoryPage from "./pages/history";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
         { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
+        { path: "/history", element: <BookingHistoryPage /> },
       ],
     },
 
