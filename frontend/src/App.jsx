@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/layout";
 import CombinedKoiRequestForm from "./pages/request-form";
 import Register from "./pages/register";
@@ -20,7 +17,6 @@ import KoiDetails from "./pages/ConsultingStaff/KoiDetails";
 import OrderList from "./pages/ConsultingStaff/OrderList"; // Renamed to avoid conflict
 import TourDetails from "./pages/ConsultingStaff/TourDetails";
 import TourList from "./pages/ConsultingStaff/TourList";
-
 
 import PaidBooking from "./pages/paidBooking";
 
@@ -68,14 +64,13 @@ function App() {
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         // { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/koifarmpage", element: <KoiFarmViewSearchComponent /> },
+        { path: "/koi-trip", element: <KoiTripViewSearchComponent /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
         { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
       ],
     },
-
-    
 
     {
       path: "/manager-dashboard",
@@ -108,7 +103,10 @@ function App() {
       element: <DeliveryStaffDashboard />,
       children: [
         { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
-        { path: "my-deliveries/order-details/:orderId", element: <OrderDetailsComponent /> },
+        {
+          path: "my-deliveries/order-details/:orderId",
+          element: <OrderDetailsComponent />,
+        },
       ],
     },
     {
@@ -132,7 +130,6 @@ function App() {
       children: [
         { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
-        
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
 
