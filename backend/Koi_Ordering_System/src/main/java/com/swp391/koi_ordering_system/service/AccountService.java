@@ -80,13 +80,29 @@ public class AccountService {
         }
         Account acc = findAcc.get();
 
-        acc.setName(accountDTO.getName());
-        acc.setPhone(accountDTO.getPhone());
-        acc.setEmail(accountDTO.getEmail());
-        acc.setPassword(accountDTO.getPassword());
-        acc.setPhone(accountDTO.getPhone());
-        acc.setAddress(accountDTO.getAddress());
-        acc.setRole(accountDTO.getRole());
+        if (accountDTO.getName() != null && !accountDTO.getName().isEmpty()) {
+            acc.setName(accountDTO.getName());
+        }
+
+        if (accountDTO.getPhone() != null && !accountDTO.getPhone().isEmpty()) {
+            acc.setPhone(accountDTO.getPhone());
+        }
+
+        if (accountDTO.getEmail() != null && !accountDTO.getEmail().isEmpty()) {
+            acc.setEmail(accountDTO.getEmail());
+        }
+
+        if (accountDTO.getPassword() != null && !accountDTO.getPassword().isEmpty()) {
+            acc.setPassword(accountDTO.getPassword());
+        }
+
+        if (accountDTO.getAddress() != null && !accountDTO.getAddress().isEmpty()) {
+            acc.setAddress(accountDTO.getAddress());
+        }
+
+        if (accountDTO.getRole() != null && !accountDTO.getRole().isEmpty()) {
+            acc.setRole(accountDTO.getRole());
+        }
 
         return accountRepository.save(acc);
     }
