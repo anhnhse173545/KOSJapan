@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/layout";
 import CombinedKoiRequestForm from "./pages/request-form";
 import Register from "./pages/register";
@@ -20,7 +17,6 @@ import KoiDetails from "./pages/ConsultingStaff/KoiDetails";
 import OrderList from "./pages/ConsultingStaff/OrderList"; // Renamed to avoid conflict
 import TourDetails from "./pages/ConsultingStaff/TourDetails";
 import TourList from "./pages/ConsultingStaff/TourList";
-
 
 import PaidBooking from "./pages/paidBooking";
 
@@ -47,6 +43,8 @@ import { OrderDetailsComponent } from "./pages/DeliveryStaff/OrderDetails";
 import { FarmImageUpload } from "./components/farm-image-upload";
 import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSearchComponent";
 import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
+import { HomepageGuest } from "./pages/homeguest";
+import BookingHistoryPage from "./pages/history";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -56,6 +54,7 @@ function App() {
       element: <Layout />,
       children: [
         { path: "/", element: <HomepageComponent /> },
+        { path: "/guest", element: <HomepageGuest /> },
         { path: "/contact", element: <CombinedKoiRequestForm /> },
         { path: "/register", element: <Register /> },
         { path: "/login", element: <Login /> },
@@ -68,14 +67,14 @@ function App() {
         { path: "/paidbooking/:id", element: <PaidBooking /> },
         // { path: "/koifarmpage", element: <KoiFarmPage /> },
         { path: "/koifarmpage", element: <KoiFarmViewSearchComponent /> },
+        { path: "/koi-trip", element: <KoiTripViewSearchComponent /> },
         { path: "/userDetail", element: <UserDetailPage /> },
         { path: "/paytrip", element: <TripPaymentPage /> },
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
         { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
+        { path: "/history", element: <BookingHistoryPage /> },
       ],
     },
-
-    
 
     {
       path: "/manager-dashboard",
@@ -108,7 +107,10 @@ function App() {
       element: <DeliveryStaffDashboard />,
       children: [
         { path: "my-deliveries", element: <DeliveryOrderListComponent /> },
-        { path: "my-deliveries/order-details/:orderId", element: <OrderDetailsComponent /> },
+        {
+          path: "my-deliveries/order-details/:orderId",
+          element: <OrderDetailsComponent />,
+        },
       ],
     },
     {
@@ -132,7 +134,6 @@ function App() {
       children: [
         { path: "", element: <ConsultingStaffHome /> }, // Default home page
         { path: "tour-list", element: <TourList /> },
-        
 
         { path: "tour-list/tour-details/:bookingId", element: <TourDetails /> }, // Dynamic route
 
