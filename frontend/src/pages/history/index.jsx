@@ -18,7 +18,7 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
   useEffect(() => {
     const fetchBookingHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/booking/customer/${customerId}`)
+        const response = await axios.get(`http://localhost:8080/api/booking/customer/AC0007`)
         const filteredBookings = response.data.filter(booking =>
           booking.status === 'Completed' || booking.status === 'Canceled'
         )

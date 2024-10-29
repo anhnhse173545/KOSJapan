@@ -45,6 +45,7 @@ import { KoiFarmViewSearchComponent } from "./pages/Manager/finals/KoiFarmViewSe
 import { KoiTripViewSearchComponent } from "./pages/Manager/finals/KoiTripViewSearchComponent";
 import { HomepageGuest } from "./pages/homeguest";
 import BookingHistoryPage from "./pages/history";
+import AboutUs from "./pages/aboutUs";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
         { path: "/paykoi50/:id", element: <PaymentTripPage /> },
         { path: "/paykoi100/:id", element: <PaymentTripPageFull /> },
         { path: "/history", element: <BookingHistoryPage /> },
+        { path: "/aboutus", element: <AboutUs /> },
       ],
     },
 
