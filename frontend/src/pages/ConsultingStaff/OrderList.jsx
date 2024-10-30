@@ -175,16 +175,17 @@ const OrderList = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const payload = {
-        deliveryAddress, // Include the delivery address in the payload
-      };
+      // Define the endpoint, including bookingId and farmId in the URL path
+      const url = `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`;
 
-      // API request to create the order
-      const response = await axios.post(
-        `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`,
-        payload
-      );
+      // Send a POST request with the delivery address as a query parameter
+      const response = await axios.post(url, null, {
+        params: {
+          address: deliveryAddress, // Pass the delivery address here
+        },
+      });
 
+      // Success message and fetch updated order data
       message.success(`Order created with ID: ${response.data.id}`);
       fetchOrders(); // Refresh orders list after successful creation
     } catch (error) {
