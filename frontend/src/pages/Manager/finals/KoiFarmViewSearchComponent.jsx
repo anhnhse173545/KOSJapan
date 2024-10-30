@@ -48,6 +48,40 @@ export function KoiFarmViewSearchComponent() {
     }
   }
 
+  const applyFilters = () => {
+    try {
+      let result = [...farms];
+  
+      // Apply search filter
+      if (searchTerm) {
+        result = result.filter((farm) =>
+          (farm.name && farm.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (farm.description && farm.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (farm.address && farm.address.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+  
+      // Apply variety filter
+      if (selectedVarieties.length > 0) {
+        result = result.filter((farm) =>
+          farm.varieties.some((variety) => selectedVarieties.includes(variety.name))
+        );
+      }
+  
+      // Apply sorting
+      result.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1;
+        if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+  
+      setFilteredFarms(result);
+    } catch (err) {
+      setError("An error occurred while filtering the farms.");
+      console.error("Error in applyFilters:", err);
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault()
     applyFilters()
@@ -59,35 +93,6 @@ export function KoiFarmViewSearchComponent() {
     setSortOrder('asc')
     setSelectedVarieties([])
     setFilteredFarms(farms)
-  }
-
-  const applyFilters = () => {
-    let result = [...farms]
-
-    // Apply search filter
-    if (searchTerm) {
-      result = result.filter((farm) =>
-        farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        farm.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        farm.address.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    // Apply variety filter
-    if (selectedVarieties.length > 0) {
-      result = result.filter((farm) =>
-        farm.varieties.some((variety) => selectedVarieties.includes(variety.name))
-      )
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1
-      if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
-
-    setFilteredFarms(result)
   }
 
   useEffect(() => {
@@ -154,7 +159,7 @@ export function KoiFarmViewSearchComponent() {
                           )
                         }}
                       />
-                      <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none">
                         {variety}
                       </label>
                     </div>
