@@ -82,7 +82,7 @@ const AboutUs = () => {
       </section>
 
       <img 
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_sJtZ9r_VRYrLeAxARsC5icePZPNBZnv-4w&s" 
+        src="https://i.ytimg.com/vi/NSOGQB33ims/maxresdefault.jpg" 
         alt="Colorful Koi fish swimming in dark water" 
         className="about-us-image" 
       />
