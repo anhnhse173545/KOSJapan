@@ -45,7 +45,11 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String accessToken = jwtTokenProvider.generateToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
-        return new TokenRefreshResponseDTO(accessToken, refreshToken);
+
+        Account account = accountRepository.findByPhone(loginRequestDTO.getPhone());
+        String role = account.getRole();
+
+        return new TokenRefreshResponseDTO(accessToken, refreshToken, role);
     }
 
     public void registerUser(RegisterRequestDTO registerRequestDTO) {
@@ -93,12 +97,15 @@ public class AuthService {
             String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
             Authentication authentication = getAuthentication(username);
             String newToken = jwtTokenProvider.generateToken(authentication);
-            return new TokenRefreshResponseDTO(newToken, refreshToken);
+
+            Account account = accountRepository.findByPhone(username);
+            String role = account.getRole();
+
+            return new TokenRefreshResponseDTO(newToken, refreshToken, role);
         } else {
             throw new IllegalArgumentException("Invalid refresh token");
         }
     }
-
     private Authentication getAuthentication(String phone) {
         Account account = accountRepository.findByPhone(phone);
         return new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());

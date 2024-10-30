@@ -20,7 +20,7 @@ function Header() {
           <li onClick={() => navigate("/contact")}>Request</li>
           <li onClick={() => navigate("/koifarmpage")}>Koi Farm</li>
           <li onClick={() => navigate("/koi-trip")}>Koi Trip</li>
-          <li onClick={() => navigate("/")}>About Us</li>
+          <li onClick={() => navigate("/aboutus")}>About Us</li>
         </ul>
       </div>
       {/* space */}
