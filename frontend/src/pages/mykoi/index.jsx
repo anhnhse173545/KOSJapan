@@ -84,6 +84,7 @@ function KoiPage() {
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
+              style={{ color: 'black' }} // Thêm style inline
               onClick={() => setSelectedStatus(status)}
             >
               {status}

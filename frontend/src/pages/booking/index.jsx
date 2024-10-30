@@ -66,17 +66,19 @@ function PaymentPage() {
 
       {/* Status Tabs */}
       <div className="payment-section">
-        <div className="status-tabs">
-          {['All', 'Requested', 'Approved Quote','Paid Booking','On-going','Order Prepare', 'Completed', 'Canceled'].map((status) => (
-            <button
-              key={status}
-              className={`tab ${selectedStatus === status ? 'active' : ''}`}
-              onClick={() => setSelectedStatus(status)}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+  <div className="status-tabs">
+    {['All', 'Requested', 'Approved Quote', 'Paid Booking', 'On-going', 'Order Prepare', 'Completed', 'Canceled'].map((status) => (
+      <button
+        key={status}
+        className={`tab ${selectedStatus === status ? 'active' : ''}`}
+        style={{ color: 'black' }} // Thêm style inline
+        onClick={() => setSelectedStatus(status)}
+      >
+        {status}
+      </button>
+    ))}
+  </div>
+
 
         {/* Payment List */}
         <div className="payment-list">
