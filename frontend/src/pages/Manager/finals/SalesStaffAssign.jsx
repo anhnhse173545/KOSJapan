@@ -242,20 +242,23 @@ export function SalesStaffManagementComponent() {
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
+                      <TableCell >
+                        <div className="flex space-x-2" style={{ color: 'black' }}>
                           <Button
+                              style={{ color: 'black' }}
                             variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedBooking(booking)
                               setIsAssigning(true)
                             }}>
-                            <UserPlus className="h-4 w-4 mr-1" />
+                            <UserPlus className="h-4 w-4 mr-1" 
+                           />
                             {booking.saleStaff ? "Reassign" : "Assign"}
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
-                            <Eye className="h-4 w-4 mr-1" />
+                          <Button style={{ color: 'black' }} variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
+                            <Eye className="h-4 w-4 mr-1"
+                            style={{ color: 'black' }} />
                             View Details
                           </Button>
                         </div>
@@ -269,7 +272,7 @@ export function SalesStaffManagementComponent() {
           <Dialog open={isAssigning} onOpenChange={setIsAssigning}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Assign Sales Staff</DialogTitle>
+                <DialogTitle >Assign Sales Staff</DialogTitle>
                 <DialogDescription>
                   Select a sales staff member to assign to {selectedBooking?.customer.name}&apos;s tour.
                 </DialogDescription>

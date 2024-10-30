@@ -23,7 +23,7 @@ const api = axios.create({
   timeout: 5000,
 })
 
-export function ExtendedQuoteReviewComponent() {
+export function   ExtendedQuoteReviewComponent() {
   const [quotes, setQuotes] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
@@ -284,9 +284,9 @@ export function ExtendedQuoteReviewComponent() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm" onClick={() => handleToggleDetails(quote.id)}>
+                        <Button style={{ color: 'black' }}s  variant="outline" size="sm" onClick={() => handleToggleDetails(quote.id)}>
                           {expandedQuoteId === quote.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                          {expandedQuoteId === quote.id ? 'Hide Details' : 'View Details'}
+                          {expandedQuoteId === quote.id ? 'Hide Details' : 'View Details' }
                         </Button>
                       </TableCell>
                     </TableRow>

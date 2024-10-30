@@ -136,7 +136,7 @@ export default function VarietyCrud() {
                   <TableCell>{variety.name}</TableCell>
                   <TableCell>{variety.description}</TableCell>
                   <TableCell>
-                    <Button variant="outline" className="mr-2" onClick={() => handleEdit(variety)}>Edit</Button>
+                    <Button style={{ color: 'black' }} variant="outline" className="mr-2" onClick={() => handleEdit(variety)}>Edit</Button>
                     <Button variant="destructive" onClick={() => handleDelete(variety.id)}>Delete</Button>
                   </TableCell>
                 </TableRow>
