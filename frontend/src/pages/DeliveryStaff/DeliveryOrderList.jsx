@@ -185,6 +185,17 @@ export default function DeliveryOrderListComponent() {
     );
   }
 
+  function getStatusColor(status) {
+    switch (status) {
+      case "Order Prepare":
+        return "bg-blue-500 text-white"; // Yellow for "Order Prepare"
+      case "Completed":
+        return "bg-green-500 text-white"; // Green for "Completed"
+      default:
+        return "bg-gray-300 text-black"; // Default gray for other statuses
+    }
+  }
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">
@@ -210,7 +221,11 @@ export default function DeliveryOrderListComponent() {
                   </Badge>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={getStatusColor(booking.status)} // Apply color based on status
+                      >
                         Change Status <ChevronDown className="ml-2 h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -256,7 +271,6 @@ export default function DeliveryOrderListComponent() {
                       <TableHead>Fish Order Status</TableHead>
                       <TableHead>Payment Status</TableHead>
                       <TableHead>Total</TableHead>
-                      {/* <TableHead className="text-right">Action</TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -269,8 +283,12 @@ export default function DeliveryOrderListComponent() {
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                {order.status || "Select Status"}{" "}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className={getStatusColor(order.status)} // Apply color based on fish order status
+                              >
+                                {order.status || "Select Status"}
                                 <ChevronDown className="ml-2 h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -305,13 +323,6 @@ export default function DeliveryOrderListComponent() {
                           </Badge>
                         </TableCell>
                         <TableCell>{formatTotal(order.total)}</TableCell>
-                        {/* <TableCell className="text-right">
-                          <Link to={`order-details/${order.id}`}>
-                            <Button variant="outline" size="sm" onClick={() => handleTrackOrder(order)}>
-                              Track Order
-                            </Button>
-                          </Link>
-                        </TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>
