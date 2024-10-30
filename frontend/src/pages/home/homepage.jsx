@@ -171,7 +171,7 @@ export function HomepageComponent() {
                       <DollarSign className="w-5 h-5 mr-2 text-red-600" /> {trip.price}
                     </li>
                   </ul>
-                  <Button className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white">Book Now</Button>
+                  <Button onClick={() => navigate("/contact")} className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white">Book Now</Button>
                 </CardContent>
               </Card>
             ))}
