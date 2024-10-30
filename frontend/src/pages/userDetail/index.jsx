@@ -11,6 +11,7 @@ const UserDetailPage = ({ accountId }) => {
   const [isEditing, setIsEditing] = useState(false); // Edit mode toggle
   const navigate = useNavigate(); // For navigation
 
+  // Fetch user details from API
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -38,28 +39,24 @@ const UserDetailPage = ({ accountId }) => {
     setIsEditing(!isEditing);
   };
 
-  // Save changes and optionally upload image
+  // Save changes and update user details
   const handleSaveChanges = async () => {
     try {
-        const { password, phone, role, ...dataToUpdate } = formData; // Exclude sensitive fields if necessary
-        const formDataToSend = new FormData();
-        
-        formDataToSend.append("userDetails", JSON.stringify(dataToUpdate));
- // Convert other data to JSON
-        
-       
-
-        await axios.put(`http://localhost:8080/accounts/AC0007/update`, formDataToSend, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        // Giả sử bạn không cần phải gửi các trường như password, phone, role
+        const { password, phone, role, ...dataToUpdate } = formData; 
+        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, {
+            userDetails: dataToUpdate // Gửi dữ liệu dưới dạng { userDetails: {...} }
         });
 
-        // Update state accordingly
-        setIsEditing(false);
-       
+        // Kiểm tra phản hồi từ server
+        if (response.status === 200) {
+            // Cập nhật userDetails và tắt chế độ chỉnh sửa
+            setUserDetails(formData);
+            setIsEditing(false);
+        }
     } catch (err) {
-        setError('Error updating user details.');
+        setError('Error updating user details.'); // Hiển thị lỗi nếu có
+        console.error(err); // Ghi lại lỗi để kiểm tra
     }
 };
 
@@ -98,7 +95,6 @@ const UserDetailPage = ({ accountId }) => {
                   <strong>Address:</strong> 
                   <input type="text" name="address" value={formData.address || ''} onChange={handleInputChange} />
                 </p>
-               
                 <button className="back-button" onClick={handleSaveChanges}>Save Changes</button>
                 <button className="back-button" onClick={handleEditToggle}>Cancel</button>
               </div>
