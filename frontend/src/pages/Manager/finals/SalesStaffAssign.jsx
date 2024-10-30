@@ -1,5 +1,5 @@
  
-import '../styles/index.css'
+// import './styles/index.css'
 
 import { useState, useEffect, useCallback } from 'react'
 import axios, { AxiosError } from 'axios'
