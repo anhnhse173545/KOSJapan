@@ -9,7 +9,6 @@ const UserDetailPage = ({ accountId }) => {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error message state
   const [isEditing, setIsEditing] = useState(false); // Edit mode toggle
-  const [imageFile, setImageFile] = useState(null); // Store the selected image file
   const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const UserDetailPage = ({ accountId }) => {
         setUserDetails(response.data);
         setFormData(response.data); // Initialize formData with fetched data
       } catch (err) {
-        setError('Lỗi khi tải thông tin người dùng.');
+        setError('Error loading user details.');
       } finally {
         setLoading(false);
       }
@@ -34,12 +33,6 @@ const UserDetailPage = ({ accountId }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle image file change
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImageFile(file); // Store the selected image file
-  };
-
   // Toggle edit mode
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -48,35 +41,31 @@ const UserDetailPage = ({ accountId }) => {
   // Save changes and optionally upload image
   const handleSaveChanges = async () => {
     try {
-      const { password, phone, role, ...dataToUpdate } = formData; // Exclude password, phone, and role from update data
+        const { password, phone, role, ...dataToUpdate } = formData; // Exclude sensitive fields if necessary
+        const formDataToSend = new FormData();
+        
+        formDataToSend.append("userDetails", JSON.stringify(dataToUpdate));
+ // Convert other data to JSON
+        
+       
 
-      // Prepare form data for uploading image
-      const formDataToSend = new FormData();
-      for (const key in dataToUpdate) {
-        formDataToSend.append(key, dataToUpdate[key]);
-      }
-      if (imageFile) {
-        formDataToSend.append('profile_image', imageFile); // Append the image file
-      }
+        await axios.put(`http://localhost:8080/accounts/AC0007/update`, formDataToSend, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-      // Send the PUT request to update user details
-      await axios.put(`http://localhost:8080/accounts/AC0007/update`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Set the content type for form data
-        },
-      });
-
-      // Update displayed data
-      setUserDetails({ ...dataToUpdate, profile_image: imageFile ? URL.createObjectURL(imageFile) : userDetails.profile_image });
-      setIsEditing(false); // Exit edit mode
-      setImageFile(null); // Clear the image file
+        // Update state accordingly
+        setIsEditing(false);
+       
     } catch (err) {
-      setError('Lỗi khi cập nhật thông tin người dùng.');
+        setError('Error updating user details.');
     }
-  };
+};
+
 
   if (loading) {
-    return <div>Đang tải...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
@@ -85,7 +74,7 @@ const UserDetailPage = ({ accountId }) => {
 
   return (
     <div className="user-detail-container">
-      <h1>Thông tin người dùng</h1>
+      <h1>User Details</h1>
       {userDetails && (
         <div>
           <img 
@@ -109,10 +98,7 @@ const UserDetailPage = ({ accountId }) => {
                   <strong>Address:</strong> 
                   <input type="text" name="address" value={formData.address || ''} onChange={handleInputChange} />
                 </p>
-                <p>
-                  <strong>Profile Image:</strong> 
-                  <input type="file" accept="image/*" onChange={handleImageChange} />
-                </p>
+               
                 <button className="back-button" onClick={handleSaveChanges}>Save Changes</button>
                 <button className="back-button" onClick={handleEditToggle}>Cancel</button>
               </div>
@@ -120,11 +106,10 @@ const UserDetailPage = ({ accountId }) => {
               <div>
                 <p><strong>ID:</strong> {userDetails.id}</p>
                 <p><strong>Name:</strong> {userDetails.name}</p>
-                <p><strong>Phone:</strong> {userDetails.phone || "09819156357"}</p>
+                <p><strong>Phone:</strong> {userDetails.phone || "No phone available"}</p>
                 <p><strong>Email:</strong> {userDetails.email}</p>
                 <p><strong>Address:</strong> {userDetails.address}</p>
                 <p><strong>Role:</strong> {userDetails.role}</p>
-                
               </div>
             )}
           </div>

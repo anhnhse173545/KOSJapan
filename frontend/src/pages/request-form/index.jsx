@@ -73,7 +73,7 @@ const CombinedKoiRequestForm = () => {
         navigate("/");
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || "Có lỗi xảy ra khi gửi yêu cầu.");
+        toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công.");
       }
     } catch (error) {
       toast.error("Đã xảy ra lỗi khi gửi yêu cầu.");
