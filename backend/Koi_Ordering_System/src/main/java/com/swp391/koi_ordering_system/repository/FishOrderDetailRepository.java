@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface FishOrderDetailRepository extends JpaRepository<FishOrderDetail, String> {
     Optional<FishOrderDetail> findTopByOrderByIdDesc();
     List<FishOrderDetail> findByFishOrderId(String id);
-    Optional<FishOrderDetail>findFishOrderDetailByFishOrderId(String id);
 }

@@ -128,6 +128,7 @@ public class AccountService {
         accountDTO.setEmail(account.getEmail());
         accountDTO.setPhone(account.getPhone());
         accountDTO.setRole(account.getRole());
+        accountDTO.setAddress(account.getAddress());
 
         return accountDTO;
     }
