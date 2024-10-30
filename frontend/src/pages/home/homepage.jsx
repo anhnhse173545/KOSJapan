@@ -96,7 +96,7 @@ export function HomepageComponent() {
                   alt="Kohaku Koi"
                   className="w-full h-64 object-contain" />
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2">Kohaku</h3>
+                <h3 className="text-2xl font-semibold mb-2" style={{ color: 'white' }}>Kohaku</h3>
                   <p className="text-gray-300 mb-4">Discover the beauty of Kohaku Koi, known for their pure white skin with red patterns.</p>
                   <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
                     Learn more <ChevronRight className="ml-1 w-4 h-4" />
@@ -113,7 +113,7 @@ export function HomepageComponent() {
                   alt="Sanke Koi"
                   className="w-full h-64 object-contain" />
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2">Sanke</h3>
+                <h3 className="text-2xl font-semibold mb-2" style={{ color: 'white' }}>Kohaku</h3>
                   <p className="text-gray-300 mb-4">Explore Sanke Koi, featuring white bodies with red and black accents.</p>
                   <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
                     Learn more <ChevronRight className="ml-1 w-4 h-4" />
@@ -130,7 +130,7 @@ export function HomepageComponent() {
                   alt="Showa Koi"
                   className="w-full h-64 object-contain" />
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2">Showa</h3>
+                <h3 className="text-2xl font-semibold mb-2" style={{ color: 'white' }}>Kohaku</h3>
                   <p className="text-gray-300 mb-4">Admire the Showa Koi, known for their black bodies with red and white patterns.</p>
                   <span className="text-red-400 hover:text-red-300 font-medium inline-flex items-center">
                     Learn more <ChevronRight className="ml-1 w-4 h-4" />
