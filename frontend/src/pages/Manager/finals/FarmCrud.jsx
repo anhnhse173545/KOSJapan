@@ -167,8 +167,8 @@ export default function FarmCrud() {
               onChange={handleInputChange}
               placeholder="Phone Number"
               required />
-            <Select value={selectedVarietyId} onValueChange={setSelectedVarietyId}>
-              <SelectTrigger>
+            <Select  value={selectedVarietyId} onValueChange={setSelectedVarietyId}>
+              <SelectTrigger style={{ color: 'black' }}>
                 <SelectValue placeholder="Select Variety" />
               </SelectTrigger>
               <SelectContent>
@@ -204,7 +204,7 @@ export default function FarmCrud() {
                   <TableCell>{farm.phoneNumber}</TableCell>
                   <TableCell>{farm.varieties.map(v => v.name).join(', ')}</TableCell>
                   <TableCell>
-                    <Button variant="outline" className="mr-2" onClick={() => handleEdit(farm)}>Edit</Button>
+                    <Button style={{ color: 'black' }} variant="outline" className="mr-2" onClick={() => handleEdit(farm)}>Edit</Button>
                     <Button variant="destructive" onClick={() => handleDelete(farm.id)}>Delete</Button>
                   </TableCell>
                 </TableRow>

@@ -208,7 +208,7 @@ function StaffList({ staffList, onEdit, onDelete }) {
             </div>
           </div>
           <div className="mt-2 flex justify-end space-x-2">
-            <Button size="sm" variant="outline" onClick={() => onEdit(staff)}>Edit</Button>
+            <Button style={{ color: 'black' }} size="sm" variant="outline" onClick={() => onEdit(staff)}>Edit</Button>
             <Button size="sm" variant="destructive" onClick={() => onDelete(staff.id)}>Delete</Button>
           </div>
         </li>

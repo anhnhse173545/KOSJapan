@@ -119,7 +119,7 @@ export function KoiFarmViewSearchComponent() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
+             <div className="space-y-2">
   <Label htmlFor="sort" className="text-black !important">Sort by</Label>
   <Select value={sortBy} onValueChange={setSortBy}>
     <SelectTrigger id="sort" className="text-black !important">
@@ -171,7 +171,7 @@ export function KoiFarmViewSearchComponent() {
                 <Search className="h-4 w-4 mr-2" />
                 Apply Filters
               </Button>
-              <Button type="button" variant="outline" onClick={resetFilters} className="w-full">
+              <Button style={{ color: 'black' }} type="button" variant="outline" onClick={resetFilters} className="w-full">
                 Reset Filters
               </Button>
             </form>
