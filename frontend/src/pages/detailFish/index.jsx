@@ -172,8 +172,9 @@ export default function KoiDetailPage() {
 
   {/* Back to My Koi link */}
   <Link to="/mykoi" className="block text-center">
-    <Button variant="outline" className="w-full">
-      <ChevronLeft className="w-4 h-4 mr-2" />
+    <Button style={{ color: 'black' }} >
+      <ChevronLeft className="w-4 h-4 mr-2 " />
+      
       Back to My Koi
     </Button>
   </Link>
