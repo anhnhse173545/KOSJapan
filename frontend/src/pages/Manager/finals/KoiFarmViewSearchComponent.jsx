@@ -120,29 +120,30 @@ export function KoiFarmViewSearchComponent() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sort">Sort by</Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Name</SelectItem>
-                    <SelectItem value="address">Address</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order">Sort order</Label>
-                <Select value={sortOrder} onValueChange={setSortOrder}>
-                  <SelectTrigger id="order">
-                    <SelectValue placeholder="Sort order" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asc">Ascending</SelectItem>
-                    <SelectItem value="desc">Descending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+  <Label htmlFor="sort" className="text-black !important">Sort by</Label>
+  <Select value={sortBy} onValueChange={setSortBy}>
+    <SelectTrigger id="sort" className="text-black !important">
+      <SelectValue placeholder="Sort by" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="name" className="text-black !important">Name</SelectItem>
+      <SelectItem value="address" className="text-black !important">Address</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="order" className="text-black !important">Sort order</Label>
+  <Select value={sortOrder} onValueChange={setSortOrder}>
+    <SelectTrigger id="order" className="text-black !important">
+      <SelectValue placeholder="Sort order" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="asc" className="text-black !important">Ascending</SelectItem>
+      <SelectItem value="desc" className="text-black !important">Descending</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
               <div className="space-y-2">
                 <Label>Koi Varieties</Label>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
