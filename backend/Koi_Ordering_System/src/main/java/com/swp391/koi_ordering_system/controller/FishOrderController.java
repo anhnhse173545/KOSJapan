@@ -37,8 +37,9 @@ public class FishOrderController {
 
     @PostMapping("/{booking_id}/{farm_id}/create")
     public ResponseEntity<FishOrderDTO> createFishOrder(@PathVariable String booking_id,
-                                                    @PathVariable String farm_id) {
-        FishOrder newOrder = orderService.createFishOrder(booking_id, farm_id);
+                                                    @PathVariable String farm_id,
+                                                        @RequestParam String address) {
+        FishOrder newOrder = orderService.createFishOrder(booking_id, farm_id, address);
         return ResponseEntity.ok(orderService.mapToDTO2(newOrder));
     }
 

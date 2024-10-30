@@ -16,5 +16,6 @@ public class AccountDTO {
     private String phone;
     private String email;
     private String role;
+    private String address;
     private String mediaUrl;
 }
