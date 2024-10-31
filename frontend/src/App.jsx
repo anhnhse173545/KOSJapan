@@ -49,7 +49,7 @@ import AboutUs from "./pages/aboutUs";
 // import { CreateTripForm } from "./pages/SaleStaff/pages/CreateTripForm";
 
 // Global and Library Styles
-// import "./styles/index.css";      // Main or global CSS file
+import "./styles/App.css";      // Main or global CSS file
  
 function App() {
   return (
