@@ -57,12 +57,12 @@ public class FishPaymentService {
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(orderId);
         FishOrder fishOrder = orderRepository.findById(orderId).get();
         if(fishPayment.getStatus().equals("Pending")){
-            fishPayment.setStatus("Deposit");
+            fishPayment.setStatus("Deposited");
             fishOrder.setStatus("Deposited");
             fishOrder.setPaymentStatus(fishPayment.getStatus());
             orderRepository.save(fishOrder);
         }
-        else if(fishPayment.getStatus().equals("Deposit")){
+        else if(fishPayment.getStatus().equals("Deposited")){
             fishPayment.setStatus("Paid Full");
             fishOrder.setStatus("Completed");
             fishOrder.setPaymentStatus(fishPayment.getStatus());

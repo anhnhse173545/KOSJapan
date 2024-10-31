@@ -284,7 +284,7 @@ export function KoiTripViewSearchComponent() {
       </div>
       {/* Main content area */}
       <div className="w-full md:w-3/4 space-y-6">
-        <h1 className="text-3xl font-bold">Koi Buying Trips</h1>
+        <h1 className="text-3xl font-bold">Koi Trips</h1>
         {error && (
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
