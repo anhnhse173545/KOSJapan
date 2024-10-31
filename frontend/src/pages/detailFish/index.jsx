@@ -133,6 +133,46 @@ export default function KoiDetailPage() {
             </Card>
           </motion.div>
         ))}
+        {/** Fish Pack Order Details Section */}
+{koi.fishPackOrderDetails && koi.fishPackOrderDetails.length > 0 && (
+  <div className="mt-8">
+    <h2 className="text-2xl font-semibold text-center mb-4">Fish Pack Order Details</h2>
+    
+    {koi.fishPackOrderDetails.map((packOrderDetail, index) => (
+      <motion.div
+        key={packOrderDetail.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Pack ID: {packOrderDetail.fishPack.id}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <p><span className="font-semibold">Length:</span> {packOrderDetail.fishPack.length}</p>
+              <p><span className="font-semibold">Weight:</span> {packOrderDetail.fishPack.weight}</p>
+              <p><span className="font-semibold">Quantity:</span> {packOrderDetail.fishPack.quantity}</p>
+              <p><span className="font-semibold">Description:</span> {packOrderDetail.fishPack.description}</p>
+              <p><span className="font-semibold">Price:</span> ${packOrderDetail.price}</p>
+            </div>
+            {/** Optionally display media URLs if available */}
+            {packOrderDetail.fishPack.mediaUrls && (
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                <img
+                  src={packOrderDetail.fishPack.mediaUrls[0]}
+                  alt={packOrderDetail.fishPack.description}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+    ))}
+  </div>
+)}
 
         <div className="mt-8 space-y-4">
           {['Pending', 'Deposited', 'In Transit', 'Delivering'].includes(koi.status) && (

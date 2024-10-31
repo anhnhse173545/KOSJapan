@@ -306,7 +306,7 @@ export function SalesStaffManagementComponent() {
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Booking Details</h1>
-            <Button variant="outline" size="sm" onClick={handleBackToList}>
+            <Button style={{ color: 'black' }} variant="outline" size="sm" onClick={handleBackToList}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Bookings
             </Button>
