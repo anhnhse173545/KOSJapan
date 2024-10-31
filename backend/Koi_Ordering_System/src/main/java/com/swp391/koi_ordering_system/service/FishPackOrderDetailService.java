@@ -1,14 +1,11 @@
 package com.swp391.koi_ordering_system.service;
 
 
-import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
-import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.*;
 import com.swp391.koi_ordering_system.repository.*;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +57,7 @@ public class FishPackOrderDetailService {
                 .collect(Collectors.toList());
     }
 
-    public FishPackOrderDetail createFishPackAndFishPackOrderDetail(CreateFishPackDTO dto){
+    public FishPackOrderDetail createFishPackAndFishPackOrderDetail(@Valid CreateFishPackDTO dto){
         //create Fish Pack
         FishPack newFishPack = new FishPack();
         newFishPack.setId(fishPackService.generateFishPackId());
@@ -106,7 +103,7 @@ public class FishPackOrderDetailService {
 
 
     public FishPackOrderDetail updatePackInOrderDetail(String fishPackOrderDetailId, String packId,
-                                                       CreateFishPackDTO fishPackDTO){
+                                                       @Valid CreateFishPackDTO fishPackDTO){
         Optional<FishPackOrderDetail> foundFPOD = fishPackOrderDetailRepository.findById(fishPackOrderDetailId);
         Optional<FishPack> foundFP = FishPackRepository.findById(packId);
 

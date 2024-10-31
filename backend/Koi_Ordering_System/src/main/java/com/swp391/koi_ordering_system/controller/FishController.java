@@ -5,6 +5,7 @@ import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.model.Fish;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.service.FishService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,13 +48,13 @@ public class FishController {
     }
 
     @PostMapping (value = "/{variety_id}/create")
-    ResponseEntity<Fish> createFish(@PathVariable String variety_id, @RequestBody CreateFishDTO fish){
+    ResponseEntity<Fish> createFish(@Valid @PathVariable String variety_id, @RequestBody CreateFishDTO fish){
         Fish newFish = fishService.createFish(fish, variety_id);
         return ResponseEntity.ok(newFish);
     }
 
     @PutMapping("/{fish_id}/update")
-    ResponseEntity<FishDTO> updateFish(@PathVariable String fish_id, @RequestBody CreateFishDTO fishDTO) {
+    ResponseEntity<FishDTO> updateFish(@Valid @PathVariable String fish_id, @RequestBody CreateFishDTO fishDTO) {
         Fish updateFish = fishService.updateFish(fish_id, fishDTO);
         FishDTO showFish = fishService.mapToDTO(updateFish);
         return ResponseEntity.ok(showFish);

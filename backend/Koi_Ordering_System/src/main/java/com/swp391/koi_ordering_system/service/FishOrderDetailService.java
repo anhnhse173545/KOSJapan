@@ -1,15 +1,14 @@
 package com.swp391.koi_ordering_system.service;
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishInOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
-import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.*;
 import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +44,7 @@ public class FishOrderDetailService {
                 .collect(Collectors.toList());
     }
 
-    public FishOrderDetail createFishAndOrderDetail(CreateFishDTO dto) {
+    public FishOrderDetail createFishAndOrderDetail(@Valid CreateFishDTO dto) {
         // Create Fish
         Fish newFish = new Fish();
         newFish.setId(fishService.generateFishId());

@@ -12,6 +12,7 @@ import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.model.Booking;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +38,7 @@ public class AuthService {
     @Autowired
     private AccountMapper accountMapper;
 
-    public TokenRefreshResponseDTO authenticateUser(LoginRequestDTO loginRequestDTO) {
+    public TokenRefreshResponseDTO authenticateUser(@Valid LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getPhone(), loginRequestDTO.getPassword())
         );
@@ -52,7 +53,7 @@ public class AuthService {
         return new TokenRefreshResponseDTO(accessToken, refreshToken, role);
     }
 
-    public void registerUser(RegisterRequestDTO registerRequestDTO) {
+    public void registerUser(@Valid RegisterRequestDTO registerRequestDTO) {
         boolean isManager = isRole("ROLE_MANAGER");
 
         Account account = new Account();
@@ -82,7 +83,7 @@ public class AuthService {
         accountRepository.save(account);
     }
 
-    public String getPassword(ForgetPasswordDTO forgetPasswordDTO) {
+    public String getPassword(@Valid ForgetPasswordDTO forgetPasswordDTO) {
         Account account = accountRepository.findByPhone(forgetPasswordDTO.getPhone());
         if (account == null) {
             throw new EntityNotFoundException("Account not found");

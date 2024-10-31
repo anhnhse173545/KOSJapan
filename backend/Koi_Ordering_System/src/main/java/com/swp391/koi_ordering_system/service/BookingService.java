@@ -15,6 +15,7 @@ import com.swp391.koi_ordering_system.repository.BookingRepository;
 import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -219,7 +220,7 @@ public class BookingService {
         return null;
     }
 
-    public TripDTO createTripForBooking(String bookingId, CreateTripDTO createTripDTO) {
+    public TripDTO createTripForBooking(String bookingId, @Valid CreateTripDTO createTripDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
                 .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
 

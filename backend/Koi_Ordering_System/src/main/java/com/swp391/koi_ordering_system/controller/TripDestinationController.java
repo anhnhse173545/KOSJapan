@@ -29,7 +29,7 @@ public class TripDestinationController  {
     private TripDestinationMapper tripDestinationMapper;
 
     @PostMapping("{tripId}/create")
-    public ResponseEntity<TripDestinationDTO> createTripDestination(@PathVariable String tripId, @RequestBody AddTripDestinationDTO addTripDestinationDTO) {
+    public ResponseEntity<TripDestinationDTO> createTripDestination(@Valid @PathVariable String tripId, @RequestBody AddTripDestinationDTO addTripDestinationDTO) {
         TripDestination tripDestination = tripDestinationService.createTripDestination(tripId, addTripDestinationDTO);
         TripDestinationDTO tripDestinationDTO = tripDestinationMapper.toTripDestinationDTO(tripDestination);
         return ResponseEntity.ok(tripDestinationDTO);
