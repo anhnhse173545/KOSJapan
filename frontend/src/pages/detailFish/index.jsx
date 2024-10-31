@@ -190,11 +190,12 @@ export default function KoiDetailPage() {
   {/* Other buttons */}
   {koi.paymentStatus === 'Pending' && koi.status === 'Pending' && (
     <Button 
+    
       className="w-full"
       onClick={() => navigate(`/paykoi50/${koi.id}`)}
     >
       <CreditCard className="w-4 h-4 mr-2" />
-      Finish Payment
+      Paying a half
     </Button>
   )}
 
@@ -202,6 +203,7 @@ export default function KoiDetailPage() {
   {/* Finish Payment button for Delivering status */}
   {(koi.paymentStatus === 'Delivering' || koi.status === 'Delivering') && (
     <Button 
+    
       className="w-full"
       onClick={() => navigate(`/paykoi100/${koi.id}`)}
     >
@@ -212,7 +214,7 @@ export default function KoiDetailPage() {
 
   {/* Back to My Koi link */}
   <Link to="/mykoi" className="block text-center">
-    <Button style={{ color: 'black' }} >
+    <Button  >
       <ChevronLeft className="w-4 h-4 mr-2 " />
       
       Back to My Koi
