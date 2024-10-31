@@ -68,7 +68,6 @@ public class FarmService {
             farm.setPhoneNumber(updateFarmDTO.getPhoneNumber());
         }
 
-
         Farm updatedFarm = farmRepository.save(farm);
         return farmMapper.toDTO(updatedFarm);
     }

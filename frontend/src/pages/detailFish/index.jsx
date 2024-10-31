@@ -146,12 +146,40 @@ export default function KoiDetailPage() {
           )}
 
           {/* Other buttons... */}
-          <Link to="/mykoi" className="block text-center">
-            <Button variant="outline" className="w-full">
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back to My Koi
-            </Button>
-          </Link>
+          <div className="mt-8 space-y-4">
+  {/* Other buttons */}
+  {koi.paymentStatus === 'Pending' && koi.status === 'Pending' && (
+    <Button 
+      className="w-full"
+      onClick={() => navigate(`/paykoi50/${koi.id}`)}
+    >
+      <CreditCard className="w-4 h-4 mr-2" />
+      Finish Payment
+    </Button>
+  )}
+
+
+  {/* Finish Payment button for Delivering status */}
+  {(koi.paymentStatus === 'Delivering' || koi.status === 'Delivering') && (
+    <Button 
+      className="w-full"
+      onClick={() => navigate(`/paykoi100/${koi.id}`)}
+    >
+      <CreditCard className="w-4 h-4 mr-2" />
+      Finish Payment
+    </Button>
+  )}
+
+  {/* Back to My Koi link */}
+  <Link to="/mykoi" className="block text-center">
+    <Button style={{ color: 'black' }} >
+      <ChevronLeft className="w-4 h-4 mr-2 " />
+      
+      Back to My Koi
+    </Button>
+  </Link>
+</div>
+         
         </div>
       </motion.div>
     </div>

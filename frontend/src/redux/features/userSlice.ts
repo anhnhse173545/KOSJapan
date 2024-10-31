@@ -1,6 +1,3 @@
-//luu tru thong tin user
-//user co thong tin gi
-
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../../models/user";
 import axios from "axios";
@@ -21,4 +18,3 @@ export const userSlice = createSlice({
 export const{ login, logout} = userSlice.actions;
 
 export default userSlice.reducer;
-

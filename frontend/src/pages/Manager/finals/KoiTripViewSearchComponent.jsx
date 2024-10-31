@@ -150,29 +150,49 @@ export function KoiTripViewSearchComponent() {
                   onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sort">Sort by</Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="startDate">Start Date</SelectItem>
-                    <SelectItem value="price">Price</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order">Sort order</Label>
-                <Select value={sortOrder} onValueChange={setSortOrder}>
-                  <SelectTrigger id="order">
-                    <SelectValue placeholder="Sort order" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asc">Ascending</SelectItem>
-                    <SelectItem value="desc">Descending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+  <Label htmlFor="sort">Sort by</Label>
+  <Select value={sortBy} onValueChange={setSortBy}>
+    <SelectTrigger 
+      id="sort" 
+      style={{
+        color: '#6b7280', // Màu chữ xám
+        border: '1px solid #e5e7eb', // Viền nhạt
+        borderRadius: '8px', // Bo góc
+        padding: '8px 12px', // Khoảng cách bên trong
+        backgroundColor: '#fff', // Nền trắng
+      }}
+    >
+      <SelectValue style={{ color: '#6b7280' }} placeholder="Sort by" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="startDate" style={{ color: '#6b7280' }}>Start Date</SelectItem>
+      <SelectItem value="price" style={{ color: '#6b7280' }}>Price</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="order">Sort order</Label>
+  <Select value={sortOrder} onValueChange={setSortOrder}>
+    <SelectTrigger 
+      id="order"
+      style={{
+        color: '#6b7280', // Màu chữ xám
+        border: '1px solid #e5e7eb', // Viền nhạt
+        borderRadius: '8px', // Bo góc
+        padding: '8px 12px', // Khoảng cách bên trong
+        backgroundColor: '#fff', // Nền trắng
+      }}
+    >
+      <SelectValue style={{ color: '#6b7280' }} placeholder="Sort order" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="asc" style={{ color: '#6b7280' }}>Ascending</SelectItem>
+      <SelectItem value="desc" style={{ color: '#6b7280' }}>Descending</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
               <div className="space-y-2">
                 <Label>Farms</Label>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -255,7 +275,7 @@ export function KoiTripViewSearchComponent() {
                 <Search className="h-4 w-4 mr-2" />
                 Apply Filters
               </Button>
-              <Button type="button" variant="outline" onClick={resetFilters} className="w-full">
+              <Button style={{ color: 'black' }} type="button" variant="outline" onClick={resetFilters} className="w-full">
                 Reset Filters
               </Button>
             </form>

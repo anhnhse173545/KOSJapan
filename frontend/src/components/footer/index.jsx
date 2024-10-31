@@ -15,21 +15,20 @@ const Footer = () => {
         <div className="footer-section quick-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Tour</a></li>
-            <li><a href="#">Koi Fish</a></li>
-            <li><a href="#">Customer Service</a></li>
-            <li><a href="#">Login</a></li>
-            <li><a href="#">Register</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/koifarmpage">Tour</a></li>
+            <li><a href="/aboutus">About us</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
           </ul>
         </div>
         <div className="footer-section customer-service">
           <h4>Customer Service</h4>
           <ul>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Returns</a></li>
-            <li><a href="#">Payment</a></li>
-            <li><a href="#">Order Status</a></li>
+            <li><a href="/aboutus">FAQ</a></li>
+            <li><a href="/">Returns</a></li>
+            <li><a href="/payment">Payment</a></li>
+            <li><a href="/payment">Order Status</a></li>
           </ul>
         </div>
         <div className="footer-section newsletter">
@@ -44,9 +43,9 @@ const Footer = () => {
         <p>Terms and Conditions | Privacy Policy | Refund Policy</p>
         <div className="payment-methods">
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefI6pAZDTEXZqfmgJTghDkO1wpT39ZsuR8A&s" alt="Payment Method" />
-          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
-          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
-          <img src="https://banner2.cleanpng.com/20180629/jox/aayoo89vy.webp" alt="Payment Method" />
+          <img src="https://i.pcmag.com/imagery/reviews/068BjcjwBw0snwHIq0KNo5m-15.fit_lim.size_1050x591.v1602794215.png" alt="Payment Method" />
+          <img src="https://thuonghieumanh.vneconomy.vn/upload/vnpay.png" alt="Payment Method" />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa7J3RCeNfJYDsLoQvrFswRT1EUPjVjYzwIw&s" alt="Payment Method" />
         </div>
       </div>
     </footer>

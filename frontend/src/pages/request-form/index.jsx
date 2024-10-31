@@ -1,4 +1,4 @@
-import { Button, Form, Input,  DatePicker } from "antd";
+import { Button, Form, Input, DatePicker } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -7,17 +7,15 @@ import './request.css';
 
 const { TextArea } = Input;
 
-// Hàm tạo bookingId ngẫu nhiên
 const generateRandomBookingId = () => {
-  const randomNum = Math.floor(100 + Math.random() * 900); // Tạo số ngẫu nhiên có 3 chữ số
-  return `TR${randomNum}`; // Tạo chuỗi bookingId với định dạng BO+3 số
+  const randomNum = Math.floor(100 + Math.random() * 900);
+  return `TR${randomNum}`;
 };
 
 const CombinedKoiRequestForm = () => {
   const [form] = Form.useForm(); 
   const navigate = useNavigate();
 
-  // Hàm gọi API lấy thông tin của booking với ID AC0007
   const fetchBookingInfo = async () => {
     try {
       const response = await fetch("http://localhost:8080/accounts/AC0007/detail", {
@@ -29,10 +27,9 @@ const CombinedKoiRequestForm = () => {
 
       if (response.ok) {
         const cusData = await response.json();
-        // Điền giá trị vào form từ dữ liệu API
         form.setFieldsValue({
           name: cusData.name,
-          phone: cusData.phone || '', // Nếu phone là null thì gán thành chuỗi rỗng
+          phone: cusData.phone || '',
           email: cusData.email,
         });
       } else {
@@ -43,15 +40,13 @@ const CombinedKoiRequestForm = () => {
     }
   };
 
-  // Gọi API khi component được tải
   useEffect(() => {
     fetchBookingInfo();
-  }, []); // Chỉ chạy khi component được mount
+  }, []);
 
   const handleFormSubmit = async (values) => {
     try {
-      const id = generateRandomBookingId(); // Tạo bookingId ngẫu nhiên
-
+      const id = generateRandomBookingId();
       const data = {
         id, 
         name: form.getFieldValue("name") || '',
@@ -62,7 +57,6 @@ const CombinedKoiRequestForm = () => {
         startDate: values.startDate ? values.startDate : null,
         endDate: values.endDate ? values.endDate : null,
         status: 'Request',
-        
         price: 0, 
       };
 
@@ -79,15 +73,14 @@ const CombinedKoiRequestForm = () => {
         navigate("/");
       } else {
         const errorData = await response.json();
-        toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công!");
+        toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công.");
       }
     } catch (error) {
-      toast.success("Yêu cầu của bạn đã được gửi thành công!");
+      toast.error("Đã xảy ra lỗi khi gửi yêu cầu.");
     }
   };
-  
+
   return (
-    
     <AuthenLayout>
       <h2>REQUEST</h2>
 
@@ -97,16 +90,27 @@ const CombinedKoiRequestForm = () => {
         onFinish={handleFormSubmit}
         layout="vertical"
       >
-        {/* Các trường không hiển thị */}
         <Form.Item name="name" hidden>
           <Input />
         </Form.Item>
         
-        <Form.Item name="phone" hidden>
+        <Form.Item 
+          name="phone" 
+          hidden
+          rules={[
+            { pattern: /^\d{10,11}$/, message: "Please enter a valid phone number (10-11 digits)" },
+          ]}
+        >
           <Input />
         </Form.Item>
 
-        <Form.Item name="email" hidden>
+        <Form.Item 
+          name="email" 
+          hidden
+          rules={[
+            { type: 'email', message: "Please enter a valid email address" },
+          ]}
+        >
           <Input />
         </Form.Item>
 
@@ -121,12 +125,12 @@ const CombinedKoiRequestForm = () => {
           />
         </Form.Item>
 
-      
-
         <Form.Item
           label="Desired Trip Start Date"
           name="startDate"
-          rules={[{ required: true, message: "Please select the start date of your trip" }]}
+          rules={[
+            { required: true, message: "Please select the start date of your trip" },
+          ]}
         >
           <DatePicker placeholder="Select the start date" />
         </Form.Item>
@@ -134,7 +138,17 @@ const CombinedKoiRequestForm = () => {
         <Form.Item
           label="Desired Trip End Date"
           name="endDate"
-          rules={[{ required: true, message: "Please select the end date of your trip" }]}
+          rules={[
+            { required: true, message: "Please select the end date of your trip" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || value.isAfter(getFieldValue("startDate"))) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("End date must be after start date"));
+              },
+            }),
+          ]}
         >
           <DatePicker placeholder="Select the end date" />
         </Form.Item>

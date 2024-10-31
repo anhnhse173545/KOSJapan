@@ -4,6 +4,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.model.Fish;
 import com.swp391.koi_ordering_system.model.Variety;
+import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +21,7 @@ public class FishService {
 
     @Autowired
     private VarietyRepository varietyRepository;
+
 
     public List<FishDTO> getAllVarietyId(String id){
         List<Fish> fishList = fishRepository.findByVarietyId(id);
@@ -40,6 +41,7 @@ public class FishService {
         newFish.setLength(fish.getLength());
         newFish.setWeight(fish.getWeight());
         newFish.setDescription(fish.getDescription());
+        newFish.setIsDeleted(false);
 
         return fishRepository.save(newFish);
     }
@@ -57,15 +59,16 @@ public class FishService {
             fish.setWeight(fishDTO.getWeight());
             fish.setLength(fishDTO.getLength());
             fish.setDescription(fishDTO.getDescription());
+            fish.setIsDeleted(false);
         }
         return fishRepository.save(fish);
     }
 
     public void deleteFish(String fishID){
-        Fish foundfish = fishRepository.findFishById(fishID);
-        if(foundfish != null){
-            foundfish.setIsDeleted(true);
-            fishRepository.save(foundfish);
+        Fish foundFish = fishRepository.findFishById(fishID);
+        if(foundFish != null){
+            foundFish.setIsDeleted(true);
+            fishRepository.save(foundFish);
         }
         throw new RuntimeException("Fish not found");
     }

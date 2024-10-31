@@ -34,7 +34,7 @@ function KoiPage() {
   // Lọc các đơn hàng dựa theo trạng thái được chọn
   const filteredPayments = koiPayments.filter((koi) => {
     if (selectedStatus === 'All') return true;
-    if (selectedStatus === 'Deposited' || selectedStatus === 'Paid Full') {
+    if (selectedStatus === 'Deposit' || selectedStatus === 'Paid Full') {
       return koi.paymentStatus === selectedStatus;
     }
     return koi.status === selectedStatus;
@@ -68,6 +68,12 @@ function KoiPage() {
               My Koi
             </Link>
           </li>
+
+          <li>
+            <Link to="/history" className={`sidebar-link ${location.pathname === '/history' ? 'active' : ''}`}>
+              Order history
+            </Link>
+          </li>
         </ul>
       </div>
 
@@ -78,6 +84,7 @@ function KoiPage() {
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
+              style={{ color: 'black' }} // Thêm style inline
               onClick={() => setSelectedStatus(status)}
             >
               {status}

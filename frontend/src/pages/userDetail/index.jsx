@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ngu.css'; // Nhập tệp CSS
+import './ngu.css'; // Import CSS file
 import { useNavigate } from 'react-router-dom';
 
 const UserDetailPage = ({ accountId }) => {
-  const [userDetails, setUserDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [userDetails, setUserDetails] = useState(null); // Store fetched user details
+  const [formData, setFormData] = useState({}); // Store form data for editing
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error message state
+  const [isEditing, setIsEditing] = useState(false); // Edit mode toggle
+  const navigate = useNavigate(); // For navigation
 
+  // Fetch user details from API
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/accounts/AC0007/detail`);
         setUserDetails(response.data);
+        setFormData(response.data); // Initialize formData with fetched data
       } catch (err) {
-        setError('Lỗi khi tải thông tin người dùng.');
+        setError('Error loading user details.');
       } finally {
         setLoading(false);
       }
@@ -24,8 +28,39 @@ const UserDetailPage = ({ accountId }) => {
     fetchUserDetails();
   }, [accountId]);
 
+  // Handle form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Toggle edit mode
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  // Save changes and update user details
+  const handleSaveChanges = async () => {
+    try {
+        // Giả sử bạn không cần phải gửi các trường như password, phone, role
+        const { password, phone, role, ...dataToUpdate } = formData; 
+        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, dataToUpdate);
+
+        // Kiểm tra phản hồi từ server
+        if (response.status === 200) {
+            // Cập nhật userDetails và tắt chế độ chỉnh sửa
+            setUserDetails(formData);
+            setIsEditing(false);
+        }
+    } catch (err) {
+        setError('Error updating user details.'); // Hiển thị lỗi nếu có
+        console.error(err); // Ghi lại lỗi để kiểm tra
+    }
+};
+
+
   if (loading) {
-    return <div>Đang tải...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
@@ -34,22 +69,46 @@ const UserDetailPage = ({ accountId }) => {
 
   return (
     <div className="user-detail-container">
-      <h1>Thông tin người dùng</h1>
+      <h1>User Details</h1>
       {userDetails && (
         <div>
           <img 
-            src={userDetails.profile_image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzGYOukhtzQwJiFMmFihZEqZBr1wNMkTjgQg&s"} 
+            src={userDetails.profile_image || "https://i.pinimg.com/236x/59/f0/d0/59f0d0067c5d04c5db5f92f517767002.jpg"} 
             alt="Profile" 
             className="profile-image" 
           />
           <div className="user-info">
-            <p><strong>ID:</strong> {userDetails.id}</p>
-            <p><strong>Name:</strong> {userDetails.name}</p>
-            <p><strong>Phone Number:</strong> {userDetails.phone || "09819156357"}</p>
-            <p><strong>Email:</strong> {userDetails.email}</p>
-            <p><strong>Role:</strong> {userDetails.role}</p>
+            {isEditing ? (
+              <div>
+                <p><strong>ID:</strong> {userDetails.id}</p>
+                <p>
+                  <strong>Name:</strong> 
+                  <input type="text" name="name" value={formData.name || ''} onChange={handleInputChange} />
+                </p>
+                <p>
+                  <strong>Email:</strong> 
+                  <input type="email" name="email" value={formData.email || ''} onChange={handleInputChange} />
+                </p>
+                <p>
+                  <strong>Address:</strong> 
+                  <input type="text" name="address" value={formData.address || ''} onChange={handleInputChange} />
+                </p>
+                <button className="back-button" onClick={handleSaveChanges}>Save Changes</button>
+                <button className="back-button" onClick={handleEditToggle}>Cancel</button>
+              </div>
+            ) : (
+              <div>
+                <p><strong>ID:</strong> {userDetails.id}</p>
+                <p><strong>Name:</strong> {userDetails.name}</p>
+                <p><strong>Phone:</strong> {userDetails.phone || "No phone available"}</p>
+                <p><strong>Email:</strong> {userDetails.email}</p>
+                <p><strong>Address:</strong> {userDetails.address}</p>
+                <p><strong>Role:</strong> {userDetails.role}</p>
+              </div>
+            )}
           </div>
           <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+          <button className="back-button" onClick={handleEditToggle}>Edit Profile</button>
         </div>
       )}
     </div>

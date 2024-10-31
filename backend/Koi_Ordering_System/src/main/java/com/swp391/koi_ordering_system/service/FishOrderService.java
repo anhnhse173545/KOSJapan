@@ -78,7 +78,7 @@ public class FishOrderService {
                 .collect(Collectors.toList());
     }
 
-    public FishOrder createFishOrder(String bookingId, String farmId) {
+    public FishOrder createFishOrder(String bookingId, String farmId, String address) {
             Optional<FishOrder> fishOrder = orderRepository.findFishOrderByBookingIdAndFarmId(bookingId, farmId);
             Optional<Farm> findFarm = FarmRepository.findById(farmId);
             Optional<Booking> findBooking = BookingRepository.findById(bookingId);
@@ -102,7 +102,7 @@ public class FishOrderService {
         newFishOrder.setTotal(0.00);
         newFishOrder.setBooking(booking);
         Account account = newFishOrder.getBooking().getCustomer();
-        newFishOrder.setDeliveryAddress(account.getAddress());
+        newFishOrder.setDeliveryAddress(address);
         newFishOrder.setFarm(farm);
         newFishOrder.setIsDeleted(false);
         newFishOrder.setFishPackOrderDetails(null);
@@ -218,6 +218,7 @@ public class FishOrderService {
         dto.setTotal(fishOrder.getTotal());
         dto.setFarmId(fishOrder.getFarm().getId());
         dto.setBookingId(fishOrder.getBooking().getId());
+        dto.setDeliveryAddress(fishOrder.getDeliveryAddress());
         dto.setPayment(FishPaymentService.mapToDTO(fishOrder.getFishPayments()));
         dto.setFishOrderDetails(FODService.mapToListDTO(findFOD));
         dto.setFishPackOrderDetails(FPODService.mapToListDTO(findFPOD));

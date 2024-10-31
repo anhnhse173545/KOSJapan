@@ -106,8 +106,9 @@ export default function StaffManagerView() {
             <CardTitle>Team Members</CardTitle>
             <CardDescription>Manage your staff and their roles</CardDescription>
           </div>
-          <Button variant="outline" onClick={() => setIsAdding(true)}>
-            <UserPlus className="h-4 w-4 mr-2" />
+          <Button  style={{ color: 'black' }}variant="outline" onClick={() => setIsAdding(true)}>
+            <UserPlus className="h-4 w-4 mr-2" 
+            style={{ color: 'black' }}/>
             Add Staff
           </Button>
         </CardHeader>
@@ -121,14 +122,15 @@ export default function StaffManagerView() {
               onCancel={() => setEditingStaff(null)} />
           ) : (
             <Tabs defaultValue="all" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
-                <TabsTrigger value="all">All Staff</TabsTrigger>
-                <TabsTrigger value="sales">Sales</TabsTrigger>
-                <TabsTrigger value="consulting">Consulting</TabsTrigger>
-                <TabsTrigger value="delivery">Delivery</TabsTrigger>
-                <TabsTrigger value="customer">Customer</TabsTrigger>
-                <TabsTrigger value="manager">Manager</TabsTrigger>
-              </TabsList>
+             <TabsList className="grid w-full grid-cols-6">
+  <TabsTrigger value="all" style={{ color: 'black' }}>All Staff</TabsTrigger>
+  <TabsTrigger value="sales" style={{ color: 'black' }}>Sales</TabsTrigger>
+  <TabsTrigger value="consulting" style={{ color: 'black' }}>Consulting</TabsTrigger>
+  <TabsTrigger value="delivery" style={{ color: 'black' }}>Delivery</TabsTrigger>
+  <TabsTrigger value="customer" style={{ color: 'black' }}>Customer</TabsTrigger>
+  <TabsTrigger value="manager" style={{ color: 'black' }}>Manager</TabsTrigger>
+</TabsList>
+
               <TabsContent value="all">
                 <StaffList staffList={staffList} onEdit={setEditingStaff} onDelete={deleteStaff} />
               </TabsContent>
@@ -206,7 +208,7 @@ function StaffList({ staffList, onEdit, onDelete }) {
             </div>
           </div>
           <div className="mt-2 flex justify-end space-x-2">
-            <Button size="sm" variant="outline" onClick={() => onEdit(staff)}>Edit</Button>
+            <Button style={{ color: 'black' }} size="sm" variant="outline" onClick={() => onEdit(staff)}>Edit</Button>
             <Button size="sm" variant="destructive" onClick={() => onDelete(staff.id)}>Delete</Button>
           </div>
         </li>
