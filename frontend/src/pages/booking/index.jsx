@@ -93,8 +93,7 @@ function PaymentPage() {
                 <p>{koi.startDate}</p>
                 <p>Create At : {koi.createAt}</p>
                 <p className="status">{koi.status}</p>
-                <img src={"https://a1.cdn.japantravel.com/photo/12865-215185/1440x960!/tokyo-tokyo-prefecture-215185.jpg"} alt="Koi Image" style={{ width: "200px", height: "auto" }} />
-
+            
                 <div className="button-group">
                   <button
                     className="details-button"

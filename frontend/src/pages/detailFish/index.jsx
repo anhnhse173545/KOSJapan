@@ -15,16 +15,7 @@ export default function KoiDetailPage() {
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(''); // New state for notification
 
-  const koiImages = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s',
-    'https://t4.ftcdn.net/jpg/05/75/48/57/360_F_575485756_WSQ6ZzqMhD0JnPcEupxyKikKKCE5p5jo.jpg',
-    // ... other images
-  ];
-
-  const getRandomImage = (images) => {
-    const randomIndex = Math.floor(Math.random() * images.length);
-    return images[randomIndex];
-  };
+ 
 
   useEffect(() => {
     const fetchKoi = async () => {
@@ -115,13 +106,7 @@ export default function KoiDetailPage() {
                 <CardTitle>{orderDetail.fish.fish_variety_name}</CardTitle>
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-6">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                  <img
-                    src={getRandomImage(koiImages)}
-                    alt={orderDetail.fish.fish_variety_name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </div>
+                
                 <div className="space-y-2">
                   <p><span className="font-semibold">Koi ID:</span> {orderDetail.fish.fish_id}</p>
                   <p><span className="font-semibold">Length:</span> {orderDetail.fish.length} cm</p>
