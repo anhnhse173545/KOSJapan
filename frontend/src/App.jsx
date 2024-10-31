@@ -50,6 +50,7 @@ import AboutUs from "./pages/aboutUs";
 
 // Global and Library Styles
 import "./styles/App.css";      // Main or global CSS file
+import AllBookingsPage from "./pages/Manager/finals/AllBookingPage";
  
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
         {/* Manager routes */}
         {/* <Route element={<RequireAuth allowedRoles={[ROLES.Manager]} />}> */}
           <Route path="manager-dashboard" element={<ManagerDashboard />}>
+            <Route path="all-booking" element={<AllBookingsPage />} />
             <Route path="dashboard" element={<FarmImageUpload />} />
             <Route path="staff-manager" element={<StaffManagerView />} />
             <Route path="booking-manager" element={<BookingManagerComponent />} />
