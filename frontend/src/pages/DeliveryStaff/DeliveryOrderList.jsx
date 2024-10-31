@@ -1,6 +1,7 @@
-'use client';;
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+'use client'
+
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -8,108 +9,126 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronDown } from "lucide-react";
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Loader2, ChevronDown, AlertCircle } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { OrderTrackingCard } from "@/components/order-tracking-card";
+} from "@/components/ui/dropdown-menu"
+import { OrderTrackingCard } from "@/components/order-tracking-card"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { toast } from "@/components/ui/use-toast"
+
+const API_BASE_URL = "http://localhost:8080"
+const STAFF_ID = "AC0003"
 
 const fishOrderStatuses = [
   "Deposited",
   "In Transit",
   "Delivering",
   "Completed",
-];
+]
+
+const bookingStatuses = ["Order Prepare", "Completed"]
 
 export default function DeliveryOrderListComponent() {
-  const [staff, setStaff] = useState(null);
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showTrackingCard, setShowTrackingCard] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [staff, setStaff] = useState(null)
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [showTrackingCard, setShowTrackingCard] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState(null)
 
   useEffect(() => {
     const fetchStaffDetails = async () => {
       try {
-        const response = await fetch("http://localhost:8080/accounts/AC0003/detail");
-        if (!response.ok) throw new Error("Failed to fetch staff details");
-        const data = await response.json();
-        setStaff(data);
+        const response = await fetch(`${API_BASE_URL}/accounts/${STAFF_ID}/detail`)
+        if (!response.ok) throw new Error("Failed to fetch staff details")
+        const data = await response.json()
+        setStaff(data)
       } catch (error) {
-        console.error("Failed to fetch staff details:", error);
-        setError("Failed to load staff details. Please try again later.");
+        console.error("Failed to fetch staff details:", error)
+        setError("Failed to load staff details. Please try again later.")
       }
-    };
+    }
 
-    fetchStaffDetails();
-  }, []);
+    fetchStaffDetails()
+  }, [])
 
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!staff) return;
+      if (!staff) return
 
-      setLoading(true);
+      setLoading(true)
       try {
         const [staffBookingsResponse, orderPrepareResponse, completedResponse] = await Promise.all([
-          fetch(`http://localhost:8080/api/booking/delivery-staff/${staff.id}`),
-          fetch(`http://localhost:8080/api/booking/status/Order%20Prepare`),
-          fetch(`http://localhost:8080/api/booking/status/Completed`)
-        ]);
+          fetch(`${API_BASE_URL}/api/booking/delivery-staff/${staff.id}`),
+          fetch(`${API_BASE_URL}/api/booking/status/Order%20Prepare`),
+          fetch(`${API_BASE_URL}/api/booking/status/Completed`)
+        ])
 
         if (!staffBookingsResponse.ok || !orderPrepareResponse.ok || !completedResponse.ok) {
-          throw new Error("Failed to fetch bookings");
+          throw new Error("Failed to fetch bookings")
         }
 
-        const staffBookings = await staffBookingsResponse.json();
-        const orderPrepareBookings = await orderPrepareResponse.json();
-        const completedBookings = await completedResponse.json();
+        const staffBookings = await staffBookingsResponse.json()
+        const orderPrepareBookings = await orderPrepareResponse.json()
+        const completedBookings = await completedResponse.json()
 
         const combinedBookings = staffBookings.filter(booking =>
           orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id) ||
-          completedBookings.some(completedBooking => completedBooking.id === booking.id));
+          completedBookings.some(completedBooking => completedBooking.id === booking.id))
 
-        setBookings(combinedBookings);
+        setBookings(combinedBookings)
       } catch (error) {
-        console.error("Failed to fetch bookings:", error);
-        setError("Failed to load bookings. Please try again later.");
+        console.error("Failed to fetch bookings:", error)
+        setError("Failed to load bookings. Please try again later.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchBookings();
-  }, [staff]);
+    fetchBookings()
+  }, [staff])
 
   const handleTrackOrder = (order) => {
-    setSelectedOrder(order);
-    setShowTrackingCard(true);
-  };
+    setSelectedOrder(order)
+    setShowTrackingCard(true)
+  }
 
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/booking/update/${bookingId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/booking/update/${bookingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: newStatus }),
-      });
+      })
 
-      if (!response.ok) throw new Error("Failed to update booking status");
+      if (!response.ok) throw new Error("Failed to update booking status")
 
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
-          booking.id === bookingId ? { ...booking, status: newStatus } : booking));
+          booking.id === bookingId ? { ...booking, status: newStatus } : booking
+        )
+      )
+      toast({
+        title: "Success",
+        description: `Booking status updated to ${newStatus}`,
+      })
     } catch (error) {
-      console.error("Failed to update booking status:", error);
+      console.error("Failed to update booking status:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update booking status. Please try again.",
+        variant: "destructive",
+      })
     }
-  };
+  }
 
   const handleUpdateFishOrderStatus = async (
     bookingId,
@@ -118,10 +137,10 @@ export default function DeliveryOrderListComponent() {
     newStatus
   ) => {
     try {
-      const booking = bookings.find((b) => b.id === bookingId);
-      if (!booking) throw new Error("Booking not found");
+      const booking = bookings.find((b) => b.id === bookingId)
+      if (!booking) throw new Error("Booking not found")
 
-      const response = await fetch(`http://localhost:8080/fish-order/${bookingId}/${farmId}/update`, {
+      const response = await fetch(`${API_BASE_URL}/fish-order/${bookingId}/${farmId}/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -130,11 +149,11 @@ export default function DeliveryOrderListComponent() {
           status: newStatus,
           delivery_address: booking.customer.address,
           arrived_date: new Date().toISOString(),
-          paymentStatus: "Deposited", // Assuming this is the correct initial status
+          paymentStatus: "Deposited",
         }),
-      });
+      })
 
-      if (!response.ok) throw new Error("Failed to update fish order status");
+      if (!response.ok) throw new Error("Failed to update fish order status")
 
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
@@ -142,46 +161,67 @@ export default function DeliveryOrderListComponent() {
             ? {
                 ...booking,
                 fishOrders: booking.fishOrders.map((order) =>
-                  order.id === orderId ? { ...order, status: newStatus } : order),
+                  order.id === orderId ? { ...order, status: newStatus } : order
+                ),
               }
-            : booking));
+            : booking
+        )
+      )
+      toast({
+        title: "Success",
+        description: `Fish order status updated to ${newStatus}`,
+      })
     } catch (error) {
-      console.error("Failed to update fish order status:", error);
+      console.error("Failed to update fish order status:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update fish order status. Please try again.",
+        variant: "destructive",
+      })
     }
-  };
-
-  const formatTotal = (total) => {
-    return `$${Math.abs(total).toFixed(2)}`;
-  };
-
-  if (error) {
-    return <p className="text-center mt-4 text-red-500">{error}</p>;
   }
 
-  if (loading) {
-    return (
-      (<div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>)
-    );
+  const formatTotal = (total) => {
+    return `$${Math.abs(total).toFixed(2)}`
   }
 
   function getStatusColor(status) {
     switch (status) {
       case "Order Prepare":
-        return "bg-blue-500 text-white";
+        return "bg-blue-500 text-white"
       case "Completed":
-        return "bg-green-500 text-white";
+        return "bg-green-500 text-white"
+      case "Deposited":
+        return "bg-yellow-500 text-white"
+      case "In Transit":
+        return "bg-orange-500 text-white"
+      case "Delivering":
+        return "bg-purple-500 text-white"
       default:
-        return "bg-gray-300 text-black";
+        return "bg-gray-300 text-black"
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
+
   return (
-    (<div className="container mx-auto py-10">
+    <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">
         Order List for {staff?.name}
       </h1>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       {bookings.length === 0 ? (
         <p>No bookings found for this delivery staff.</p>
       ) : (
@@ -206,18 +246,13 @@ export default function DeliveryOrderListComponent() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onSelect={() =>
-                          handleUpdateBookingStatus(booking.id, "Order Prepare")
-                        }>
-                        Order Prepare
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onSelect={() =>
-                          handleUpdateBookingStatus(booking.id, "Completed")
-                        }>
-                        Completed
-                      </DropdownMenuItem>
+                      {bookingStatuses.map((status) => (
+                        <DropdownMenuItem
+                          key={status}
+                          onSelect={() => handleUpdateBookingStatus(booking.id, status)}>
+                          {status}
+                        </DropdownMenuItem>
+                      ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -245,6 +280,7 @@ export default function DeliveryOrderListComponent() {
                       <TableHead>Fish Order Status</TableHead>
                       <TableHead>Payment Status</TableHead>
                       <TableHead>Total</TableHead>
+                      {/* <TableHead>Actions</TableHead> */}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -286,6 +322,15 @@ export default function DeliveryOrderListComponent() {
                           </Badge>
                         </TableCell>
                         <TableCell>{formatTotal(order.total)}</TableCell>
+                        {/* <TableCell>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTrackOrder(order)}
+                          >
+                            Track Order
+                          </Button>
+                        </TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -303,6 +348,6 @@ export default function DeliveryOrderListComponent() {
           <OrderTrackingCard order={selectedOrder} onClose={() => setShowTrackingCard(false)} />
         </div>
       )}
-    </div>)
-  );
+    </div>
+  )
 }
