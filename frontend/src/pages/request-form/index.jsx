@@ -47,19 +47,25 @@ const CombinedKoiRequestForm = () => {
   const handleFormSubmit = async (values) => {
     try {
       const id = generateRandomBookingId();
+  
+      // Gộp các thông tin thành 1 chuỗi mô tả duy nhất
+      const combinedDescription = `
+        Trip Details: ${values.description || 'N/A'}
+        Start Date: ${values.startDate ? values.startDate.format("YYYY-MM-DD") : 'N/A'}
+        End Date: ${values.endDate ? values.endDate.format("YYYY-MM-DD") : 'N/A'}
+      `;
+  
       const data = {
-        id, 
+        id,
         name: form.getFieldValue("name") || '',
         phone: form.getFieldValue("phone") || '',
         email: form.getFieldValue("email") || '',
-        description: values.description || '',
+        description: combinedDescription,
         departureAirport: values.departureAirport || '',
-        startDate: values.startDate ? values.startDate : null,
-        endDate: values.endDate ? values.endDate : null,
         status: 'Request',
-        price: 0, 
+        price: 0,
       };
-
+  
       const response = await fetch("http://localhost:8080/api/booking/AC0007/create", {
         method: 'POST',
         headers: {
@@ -67,7 +73,7 @@ const CombinedKoiRequestForm = () => {
         },
         body: JSON.stringify(data),
       });
-
+  
       if (response.status === 201) {
         toast.success("Yêu cầu của bạn đã được gửi thành công!");
         navigate("/");
@@ -79,6 +85,7 @@ const CombinedKoiRequestForm = () => {
       toast.error("Đã xảy ra lỗi khi gửi yêu cầu.");
     }
   };
+  
 
   return (
     <AuthenLayout>
