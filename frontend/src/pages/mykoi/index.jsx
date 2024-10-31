@@ -34,7 +34,7 @@ function KoiPage() {
   // Lọc các đơn hàng dựa theo trạng thái được chọn
   const filteredPayments = koiPayments.filter((koi) => {
     if (selectedStatus === 'All') return true;
-    if (selectedStatus === 'Deposit' || selectedStatus === 'Paid Full') {
+    if (selectedStatus === 'Deposited' || selectedStatus === 'Paid Full') {
       return koi.paymentStatus === selectedStatus;
     }
     return koi.status === selectedStatus;
