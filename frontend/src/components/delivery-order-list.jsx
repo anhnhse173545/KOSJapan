@@ -26,7 +26,7 @@ const fishOrderStatuses = [
   "Completed",
 ];
 
-export default function DeliveryOrderListComponent() {
+export function DeliveryOrderList() {
   const [staff, setStaff] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -207,31 +207,19 @@ const OrderList = () => {
   const handleUpdatePaymentStatus = async (record) => {
     try {
       const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/update`;
-      const payload = {
-        paymentStatus: "Deposited",
-      };
+      const payload = { paymentStatus: "Deposited" };
       await axios.put(url, payload);
       message.success(`Payment status updated for Order ID: ${record.id}`);
-      fetchOrders();
+
+      // Update the data locally
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === record.id ? { ...item, paymentStatus: "Deposited" } : item
+        )
+      );
     } catch (error) {
       console.error("Error updating payment status:", error);
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message === "Fish order not found"
-      ) {
-        message.error("Failed to update payment status: Fish order not found.");
-      } else if (error.response) {
-        message.error(
-          `Failed to update payment status: ${
-            error.response.data.message || error.response.statusText
-          }`
-        );
-      } else {
-        message.error(
-          "Failed to update payment status. Please check your network and server."
-        );
-      }
+      message.error("Failed to update payment status.");
     }
   };
 
