@@ -44,14 +44,14 @@ export default function KoiDetailPage() {
       
       // Set both paymentStatus and status to 'Rejected'
       const updatedData = {
-        paymentStatus: 'Rejected',
-        status: 'Rejected',
+        status: 'Canceled',
+        paymentStatus: 'Deposited'
       };
   
       await axios.put(apiUrl, updatedData);
       
       // Update both states in the koi object
-      setKoi(prev => ({ ...prev, paymentStatus: 'Rejected', status: 'Rejected' }));
+      setKoi(prev => ({ ...prev, paymentStatus: 'Deposited', status: 'Canceled' }));
   
       // Set notification message
       setNotification('Koi order has been rejected successfully.');
@@ -166,7 +166,7 @@ export default function KoiDetailPage() {
               variant="destructive"
               onClick={handleReject}
             >
-              Rejected
+              Cancel Koi Fish
             </Button>
           )}
 

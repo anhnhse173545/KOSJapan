@@ -16,14 +16,12 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateTripDTO {
-    @NotNull(message = "Start date cannot be null")
-    @NotBlank(message = "Start Date must not be empty")
+    
     @FutureOrPresent(message = "visit date must be in the future or present")
     @DateTimeFormat(pattern = "YYYY-MM-DD HH:MM")
     private LocalDateTime startDate;
 
-    @NotNull(message = "End date cannot be null")
-    @NotBlank(message = "End Date must not be empty")
+    
     @Future(message = "End date must be in the future")
     @DateTimeFormat(pattern = "YYYY-MM-DD HH:MM")
     private LocalDateTime endDate;
