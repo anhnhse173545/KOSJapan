@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, UserPlus, Calendar, MapPin, Eye, ArrowLeft, User, Phone, Mail, Briefcase } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
+import { Tab } from 'bootstrap'
 
 const api = axios.create({
   baseURL: 'http://localhost:8080',
@@ -170,6 +171,7 @@ export function ConsultingStaffAssignmentComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Booking Id</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Trip Summary</TableHead>
                     <TableHead>Date</TableHead>
@@ -178,9 +180,11 @@ export function ConsultingStaffAssignmentComponent() {
                     <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {filteredBookings.map((booking) => (
                     <TableRow key={booking.id}>
+                      <TableCell className="font-medium">{booking.id}</TableCell>
                       <TableCell className="font-medium">{booking.customer.name}</TableCell>
                       <TableCell>
                         <div className="flex items-center">
