@@ -11,52 +11,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, UserPlus, Calendar, MapPin, Eye, ArrowLeft, User, Phone, Mail, Briefcase } from 'lucide-react';
+import { Search, UserPlus, Calendar, MapPin, Eye, ArrowLeft, User, Phone, Mail, Briefcase } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
-
-// {
-//   "id": "BO0010",
-//   "customer": {
-//   "id": "AC0001",
-//   "name": "C1",
-//   "phone": "11",
-//   "email": "c@1",
-//   "role": "Customer",
-//   "profile_image": null
-//   },
-//   "trip": {
-//   "id": "TR0001",
-//   "startDate": "2024-09-02T08:00:00",
-//   "endDate": "2024-09-05T17:00:00",
-//   "departureAirport": "SGN",
-//   "description": null,
-//   "price": 500,
-//   "status": "Pending",
-//   "tripDestinations": []
-//   },
-//   "description": "Looking to buy Kohaku, Sanke, Showa breeds.",
-//   "createAt": "2024-09-01T10:00:00",
-//   "tripPayment": null,
-//   "status": "Paid Booking",
-//   "saleStaff": {
-//   "id": "AC0002",
-//   "name": "S1",
-//   "phone": "21",
-//   "email": "s@1",
-//   "role": "Sales Staff",
-//   "profile_image": null
-//   },
-//   "consultingStaff": {
-//   "id": "AC0008",
-//   "name": "CS1",
-//   "phone": "31",
-//   "email": "cs@1",
-//   "role": "Consulting Staff",
-//   "profile_image": null
-//   },
-//   "deliveryStaff": {},
-//   "fishOrders": []
-//   }
 
 const api = axios.create({
   baseURL: 'http://localhost:8080',
@@ -71,7 +27,7 @@ export function ConsultingStaffAssignmentComponent() {
   const [selectedStaff, setSelectedStaff] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState('list') // 'list' or 'details'
+  const [viewMode, setViewMode] = useState('list')
 
   const fetchConsultingStaff = useCallback(async () => {
     try {
@@ -132,11 +88,11 @@ export function ConsultingStaffAssignmentComponent() {
       })
 
       if (response.status === 200) {
-        // Update the local state
         setBookings(prevBookings => prevBookings.map(booking => 
           booking.id === selectedBooking.id 
             ? { ...booking, consultingStaff: consultingStaff.find(staff => staff.id === selectedStaff) }
-            : booking))
+            : booking
+        ))
 
         setIsAssigning(false)
         setSelectedStaff("")
@@ -172,11 +128,8 @@ export function ConsultingStaffAssignmentComponent() {
   const filteredBookings = bookings.filter(booking => 
     booking.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (booking.consultingStaff?.name && booking.consultingStaff.name.toLowerCase().includes(searchTerm.toLowerCase())))
-
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+    (booking.consultingStaff?.name && booking.consultingStaff.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  )
 
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking)
@@ -188,8 +141,12 @@ export function ConsultingStaffAssignmentComponent() {
     setViewMode('list')
   }
 
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>
+  }
+
   return (
-    (<div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       {viewMode === 'list' ? (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Consulting Staff Assignment</h2>
@@ -206,7 +163,8 @@ export function ConsultingStaffAssignmentComponent() {
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8" />
+                    className="pl-8"
+                  />
                 </div>
               </div>
               <Table>
@@ -214,7 +172,6 @@ export function ConsultingStaffAssignmentComponent() {
                   <TableRow>
                     <TableHead>Customer</TableHead>
                     <TableHead>Trip Summary</TableHead>
-                    
                     <TableHead>Date</TableHead>
                     <TableHead>Booking Status</TableHead>
                     <TableHead>Consulting Staff</TableHead>
@@ -248,7 +205,8 @@ export function ConsultingStaffAssignmentComponent() {
                             <Avatar className="h-8 w-8 mr-2">
                               <AvatarImage
                                 src={booking.consultingStaff.profile_image || `/placeholder.svg?height=32&width=32`}
-                                alt={booking.consultingStaff.name} />
+                                alt={booking.consultingStaff.name}
+                              />
                               <AvatarFallback>{booking.consultingStaff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                             </Avatar>
                             {booking.consultingStaff.name}
@@ -256,7 +214,8 @@ export function ConsultingStaffAssignmentComponent() {
                         ) : (
                           <Badge
                             variant="outline"
-                            className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                            className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                          >
                             Unassigned
                           </Badge>
                         )}
@@ -264,18 +223,17 @@ export function ConsultingStaffAssignmentComponent() {
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button
-                          style={{ color: 'black' }}
                             variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedBooking(booking)
                               setIsAssigning(true)
-                            }}>
+                            }}
+                          >
                             <UserPlus className="h-4 w-4 mr-1" />
                             {booking.consultingStaff ? "Reassign" : "Assign"}
                           </Button>
-                          <Button style={{ color: 'black' }}
-                          variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
+                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
                             <Eye className="h-4 w-4 mr-1" />
                             View Details
                           </Button>
@@ -359,7 +317,8 @@ export function ConsultingStaffAssignmentComponent() {
                       <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Consultation Status</h3>
                       <Badge
                         variant={selectedBooking.status === "Confirmed" ? "success" : "warning"}
-                        className="mt-2">
+                        className="mt-2"
+                      >
                         {selectedBooking.status}
                       </Badge>
                     </div>
@@ -373,45 +332,60 @@ export function ConsultingStaffAssignmentComponent() {
                           {selectedBooking.trip?.description || 'N/A'}
                         </p>
                         <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">
-                          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                          <Calendar className="h-4 w-4  mr-2 text-muted-foreground" />
                           {selectedBooking.trip?.startDate && selectedBooking.trip?.endDate ? (
                             <>
                               {new Date(selectedBooking.trip.startDate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                               {' - '}
-                              {new Date(selectedBooking.trip.endDate).toLocaleDateString('en-GB', { year: 'numeric', month:  'long', day: 'numeric' })}
+                              {new Date(selectedBooking.trip.endDate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                             </>
                           ) : 'N/A'}
                         </p>
                         <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">Departure Airport: {selectedBooking.trip?.departureAirport || 'N/A'}</p>
                         <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">Price: {selectedBooking.trip?.price || 'N/A'}</p>
                         <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">Status: {selectedBooking.trip?.status || 'N/A'}</p>
-                        <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">Trip Destinations: {selectedBooking.trip?.tripDestinations || 'N/A'}</p>
+                        <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">
+                          Trip Destinations: 
+                          {selectedBooking.trip?.tripDestinations && selectedBooking.trip.tripDestinations.length > 0
+                            ? selectedBooking.trip.tripDestinations.map((dest, index) => (
+                                <span key={index} className="ml-1">
+                                  {dest.farm?.name || 'Unknown'}
+                                  {index < selectedBooking.trip.tripDestinations.length - 1 ? ', ' : ''}
+                                </span>
+                              ))
+                            : ' N/A'}
+                        </p>
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium  text-gray-500 dark:text-gray-400">Assigned Consulting Staff</h3>
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assigned Consulting Staff</h3>
                       {selectedBooking.consultingStaff ? (
                         <div className="flex items-center mt-2">
                           <Avatar className="h-8 w-8 mr-2">
                             <AvatarImage
                               src={selectedBooking.consultingStaff.profile_image || `/placeholder.svg?height=32&width=32`}
-                              alt={selectedBooking.consultingStaff.name} />
+                              alt={selectedBooking.consultingStaff.name}
+                            />
                             <AvatarFallback>{selectedBooking.consultingStaff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                           </Avatar>
                           <div>
                             <span className="text-sm text-gray-900 dark:text-gray-100">{selectedBooking.consultingStaff.name}</span>
                             <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">
-                            <Phone className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.phone || 'No additional info'}</p>
+                              <Phone className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.phone || 'No additional info'}
+                            </p>
                             <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">
-                            <Mail className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.email || 'No additional info'}</p>
+                              <Mail className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.email || 'No additional info'}
+                            </p>
                             <p className="text-sm text-gray-900 dark:text-gray-100 flex items-center">
-                            <Briefcase className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.role || 'No additional info'}</p>
+                              <Briefcase className="h-4 w-4 mr-2 text-muted-foreground" /> {selectedBooking.consultingStaff.role || 'No additional info'}
+                            </p>
                           </div>
                         </div>
                       ) : (
                         <Badge
                           variant="outline"
-                          className="mt-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                          className="mt-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        >
                           Unassigned
                         </Badge>
                       )}
@@ -420,13 +394,13 @@ export function ConsultingStaffAssignmentComponent() {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Additional Notes</h3>
-                  <p className="mt-2 text-sm text-gray-900 dark:text-gray-100">{selectedBooking.additionalNotes || 'No additional notes'}</p>
+                  <p className="mt-2 text-sm text-gray-900 dark:text-gray-100">{selectedBooking.description || 'No additional notes'}</p>
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
       )}
-    </div>)
-  );
+    </div>
+  )
 }

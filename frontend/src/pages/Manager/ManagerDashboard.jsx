@@ -22,10 +22,11 @@ export default function ManagerDashboard() {
   const toggleNav = () => setIsNavExpanded(!isNavExpanded)
 
   const navItems = [
-    { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/manager-dashboard/dashboard' },
+    // { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/manager-dashboard/dashboard' },
     // { name: 'Staff Manager', icon: <Users className="h-5 w-5" />, path: '/manager-dashboard/staff-manager' },
     // { name: 'Booking Manager', icon: <MapPin className="h-5 w-5" />, path: '/manager-dashboard/booking-manager' },
     // { name: 'Payment Status', icon: <CreditCard className="h-5 w-5" />, path: '/manager-dashboard/payment-status' },
+    { name: 'All Booking List', icon: <BarChart className="h-5 w-5" />, path: '/manager-dashboard/all-booking' },
     { name: 'Sales Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/sales-staff-assignment' },
     { name: 'Quotes Review', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/quotes-review' },
     { name: 'Consulting Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/consulting-staff-assignment' },
