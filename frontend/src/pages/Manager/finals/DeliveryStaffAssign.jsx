@@ -168,6 +168,7 @@ export function DeliveryStaffAssignment() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Booking Id</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Trip Summary</TableHead>
                     <TableHead>Date</TableHead>
@@ -179,6 +180,7 @@ export function DeliveryStaffAssignment() {
                 <TableBody>
                   {filteredBookings.map((booking) => (
                     <TableRow key={booking.id}>
+                      <TableCell>{booking.id}</TableCell>
                       <TableCell className="font-medium">{booking.customer?.name || 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex items-center">
@@ -221,6 +223,7 @@ export function DeliveryStaffAssignment() {
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button
+                          style={{ color: 'black' }}
                             variant="outline"
                             size="sm"
                             onClick={() => {
@@ -230,7 +233,7 @@ export function DeliveryStaffAssignment() {
                             <UserPlus className="h-4 w-4 mr-1" />
                             {booking.deliveryStaff ? "Reassign" : "Assign"}
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
+                          <Button style={{ color: 'black' }} variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
                             <Eye className="h-4 w-4 mr-1" />
                             View Details
                           </Button>

@@ -111,7 +111,7 @@ function KoiPage() {
 
                 {/* Hiển thị paymentStatus nếu là "Deposited" hoặc "Paid Full", nếu không thì hiển thị status */}
                 <p className="status">
-                  Status: {koi.paymentStatus === 'Deposit' || koi.paymentStatus === 'Paid Full'
+                  Status: {koi.paymentStatus === 'Deposited' || koi.paymentStatus === 'Paid Full'
                     ? koi.paymentStatus
                     : koi.status}
                 </p>

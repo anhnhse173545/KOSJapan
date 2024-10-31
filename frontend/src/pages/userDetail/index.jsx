@@ -44,9 +44,7 @@ const UserDetailPage = ({ accountId }) => {
     try {
         // Giả sử bạn không cần phải gửi các trường như password, phone, role
         const { password, phone, role, ...dataToUpdate } = formData; 
-        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, {
-            userDetails: dataToUpdate // Gửi dữ liệu dưới dạng { userDetails: {...} }
-        });
+        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, dataToUpdate);
 
         // Kiểm tra phản hồi từ server
         if (response.status === 200) {

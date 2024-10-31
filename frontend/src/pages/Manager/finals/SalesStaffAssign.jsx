@@ -194,6 +194,7 @@ export function SalesStaffManagementComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Booking Id</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Request Summary</TableHead>
                     <TableHead>Date</TableHead>
@@ -205,6 +206,7 @@ export function SalesStaffManagementComponent() {
                 <TableBody>
                   {filteredBookings.map((booking) => (
                     <TableRow key={booking.id}>
+                      <TableCell className="font-medium">{booking.id}</TableCell>
                       <TableCell className="font-medium">{booking.customer.name}</TableCell>
                       <TableCell>
                         <div className="flex items-center">
@@ -242,20 +244,23 @@ export function SalesStaffManagementComponent() {
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
+                      <TableCell >
+                        <div className="flex space-x-2" style={{ color: 'black' }}>
                           <Button
+                              style={{ color: 'black' }}
                             variant="outline"
                             size="sm"
                             onClick={() => {
                               setSelectedBooking(booking)
                               setIsAssigning(true)
                             }}>
-                            <UserPlus className="h-4 w-4 mr-1" />
+                            <UserPlus className="h-4 w-4 mr-1" 
+                           />
                             {booking.saleStaff ? "Reassign" : "Assign"}
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
-                            <Eye className="h-4 w-4 mr-1" />
+                          <Button style={{ color: 'black' }} variant="outline" size="sm" onClick={() => handleViewDetails(booking)}>
+                            <Eye className="h-4 w-4 mr-1"
+                            style={{ color: 'black' }} />
                             View Details
                           </Button>
                         </div>
@@ -269,7 +274,7 @@ export function SalesStaffManagementComponent() {
           <Dialog open={isAssigning} onOpenChange={setIsAssigning}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Assign Sales Staff</DialogTitle>
+                <DialogTitle >Assign Sales Staff</DialogTitle>
                 <DialogDescription>
                   Select a sales staff member to assign to {selectedBooking?.customer.name}&apos;s tour.
                 </DialogDescription>
@@ -303,7 +308,7 @@ export function SalesStaffManagementComponent() {
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Booking Details</h1>
-            <Button variant="outline" size="sm" onClick={handleBackToList}>
+            <Button style={{ color: 'black' }} variant="outline" size="sm" onClick={handleBackToList}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Bookings
             </Button>

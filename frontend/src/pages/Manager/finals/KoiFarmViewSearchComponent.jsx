@@ -48,6 +48,40 @@ export function KoiFarmViewSearchComponent() {
     }
   }
 
+  const applyFilters = () => {
+    try {
+      let result = [...farms];
+  
+      // Apply search filter
+      if (searchTerm) {
+        result = result.filter((farm) =>
+          (farm.name && farm.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (farm.description && farm.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (farm.address && farm.address.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+  
+      // Apply variety filter
+      if (selectedVarieties.length > 0) {
+        result = result.filter((farm) =>
+          farm.varieties.some((variety) => selectedVarieties.includes(variety.name))
+        );
+      }
+  
+      // Apply sorting
+      result.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1;
+        if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+  
+      setFilteredFarms(result);
+    } catch (err) {
+      setError("An error occurred while filtering the farms.");
+      console.error("Error in applyFilters:", err);
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault()
     applyFilters()
@@ -59,35 +93,6 @@ export function KoiFarmViewSearchComponent() {
     setSortOrder('asc')
     setSelectedVarieties([])
     setFilteredFarms(farms)
-  }
-
-  const applyFilters = () => {
-    let result = [...farms]
-
-    // Apply search filter
-    if (searchTerm) {
-      result = result.filter((farm) =>
-        farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        farm.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        farm.address.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    // Apply variety filter
-    if (selectedVarieties.length > 0) {
-      result = result.filter((farm) =>
-        farm.varieties.some((variety) => selectedVarieties.includes(variety.name))
-      )
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1
-      if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
-
-    setFilteredFarms(result)
   }
 
   useEffect(() => {
@@ -114,30 +119,31 @@ export function KoiFarmViewSearchComponent() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="sort">Sort by</Label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">Name</SelectItem>
-                    <SelectItem value="address">Address</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order">Sort order</Label>
-                <Select value={sortOrder} onValueChange={setSortOrder}>
-                  <SelectTrigger id="order">
-                    <SelectValue placeholder="Sort order" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="asc">Ascending</SelectItem>
-                    <SelectItem value="desc">Descending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+             <div className="space-y-2">
+  <Label htmlFor="sort" className="text-black !important">Sort by</Label>
+  <Select value={sortBy} onValueChange={setSortBy}>
+    <SelectTrigger id="sort" className="text-black !important">
+      <SelectValue placeholder="Sort by" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="name" className="text-black !important">Name</SelectItem>
+      <SelectItem value="address" className="text-black !important">Address</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="order" className="text-black !important">Sort order</Label>
+  <Select value={sortOrder} onValueChange={setSortOrder}>
+    <SelectTrigger id="order" className="text-black !important">
+      <SelectValue placeholder="Sort order" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="asc" className="text-black !important">Ascending</SelectItem>
+      <SelectItem value="desc" className="text-black !important">Descending</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
               <div className="space-y-2">
                 <Label>Koi Varieties</Label>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -154,7 +160,7 @@ export function KoiFarmViewSearchComponent() {
                           )
                         }}
                       />
-                      <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none">
                         {variety}
                       </label>
                     </div>
@@ -165,7 +171,7 @@ export function KoiFarmViewSearchComponent() {
                 <Search className="h-4 w-4 mr-2" />
                 Apply Filters
               </Button>
-              <Button type="button" variant="outline" onClick={resetFilters} className="w-full">
+              <Button style={{ color: 'black' }} type="button" variant="outline" onClick={resetFilters} className="w-full">
                 Reset Filters
               </Button>
             </form>
