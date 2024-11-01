@@ -108,13 +108,10 @@ function KoiPage() {
                 {koi.size && <p>Size: {koi.size} cm</p>}
                 <p className="Id Trip">Koi ID: {koi.id}</p>
                 <p className="Id Farm">Farm ID: {koi.farmId}</p>
+                <p className="Id Farm">Status: {koi.status}</p>
+                <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
 
-                {/* Hiển thị paymentStatus nếu là "Deposited" hoặc "Paid Full", nếu không thì hiển thị status */}
-                <p className="status">
-                  Status: {koi.paymentStatus === 'Deposited' || koi.paymentStatus === 'Paid Full'
-                    ? koi.paymentStatus
-                    : koi.status}
-                </p>
+             
 
                 <button
                   className="details-button"
