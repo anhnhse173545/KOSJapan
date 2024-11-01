@@ -258,7 +258,7 @@ public class PayPalController {
             if (detailedRefund.getState().equals("completed")) {
                 // Update the trip payment status if needed
                 fishPayment.setStatus("Refunded");
-                fishOrder.setStatus("Refunded");
+                fishOrder.setPaymentStatus("Refunded");
                 fishPaymentRepository.save(fishPayment);
                 orderRepository.save(fishOrder);
                 return ResponseEntity.ok(Collections.singletonMap("message", "Refund successful"));

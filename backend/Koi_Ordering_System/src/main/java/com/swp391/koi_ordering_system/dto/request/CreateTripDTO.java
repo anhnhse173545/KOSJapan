@@ -21,7 +21,6 @@ public class CreateTripDTO {
     @DateTimeFormat(pattern = "YYYY-MM-DD HH:MM")
     private LocalDateTime startDate;
 
-    
     @Future(message = "End date must be in the future")
     @DateTimeFormat(pattern = "YYYY-MM-DD HH:MM")
     private LocalDateTime endDate;
