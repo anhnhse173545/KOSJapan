@@ -25,8 +25,6 @@ public class  RegisterRequestDTO {
     @Size(min = 8, max = 30, message = "Password must be between 8 and 30 characters")
     private String password;
 
-    @NotNull(message = "Address must not be null")
-    @NotBlank(message = "Address must not be empty")
     private String address;
 
     @NotNull
