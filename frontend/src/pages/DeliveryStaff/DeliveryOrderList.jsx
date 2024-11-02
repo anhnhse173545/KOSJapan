@@ -21,6 +21,7 @@ import {
 import { OrderTrackingCard } from "@/components/order-tracking-card"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { toast } from "@/components/ui/use-toast"
+import { useNavigate } from "react-router-dom"
 
 const API_BASE_URL = "http://localhost:8080"
 const STAFF_ID = "AC0003"
@@ -41,7 +42,7 @@ export default function DeliveryOrderListComponent() {
   const [error, setError] = useState(null)
   const [showTrackingCard, setShowTrackingCard] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchStaffDetails = async () => {
       try {
@@ -197,6 +198,8 @@ export default function DeliveryOrderListComponent() {
         return "bg-orange-500 text-white"
       case "Delivering":
         return "bg-purple-500 text-white"
+      case "Canceled":
+        return "bg-purple-500 text-white"
       default:
         return "bg-gray-300 text-black"
     }
@@ -266,9 +269,11 @@ export default function DeliveryOrderListComponent() {
                   {booking.customer.address || "Not provided"}
                 </p>
                 <p>
+                  {/* 
                   <strong>Trip:</strong> {booking.trip.departureAirport} (
                   {new Date(booking.trip.startDate).toLocaleDateString()} -{" "}
                   {new Date(booking.trip.endDate).toLocaleDateString()})
+                  */ }
                 </p>
               </div>
               <div className="overflow-x-auto">
@@ -280,7 +285,7 @@ export default function DeliveryOrderListComponent() {
                       <TableHead>Fish Order Status</TableHead>
                       <TableHead>Payment Status</TableHead>
                       <TableHead>Total</TableHead>
-                      {/* <TableHead>Actions</TableHead> */}
+                      <TableHead>Actions</TableHead> 
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -322,6 +327,12 @@ export default function DeliveryOrderListComponent() {
                           </Badge>
                         </TableCell>
                         <TableCell>{formatTotal(order.total)}</TableCell>
+                        <TableCell>
+                          {/* Nút Refund */}
+                          <Button onClick={() => navigate(`/refundkoi/${order.id}`)} variant="primary">
+                            Refund
+                          </Button>
+                        </TableCell>
                         {/* <TableCell>
                           <Button
                             variant="outline"

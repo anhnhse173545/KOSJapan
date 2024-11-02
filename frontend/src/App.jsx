@@ -56,7 +56,6 @@ import DeliveryStaffHome from "./pages/DeliveryStaff/DeliveryStaffHome.jsx";
 // Global and Library Styles
 import "./styles/App.css"; // Main or global CSS file
 import AllBookingsPage from "./pages/Manager/finals/AllBookingPage";
-
 function App() {
   return (
     <Routes>

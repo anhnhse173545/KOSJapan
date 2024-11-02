@@ -10,6 +10,7 @@ import com.swp391.koi_ordering_system.model.TripDestination;
 import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.TripDestinationRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class TripDestinationService {
     private TripDestinationMapper tripDestinationMapper;
 
 
-    public TripDestination createTripDestination(String tripId, AddTripDestinationDTO addTripDestinationDTO) {
+    public TripDestination createTripDestination(String tripId, @Valid AddTripDestinationDTO addTripDestinationDTO) {
         Trip trip = tripRepository.findByIdAndIsDeletedFalse(tripId)
                 .orElseThrow(() -> new RuntimeException("Trip not found"));
         Farm farm = farmRepository.findById(addTripDestinationDTO.getFarmId())
@@ -46,8 +47,8 @@ public class TripDestinationService {
         tripDestination.setFarm(farm);
         tripDestinationRepository.save(tripDestination);
 
-        trip.getTripDestinations().add(tripDestination);
-        tripRepository.save(trip);
+//        trip.getTripDestinations().add(tripDestination);
+//        tripRepository.save(trip);
 
         return tripDestinationRepository.save(tripDestination);
     }
@@ -93,7 +94,7 @@ public class TripDestinationService {
         TripDestination tripDestination = tripDestinationRepository.findById(tripDestinationId)
                 .orElseThrow(() -> new RuntimeException("TripDestination not found"));
         tripDestination.setIsDeleted(true);
-        tripDestinationRepository.save(tripDestination);
+        tripDestinationRepository.delete(tripDestination);
     }
 
     public TripDestinationDTO mapToDTO(TripDestination tripDestination) {

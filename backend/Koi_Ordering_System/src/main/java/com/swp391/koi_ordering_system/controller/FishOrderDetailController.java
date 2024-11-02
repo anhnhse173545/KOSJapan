@@ -1,11 +1,11 @@
 package com.swp391.koi_ordering_system.controller;
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.request.UpdateFishInOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.service.FishOrderDetailService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +38,7 @@ public class FishOrderDetailController {
     }
 
     @PostMapping("/create-fish-and-order-detail")
-    public ResponseEntity<FishOrderDetail> createFishAndOrderDetail(@RequestBody CreateFishDTO dto) {
+    public ResponseEntity<FishOrderDetail> createFishAndOrderDetail(@Valid @RequestBody CreateFishDTO dto) {
         FishOrderDetail fishOrderDetail = service.createFishAndOrderDetail(dto);
         return ResponseEntity.ok(fishOrderDetail);
     }

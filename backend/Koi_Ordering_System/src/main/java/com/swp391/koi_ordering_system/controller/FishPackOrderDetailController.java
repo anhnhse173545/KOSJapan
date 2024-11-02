@@ -2,10 +2,10 @@ package com.swp391.koi_ordering_system.controller;
 
 
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
-import com.swp391.koi_ordering_system.dto.request.CreateOrderDetailDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackOrderDetailDTO;
 import com.swp391.koi_ordering_system.model.FishPackOrderDetail;
 import com.swp391.koi_ordering_system.service.FishPackOrderDetailService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,15 +36,15 @@ public class FishPackOrderDetailController {
 
 
     @PostMapping("/create-fish-pack-and-fish-pack-order-detail")
-    public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@RequestBody CreateFishPackDTO createFishPackDTO) {
+    public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@Valid @RequestBody CreateFishPackDTO createFishPackDTO) {
         FishPackOrderDetail newFPOD = service.createFishPackAndFishPackOrderDetail(createFishPackDTO);
         return ResponseEntity.ok(service.mapToDTO(newFPOD));
     }
 
     @PutMapping("/{fish_pack_order_id}/update-pack-in-Order-Detail/{pack_id}")
-    public ResponseEntity<FishPackOrderDetailDTO> updatePackInOrderDetail(@PathVariable String fish_pack_order_id,
+    public ResponseEntity<FishPackOrderDetailDTO> updatePackInOrderDetail( @PathVariable String fish_pack_order_id,
                                                                           @PathVariable String pack_id,
-                                                                          @RequestBody CreateFishPackDTO dto) {
+                                                                           @Valid @RequestBody CreateFishPackDTO dto) {
         FishPackOrderDetail updateFPOD = service.updatePackInOrderDetail(fish_pack_order_id, pack_id, dto);
         return ResponseEntity.ok(service.mapToDTO(updateFPOD));
     }

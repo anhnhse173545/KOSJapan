@@ -1,11 +1,10 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.dto.request.CreateFishDTO;
 import com.swp391.koi_ordering_system.dto.request.CreateFishPackDTO;
-import com.swp391.koi_ordering_system.dto.response.FishDTO;
 import com.swp391.koi_ordering_system.dto.response.FishPackDTO;
 import com.swp391.koi_ordering_system.model.FishPack;
 import com.swp391.koi_ordering_system.service.FishPackService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +31,8 @@ public class FishPackController {
     }
 
     @PutMapping("/{fish_pack_id}/update")
-    public ResponseEntity<FishPackDTO> updateFishPack(@PathVariable String fish_pack_id,
-                                                      @RequestBody CreateFishPackDTO fishPackDTO) {
+    public ResponseEntity<FishPackDTO> updateFishPack( @PathVariable String fish_pack_id,
+                                                       @Valid @RequestBody CreateFishPackDTO fishPackDTO) {
         FishPack fishPack = fishPackService.updateFishPack(fish_pack_id, fishPackDTO);
         return ResponseEntity.ok(fishPackService.mapToDTO(fishPack));
     }

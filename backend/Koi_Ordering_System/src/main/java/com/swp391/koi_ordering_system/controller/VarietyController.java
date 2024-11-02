@@ -3,6 +3,7 @@ package com.swp391.koi_ordering_system.controller;
 import com.swp391.koi_ordering_system.dto.request.CreateVarietyDTO;
 import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.service.VarietyService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class VarietyController {
     private VarietyService varietyService;
 
     @PostMapping("/create")
-    public ResponseEntity<VarietyDTO> createVariety(@RequestBody CreateVarietyDTO varietyDTO) {
+    public ResponseEntity<VarietyDTO> createVariety(@Valid @RequestBody CreateVarietyDTO varietyDTO) {
         VarietyDTO createdVariety = varietyService.createVariety(varietyDTO);
         return ResponseEntity.ok(createdVariety);
     }

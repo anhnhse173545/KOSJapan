@@ -1,5 +1,9 @@
 package com.swp391.koi_ordering_system.dto.request;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +14,26 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateFishDTO {
+    @NotNull(message = "Variety ID must not be null ")
+    @NotBlank(message = "Variety ID must not be empty")
+    @Pattern(regexp = "^VA\\d{4}$", message = "ID must be in pattern [VA000X]")
     private String variety_id;
+
+    @Min(value = 0, message = "Weight must not be negative")
     private Double weight;
+
+    @Min(value = 0, message = "Length must be negative")
     private Double length;
+
+    @NotBlank(message = "Description must not be empty")
+    @NotNull(message = "Description must not be null")
     private String description;
+
+    @NotNull(message = "Order ID must not be null")
+    @NotBlank(message = "Order ID must not be empty")
+    @Pattern(regexp = "^PO\\d{4}$", message = "ID must be in pattern [PO000X]")
     private String orderId;
+
+    @Min(value = 0, message = "Price must not be negative")
     private Double price;
 }

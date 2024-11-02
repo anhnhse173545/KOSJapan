@@ -50,7 +50,7 @@ const CombinedKoiRequestForm = () => {
   
       // Gộp các thông tin thành 1 chuỗi mô tả duy nhất
       const combinedDescription = `
-        Trip Details: ${values.description || 'N/A'}
+         ${values.description || 'N/A'}  
         Start Date: ${values.startDate ? values.startDate.format("YYYY-MM-DD") : 'N/A'}
         End Date: ${values.endDate ? values.endDate.format("YYYY-MM-DD") : 'N/A'}
       `;
@@ -58,7 +58,7 @@ const CombinedKoiRequestForm = () => {
       const data = {
         id,
         name: form.getFieldValue("name") || '',
-        phone: form.getFieldValue("phone") || '',
+        phone: form.getFieldValue("phone") || '', 
         email: form.getFieldValue("email") || '',
         description: combinedDescription,
         departureAirport: values.departureAirport || '',

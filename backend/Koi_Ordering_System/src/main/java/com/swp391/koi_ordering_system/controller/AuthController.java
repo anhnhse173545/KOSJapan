@@ -11,6 +11,7 @@ import com.swp391.koi_ordering_system.mapper.AccountMapper;
 import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.service.AccountService;
 import com.swp391.koi_ordering_system.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +39,13 @@ public class    AuthController {
     private AccountMapper accountMapper;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenRefreshResponseDTO> authenticateUser(@RequestBody LoginRequestDTO loginRequest) {
+    public ResponseEntity<TokenRefreshResponseDTO> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
         TokenRefreshResponseDTO response = authService.authenticateUser(loginRequest);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequestDTO registerRequest) {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequest) {
         authService.registerUser(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Registration successful");
@@ -57,7 +58,7 @@ public class    AuthController {
     }
 
     @PostMapping("/forget-password")
-    public ResponseEntity<String> forgetPassword(@RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+    public ResponseEntity<String> forgetPassword(@Valid @RequestBody ForgetPasswordDTO forgetPasswordDTO) {
         String newPassword = authService.getPassword(forgetPasswordDTO);
         return ResponseEntity.ok(newPassword);
     }

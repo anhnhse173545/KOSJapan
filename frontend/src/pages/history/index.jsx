@@ -57,7 +57,9 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
   }
 
   return (
+
     <div className="space-y-8 p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      
       <motion.h1 
         className="text-4xl font-bold tracking-tight text-gray-900"
         initial={{ opacity: 0, y: -20 }}
@@ -147,7 +149,7 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
           ))}
         </motion.div>
       )}
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+      <button  onClick={() => navigate(-1)}>Back</button>
     </div>
   )
 }

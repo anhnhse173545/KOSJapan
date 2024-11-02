@@ -5,6 +5,7 @@ import com.swp391.koi_ordering_system.dto.request.CreateAccountDTO;
 import com.swp391.koi_ordering_system.dto.response.AccountDTO;
 import com.swp391.koi_ordering_system.model.Account;
 import com.swp391.koi_ordering_system.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class AccountController {
 
 
     @PutMapping("/{account_id}/update")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable String account_id,
+    public ResponseEntity<AccountDTO> updateAccount(@Valid @PathVariable String account_id,
                                                     @RequestBody CreateAccountDTO accountDTO) {
         Account updatedAccount = accountService.updateAccount(account_id, accountDTO);
         return ResponseEntity.ok(accountService.mapToDTO(updatedAccount));
