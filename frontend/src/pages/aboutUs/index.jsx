@@ -81,26 +81,21 @@ const AboutUs = () => {
         </p>
       </section>
 
-      <img 
-        src="https://i.ytimg.com/vi/NSOGQB33ims/maxresdefault.jpg" 
-        alt="Colorful Koi fish swimming in dark water" 
-        className="about-us-image" 
-      />
-
       <style jsx>{`
         .about-us-container {
-          max-width: 800px;
-          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          color: #fff;
           padding: 40px 20px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          color: #333;
-          background-color: #f9f9f9;
-          line-height: 1.6;
+          background: url('https://mrwallpaper.com/images/hd/koi-fish-eggs-eqijtroh4pkdbw6e.jpg') no-repeat center center fixed;
+          background-size: cover;
+          min-height: 100vh;
         }
 
         h1 {
           font-size: 2.5em;
-          color: #2c3e50;
+          color: #fff;
           text-align: center;
           margin-bottom: 40px;
           border-bottom: 2px solid #3498db;
@@ -108,57 +103,28 @@ const AboutUs = () => {
         }
 
         .about-us-section {
-          background-color: #ffffff;
+          background: rgba(0, 0, 0, 0.6); /* Add dark overlay for readability */
+          color: #fff;
           padding: 30px;
           margin-bottom: 30px;
           border-radius: 8px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease;
-        }
-
-        .about-us-section:hover {
-          transform: translateY(-5px);
+          max-width: 800px;
+          width: 100%;
         }
 
         h2 {
           font-size: 1.8em;
-          color: #2980b9;
           margin-bottom: 20px;
+          color: #fff;
         }
 
         p {
           margin-bottom: 15px;
           font-size: 1.1em;
         }
-
-        .about-us-image {
-          width: 100%;
-          height: auto;
-          border-radius: 8px;
-          margin-top: 30px;
-          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        @media (max-width: 600px) {
-          .about-us-container {
-            padding: 20px 10px;
-          }
-
-          h1 {
-            font-size: 2em;
-          }
-
-          h2 {
-            font-size: 1.5em;
-          }
-
-          .about-us-section {
-            padding: 20px;
-          }
-        }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
 export default AboutUs

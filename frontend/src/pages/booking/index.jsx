@@ -36,6 +36,7 @@ function PaymentPage() {
   );
 
   return (
+    
     <div className="payment-page-container">
       {/* Sidebar */}
       <div className="profile-sidebar">
@@ -65,6 +66,7 @@ function PaymentPage() {
       </div>
 
       {/* Status Tabs */}
+      
       <div className="payment-section">
   <div className="status-tabs">
     {['All', 'Requested', 'Approved Quote', 'Paid Booking', 'On-going', 'Order Prepare', 'Completed', 'Canceled'].map((status) => (

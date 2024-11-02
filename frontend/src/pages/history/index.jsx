@@ -14,11 +14,12 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
   const [bookingHistory, setBookingHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchBookingHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/booking/customer/AC0007`)
+        const response = await axios.get(`http://localhost:8080/api/booking/customer/${customerId}`)
         const filteredBookings = response.data.filter(booking =>
           booking.status === 'Completed' || booking.status === 'Canceled'
         )
@@ -57,28 +58,35 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
   }
 
   return (
-
-    <div className="space-y-8 p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="space-y-8 p-6 min-h-screen" style={{
+      backgroundImage: 'url("https://img.freepik.com/free-photo/beautiful-exotic-colorful-fish_23-2150737625.jpg")', // Đặt đường dẫn hình ảnh của bạn ở đây
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
       
       <motion.h1 
-        className="text-4xl font-bold tracking-tight text-gray-900"
+        className="text-4xl font-bold tracking-tight text-white"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Customer booking history
+        Customer Booking History
       </motion.h1>
+      
       {bookingHistory.length === 0 ? (
         <Alert className="bg-white/50 backdrop-blur-sm border-gray-200">
           <AlertCircle className="h-5 w-5 text-blue-500" />
           <AlertTitle className="text-lg font-semibold text-gray-900">Notification</AlertTitle>
           <AlertDescription className="text-gray-600">
-          There is no booking history with status completed or canceled.
+            There is no booking history with status completed or canceled.
           </AlertDescription>
         </Alert>
       ) : (
         <motion.div 
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full max-w-5xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, staggerChildren: 0.1 }}
@@ -90,7 +98,7 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="overflow-hidden bg-white/70 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="overflow-hidden bg-white/70 backdrop-blur-lg border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="bg-gray-50 border-b border-gray-200">
                   <CardTitle className="flex items-center justify-between text-lg">
                     <span className="font-semibold text-gray-700">Booking Id: {booking.id}</span>
@@ -149,7 +157,10 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
           ))}
         </motion.div>
       )}
-      <button  onClick={() => navigate(-1)}>Back</button>
+      
+      <button onClick={() => navigate(-1)} className="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow-lg hover:bg-blue-700 transition duration-300">
+        Back
+      </button>
     </div>
   )
 }
