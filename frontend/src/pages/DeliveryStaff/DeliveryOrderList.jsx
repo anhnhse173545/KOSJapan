@@ -31,6 +31,7 @@ const fishOrderStatuses = [
   "In Transit",
   "Delivering",
   "Completed",
+  "Canceled ",
 ]
 
 const bookingStatuses = ["Order Prepare", "Completed"]
