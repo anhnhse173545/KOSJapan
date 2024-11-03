@@ -58,4 +58,11 @@ public class AccountController {
         return ResponseEntity.ok("Account deleted successfully.");
     }
 
+    @PreAuthorize("hasRole('Manager')")
+    @PutMapping("/{accountId}/restore")
+    public ResponseEntity<String> restoreAccount(@PathVariable String accountId) {
+        accountService.restoreAccount(accountId);
+        return ResponseEntity.ok("Account restored successfully.");
+    }
+
 }

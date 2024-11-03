@@ -5,12 +5,12 @@ import com.swp391.koi_ordering_system.dto.request.CreateAccountDTO;
 import com.swp391.koi_ordering_system.dto.response.AccountDTO;
 import com.swp391.koi_ordering_system.mapper.AccountMapper;
 import com.swp391.koi_ordering_system.model.Account;
-import com.swp391.koi_ordering_system.model.FishOrderDetail;
 import com.swp391.koi_ordering_system.repository.AccountRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.List;  
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,6 +73,16 @@ public class AccountService {
         return accountRepository.save(newAccount);
     }
 
+    public void restoreAccount (String accountId) {
+        Optional<Account> findAccount = accountRepository.findByIdAndIsDeletedTrue(accountId);
+        if (findAccount.isEmpty()) {
+            throw new EntityNotFoundException("Account not found");
+        }
+        Account foundAccount = findAccount.get();
+        foundAccount.setIsDeleted(false);
+        accountRepository.save(foundAccount);
+    }
+
     public Account updateAccount(String accountId, CreateAccountDTO accountDTO) {
         Optional<Account> findAcc = accountRepository.findById(accountId);
         if (findAcc.isEmpty()) {
@@ -90,10 +100,6 @@ public class AccountService {
 
         if (accountDTO.getEmail() != null && !accountDTO.getEmail().isEmpty()) {
             acc.setEmail(accountDTO.getEmail());
-        }
-
-        if (accountDTO.getPassword() != null && !accountDTO.getPassword().isEmpty()) {
-            acc.setPassword(accountDTO.getPassword());
         }
 
         if (accountDTO.getAddress() != null && !accountDTO.getAddress().isEmpty()) {
@@ -132,6 +138,8 @@ public class AccountService {
 
         return accountDTO;
     }
+
+
 
     private String generateAccountId() {
         String lastId = accountRepository.findTopByOrderByIdDesc()

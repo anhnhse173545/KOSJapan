@@ -21,12 +21,14 @@ public class  RegisterRequestDTO {
     @Pattern(regexp = "^\\d{10}$", message = "phone number is invalid")
     private String phone;
 
-    @NotNull(message = "Password cannot be null")
+    @NotEmpty(message = "Password cannot be null")
     @Size(min = 8, max = 30, message = "Password must be between 8 and 30 characters")
+    @Pattern(regexp = "^\\S*$", message = "Password cannot contain spaces")
     private String password;
 
     private String address;
 
     @NotNull
+    @NotBlank
     private String role;
 }

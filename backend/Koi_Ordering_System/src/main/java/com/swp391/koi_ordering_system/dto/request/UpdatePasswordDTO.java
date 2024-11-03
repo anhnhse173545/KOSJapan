@@ -9,13 +9,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ForgetPasswordDTO {
-    @NotBlank
+public class UpdatePasswordDTO {
     @NotNull
-    @Pattern(regexp = "^\\d{10}$", message = "phone number is invalid")
+    @NotBlank
     private String phone;
 
-    @NotEmpty(message = "Password must not be empty")
+    @NotNull
+    @NotBlank
+    private String oldPassword;
+
+    @NotEmpty
     @Pattern(regexp = "^\\S*$", message = "Password cannot contain spaces")
-    private String password;
+    private String newPassword;
 }
