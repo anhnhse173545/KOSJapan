@@ -56,6 +56,7 @@ import DeliveryStaffHome from "./pages/DeliveryStaff/DeliveryStaffHome.jsx";
 // Global and Library Styles
 import "./styles/App.css"; // Main or global CSS file
 import AllBookingsPage from "./pages/Manager/finals/AllBookingPage";
+import RefundKoi from "./pages/refundkoifish";
 function App() {
   return (
     <Routes>
@@ -84,6 +85,7 @@ function App() {
         <Route path="paykoi50/:id" element={<PaymentTripPage />} />
         <Route path="paykoi100/:id" element={<PaymentTripPageFull />} />
         <Route path="history" element={<BookingHistoryPage />} />
+        <Route path="refundkoi/:id" element={<RefundKoi />} />
         {/* </Route> */}
       </Route>
       {/* Manager routes */}
