@@ -91,28 +91,36 @@ public class MediaService {
         if ("farm".equalsIgnoreCase(entity)) {
             Farm farm = farmRepository.findById(entityId)
                     .orElseThrow(() -> new EntityNotFoundException("Farm not found"));
-            deleteEntityImage(entityId, entity, farm.getImage().getUrl());
+            if (farm.getImage() != null) {
+                deleteEntityImage(entityId, entity, farm.getImage().getUrl());
+            }
             media = uploadMedia(file, entity);
             farm.setImage(media);
             return farmRepository.save(farm);
         } else if ("account".equalsIgnoreCase(entity)) {
             Account account = accountRepository.findById(entityId)
                     .orElseThrow(() -> new EntityNotFoundException("Account not found"));
-            deleteEntityImage(entityId, entity, account.getProfileImg().getUrl());
+            if (account.getProfileImg() != null) {
+                deleteEntityImage(entityId, entity, account.getProfileImg().getUrl());
+            }
             media = uploadMedia(file, entity);
             account.setProfileImg(media);
             return accountRepository.save(account);
         } else if ("fish".equals(entity)) {
             Fish fish = fishRepository.findById(entityId)
                     .orElseThrow(() -> new EntityNotFoundException("Fish not found"));
-            deleteEntityImage(entityId, entity, fish.getImage().getUrl());
+            if (fish.getImage() != null) {
+                deleteEntityImage(entityId, entity, fish.getImage().getUrl());
+            }
             media = uploadMedia(file, entity);
             fish.setImage(media);
             return fishRepository.save(fish);
         } else if ("fish_pack".equals(entity)) {
             FishPack fishPack = fishPackRepository.findById(entityId)
                     .orElseThrow(() -> new EntityNotFoundException("Fish Pack not found"));
-            deleteEntityImage(entityId, entity, fishPack.getImage().getUrl());
+            if (fishPack.getImage() != null) {
+                deleteEntityImage(entityId, entity, fishPack.getImage().getUrl());
+            }
             media = uploadMedia(file, entity);
             fishPack.setImage(media);
             return fishPackRepository.save(fishPack);
