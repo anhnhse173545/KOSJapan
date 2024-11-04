@@ -29,5 +29,5 @@ public class FishPackDTO {
 
     private Variety variety;
 
-    private List<String> mediaUrls;
+    private String mediaUrl;
 }
