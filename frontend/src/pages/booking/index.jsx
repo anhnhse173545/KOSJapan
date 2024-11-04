@@ -93,8 +93,14 @@ function PaymentPage() {
               <div className="payment-details">
                 <h3>Booking Id :{koi.id}</h3>
                 <p>{koi.startDate}</p>
-                <p>Create At : {koi.createAt}</p>
-                <p className="status">{koi.status}</p>
+                <dd className="text-gray-900">Create At: {new Date(koi.createAt).toLocaleString('EN-EN', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}</dd>
+                <p className="status">Booking Status: {koi.status}</p>
             
                 <div className="button-group">
                   <button
