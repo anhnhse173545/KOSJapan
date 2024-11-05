@@ -101,13 +101,13 @@ const TourList = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      sorter: (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      sorter: (a, b) => new Date(a.endDate) - new Date(b.endDate),
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
     },
     {
       title: "Booking Status",
