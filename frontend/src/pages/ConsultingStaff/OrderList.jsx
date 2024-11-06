@@ -291,7 +291,7 @@ const OrderList = () => {
             disabled={record.paymentStatus === "Deposited"}
             style={{ marginRight: 8 }}
           >
-            Update Payment Status
+            Update Cash Payment Status
           </Button>
           <Button
             type="danger"
