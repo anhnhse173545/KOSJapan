@@ -43,7 +43,7 @@ public class OpenApiConfig {
                                                                 .description("The image file to upload"))))))
                 )
                 .path("/media/{entity}/{id}/upload/image", new PathItem().post(new Operation()
-                        .summary("Upload an image for a specific entity ( farm, account, fish, fishpack )")
+                        .summary("Upload an image for a specific entity ( farm, account, fish, fish_pack )")
                         .addTagsItem("media-controller")
                         .addParametersItem(new Parameter().name("entity").in("path").required(true).schema(new Schema<String>().type("string")))
                         .addParametersItem(new Parameter().name("id").in("path").required(true).schema(new Schema<String>().type("string")))
