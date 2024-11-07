@@ -479,13 +479,12 @@ const OrderList = () => {
                 ) : (
                   "No image"
                 )}
-
                 <input
                   type="file"
                   style={{ display: "none" }}
                   onChange={(e) =>
                     handleImageUpload(
-                      "fishpack",
+                      "fish_pack",
                       fishPackOrderDetail.fishPack.id,
                       e.target.files[0]
                     )
@@ -501,6 +500,7 @@ const OrderList = () => {
               </div>
             ),
           },
+
           {
             title: "Length",
             dataIndex: ["fishPack", "length"],
