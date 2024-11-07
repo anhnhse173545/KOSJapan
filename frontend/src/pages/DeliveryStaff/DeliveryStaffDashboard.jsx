@@ -24,25 +24,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function DeliveryStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
-  const [staff, setStaff] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const toggleNav = () => setIsNavExpanded(!isNavExpanded);
 
   const fetchStaffDetails = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/accounts/AC0003/detail"
+        `http://localhost:8080/accounts/${user.id}/detail`
       );
       if (!response.ok) throw new Error("Failed to fetch staff details");
       const data = await response.json();
       console.log("Staff details:", data);
-      setStaff(data);
       setIsLoading(false);
     } catch (error) {
       console.error("Failed to fetch staff details:", error);
@@ -52,8 +52,10 @@ export function DeliveryStaffDashboard() {
   };
 
   useEffect(() => {
-    fetchStaffDetails();
-  }, []);
+    if (user) {
+      fetchStaffDetails();
+    }
+  }, [user]);
 
   const navItems = [
     {
@@ -66,7 +68,6 @@ export function DeliveryStaffDashboard() {
       icon: <Package className="h-5 w-5" />,
       path: "/ds-dashboard/my-deliveries",
     },
-    // { name: 'Order Details', icon: <Truck className="h-5 w-5" />, path: '/ds-dashboard/order-details/:orderId' },
     {
       name: "Delivery Map",
       icon: <MapPin className="h-5 w-5" />,
@@ -84,10 +85,13 @@ export function DeliveryStaffDashboard() {
     },
   ];
 
-  const handleLogout = () => {
-    // Implement logout logic here
-    console.log("Logging out...");
-    navigate("/login"); // Redirect to login page after logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -148,16 +152,16 @@ export function DeliveryStaffDashboard() {
                 {error}
               </span>
             </div>
-          ) : staff ? (
+          ) : user ? (
             isNavExpanded ? (
               <div className="flex items-center space-x-3">
                 <Avatar>
                   <AvatarImage
-                    src={staff.avatar || "/placeholder.svg?height=32&width=32"}
-                    alt={staff.name}
+                    src={user.mediaUrl || "/placeholder.svg?height=32&width=32"}
+                    alt={user.name}
                   />
                   <AvatarFallback>
-                    {staff.name
+                    {user.name
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
@@ -165,10 +169,10 @@ export function DeliveryStaffDashboard() {
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {staff.name}
+                    {user.name}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {staff.role}
+                    {user.role}
                   </span>
                 </div>
                 <Button
@@ -192,12 +196,12 @@ export function DeliveryStaffDashboard() {
                     <Avatar>
                       <AvatarImage
                         src={
-                          staff.avatar || "/placeholder.svg?height=32&width=32"
+                          user.mediaUrl || "/placeholder.svg?height=32&width=32"
                         }
-                        alt={staff.name}
+                        alt={user.name}
                       />
                       <AvatarFallback>
-                        {staff.name
+                        {user.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
@@ -207,8 +211,8 @@ export function DeliveryStaffDashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{staff.name}</DropdownMenuLabel>
-                  <DropdownMenuItem>{staff.role}</DropdownMenuItem>
+                  <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                  <DropdownMenuItem>{user.role}</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

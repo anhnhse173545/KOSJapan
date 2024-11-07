@@ -57,20 +57,27 @@ import DeliveryStaffHome from "./pages/DeliveryStaff/DeliveryStaffHome.jsx";
 import "./styles/App.css"; // Main or global CSS file
 import AllBookingsPage from "./pages/Manager/finals/AllBookingPage";
 import RefundKoi from "./pages/refundkoifish";
+import { LoginComponent } from "./pages/auth/Login";
+import { RegisterComponent } from "./pages/auth/Register";
+import RequireAuth from "./pages/auth/RequireAuth";
+import UnauthorizedPage from "./pages/auth/UnauthorizedPage";
 function App() {
   return (
     <Routes>
+      <Route path="login" element={<LoginComponent />} />
+      <Route path="register" element={<RegisterComponent />} />
+
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        
         <Route path="/" element={<HomepageComponent />} />
         <Route path="guest" element={<HomepageGuest />} />
         <Route path="contact" element={<CombinedKoiRequestForm />} />
         <Route path="aboutus" element={<AboutUs />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
 
         {/* Customer routes */}
-        {/* <Route element={<RequireAuth allowedRoles={[ROLES.Customer]} />}> */}
+        {/* <Route element={<RequireAuth allowedRoles={["Customer"]} />}> */}
         <Route path="payment" element={<PaymentPage />} />
         <Route path="request/:id" element={<PaymentDetailsPage />} />
         <Route path="quota/:id" element={<QuotaDetailsPage />} />
@@ -89,7 +96,7 @@ function App() {
         {/* </Route> */}
       </Route>
       {/* Manager routes */}
-      {/* <Route element={<RequireAuth allowedRoles={[ROLES.Manager]} />}> */}
+      <Route element={<RequireAuth allowedRoles={["Manager"]} />}>
       <Route path="manager-dashboard" element={<ManagerDashboard />}>
         <Route path="all-booking" element={<AllBookingsPage />} />
         <Route path="dashboard" element={<FarmImageUpload />} />
@@ -116,10 +123,10 @@ function App() {
         <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
         <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
       </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* Delivery Staff routes */}
-      {/* <Route element={<RequireAuth allowedRoles={[ROLES.DeliveryStaff]} />}> */}
+      <Route element={<RequireAuth allowedRoles={["Delivery Staff"]} />}>
       <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
         <Route index element={<DeliveryStaffHome />} />
         <Route path="my-deliveries" element={<DeliveryOrderListComponent />} />
@@ -128,14 +135,14 @@ function App() {
           element={<OrderDetailsComponent />}
         />
       </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* Sales Staff routes */}
-      {/* <Route element={<RequireAuth allowedRoles={[ROLES.SalesStaff]} />}> */}
+      <Route element={<RequireAuth allowedRoles={["Sales Staff"]} />}>
       <Route path="ss-dashboard" element={<SalesStaffDashboard />}>
         <Route path="customer-request" element={<CustomerRequest />} />
       </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* Consulting Staff routes */}
       {/* <Route element={<RequireAuth allowedRoles={[ROLES.ConsultingStaff]} />}> */}
