@@ -6,8 +6,7 @@ import {
 } from "react-router-dom";
 import Layout from "./components/layout";
 import CombinedKoiRequestForm from "./pages/request-form";
-import Register from "./pages/register";
-import Login from "./pages/login";
+
 import PaymentPage from "./pages/booking";
 import PaymentDetailsPage from "./pages/tripDetail";
 import QuotaDetailsPage from "./pages/tripQuota";
@@ -66,63 +65,71 @@ function App() {
     <Routes>
       <Route path="login" element={<LoginComponent />} />
       <Route path="register" element={<RegisterComponent />} />
+      {/* <Route path="/" element={< />} /> */}
+
+      
 
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
         
         <Route path="/" element={<HomepageComponent />} />
         <Route path="guest" element={<HomepageGuest />} />
-        <Route path="contact" element={<CombinedKoiRequestForm />} />
+        
         <Route path="aboutus" element={<AboutUs />} />
         <Route path="unauthorized" element={<UnauthorizedPage />} />
-
-        {/* Customer routes */}
-        {/* <Route element={<RequireAuth allowedRoles={["Customer"]} />}> */}
-        <Route path="payment" element={<PaymentPage />} />
-        <Route path="request/:id" element={<PaymentDetailsPage />} />
-        <Route path="quota/:id" element={<QuotaDetailsPage />} />
-        <Route path="onGoing/:id" element={<OnGoingPage />} />
-        <Route path="mykoi" element={<KoiPage />} />
-        <Route path="mykoi/:id" element={<KoiDetailPage />} />
-        <Route path="paidbooking/:id" element={<PaidBooking />} />
-        <Route path="koifarmpage" element={<KoiFarmViewSearchComponent />} />
-        <Route path="koi-trip" element={<KoiTripViewSearchComponent />} />
-        <Route path="userDetail" element={<UserDetailPage />} />
-        <Route path="paytrip" element={<TripPaymentPage />} />
-        <Route path="paykoi50/:id" element={<PaymentTripPage />} />
-        <Route path="paykoi100/:id" element={<PaymentTripPageFull />} />
-        <Route path="history" element={<BookingHistoryPage />} />
-        <Route path="refundkoi/:id" element={<RefundKoi />} />
-        {/* </Route> */}
-      </Route>
-      {/* Manager routes */}
-      <Route element={<RequireAuth allowedRoles={["Manager"]} />}>
-      <Route path="manager-dashboard" element={<ManagerDashboard />}>
-        <Route path="all-booking" element={<AllBookingsPage />} />
-        <Route path="dashboard" element={<FarmImageUpload />} />
-        <Route path="staff-manager" element={<StaffManagerView />} />
-        <Route path="booking-manager" element={<BookingManagerComponent />} />
-        <Route
-          path="sales-staff-assignment"
-          element={<SalesStaffManagementComponent />}
-        />
-        <Route
-          path="consulting-staff-assignment"
-          element={<ConsultingStaffAssignmentComponent />}
-        />
-        <Route
-          path="delivery-staff-assignment"
-          element={<DeliveryStaffAssignment />}
-        />
-        <Route
-          path="quotes-review"
-          element={<ExtendedQuoteReviewComponent />}
-        />
-        <Route path="farm-control" element={<FarmCrud />} />
-        <Route path="variety-control" element={<VarietyCrud />} />
         <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
         <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
       </Route>
+
+      
+        {/* Customer routes */}
+      <Route element={<RequireAuth allowedRoles={["Customer"]} />}>
+        <Route path="/" element={<Layout />}>
+          <Route path="contact" element={<CombinedKoiRequestForm />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="request/:id" element={<PaymentDetailsPage />} />
+          <Route path="quota/:id" element={<QuotaDetailsPage />} />
+          <Route path="onGoing/:id" element={<OnGoingPage />} />
+          <Route path="mykoi" element={<KoiPage />} />
+          <Route path="mykoi/:id" element={<KoiDetailPage />} />
+          <Route path="paidbooking/:id" element={<PaidBooking />} />
+          <Route path="koifarmpage" element={<KoiFarmViewSearchComponent />} />
+          <Route path="koi-trip" element={<KoiTripViewSearchComponent />} />
+          <Route path="userDetail" element={<UserDetailPage />} />
+          <Route path="paytrip" element={<TripPaymentPage />} />
+          <Route path="paykoi50/:id" element={<PaymentTripPage />} />
+          <Route path="paykoi100/:id" element={<PaymentTripPageFull />} />
+          <Route path="history" element={<BookingHistoryPage />} />
+          <Route path="refundkoi/:id" element={<RefundKoi />} />
+        </Route> 
+      </Route>
+      {/* Manager routes */}
+      <Route element={<RequireAuth allowedRoles={["Manager"]} />}>
+        <Route path="manager-dashboard" element={<ManagerDashboard />}>
+          <Route path="all-booking" element={<AllBookingsPage />} />
+          <Route path="dashboard" element={<FarmImageUpload />} />
+          <Route path="staff-manager" element={<StaffManagerView />} />
+          <Route path="booking-manager" element={<BookingManagerComponent />} />
+          <Route
+            path="sales-staff-assignment"
+            element={<SalesStaffManagementComponent />}
+          />
+          <Route
+            path="consulting-staff-assignment"
+            element={<ConsultingStaffAssignmentComponent />}
+          />
+          <Route
+            path="delivery-staff-assignment"
+            element={<DeliveryStaffAssignment />}
+          />
+          <Route
+            path="quotes-review"
+            element={<ExtendedQuoteReviewComponent />}
+          />
+          <Route path="farm-control" element={<FarmCrud />} />
+          <Route path="variety-control" element={<VarietyCrud />} />
+          
+        </Route>
       </Route>
 
       {/* Delivery Staff routes */}
@@ -145,7 +152,7 @@ function App() {
       </Route>
 
       {/* Consulting Staff routes */}
-      {/* <Route element={<RequireAuth allowedRoles={[ROLES.ConsultingStaff]} />}> */}
+      <Route element={<RequireAuth allowedRoles={["Consulting Staff"]} />}>
       <Route path="cs-dashboard" element={<ConsultingStaffDashboard />}>
         <Route index element={<ConsultingStaffHome />} />
         <Route path="tour-list" element={<TourList />} />
@@ -157,7 +164,7 @@ function App() {
         <Route path="order-list/add-koi" element={<AddKoi />} />
         <Route path="koi-details" element={<KoiDetails />} />
       </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* Catch all */}
       {/* <Route path="*" element={<Missing />} /> */}
