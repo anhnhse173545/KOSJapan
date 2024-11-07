@@ -1,24 +1,18 @@
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ReloadIcon, Cross2Icon, EyeOpenIcon } from "@radix-ui/react-icons"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { ReloadIcon, Cross2Icon, PlusIcon } from "@radix-ui/react-icons"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const API_BASE_URL = 'http://localhost:8080';
 
-export default function FarmCrud() {
+export function FarmCrudComponent() {
   const [farms, setFarms] = useState([])
   const [varieties, setVarieties] = useState([])
   const [currentFarm, setCurrentFarm] = useState({
@@ -28,13 +22,13 @@ export default function FarmCrud() {
     phoneNumber: '',
     isDeleted: false,
     varieties: [],
-    mediaUrl: ''
+    imageUrl: ''
   })
   const [selectedVarietyId, setSelectedVarietyId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [imageFile, setImageFile] = useState(null)
-  const [selectedFarm, setSelectedFarm] = useState(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchFarms()
@@ -98,13 +92,13 @@ export default function FarmCrud() {
   }
 
   const handleImageChange = (e) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0])
     }
   }
 
   const uploadImage = async (farmId) => {
-    if (!imageFile) return
+    if (!imageFile) return null
 
     const formData = new FormData()
     formData.append('file', imageFile)
@@ -117,16 +111,15 @@ export default function FarmCrud() {
 
       if (!response.ok) throw new Error('Failed to upload image')
 
-      toast({
-        title: "Success",
-        description: "Farm image uploaded successfully",
-      })
+      const data = await response.json()
+      return data.imageUrl
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to upload farm image",
         variant: "destructive",
       })
+      return null
     }
   }
 
@@ -150,16 +143,19 @@ export default function FarmCrud() {
       const savedFarm = await response.json()
       
       if (imageFile) {
-        await uploadImage(savedFarm.id)
+        const imageUrl = await uploadImage(savedFarm.id)
+        if (imageUrl) {
+          savedFarm.imageUrl = imageUrl
+          await fetch(`${API_BASE_URL}/api/farm/update/${savedFarm.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(savedFarm)
+          })
+        }
       }
       
       await fetchFarms()
-      setCurrentFarm(
-        { id: '', name: '', address: '', phoneNumber: '', isDeleted: false, varieties: [], mediaUrl: '' }
-      )
-      setSelectedVarietyId('')
-      setIsEditing(false)
-      setImageFile(null)
+      resetForm()
       toast({
         title: "Success",
         description: `Farm ${isEditing ? 'updated' : 'created'} successfully`,
@@ -203,13 +199,18 @@ export default function FarmCrud() {
     }
   }
 
-  const handleViewDetails = (farm) => {
-    setSelectedFarm(farm)
+  const resetForm = () => {
+    setCurrentFarm(
+      { id: '', name: '', address: '', phoneNumber: '', isDeleted: false, varieties: [], imageUrl: '' }
+    )
+    setSelectedVarietyId('')
+    setIsEditing(false)
+    setImageFile(null)
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="mb-8">
+    (<div className="container mx-auto p-4 space-y-8">
+      <Card>
         <CardHeader>
           <CardTitle>{isEditing ? 'Edit Farm' : 'Add New Farm'}</CardTitle>
         </CardHeader>
@@ -245,36 +246,53 @@ export default function FarmCrud() {
                 </SelectContent>
               </Select>
               <Button type="button" onClick={handleAddVariety} disabled={!selectedVarietyId}>
-                Add Variety
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Add
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {currentFarm.varieties.map((variety) => (
-                <Badge key={variety.id} variant="secondary" className="flex items-center gap-1">
-                  {variety.name}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-4 w-4 p-0"
-                    onClick={() => handleRemoveVariety(variety.id)}>
-                    <Cross2Icon className="h-3 w-3" />
-                    <span className="sr-only">Remove {variety.name}</span>
-                  </Button>
-                </Badge>
-              ))}
-            </div>
-            <Input type="file" onChange={handleImageChange} accept="image/*" />
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  {isEditing ? 'Updating...' : 'Creating...'}
-                </>
-              ) : (
-                isEditing ? 'Update Farm' : 'Create Farm'
+            <ScrollArea className="h-20 w-full">
+              <div className="flex flex-wrap gap-2 p-2">
+                {currentFarm.varieties.map((variety) => (
+                  <Badge key={variety.id} variant="secondary" className="flex items-center gap-1">
+                    {variety.name}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0"
+                      onClick={() => handleRemoveVariety(variety.id)}>
+                      <Cross2Icon className="h-3 w-3" />
+                      <span className="sr-only">Remove {variety.name}</span>
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            </ScrollArea>
+            <div className="flex items-center space-x-2">
+              <Input
+                type="file"
+                onChange={handleImageChange}
+                accept="image/*"
+                className="flex-grow" />
+              {imageFile && (
+                <Badge variant="outline">{imageFile.name}</Badge>
               )}
-            </Button>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={resetForm}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    {isEditing ? 'Updating...' : 'Creating...'}
+                  </>
+                ) : (
+                  isEditing ? 'Update Farm' : 'Create Farm'
+                )}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -291,6 +309,7 @@ export default function FarmCrud() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Phone Number</TableHead>
@@ -301,68 +320,44 @@ export default function FarmCrud() {
               <TableBody>
                 {farms.map((farm) => (
                   <TableRow key={farm.id}>
+                    <TableCell>
+                      {farm.imageUrl ? (
+                        <Image
+                          src={farm.imageUrl}
+                          alt={`Image of ${farm.name}`}
+                          width={50}
+                          height={50}
+                          className="rounded-full object-cover" />
+                      ) : (
+                        <div
+                          className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                          <span className="text-gray-500 text-xs">No image</span>
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell>{farm.name}</TableCell>
                     <TableCell>{farm.address}</TableCell>
                     <TableCell>{farm.phoneNumber}</TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {farm.varieties.map((variety) => (
-                          <Badge key={variety.id} variant="secondary">
-                            {variety.name}
-                          </Badge>
-                        ))}
-                      </div>
+                      <ScrollArea className="h-20 w-full">
+                        <div className="flex flex-wrap gap-1 p-2">
+                          {farm.varieties.map((variety) => (
+                            <Badge key={variety.id} variant="secondary">
+                              {variety.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </TableCell>
                     <TableCell>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" className="mr-2" onClick={() => handleViewDetails(farm)}>
-                            <EyeOpenIcon className="mr-2 h-4 w-4" />
-                            View
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                          <DialogHeader>
-                            <DialogTitle>{selectedFarm?.name}</DialogTitle>
-                            <DialogDescription>Farm Details</DialogDescription>
-                          </DialogHeader>
-                          <div className="grid gap-4 py-4">
-                            {selectedFarm?.mediaUrl && (
-                              <div className="flex justify-center">
-                                <img
-                                  src={selectedFarm.mediaUrl}
-                                  alt={`${selectedFarm.name} farm`}
-                                  className="w-full max-w-[300px] h-auto object-cover rounded-md"
-                                />
-                              </div>
-                            )}
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <span className="font-bold">Address:</span>
-                              <span className="col-span-3">{selectedFarm?.address}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <span className="font-bold">Phone:</span>
-                              <span className="col-span-3">{selectedFarm?.phoneNumber}</span>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <span className="font-bold">Varieties:</span>
-                              <div className="col-span-3 flex flex-wrap gap-1">
-                                {selectedFarm?.varieties.map((variety) => (
-                                  <Badge key={variety.id} variant="secondary">
-                                    {variety.name}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      <Button variant="outline" className="mr-2" onClick={() => handleEdit(farm)}>
-                        Edit
-                      </Button>
-                      <Button variant="destructive" onClick={() => handleDelete(farm.id)}>
-                        Delete
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" onClick={() => handleEdit(farm)}>
+                          Edit
+                        </Button>
+                        <Button variant="destructive" onClick={() => handleDelete(farm.id)}>
+                          Delete
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -371,6 +366,6 @@ export default function FarmCrud() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </div>)
   );
 }

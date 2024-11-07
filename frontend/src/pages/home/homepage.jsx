@@ -98,7 +98,7 @@ export function HomepageComponent() {
       {/* Introduction Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12 text-gray-900">Welcome to KOSJapan</h2>
-        <div className="mb-12 text-center">
+        {/* <div className="mb-12 text-center">
           <img
             src="/frontend/src/assets/IMG_0378-1024x768.jpg?height=400&width=600"
             alt="Colorful Koi fish swimming in a pond"
@@ -106,7 +106,7 @@ export function HomepageComponent() {
             width={600}
             height={400}
           />
-        </div>
+        </div> */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-6">
