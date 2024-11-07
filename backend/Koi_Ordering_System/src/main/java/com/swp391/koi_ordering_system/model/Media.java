@@ -31,13 +31,4 @@ public class Media {
     @Column(name = "type")
     private String type;
 
-    @JsonIgnore
-    @JsonBackReference(value = "fish-media")
-    @ManyToMany(mappedBy = "medias")
-    private Set<Fish> fishes;
-
-    @JsonIgnore
-    @JsonBackReference(value = "fishPack-media")
-    @ManyToMany(mappedBy = "medias")
-    private Set<FishPack> fishPacks;
 }

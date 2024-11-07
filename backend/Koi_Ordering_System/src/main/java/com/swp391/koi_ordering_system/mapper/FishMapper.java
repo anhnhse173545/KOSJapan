@@ -16,12 +16,12 @@ public interface FishMapper {
 
     @Mapping(source = "id", target = "fish_id")
     @Mapping(source = "variety.name", target = "fish_variety_name")
-    @Mapping(source = "medias", target = "mediaUrls", qualifiedByName = "mediaToUrls")
+    @Mapping(source = "image.url", target = "mediaUrl")
     FishDTO toDTO(Fish fish);
 
     @Mapping(source = "fish_id", target = "id")
     @Mapping(source = "fish_variety_name", target = "variety.name")
-    @Mapping(source = "mediaUrls", target = "medias", qualifiedByName = "urlsToMedia")
+    @Mapping(source = "mediaUrl", target = "image.url")
     Fish toEntity(FishDTO fishDTO);
 
     @Named("mediaToUrls")

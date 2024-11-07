@@ -11,11 +11,16 @@ import {
   Descriptions,
   Card,
   List,
-  Collapse,
 } from "antd";
 
 const { Title, Text } = Typography;
-const { Panel } = Collapse;
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return `${String(date.getDate()).padStart(2, "0")}/${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}/${date.getFullYear()}`;
+};
 
 const TourDetails = () => {
   const { bookingId } = useParams();
@@ -61,7 +66,6 @@ const TourDetails = () => {
       const doc = new jsPDF();
       doc.text("Booking Details", 20, 10);
 
-      // Booking Information
       doc.autoTable({
         head: [["Booking ID", "Customer", "Status", "Created At"]],
         body: [
@@ -69,21 +73,20 @@ const TourDetails = () => {
             bookingData.id,
             bookingData.customer.name,
             bookingData.status,
-            new Date(bookingData.createAt).toLocaleString(),
+            formatDate(bookingData.createAt),
           ],
         ],
         startY: 20,
       });
 
-      // Trip Information
       doc.text("Trip Information", 20, doc.lastAutoTable.finalY + 10);
       doc.autoTable({
         head: [["Trip ID", "Start Date", "End Date", "Status", "Price"]],
         body: [
           [
             bookingData.trip.id,
-            new Date(bookingData.trip.startDate).toLocaleString(),
-            new Date(bookingData.trip.endDate).toLocaleString(),
+            formatDate(bookingData.trip.startDate),
+            formatDate(bookingData.trip.endDate),
             bookingData.trip.status,
             `$${bookingData.trip.price}`,
           ],
@@ -91,7 +94,6 @@ const TourDetails = () => {
         startY: doc.lastAutoTable.finalY + 15,
       });
 
-      // Trip Destinations
       doc.text("Trip Destinations", 20, doc.lastAutoTable.finalY + 10);
       const destinations = bookingData.trip.tripDestinations.map((dest) => [
         dest.farm.name,
@@ -104,8 +106,6 @@ const TourDetails = () => {
         body: destinations,
         startY: doc.lastAutoTable.finalY + 15,
       });
-
-      // Fish Orders
 
       doc.save(`Booking_${bookingData.id}_details.pdf`);
       message.success("PDF exported successfully.");
@@ -145,7 +145,7 @@ const TourDetails = () => {
             {bookingData.status}
           </Descriptions.Item>
           <Descriptions.Item label="Created At">
-            {new Date(bookingData.createAt).toLocaleString()}
+            {formatDate(bookingData.createAt)}
           </Descriptions.Item>
           <Descriptions.Item label="Description">
             {bookingData.description || "N/A"}
@@ -159,10 +159,10 @@ const TourDetails = () => {
             {bookingData.trip.id}
           </Descriptions.Item>
           <Descriptions.Item label="Start Date">
-            {new Date(bookingData.trip.startDate).toLocaleString()}
+            {formatDate(bookingData.trip.startDate)}
           </Descriptions.Item>
           <Descriptions.Item label="End Date">
-            {new Date(bookingData.trip.endDate).toLocaleString()}
+            {formatDate(bookingData.trip.endDate)}
           </Descriptions.Item>
           <Descriptions.Item label="Departure Airport">
             {bookingData.trip.departureAirport}
@@ -200,20 +200,6 @@ const TourDetails = () => {
           )}
         />
       </Card>
-      {/* 
-      <Card title="Payment Information" className="mb-6">
-        <Descriptions bordered>
-          <Descriptions.Item label="Payment ID">
-            {bookingData.tripPayment.id}
-          </Descriptions.Item>
-          <Descriptions.Item label="Payment Method">
-            {bookingData.tripPayment.paymentMethodName}
-          </Descriptions.Item>
-          <Descriptions.Item label="Amount">
-            ${bookingData.tripPayment.amount}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card> */}
 
       <Button type="primary" onClick={handleExportToPDF}>
         Export to PDF

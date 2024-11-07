@@ -1,11 +1,8 @@
 package com.swp391.koi_ordering_system.controller;
 
-import com.swp391.koi_ordering_system.model.*;
 import com.swp391.koi_ordering_system.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +24,7 @@ public class MediaController {
 
     @DeleteMapping("/{entity}/{id}/delete/image")
     public ResponseEntity<String> deleteEntityImage(@PathVariable String entity, @PathVariable String id, @RequestParam String url) {
-        mediaService.deleteEtityImage(id, entity, url);
+        mediaService.deleteEntityImage(id, entity, url);
         return ResponseEntity.ok("Image deleted");
     }
 

@@ -1,11 +1,9 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChevronRight, MapPin, Star, Calendar, Users, DollarSign, Phone, Loader2, Plane } from 'lucide-react'
-import { useNavigate } from "react-router-dom"
+import { ChevronRight, MapPin, Star, Calendar, Users, DollarSign, Phone, Loader2, Plane, Fish } from 'lucide-react'
 import { Badge } from "@/components/ui/badge"
 
 const farmApi = axios.create({
@@ -16,7 +14,7 @@ const tripApi = axios.create({
   baseURL: 'http://localhost:8080/api/trip'
 })
 
-export   function HomepageComponent() {
+export function HomepageComponent() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const navigate = useNavigate()
   const [farms, setFarms] = useState([])
@@ -100,6 +98,15 @@ export   function HomepageComponent() {
       {/* Introduction Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <h2 className="text-4xl sm:text-5xl font-bold text-center mb-12 text-gray-900">Welcome to KOSJapan</h2>
+        <div className="mb-12 text-center">
+          <img
+            src="/frontend/src/assets/IMG_0378-1024x768.jpg?height=400&width=600"
+            alt="Colorful Koi fish swimming in a pond"
+            className="rounded-lg shadow-lg mx-auto"
+            width={600}
+            height={400}
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-6">
@@ -198,7 +205,21 @@ export   function HomepageComponent() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {farms.map((farm) => (
-                <Card key={farm.id} className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Card key={farm.id} className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                  <div className="aspect-video relative">
+                    {farm.mediaUrl ? (
+                      <img
+                        src={farm.mediaUrl}
+                        alt={`${farm.name} farm`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-500 text-lg font-semibold">
+                        <Fish className="w-12 h-12 mr-2" />
+                        {farm.name}
+                      </div>
+                    )}
+                  </div>
                   <CardHeader>
                     <CardTitle className="text-2xl font-bold text-gray-900">{farm.name}</CardTitle>
                   </CardHeader>
@@ -259,7 +280,7 @@ export   function HomepageComponent() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 text-white text-center">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4 !text-white">Ready to Start Your Koi Journey?</h2>
-          <p className="text-xl mb-8">Book a tour to Japan's finest Koi farms and find your perfect Koi.</p>
+          <p className="text-xl mb-8">Book a tour to Japan's finest Koi farms and find your perfect  Koi.</p>
           <Button
             size="lg"
             variant="outline"

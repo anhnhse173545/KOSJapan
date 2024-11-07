@@ -7,7 +7,7 @@ import com.swp391.koi_ordering_system.model.FishOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, FishOrderDetailMapper.class})
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, FishOrderDetailMapper.class, FishPackOrderDetailMapper.class})
 public interface FishOrderMapper {
     //@Mapping(source = "fishPackOrderDetails", target = "fishPackOrderDetails")
     @Mapping(source = "booking.consultingStaff", target = "consultingStaff")
@@ -16,7 +16,7 @@ public interface FishOrderMapper {
     @Mapping(source = "booking.id", target = "bookingId")
     @Mapping(source = "farm.id", target = "farmId")
     @Mapping(source = "paymentStatus", target = "paymentStatus")
-    FishOrderDTO toDTO(FishOrder fishOrder);
+    FishOrderDTO toDTO(FishOrder fishOrder);    
 
     @Mapping(source = "farmId", target = "farm.id")
     @Mapping(source = "bookingId", target = "booking.id")
