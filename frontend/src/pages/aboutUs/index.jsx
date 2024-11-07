@@ -88,7 +88,7 @@ const AboutUs = () => {
           align-items: center;
           color: #fff;
           padding: 40px 20px;
-          background: url('https://mrwallpaper.com/images/hd/koi-fish-eggs-eqijtroh4pkdbw6e.jpg') no-repeat center center fixed;
+          background: url('https://i.pinimg.com/originals/92/75/93/9275939c5f5fa9356098f74094fd99ae.jpg') no-repeat center center fixed;
           background-size: cover;
           min-height: 100vh;
         }
