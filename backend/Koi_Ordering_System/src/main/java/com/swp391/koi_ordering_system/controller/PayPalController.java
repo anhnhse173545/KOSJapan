@@ -239,7 +239,7 @@ public class PayPalController {
     }
 
     @PostMapping("/{order_id}/api/refund")
-    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) {
+    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) { // RedirectView ?
         // Retrieve the trip payment details to get the sale ID
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
         FishOrder fishOrder = orderRepository.findById(order_id).get();
@@ -256,7 +256,7 @@ public class PayPalController {
 
             // Check if the refund was successful
             if (detailedRefund.getState().equals("completed")) {
-                // Update the trip payment status if needed
+                // Update the fish payment status
                 fishPayment.setStatus("Refunded");
                 fishOrder.setPaymentStatus("Refunded");
                 fishPaymentRepository.save(fishPayment);

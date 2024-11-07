@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -118,7 +119,7 @@ public class AuthService {
         sendResetPasswordEmail(account.getEmail(), token, newPassword);
     }
 
-    private void sendResetPasswordEmail(String email, String token, String newPassword) {
+    private RedirectView sendResetPasswordEmail(String email, String token, String newPassword) {
         try {
             String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token + "&newPassword=" + newPassword;
             String htmlContent = "<html>" +
@@ -158,9 +159,12 @@ public class AuthService {
             helper.setText(htmlContent, true);
 
             javaMailSender.send(message);
+
+            return new RedirectView("http://localhost:5173/mykoi");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        return new RedirectView("http://localhost:5173/mykoi");
     }
 
     public void resetPassword(String token, String newPassword) {
