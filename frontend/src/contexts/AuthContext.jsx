@@ -1,3 +1,4 @@
+import axios from '@/config/api'
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -104,7 +105,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/refresh-token', {
+      const response = api.get('/api/auth/refresh-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),

@@ -106,7 +106,7 @@ function App() {
       {/* Manager routes */}
       <Route element={<RequireAuth allowedRoles={["Manager"]} />}>
         <Route path="manager-dashboard" element={<ManagerDashboard />}>
-          <Route path="all-booking" element={<AllBookingsPage />} />
+          <Route path="all-booking" index element={<AllBookingsPage />} />
           <Route path="dashboard" element={<FarmImageUpload />} />
           <Route path="staff-manager" element={<StaffManagerView />} />
           <Route path="booking-manager" element={<BookingManagerComponent />} />
@@ -128,6 +128,9 @@ function App() {
           />
           <Route path="farm-control" element={<FarmCrud />} />
           <Route path="variety-control" element={<VarietyCrud />} />
+
+          <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
+          <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
           
         </Route>
       </Route>
