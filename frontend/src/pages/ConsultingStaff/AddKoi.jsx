@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, InputNumber, Button, message, Space, Select } from "antd"; // Import InputNumber
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Consulting/AddKoi.css";
 const { Option } = Select;
@@ -12,7 +12,7 @@ const AddKoi = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { consultingStaffId } = useParams();
   const { orderId } = location.state || {};
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const AddKoi = () => {
       message.success(
         "Fish, Fish Packs, and order details created successfully!"
       );
-      navigate("/cs-dashboard/order-list");
+      navigate(`/cs-dashboard/order-list/${consultingStaffId}`);
     } catch (error) {
       let errorMessage =
         "Failed to create fish, fish packs, and order details: ";

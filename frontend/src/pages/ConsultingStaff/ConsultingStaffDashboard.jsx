@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Link, Outlet, useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useState, useEffect } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ChevronLeft,
   LogOut,
@@ -12,7 +12,7 @@ import {
   ClipboardList,
   Menu,
   Home,
-} from "lucide-react"
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,44 +20,44 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ConsultingStaffDashboard() {
-  const [isNavExpanded, setIsNavExpanded] = useState(true)
-  const [staff, setStaff] = useState(null)
-  const [error, setError] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isNavExpanded, setIsNavExpanded] = useState(true);
+  const [staff, setStaff] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const toggleNav = () => setIsNavExpanded(!isNavExpanded)
+  const toggleNav = () => setIsNavExpanded(!isNavExpanded);
 
   const fetchStaffDetails = async () => {
-    if (!user) return
+    if (!user) return;
     try {
       const response = await fetch(
         `http://localhost:8080/accounts/${user.id}/detail`
-      )
-      if (!response.ok) throw new Error("Failed to fetch staff details")
-      const data = await response.json()
-      console.log("Staff details:", data)
-      setStaff(data)
-      setIsLoading(false)
+      );
+      if (!response.ok) throw new Error("Failed to fetch staff details");
+      const data = await response.json();
+      console.log("Staff details:", data);
+      setStaff(data);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Failed to fetch staff details:", error)
-      setError("Failed to load staff details. Please try again later.")
-      setIsLoading(false)
+      console.error("Failed to fetch staff details:", error);
+      setError("Failed to load staff details. Please try again later.");
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (user) {
-      fetchStaffDetails()
+      fetchStaffDetails();
     }
-  }, [user])
+  }, [user]);
 
   const navItems = [
     {
@@ -68,23 +68,23 @@ export default function ConsultingStaffDashboard() {
     {
       name: "Tour List",
       icon: <MapPin className="h-5 w-5" />,
-      path: "/cs-dashboard/tour-list",
+      path: `/cs-dashboard/tour-list/${staff?.id || ""}`,
     },
     {
       name: "Order List",
       icon: <ClipboardList className="h-5 w-5" />,
-      path: "/cs-dashboard/order-list",
+      path: `/cs-dashboard/order-list/${staff?.id || ""}`,
     },
-  ]
+  ];
 
   const handleLogout = async () => {
     try {
-      await logout()
-      navigate("/login")
+      await logout();
+      navigate("/login");
     } catch (error) {
-      console.error("Logout failed:", error)
+      console.error("Logout failed:", error);
     }
-  }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -239,5 +239,5 @@ export default function ConsultingStaffDashboard() {
         </main>
       </div>
     </div>
-  )
+  );
 }

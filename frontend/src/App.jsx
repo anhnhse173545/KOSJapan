@@ -67,22 +67,19 @@ function App() {
       <Route path="register" element={<RegisterComponent />} />
       {/* <Route path="/" element={< />} /> */}
 
-      
-
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
-        
+
         <Route path="/" element={<HomepageComponent />} />
         <Route path="guest" element={<HomepageGuest />} />
-        
+
         <Route path="aboutus" element={<AboutUs />} />
         <Route path="unauthorized" element={<UnauthorizedPage />} />
         <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
         <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
       </Route>
 
-      
-        {/* Customer routes */}
+      {/* Customer routes */}
       <Route element={<RequireAuth allowedRoles={["Customer"]} />}>
         <Route path="/" element={<Layout />}>
           <Route path="contact" element={<CombinedKoiRequestForm />} />
@@ -101,7 +98,7 @@ function App() {
           <Route path="paykoi100/:id" element={<PaymentTripPageFull />} />
           <Route path="history" element={<BookingHistoryPage />} />
           <Route path="refundkoi/:id" element={<RefundKoi />} />
-        </Route> 
+        </Route>
       </Route>
       {/* Manager routes */}
       <Route element={<RequireAuth allowedRoles={["Manager"]} />}>
@@ -131,42 +128,47 @@ function App() {
 
           <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
           <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
-          
         </Route>
       </Route>
 
       {/* Delivery Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Delivery Staff"]} />}>
-      <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
-        <Route index element={<DeliveryStaffHome />} />
-        <Route path="my-deliveries" element={<DeliveryOrderListComponent />} />
-        <Route
-          path="my-deliveries/order-details/:orderId"
-          element={<OrderDetailsComponent />}
-        />
-      </Route>
+        <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
+          <Route index element={<DeliveryStaffHome />} />
+          <Route
+            path="my-deliveries"
+            element={<DeliveryOrderListComponent />}
+          />
+          <Route
+            path="my-deliveries/order-details/:orderId"
+            element={<OrderDetailsComponent />}
+          />
+        </Route>
       </Route>
 
       {/* Sales Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Sales Staff"]} />}>
-      <Route path="ss-dashboard" element={<SalesStaffDashboard />}>
-        <Route path="customer-request" element={<CustomerRequest />} />
-      </Route>
+        <Route path="ss-dashboard" element={<SalesStaffDashboard />}>
+          <Route path="customer-request" element={<CustomerRequest />} />
+        </Route>
       </Route>
 
       {/* Consulting Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Consulting Staff"]} />}>
-      <Route path="cs-dashboard" element={<ConsultingStaffDashboard />}>
-        <Route index element={<ConsultingStaffHome />} />
-        <Route path="tour-list" element={<TourList />} />
-        <Route
-          path="tour-list/tour-details/:bookingId"
-          element={<TourDetails />}
-        />
-        <Route path="order-list" element={<OrderList />} />
-        <Route path="order-list/add-koi" element={<AddKoi />} />
-        <Route path="koi-details" element={<KoiDetails />} />
-      </Route>
+        <Route path="cs-dashboard" element={<ConsultingStaffDashboard />}>
+          <Route index element={<ConsultingStaffHome />} />
+          <Route path="tour-list/:consultingStaffId" element={<TourList />} />
+          <Route
+            path="tour-list/:consultingStaffId/tour-details/:bookingId"
+            element={<TourDetails />}
+          />
+          <Route path="order-list/:consultingStaffId" element={<OrderList />} />
+          <Route
+            path="order-list/:consultingStaffId/add-koi"
+            element={<AddKoi />}
+          />
+          <Route path="koi-details" element={<KoiDetails />} />
+        </Route>
       </Route>
 
       {/* Catch all */}

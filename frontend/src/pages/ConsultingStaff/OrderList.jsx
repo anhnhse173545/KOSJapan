@@ -11,7 +11,7 @@ import {
   Modal,
   Select,
 } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../../styles/Consulting/OrderList.css";
@@ -28,12 +28,13 @@ const OrderList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
+  const { consultingStaffId } = useParams();
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+        `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
       );
       setData(response.data);
       setLoading(false);
@@ -44,6 +45,18 @@ const OrderList = () => {
     }
   };
 
+  // Fetch bookings
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/booking/consulting-staff/${consultingStaffId}`
+      );
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching booking list:", error);
+      message.error("Failed to load booking data.");
+    }
+  };
   const fetchFarms = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/farm/list");
@@ -54,26 +67,13 @@ const OrderList = () => {
     }
   };
 
-  // Fetch bookings
-  const fetchBookings = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/api/booking/consulting-staff/AC0004"
-      );
-      setBookings(response.data);
-    } catch (error) {
-      console.error("Error fetching booking list:", error);
-      message.error("Failed to load booking data.");
-    }
-  };
-
   // Fetch data on component mount
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost:8080/fish-order/consulting-staff/AC0004"
+          `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
         );
         console.log("Response data:", response.data); // Add this line to inspect the data
         setData(response.data);
@@ -86,8 +86,8 @@ const OrderList = () => {
     };
     fetchOrders();
     fetchFarms();
-    fetchBookings(); // Fetch bookings when component loads
-  }, []);
+    fetchBookings();
+  }, [consultingStaffId]);
 
   const calculateTotalPrice = (record) => {
     const fishTotal =
@@ -102,7 +102,9 @@ const OrderList = () => {
   };
 
   const handleAddKoi = (orderId, farmId) => {
-    navigate("add-koi", { state: { orderId, farmId } });
+    navigate(`add-koi`, {
+      state: { orderId, farmId },
+    });
   };
 
   const handleDeleteOrder = async (record) => {
