@@ -9,12 +9,13 @@ function KoiPage() {
   const [koiPayments, setKoiPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id } = useParams(); // Lấy customerId từ URL
 
   // Gọi API để lấy dữ liệu koi payments
   useEffect(() => {
     const fetchKoiPayments = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/fish-order/customer/AC0007`);
+        const response = await fetch(`http://localhost:8080/fish-order/customer/${id}`);
         const data = await response.json();
         if (Array.isArray(data)) {
           setKoiPayments(data);
@@ -54,23 +55,23 @@ function KoiPage() {
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
+            <Link to={`/userDetail/${id}`} className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>
           <li>
-            <Link to="/payment" className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
+            <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
               My Trip
             </Link>
           </li>
           <li>
-            <Link to="/mykoi" className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
               My Koi
             </Link>
           </li>
 
           <li>
-            <Link to="/history" className={`sidebar-link ${location.pathname === '/history' ? 'active' : ''}`}>
+            <Link to={`/history/${id}`} className={`sidebar-link ${location.pathname === `/history` ? 'active' : ''}`}>
               Order history
             </Link>
           </li>

@@ -41,9 +41,9 @@ export default function Header() {
             <nav className="hidden md:flex ml-10 space-x-8">
               <Button variant="ghost" onClick={() => navigate("/")}>Home</Button>
               {user && (
-                <Button variant="ghost" onClick={() => navigate("/payment")}>My Booking</Button>
+                <Button variant="ghost" onClick={() => navigate(`/payment/${user.id}`)}>My Booking</Button>
               )}
-              <Button variant="ghost" onClick={() => navigate("/contact")}>Request</Button>
+              <Button variant="ghost" onClick={() => navigate(`/contact/${user.id}`)}>Request</Button>
               <Button variant="ghost" onClick={() => navigate("/farm-view")}>Koi Farm</Button>
               <Button variant="ghost" onClick={() => navigate("/trip-view")}>Koi Trip</Button>
               <Button variant="ghost" onClick={() => navigate("/aboutus")}>About Us</Button>

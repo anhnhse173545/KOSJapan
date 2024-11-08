@@ -85,8 +85,8 @@ function App() {
         {/* Customer routes */}
       <Route element={<RequireAuth allowedRoles={["Customer"]} />}>
         <Route path="/" element={<Layout />}>
-          <Route path="contact" element={<CombinedKoiRequestForm />} />
-          <Route path="payment" element={<PaymentPage />} />
+          <Route path="contact/:id" element={<CombinedKoiRequestForm />} />
+          <Route path="payment/:id" element={<PaymentPage />} />
           <Route path="request/:id" element={<PaymentDetailsPage />} />
           <Route path="quota/:id" element={<QuotaDetailsPage />} />
           <Route path="onGoing/:id" element={<OnGoingPage />} />
@@ -95,11 +95,11 @@ function App() {
           <Route path="paidbooking/:id" element={<PaidBooking />} />
           <Route path="koifarmpage" element={<KoiFarmViewSearchComponent />} />
           <Route path="koi-trip" element={<KoiTripViewSearchComponent />} />
-          <Route path="userDetail" element={<UserDetailPage />} />
+          <Route path="userDetail/:id" element={<UserDetailPage />} />
           <Route path="paytrip" element={<TripPaymentPage />} />
           <Route path="paykoi50/:id" element={<PaymentTripPage />} />
           <Route path="paykoi100/:id" element={<PaymentTripPageFull />} />
-          <Route path="history" element={<BookingHistoryPage />} />
+          <Route path="history/:id" element={<BookingHistoryPage />} />
           <Route path="refundkoi/:id" element={<RefundKoi />} />
         </Route> 
       </Route>
