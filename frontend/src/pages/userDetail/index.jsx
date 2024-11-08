@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ngu.css'; // Import CSS file
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const UserDetailPage = ({ accountId }) => {
+const UserDetailPage = () => {
+  const { id } = useParams(); // Lấy accountId từ URL
   const [userDetails, setUserDetails] = useState(null); // Store fetched user details
   const [formData, setFormData] = useState({}); // Store form data for editing
   const [loading, setLoading] = useState(true); // Loading state
@@ -16,7 +17,7 @@ const UserDetailPage = ({ accountId }) => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/accounts/AC0007/detail`);
+        const response = await axios.get(`http://localhost:8080/accounts/${id}/detail`);
         setUserDetails(response.data);
         setFormData(response.data); // Initialize formData with fetched data
       } catch (err) {
@@ -27,7 +28,7 @@ const UserDetailPage = ({ accountId }) => {
     };
 
     fetchUserDetails();
-  }, [accountId]);
+  }, [id]);
 
   // Handle form input change
   const handleInputChange = (e) => {
@@ -43,16 +44,16 @@ const UserDetailPage = ({ accountId }) => {
   // Save changes and update user details
   const handleSaveChanges = async () => {
     try {
-        const { password, phone, role, ...dataToUpdate } = formData;
-        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, dataToUpdate);
+      const { password, phone, role, ...dataToUpdate } = formData;
+      const response = await axios.put(`http://localhost:8080/accounts/${id}/update`, dataToUpdate);
 
-        if (response.status === 200) {
-            setUserDetails(formData);
-            setIsEditing(false);
-        }
+      if (response.status === 200) {
+        setUserDetails(formData);
+        setIsEditing(false);
+      }
     } catch (err) {
-        setError('Error updating user details.');
-        console.error(err);
+      setError('Error updating user details.');
+      console.error(err);
     }
   };
 
@@ -69,7 +70,7 @@ const UserDetailPage = ({ accountId }) => {
     formData.append('image', selectedImage);
 
     try {
-      const response = await axios.post(`http://localhost:8080/media/accounts/${userDetails.id}/upload/image`, formData, {
+      const response = await axios.post(`http://localhost:8080/media/accounts/${id}/upload/image`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
