@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Bar, Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -100,8 +100,20 @@ const ConsultingStaffHome = () => {
     datasets: [
       {
         data: Object.values(farmPaymentData),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
       },
     ],
   };
@@ -118,15 +130,15 @@ const ConsultingStaffHome = () => {
     datasets: [
       {
         data: Object.values(paymentStatusData),
-        backgroundColor: ["#FF6384", "#36A2EB"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB"],
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
       },
     ],
   };
 
   // Preparing data for Total Price Over Time (Line Chart)
   const orderTotalOverTimeData = {
-    labels: fishOrders.map((order) => order.id), // Using `id` as the x-axis label
+    labels: fishOrders.map((order) => order.id),
     datasets: [
       {
         label: "Total Price",
@@ -139,15 +151,104 @@ const ConsultingStaffHome = () => {
     ],
   };
 
+  // New: Preparing data for Fish Variety Distribution (Bar Chart)
+  const fishVarietyData = fishOrders.reduce((acc, order) => {
+    order.fishOrderDetails.forEach((detail) => {
+      const variety = detail.fish.fish_variety_name;
+      acc[variety] = (acc[variety] || 0) + 1;
+    });
+    order.fishPackOrderDetails.forEach((detail) => {
+      const variety = detail.fishPack.variety.name;
+      acc[variety] = (acc[variety] || 0) + 1;
+    });
+    return acc;
+  }, {});
+
+  const fishVarietyChartData = {
+    labels: Object.keys(fishVarietyData),
+    datasets: [
+      {
+        label: "Number of Orders",
+        data: Object.values(fishVarietyData),
+        backgroundColor: "rgba(153, 102, 255, 0.5)",
+        borderColor: "rgba(153, 102, 255, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // New: Preparing data for Order Status Distribution (Pie Chart)
+  const orderStatusData = fishOrders.reduce((acc, order) => {
+    const status = order.status;
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {});
+
+  const orderStatusChartData = {
+    labels: Object.keys(orderStatusData),
+    datasets: [
+      {
+        data: Object.values(orderStatusData),
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="p-6">
-      <h1>Welcome, {userName}!</h1>
-      <p>We wish you a good working day!</p>
+      <h1 className="text-3xl font-bold mb-6">Welcome, {userName}!</h1>
+      <p className="text-xl mb-8">We wish you a good working day!</p>
+
+      {/* Summary Cards */}
+      <div className="grid gap-4 mb-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2">Total Orders</h2>
+          <p className="text-3xl font-bold">{fishOrders.length}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2">Total Revenue</h2>
+          <p className="text-3xl font-bold">
+            $
+            {fishOrders
+              .reduce((sum, order) => sum + order.total, 0)
+              .toLocaleString()}
+          </p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2">Avg. Order Value</h2>
+          <p className="text-3xl font-bold">
+            $
+            {(
+              fishOrders.reduce((sum, order) => sum + order.total, 0) /
+                fishOrders.length || 0
+            ).toLocaleString()}
+          </p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-2">Pending Orders</h2>
+          <p className="text-3xl font-bold">
+            {fishOrders.filter((order) => order.status === "Pending").length}
+          </p>
+        </div>
+      </div>
 
       {/* Row 1: Total Orders by Customer (Bar Chart) & Total Payment by Farm (Pie Chart) */}
       <div className="chart-row">
         <div className="chart-container">
-          <h2 className="mt-8 text-xl font-semibold">
+          <h2 className="text-xl font-semibold mb-4">
             Total Orders by Customer
           </h2>
           <Bar
@@ -163,13 +264,13 @@ const ConsultingStaffHome = () => {
         </div>
 
         <div className="pie-chart-container">
-          <h2 className="mt-8 text-xl font-semibold">Total Payment by Farm</h2>
+          <h2 className="text-xl font-semibold mb-4">Total Payment by Farm</h2>
           <Pie
             data={farmPaymentChartData}
             options={{
               responsive: true,
               plugins: {
-                legend: { position: "top" },
+                legend: { position: "right" },
                 title: { display: true, text: "Total Payment by Farm" },
               },
             }}
@@ -180,7 +281,7 @@ const ConsultingStaffHome = () => {
       {/* Row 2: Payment Status Distribution & Total Price Over Time */}
       <div className="chart-row">
         <div className="pie-chart-container">
-          <h2 className="mt-8 text-xl font-semibold">
+          <h2 className="text-xl font-semibold mb-4">
             Order Payment Status Distribution
           </h2>
           <Pie
@@ -188,7 +289,7 @@ const ConsultingStaffHome = () => {
             options={{
               responsive: true,
               plugins: {
-                legend: { position: "top" },
+                legend: { position: "right" },
                 title: { display: true, text: "Payment Status Distribution" },
               },
             }}
@@ -196,7 +297,7 @@ const ConsultingStaffHome = () => {
         </div>
 
         <div className="chart-container">
-          <h2 className="mt-8 text-xl font-semibold">Total Price Over Time</h2>
+          <h2 className="text-xl font-semibold mb-4">Total Price Over Time</h2>
           <Line
             data={orderTotalOverTimeData}
             options={{
@@ -222,6 +323,90 @@ const ConsultingStaffHome = () => {
               },
             }}
           />
+        </div>
+      </div>
+
+      {/* Row 3: Fish Variety Distribution & Order Status Distribution */}
+      <div className="chart-row">
+        <div className="chart-container">
+          <h2 className="text-xl font-semibold mb-4">
+            Fish Variety Distribution
+          </h2>
+          <Bar
+            data={fishVarietyChartData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { position: "top" },
+                title: { display: true, text: "Fish Variety Distribution" },
+              },
+            }}
+          />
+        </div>
+
+        <div className="pie-chart-container">
+          <h2 className="text-xl font-semibold mb-4">
+            Order Status Distribution
+          </h2>
+          <Pie
+            data={orderStatusChartData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { position: "right" },
+                title: { display: true, text: "Order Status Distribution" },
+              },
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Recent Orders Table */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Recent Orders</h2>
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <table className="min-w-full">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Order ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Customer
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {fishOrders.slice(0, 5).map((order) => (
+                <tr key={order.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {order.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.customer.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${order.total}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.status}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.paymentStatus}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
