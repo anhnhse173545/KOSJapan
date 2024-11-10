@@ -17,11 +17,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
+import "../../styles/Delivery/DeliveryStaffHome.css";
 const DeliveryStaffHome = () => {
-  const [orderStatusData, setOrderStatusData] = useState(null);
-  const [paymentStatusData, setPaymentStatusData] = useState(null);
-  const [totalPriceData, setTotalPriceData] = useState(null);
+  const [orderStatusData, setOrderStatusData] = useState([]);
+  const [paymentStatusData, setPaymentStatusData] = useState([]);
+  const [totalPriceData, setTotalPriceData] = useState([]);
+  const [priceByFarmData, setPriceByFarmData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +34,7 @@ const DeliveryStaffHome = () => {
 
         console.log("API Response Data:", data);
 
-        // Process Order Status Data
+        // Order Status Data
         const orderStatusCount = data.reduce((acc, order) => {
           acc[order.status] = (acc[order.status] || 0) + 1;
           return acc;
@@ -45,7 +46,7 @@ const DeliveryStaffHome = () => {
           }))
         );
 
-        // Process Payment Status Data
+        // Payment Status Data
         const paymentStatusCount = data.reduce((acc, order) => {
           acc[order.paymentStatus] = (acc[order.paymentStatus] || 0) + 1;
           return acc;
@@ -56,70 +57,106 @@ const DeliveryStaffHome = () => {
             count,
           }))
         );
-      } catch (error) {
-        console.error(
-          "Error fetching data:",
-          error.response?.data || error.message
+
+        // Total Price Data Over Time
+        setTotalPriceData(
+          data.map((order) => ({
+            bookingId: order.bookingId,
+            total: order.total,
+          }))
         );
+
+        // Total Price by Farm Data
+        const farmPriceData = data.reduce((acc, order) => {
+          acc[order.farmId] = (acc[order.farmId] || 0) + order.total;
+          return acc;
+        }, {});
+        setPriceByFarmData(
+          Object.entries(farmPriceData).map(([farmId, total]) => ({
+            farmId,
+            total,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
   }, []);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
-
   return (
-    <div className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-4">Order Status</h2>
-          <div className="h-[300px]">
-            {orderStatusData ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={orderStatusData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="status" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#4bc0c0" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p>Loading Order Status...</p>
-            )}
-          </div>
+    <div className="dashboard-container">
+      <div className="chart-row">
+        <div className="chart-container">
+          <h3>Order Status Distribution</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={orderStatusData}>
+              <XAxis dataKey="status" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-4">Payment Status</h2>
-          <div className="h-[300px]">
-            {paymentStatusData ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={paymentStatusData}
-                    dataKey="count"
-                    nameKey="status"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label
-                  >
-                    {paymentStatusData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p>Loading Payment Status...</p>
-            )}
-          </div>
+
+        <div className="chart-container">
+          <h3>Payment Status Distribution</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={paymentStatusData}
+                dataKey="count"
+                nameKey="status"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#82ca9d"
+                label
+              >
+                {paymentStatusData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={["#8884d8", "#8dd1e1", "#82ca9d"][index % 3]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="chart-row">
+        <div className="chart-container">
+          <h3>Total Price Over Time</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={totalPriceData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-container">
+          <h3>Another Chart Title</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={priceByFarmData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="farmId" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="total" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
