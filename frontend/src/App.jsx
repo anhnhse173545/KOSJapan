@@ -156,7 +156,7 @@ function App() {
       {/* Consulting Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Consulting Staff"]} />}>
         <Route path="cs-dashboard" element={<ConsultingStaffDashboard />}>
-          <Route index element={<ConsultingStaffHome />} />
+          <Route path=":consultingStaffId" element={<ConsultingStaffHome />} />
           <Route path="tour-list/:consultingStaffId" element={<TourList />} />
           <Route
             path="tour-list/:consultingStaffId/tour-details/:bookingId"

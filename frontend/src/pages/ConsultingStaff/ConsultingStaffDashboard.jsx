@@ -63,7 +63,7 @@ export default function ConsultingStaffDashboard() {
     {
       name: "Home",
       icon: <Home className="h-5 w-5" />,
-      path: "/cs-dashboard",
+      path: `/cs-dashboard/${staff?.id || ""}`,
     },
     {
       name: "Tour List",

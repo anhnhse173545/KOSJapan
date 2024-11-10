@@ -13,8 +13,9 @@ import {
   LineElement,
   TimeScale,
 } from "chart.js";
+import { useParams } from "react-router-dom";
 import "../../styles/Consulting/ConsultingHome.css";
-// Register necessary Chart.js components
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -31,13 +32,13 @@ ChartJS.register(
 const ConsultingStaffHome = () => {
   const [userName, setUserName] = useState("Loading...");
   const [fishOrders, setFishOrders] = useState([]);
+  const { consultingStaffId } = useParams();
 
-  // Fetch user name and fish orders
   useEffect(() => {
     const fetchUserName = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/accounts/AC0004/detail"
+          `http://localhost:8080/accounts/${consultingStaffId}/detail`
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
@@ -51,7 +52,7 @@ const ConsultingStaffHome = () => {
     const fetchFishOrders = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/fish-order/consulting-staff/AC0004"
+          `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
         );
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
@@ -61,9 +62,11 @@ const ConsultingStaffHome = () => {
       }
     };
 
-    fetchUserName();
-    fetchFishOrders();
-  }, []);
+    if (consultingStaffId) {
+      fetchUserName();
+      fetchFishOrders();
+    }
+  }, [consultingStaffId]);
 
   // Preparing data for Total Orders by Customer (Bar Chart)
   const customerOrderData = fishOrders.reduce((acc, order) => {
