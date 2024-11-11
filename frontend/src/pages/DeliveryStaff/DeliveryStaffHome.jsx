@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -18,6 +16,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "../../styles/Delivery/DeliveryStaffHome.css";
+
 const DeliveryStaffHome = () => {
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [paymentStatusData, setPaymentStatusData] = useState([]);
@@ -85,8 +84,11 @@ const DeliveryStaffHome = () => {
     fetchData();
   }, []);
 
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
   return (
     <div className="dashboard-container">
+      <h1 className="dashboard-title">Delivery Staff Dashboard</h1>
       <div className="chart-row">
         <div className="chart-container">
           <h3>Order Status Distribution</h3>
@@ -119,7 +121,7 @@ const DeliveryStaffHome = () => {
                 {paymentStatusData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={["#8884d8", "#8dd1e1", "#82ca9d"][index % 3]}
+                    fill={COLORS[index % COLORS.length]}
                   />
                 ))}
               </Pie>
@@ -135,7 +137,7 @@ const DeliveryStaffHome = () => {
           <h3>Total Price Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={totalPriceData}>
-              <XAxis dataKey="name" />
+              <XAxis dataKey="bookingId" />
               <YAxis />
               <CartesianGrid strokeDasharray="3 3" />
               <Tooltip />
@@ -146,7 +148,7 @@ const DeliveryStaffHome = () => {
         </div>
 
         <div className="chart-container">
-          <h3>Another Chart Title</h3>
+          <h3>Total Price by Farm</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={priceByFarmData}>
               <CartesianGrid strokeDasharray="3 3" />
