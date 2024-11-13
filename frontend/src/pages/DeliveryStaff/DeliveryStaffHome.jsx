@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Bar,
@@ -22,12 +23,13 @@ const DeliveryStaffHome = () => {
   const [paymentStatusData, setPaymentStatusData] = useState([]);
   const [totalPriceData, setTotalPriceData] = useState([]);
   const [priceByFarmData, setPriceByFarmData] = useState([]);
+  const { deliveryStaffId } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/fish-order/delivery-staff/AC0003"
+          `http://localhost:8080/fish-order/delivery-staff/${deliveryStaffId}`
         );
         const data = response.data;
 
@@ -81,8 +83,10 @@ const DeliveryStaffHome = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    if (deliveryStaffId) {
+      fetchData();
+    }
+  }, [deliveryStaffId]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 

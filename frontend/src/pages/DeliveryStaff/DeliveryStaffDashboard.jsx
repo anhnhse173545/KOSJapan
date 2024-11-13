@@ -61,7 +61,7 @@ export function DeliveryStaffDashboard() {
     {
       name: "Home",
       icon: <Home className="h-5 w-5" />,
-      path: "/ds-dashboard",
+      path: "/ds-dashboard/${user.id}",
     },
     {
       name: "My Deliveries",

@@ -127,6 +127,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+
     public BookingDTO updateBooking(String bookingId, UpdateBookingDTO updateBookingDTO) {
         Booking booking = bookingRepository.findByIdAndIsDeletedFalse(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -134,7 +135,7 @@ public class BookingService {
         Set<String> salesStatuses = Set.of("Requested", "Pending Quote", "Approved Quote", "Paid Booking", "Cancelled");
         Set<String> consultingStatuses = Set.of("On-going", "Order Prepare");
         Set<String> deliveryStatuses = Set.of("Completed");
-        String customerStatuses = "Cancelled";
+        String customerStatuses = "Canceled";
 
         boolean isCustomer = authService.isRole("ROLE_Customer");
 
