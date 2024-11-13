@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './index.scss'; // Import file CSS để styling
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import { useParams } from 'react-router-dom';
 function KoiPage() {
   const navigate = useNavigate();
   const location = useLocation();
