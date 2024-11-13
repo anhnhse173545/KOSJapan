@@ -11,5 +11,6 @@
             "password": "12345"
         }
     ],
-    "java.compile.nullAnalysis.mode": "disabled"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.debug.settings.onBuildFailureProceed": true
 }
