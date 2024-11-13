@@ -9,11 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "@/components/ui/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import api from '@/config/api';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 5000,
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080',
+//   timeout: 5000,
+// })
 
 export default function BookingManagerComponent() {
   const [bookings, setBookings] = useState([])

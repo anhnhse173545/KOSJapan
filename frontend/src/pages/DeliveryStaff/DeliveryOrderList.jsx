@@ -153,7 +153,7 @@ export default function DeliveryOrderListComponent() {
         },
         body: JSON.stringify({
           status: newStatus,
-          delivery_address: booking.deliveryAddress,
+          delivery_address: booking.fishOrders.deliveryAddress,
           arrived_date: new Date().toISOString(),
           paymentStatus: "Deposited",
         }),
@@ -333,7 +333,7 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Address</p>
-                <p className="font-medium">{booking.deliveryAddress || "Not provided"}</p>
+                <p className="font-medium">{booking.fishOrders.deliveryAddress || "Not provided"}</p>
               </div>
             </div>
             <Table>
@@ -389,14 +389,6 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                           Refund
                         </Button>
                         <Button 
-                          onClick={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Delivering")
-                          }
-                          variant="outline"
-                          size="sm"
-                        >
-                          Order Delivering
-                        </Button>
-                        <Button 
                           onClick={() =>
                             handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "In Transit")
                           }
@@ -405,6 +397,15 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                         >
                           Order In Transit
                         </Button>
+                        <Button 
+                          onClick={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Delivering")
+                          }
+                          variant="outline"
+                          size="sm"
+                        >
+                          Order Delivering
+                        </Button>
+                        
                         <Button 
                           onClick={() => {
                             handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Completed");

@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogClose
 } from "@/components/ui/dialog"
+import api from '@/config/api'
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -53,9 +54,9 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080/api',
+// })
 
 export default function AllBookingsPage() {
   const [bookings, setBookings] = useState([])
@@ -77,7 +78,7 @@ export default function AllBookingsPage() {
   const fetchBookings = async () => {
     setIsLoading(true)
     try {
-      const response = await api.get('/booking/list')
+      const response = await api.get('api/booking/list')
       const validBookings = response.data.filter(booking => 
         booking && booking.trip && booking.customer
       )
@@ -114,7 +115,7 @@ export default function AllBookingsPage() {
 
   const handleViewDetails = async (bookingId) => {
     try {
-      const response = await api.get(`/booking/get/${bookingId}`)
+      const response = await api.get(`api/booking/get/${bookingId}`)
       setSelectedBooking(response.data)
       setIsDialogOpen(true)
     } catch (error) {
