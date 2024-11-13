@@ -52,12 +52,12 @@ function PaymentPage() {
             </Link>
           </li>
           <li>
-            <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
+          <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === `/payment}` ? 'active' : ''}`}> 
               My Trip
             </Link>
           </li>
           <li>
-            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+          <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === `/mykoi/${id}` ? 'active' : ''}`}>
               My Koi Fish
             </Link>
           </li>

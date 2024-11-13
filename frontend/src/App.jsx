@@ -70,7 +70,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
 
-        <Route path="/" element={<HomepageComponent />} />
+        <Route path="/" index element={<HomepageComponent />} />
         <Route path="guest" element={<HomepageGuest />} />
 
         <Route path="aboutus" element={<AboutUs />} />
@@ -87,8 +87,8 @@ function App() {
           <Route path="request/:id" element={<PaymentDetailsPage />} />
           <Route path="quota/:id" element={<QuotaDetailsPage />} />
           <Route path="onGoing/:id" element={<OnGoingPage />} />
-          <Route path="mykoi" element={<KoiPage />} />
-          <Route path="mykoi/:id" element={<KoiDetailPage />} />
+          <Route path="mykoi/:id" element={<KoiPage />} />
+          <Route path="mykoidetail/:id" element={<KoiDetailPage />} />
           <Route path="paidbooking/:id" element={<PaidBooking />} />
           <Route path="koifarmpage" element={<KoiFarmViewSearchComponent />} />
           <Route path="koi-trip" element={<KoiTripViewSearchComponent />} />
@@ -134,10 +134,10 @@ function App() {
       {/* Delivery Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Delivery Staff"]} />}>
         <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
-          <Route path=":deliveryStaffId" element={<DeliveryStaffHome />} />
+          <Route path="home" element={<DeliveryStaffHome />} />
           <Route
             path="my-deliveries"
-            element={<DeliveryOrderListComponent />}
+            index element={<DeliveryOrderListComponent />}
           />
           <Route
             path="my-deliveries/order-details/:orderId"
