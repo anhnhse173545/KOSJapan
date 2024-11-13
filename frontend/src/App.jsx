@@ -65,6 +65,7 @@ function App() {
     <Routes>
       <Route path="login" element={<LoginComponent />} />
       <Route path="register" element={<RegisterComponent />} />
+      <Route path="unauthorized" element={<UnauthorizedPage />} />
       {/* <Route path="/" element={< />} /> */}
 
       <Route path="/" element={<Layout />}>
@@ -74,7 +75,7 @@ function App() {
         <Route path="guest" element={<HomepageGuest />} />
 
         <Route path="aboutus" element={<AboutUs />} />
-        <Route path="unauthorized" element={<UnauthorizedPage />} />
+        
         <Route path="farm-view" element={<KoiFarmViewSearchComponent />} />
         <Route path="trip-view" element={<KoiTripViewSearchComponent />} />
       </Route>
