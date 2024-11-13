@@ -63,12 +63,12 @@ export default function DeliveryOrderListComponent() {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!staff) return
+      if (!user) return
 
       setLoading(true)
       try {
         const [staffBookingsResponse, orderPrepareResponse, completedResponse] = await Promise.all([
-          api.get(`/api/booking/delivery-staff/${staff.id}`),
+          api.get(`/api/booking/delivery-staff/${user.id}`),
           api.get('/api/booking/status/Order%20Prepare'),
           api.get('/api/booking/status/Completed')
         ])
@@ -91,7 +91,7 @@ export default function DeliveryOrderListComponent() {
     }
 
     fetchBookings()
-  }, [staff])
+  }, [user])
 
   const handleTrackOrder = (order) => {
     setSelectedOrder(order)
