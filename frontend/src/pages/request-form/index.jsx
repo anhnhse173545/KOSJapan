@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext"; // Đảm bảo rằng bạn đã cấu hình AuthContext
 import AuthenLayout from "../../components/auth-layout";
 import './request.css';
-
+import api from "@/config/api";
 const { TextArea } = Input;
 
 const CombinedKoiRequestForm = () => {
@@ -20,7 +20,7 @@ const CombinedKoiRequestForm = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/accounts/${user.id}/detail`, {
+      const response = await api.get(`/accounts/${user.id}/detail`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ const CombinedKoiRequestForm = () => {
         price: 0,
       };
   
-      const response = await fetch(`http://localhost:8080/api/booking/${user.id}/create`, {
+      const response = await api.get(`/api/booking/${user.id}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

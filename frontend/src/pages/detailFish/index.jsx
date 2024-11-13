@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useLocation} from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
+import api from '@/config/api';
 
 export default function KoiDetailPage() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ export default function KoiDetailPage() {
     const fetchKoi = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/${id}`);
+        const response = await api.get(`/fish-order/customer/${id}`);
         
         // Giả sử API trả về một đối tượng đơn hàng thay vì mảng, chỉ cần gán trực tiếp
         const order = response.data.find(order => order.id === koiId);
@@ -42,7 +42,7 @@ export default function KoiDetailPage() {
   
     fetchKoi();
   }, [id]);
-  
+
 
   const handleReject = async () => {
     try {

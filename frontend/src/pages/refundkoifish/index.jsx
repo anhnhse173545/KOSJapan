@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import api from '@/config/api';
 const RefundKoi = () => {
   const { id } = useParams(); // lấy bookingid từ URL
   const [loading, setLoading] = useState(true);
@@ -9,15 +9,15 @@ const RefundKoi = () => {
   const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
-    const createTripPayment = async () => {
+    const createRefundRequest = async () => {
       try {
-        // Gửi yêu cầu POST tới API để tạo thanh toán
-        const response = await axios.post(`http://localhost:8080/${id}/api/refund`);
+        // Gửi yêu cầu POST tới API để yêu cầu hoàn tiền
+        const response = await api.post(`/${id}/api/refund`);
         console.log(response.data); // Kiểm tra dữ liệu trả về từ API
 
         setLoading(false); // Ngừng trạng thái loading
 
-        // Redirect to the deliveries page with a success message
+        // Điều hướng đến trang deliveries với thông báo thành công
         navigate('/ds-dashboard/my-deliveries', {
           state: { message: "Refund successful! 🎉" }
         });
@@ -28,7 +28,7 @@ const RefundKoi = () => {
       }
     };
 
-    createTripPayment(); // Gọi hàm tạo thanh toán khi component render
+    createRefundRequest(); // Gọi hàm yêu cầu hoàn tiền khi component render
   }, [id, navigate]);
 
   // Hiển thị khi đang loading hoặc có lỗi
