@@ -389,14 +389,6 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                           Refund
                         </Button>
                         <Button 
-                          onClick={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Delivering")
-                          }
-                          variant="outline"
-                          size="sm"
-                        >
-                          Order Delivering
-                        </Button>
-                        <Button 
                           onClick={() =>
                             handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "In Transit")
                           }
@@ -405,6 +397,15 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                         >
                           Order In Transit
                         </Button>
+                        <Button 
+                          onClick={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Delivering")
+                          }
+                          variant="outline"
+                          size="sm"
+                        >
+                          Order Delivering
+                        </Button>
+                        
                         <Button 
                           onClick={() => {
                             handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Completed");
