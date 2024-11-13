@@ -26,7 +26,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
-
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{account_id}/detail")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable String account_id) {
         return ResponseEntity.ok(accountService.getAccountById(account_id));

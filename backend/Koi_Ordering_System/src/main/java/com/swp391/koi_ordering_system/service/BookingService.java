@@ -139,9 +139,9 @@ public class BookingService {
 
         boolean isCustomer = authService.isRole("ROLE_Customer");
 
-//        boolean isManager = authService.isRole("ROLE_Manager");
+        boolean isManager = authService.isRole("ROLE_Manager");
 
-        boolean isManager = true;
+//        boolean isManager = true;
 
         boolean isSalesStaff = authService.isRole("ROLE_Sales_Staff");
 

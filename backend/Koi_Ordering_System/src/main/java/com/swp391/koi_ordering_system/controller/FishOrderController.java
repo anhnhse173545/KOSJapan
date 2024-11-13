@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.service.FishOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,6 +73,7 @@ public class FishOrderController {
         return ResponseEntity.ok("Deleted Fish Order: ");
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/delivery-staff/{deliveryId}")
     public ResponseEntity<?> getFishOrderByDeliveryId(@PathVariable String deliveryId) {
         List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
