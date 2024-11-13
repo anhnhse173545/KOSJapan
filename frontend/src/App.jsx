@@ -70,7 +70,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         {/* Public routes */}
 
-        <Route path="/" element={<HomepageComponent />} />
+        <Route path="/" index element={<HomepageComponent />} />
         <Route path="guest" element={<HomepageGuest />} />
 
         <Route path="aboutus" element={<AboutUs />} />
@@ -134,10 +134,10 @@ function App() {
       {/* Delivery Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Delivery Staff"]} />}>
         <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
-          <Route path=":deliveryStaffId" element={<DeliveryStaffHome />} />
+          <Route path="home" element={<DeliveryStaffHome />} />
           <Route
             path="my-deliveries"
-            element={<DeliveryOrderListComponent />}
+            index element={<DeliveryOrderListComponent />}
           />
           <Route
             path="my-deliveries/order-details/:orderId"

@@ -308,9 +308,11 @@ const OrderList = () => {
           </Button>
           <Button
             type="danger"
-            icon={<DeleteOutlined />}
+            className="centered-delete-button"
             onClick={() => handleDeleteOrder(record)}
-          />
+          >
+            Delete
+          </Button>
         </>
       ),
     },
@@ -604,8 +606,16 @@ const OrderList = () => {
             />
           </Form.Item>
 
-          <Form.Item className="order-form-item">
-            <Button type="primary" onClick={handleCreateOrder}>
+          {/* Create Order Button */}
+          <Form.Item
+            className="order-form-item"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <Button
+              type="primary"
+              onClick={handleCreateOrder}
+              style={{ width: "auto" }}
+            >
               Create Order
             </Button>
           </Form.Item>
