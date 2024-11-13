@@ -12,6 +12,7 @@ import {
   Card,
   List,
 } from "antd";
+import api from "@/config/api";
 
 const { Title, Text } = Typography;
 
@@ -37,9 +38,7 @@ const TourDetails = () => {
       }
 
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/booking/get/${bookingId}`
-        );
+        const response = await api.get(`/api/booking/get/${bookingId}`);
         setBookingData(response.data);
       } catch (error) {
         setError(
@@ -55,7 +54,6 @@ const TourDetails = () => {
 
     fetchBookingData();
   }, [bookingId]);
-
   const handleExportToPDF = () => {
     if (!bookingData) {
       message.error("No booking data available to export.");

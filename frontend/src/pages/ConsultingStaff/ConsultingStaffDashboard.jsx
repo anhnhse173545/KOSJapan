@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useAuth } from "@/contexts/AuthContext";
+import api from "@/config/api";
 
 export default function ConsultingStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
@@ -38,13 +39,9 @@ export default function ConsultingStaffDashboard() {
   const fetchStaffDetails = async () => {
     if (!user) return;
     try {
-      const response = await fetch(
-        `http://localhost:8080/accounts/${user.id}/detail`
-      );
-      if (!response.ok) throw new Error("Failed to fetch staff details");
-      const data = await response.json();
-      console.log("Staff details:", data);
-      setStaff(data);
+      const response = await api.get(`/accounts/${user.id}/detail`);
+      console.log("Staff details:", response.data);
+      setStaff(response.data);
       setIsLoading(false);
     } catch (error) {
       console.error("Failed to fetch staff details:", error);

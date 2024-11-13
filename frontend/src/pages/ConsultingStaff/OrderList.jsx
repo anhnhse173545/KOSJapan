@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../../styles/Consulting/OrderList.css";
+import api from "@/config/api";
 
 const OrderList = () => {
   const [data, setData] = useState([]);
@@ -33,8 +34,8 @@ const OrderList = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
+      const response = await api.get(
+        `/fish-order/consulting-staff/${consultingStaffId}`
       );
       setData(response.data);
       setLoading(false);
@@ -48,8 +49,8 @@ const OrderList = () => {
   // Fetch bookings
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/booking/consulting-staff/${consultingStaffId}`
+      const response = await api.get(
+        `/api/booking/consulting-staff/${consultingStaffId}`
       );
       setBookings(response.data);
     } catch (error) {
@@ -57,9 +58,10 @@ const OrderList = () => {
       message.error("Failed to load booking data.");
     }
   };
+
   const fetchFarms = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/farm/list");
+      const response = await api.get("/api/farm/list");
       setFarms(response.data);
     } catch (error) {
       console.error("Error fetching farm list:", error);
@@ -69,24 +71,21 @@ const OrderList = () => {
 
   // Fetch data on component mount
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
-        );
-        console.log("Response data:", response.data); // Add this line to inspect the data
-        setData(response.data);
-        setLoading(false);
+        await fetchOrders();
+        await fetchFarms();
+        await fetchBookings();
       } catch (error) {
-        console.error("Error fetching orders:", error);
-        message.error("Failed to load order data.");
+        console.error("Error during initial data fetch:", error);
+        message.error("Failed to load some data.");
+      } finally {
         setLoading(false);
       }
     };
-    fetchOrders();
-    fetchFarms();
-    fetchBookings();
+
+    fetchData();
   }, [consultingStaffId]);
 
   const calculateTotalPrice = (record) => {
@@ -109,8 +108,8 @@ const OrderList = () => {
 
   const handleDeleteOrder = async (record) => {
     try {
-      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/delete`;
-      await axios.delete(url);
+      const url = `/fish-order/${record.bookingId}/${record.farmId}/delete`;
+      await api.delete(url);
       message.success(`Order with ID ${record.id} has been deleted.`);
       fetchOrders();
     } catch (error) {
@@ -138,8 +137,8 @@ const OrderList = () => {
       title: "Are you sure you want to delete this fish order detail?",
       onOk: async () => {
         try {
-          const url = `http://localhost:8080/fish-order/${orderId}/remove-fish-order-detail-from-order/${fishOrderDetailId}`;
-          await axios.post(url);
+          const url = `/fish-order/${orderId}/remove-fish-order-detail-from-order/${fishOrderDetailId}`;
+          await api.post(url);
           message.success("Fish order detail has been deleted.");
           fetchOrders();
         } catch (error) {
@@ -162,8 +161,8 @@ const OrderList = () => {
       title: "Are you sure you want to delete this fish pack order?",
       onOk: async () => {
         try {
-          const url = `http://localhost:8080/fish-order/${orderId}/remove-pack-order-detail-from-order/${fishPackOrderDetailId}`;
-          await axios.post(url);
+          const url = `/fish-order/${orderId}/remove-pack-order-detail-from-order/${fishPackOrderDetailId}`;
+          await api.post(url);
           message.success("Fish pack order has been deleted.");
           fetchOrders();
         } catch (error) {
@@ -179,17 +178,12 @@ const OrderList = () => {
 
   const handleCreateOrder = async () => {
     try {
-      // Define the endpoint, including bookingId and farmId in the URL path
-      const url = `http://localhost:8080/fish-order/${bookingId}/${farmId}/create`;
-
-      // Send a POST request with the delivery address as a query parameter
-      const response = await axios.post(url, null, {
+      const url = `/fish-order/${bookingId}/${farmId}/create`;
+      const response = await api.post(url, null, {
         params: {
-          address: deliveryAddress, // Pass the delivery address here
+          address: deliveryAddress,
         },
       });
-
-      // Success message and fetch updated order data
       message.success(`Order created with ID: ${response.data.id}`);
       fetchOrders(); // Refresh orders list after successful creation
     } catch (error) {
@@ -210,9 +204,9 @@ const OrderList = () => {
 
   const handleUpdatePaymentStatus = async (record) => {
     try {
-      const url = `http://localhost:8080/fish-order/${record.bookingId}/${record.farmId}/update`;
+      const url = `/fish-order/${record.bookingId}/${record.farmId}/update`;
       const payload = { paymentStatus: "Deposited" };
-      await axios.put(url, payload);
+      await api.put(url, payload);
       message.success(`Payment status updated for Order ID: ${record.id}`);
 
       // Update the data locally
@@ -226,6 +220,7 @@ const OrderList = () => {
       message.error("Failed to update payment status.");
     }
   };
+
   const handleImageClick = (url) => {
     setSelectedImage(url);
     setIsModalVisible(true);
@@ -334,10 +329,18 @@ const OrderList = () => {
     formData.append("file", file);
 
     try {
-      await axios.post(
-        `http://localhost:8080/media/${entity}/${id}/upload/image`,
-        formData
-      );
+      const url = `/media/${entity}/${id}/upload/image`;
+
+      // Ensure the request is sent as multipart/form-data
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      // Send the request using the custom api instance
+      await api.post(url, formData, config);
+
       message.success(`Image uploaded successfully for ${entity}.`);
       fetchOrders(); // Refresh data to reflect the uploaded image
     } catch (error) {
