@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, ChevronDown, AlertCircle } from "lucide-react"
+import { Loader2, ChevronDown, AlertCircle, Package2, User, MapPin } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,21 +22,24 @@ import { OrderTrackingCard } from "@/components/order-tracking-card"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { toast } from "@/components/ui/use-toast"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/contexts/AuthContext"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const API_BASE_URL = "http://localhost:8080"
-const STAFF_ID = "AC0003"
 
 const fishOrderStatuses = [
   "Deposited",
   "In Transit",
   "Delivering",
   "Completed",
-  "Canceled ",
+  "Canceled",
 ]
 
 const bookingStatuses = ["Order Prepare", "Completed"]
 
 export default function DeliveryOrderListComponent() {
+  const { user } = useAuth();
   const [staff, setStaff] = useState(null)
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -44,10 +47,11 @@ export default function DeliveryOrderListComponent() {
   const [showTrackingCard, setShowTrackingCard] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchStaffDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/accounts/${STAFF_ID}/detail`)
+        const response = await fetch(`${API_BASE_URL}/accounts/${user.id}/detail`)
         if (!response.ok) throw new Error("Failed to fetch staff details")
         const data = await response.json()
         setStaff(data)
@@ -58,7 +62,7 @@ export default function DeliveryOrderListComponent() {
     }
 
     fetchStaffDetails()
-  }, [])
+  }, [user.id])
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -149,7 +153,7 @@ export default function DeliveryOrderListComponent() {
         },
         body: JSON.stringify({
           status: newStatus,
-          delivery_address: booking.customer.address,
+          delivery_address: booking.deliveryAddress,
           arrived_date: new Date().toISOString(),
           paymentStatus: "Deposited",
         }),
@@ -200,7 +204,7 @@ export default function DeliveryOrderListComponent() {
       case "Delivering":
         return "bg-purple-500 text-white"
       case "Canceled":
-        return "bg-purple-500 text-white"
+        return "bg-red-500 text-white"
       default:
         return "bg-gray-300 text-black"
     }
@@ -215,142 +219,86 @@ export default function DeliveryOrderListComponent() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-5">
-        Order List for {staff?.name}
-      </h1>
+    <div className="container mx-auto py-10 px-4">
+      <h1 className="text-3xl font-bold mb-8 text-center">Delivery Staff Dashboard</h1>
       {error && (
-        <Alert variant="destructive" className="mb-4">
+        <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      {bookings.length === 0 ? (
-        <p>No bookings found for this delivery staff.</p>
-      ) : (
-        <div className="space-y-8">
-          {bookings.map((booking) => (
-            <div key={booking.id} className="bg-white shadow rounded-lg p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">
-                  Booking ID: {booking.id}
-                </h2>
-                <div className="flex items-center space-x-2">
-                  <Badge
-                    variant={
-                      booking.status === "Completed" ? "success" : "secondary"
-                    }>
-                    {booking.status}
-                  </Badge>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className={getStatusColor(booking.status)}>
-                        Change Status <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {bookingStatuses.map((status) => (
-                        <DropdownMenuItem
-                          key={status}
-                          onSelect={() => handleUpdateBookingStatus(booking.id, status)}>
-                          {status}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-              <div className="mb-4">
-                <p>
-                  <strong>Customer:</strong> {booking.customer.name}
-                </p>
-                <p>
-                  <strong>Address:</strong>{" "}
-                  {booking.customer.address || "Not provided"}
-                </p>
-                <p>
-                  {/* 
-                  <strong>Trip:</strong> {booking.trip.departureAirport} (
-                  {new Date(booking.trip.startDate).toLocaleDateString()} -{" "}
-                  {new Date(booking.trip.endDate).toLocaleDateString()})
-                  */ }
-                </p>
-              </div>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Order ID</TableHead>
-                      <TableHead>Farm ID</TableHead>
-                      <TableHead>Fish Order Status</TableHead>
-                      <TableHead>Payment Status</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>Actions</TableHead> 
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {booking.fishOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          {order.id}
-                        </TableCell>
-                        <TableCell>{order.farmId}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm" className={getStatusColor(order.status)}>
-                                {order.status || "Select Status"}
-                                <ChevronDown className="ml-2 h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              {fishOrderStatuses.map((status) => (
-                                <DropdownMenuItem
-                                  key={status}
-                                  onSelect={() =>
-                                    handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, status)
-                                  }>
-                                  {status}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              order.paymentStatus === "Deposited"
-                                ? "success"
-                                : "warning"
-                            }>
-                            {order.paymentStatus}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{formatTotal(order.total)}</TableCell>
-                        <TableCell>
-                          {/* Nút Refund */}
-                          <Button onClick={() => navigate(`/refundkoi/${order.id}`)} variant="primary">
-                            Refund
-                          </Button>
-                        </TableCell>
-                        {/* <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleTrackOrder(order)}
-                          >
-                            Track Order
-                          </Button>
-                        </TableCell> */}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+            <Package2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{bookings.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
+            <User className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {bookings.filter(booking => booking.status === "Completed").length}
             </div>
-          ))}
-        </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {bookings.filter(booking => booking.status !== "Completed").length}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      {bookings.length === 0 ? (
+        <Card>
+          <CardContent className="flex justify-center items-center h-32">
+            <p className="text-muted-foreground">No bookings found for this delivery staff.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Tabs defaultValue="all" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="all">All Orders</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
+          </TabsList>
+          <TabsContent value="all">
+            <BookingList 
+              bookings={bookings} 
+              handleUpdateBookingStatus={handleUpdateBookingStatus}
+              handleUpdateFishOrderStatus={handleUpdateFishOrderStatus}
+              navigate={navigate}
+            />
+          </TabsContent>
+          <TabsContent value="pending">
+            <BookingList 
+              bookings={bookings.filter(booking => booking.status !== "Completed")}
+              handleUpdateBookingStatus={handleUpdateBookingStatus}
+              handleUpdateFishOrderStatus={handleUpdateFishOrderStatus}
+              navigate={navigate}
+            />
+          </TabsContent>
+          <TabsContent value="completed">
+            <BookingList 
+              bookings={bookings.filter(booking => booking.status === "Completed")}
+              handleUpdateBookingStatus={handleUpdateBookingStatus}
+              handleUpdateFishOrderStatus={handleUpdateFishOrderStatus}
+              navigate={navigate}
+            />
+          </TabsContent>
+        </Tabs>
       )}
       {showTrackingCard && selectedOrder && (
         <div
@@ -362,4 +310,143 @@ export default function DeliveryOrderListComponent() {
       )}
     </div>
   )
+}
+
+function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrderStatus, navigate }) {
+  return (
+    <div className="space-y-8">
+      {bookings.map((booking) => (
+        <Card key={booking.id}>
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              <span>Booking ID: {booking.id}</span>
+              <Badge variant={booking.status === "Completed" ? "success" : "secondary"}>
+                {booking.status}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Customer</p>
+                <p className="font-medium">{booking.customer.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Address</p>
+                <p className="font-medium">{booking.deliveryAddress || "Not provided"}</p>
+              </div>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Order ID</TableHead>
+                  <TableHead>Farm ID</TableHead>
+                  <TableHead>Fish Order Status</TableHead>
+                  <TableHead>Payment Status</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {booking.fishOrders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.id}</TableCell>
+                    <TableCell>{order.farmId}</TableCell>
+                    <TableCell>
+                      {/* <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className={getStatusColor(order.status)}>
+                            {order.status || "Select Status"}
+                            <ChevronDown className="ml-2 h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {fishOrderStatuses.map((status) => (
+                            <DropdownMenuItem
+                              key={status}
+                              onSelect={() =>
+                                handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, status)
+                              }>
+                              {status}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu> */}
+
+                      <Badge variant={order.status === "Deposited" ? "success" : "warning"}>
+                        {order.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={order.paymentStatus === "Deposited" ? "success" : "warning"}>
+                        {order.paymentStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{formatTotal(order.total)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col space-y-2">
+                        <Button onClick={() => navigate(`/refundkoi/${order.id}`)} variant="outline" size="sm">
+                          Refund
+                        </Button>
+                        <Button 
+                          onClick={() => handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Delivering")
+                          }
+                          variant="outline"
+                          size="sm"
+                        >
+                          Delivering
+                        </Button>
+                        <Button 
+                          onClick={() =>
+                            handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "In Transit")
+                          }
+                          variant="outline"
+                          size="sm"
+                        >
+                          In Transit
+                        </Button>
+                        <Button 
+                          onClick={() => {
+                            handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, "Completed");
+                            handleUpdateBookingStatus(booking.id, "Completed");
+                          }}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Completed
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+function getStatusColor(status) {
+  switch (status) {
+    case "Order Prepare":
+      return "bg-blue-500 text-white"
+    case "Completed":
+      return "bg-green-500 text-white"
+    case "Deposited":
+      return "bg-yellow-500 text-white"
+    case "In Transit":
+      return "bg-orange-500 text-white"
+    case "Delivering":
+      return "bg-purple-500 text-white"
+    case "Canceled":
+      return "bg-red-500 text-white"
+    default:
+      return "bg-gray-300 text-black"
+  }
+}
+
+function formatTotal(total) {
+  return `$${Math.abs(total).toFixed(2)}`
 }
