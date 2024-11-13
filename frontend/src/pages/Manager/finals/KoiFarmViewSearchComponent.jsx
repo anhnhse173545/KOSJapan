@@ -21,9 +21,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/farm'
-})
+import api from '@/config/api'
+
+ 
 
 export function KoiFarmViewSearchComponent() {
   const [farms, setFarms] = useState([])
@@ -45,7 +45,7 @@ export function KoiFarmViewSearchComponent() {
     setLoading(true)
     setError('')
     try {
-      const response = await api.get('/list')
+      const response = await api.get('api/farm/list')
       setFarms(response.data)
       setFilteredFarms(response.data)
       const varieties = [...new Set(response.data.flatMap(farm => farm.varieties.map(v => v.name)))]
