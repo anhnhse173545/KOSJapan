@@ -20,6 +20,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from 'lucide-react';
+import api from "@/config/api";
 
 export default function DeliveryStaffHome() {
   const [orderStatusData, setOrderStatusData] = useState([]);
@@ -38,8 +39,8 @@ export default function DeliveryStaffHome() {
       }
 
       try {
-        const response = await axios.get(
-          `http://localhost:8080/fish-order/delivery-staff/${user.id}`
+        const response = await api.get(
+          `fish-order/delivery-staff/${user.id}`
         );
         const data = response.data;
 

@@ -25,9 +25,8 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-const API_BASE_URL = "http://localhost:8080"
-
+import api from "@/config/api"
+ 
 const fishOrderStatuses = [
   "Deposited",
   "In Transit",
@@ -51,10 +50,8 @@ export default function DeliveryOrderListComponent() {
   useEffect(() => {
     const fetchStaffDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/accounts/${user.id}/detail`)
-        if (!response.ok) throw new Error("Failed to fetch staff details")
-        const data = await response.json()
-        setStaff(data)
+        const response = await api.get(`/accounts/${user.id}/detail`)
+        setStaff(response.data)
       } catch (error) {
         console.error("Failed to fetch staff details:", error)
         setError("Failed to load staff details. Please try again later.")
@@ -66,23 +63,19 @@ export default function DeliveryOrderListComponent() {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!staff) return
+      if (!user) return
 
       setLoading(true)
       try {
         const [staffBookingsResponse, orderPrepareResponse, completedResponse] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/booking/delivery-staff/${staff.id}`),
-          fetch(`${API_BASE_URL}/api/booking/status/Order%20Prepare`),
-          fetch(`${API_BASE_URL}/api/booking/status/Completed`)
+          api.get(`/api/booking/delivery-staff/${user.id}`),
+          api.get('/api/booking/status/Order%20Prepare'),
+          api.get('/api/booking/status/Completed')
         ])
 
-        if (!staffBookingsResponse.ok || !orderPrepareResponse.ok || !completedResponse.ok) {
-          throw new Error("Failed to fetch bookings")
-        }
-
-        const staffBookings = await staffBookingsResponse.json()
-        const orderPrepareBookings = await orderPrepareResponse.json()
-        const completedBookings = await completedResponse.json()
+        const staffBookings = staffBookingsResponse.data
+        const orderPrepareBookings = orderPrepareResponse.data
+        const completedBookings = completedResponse.data
 
         const combinedBookings = staffBookings.filter(booking =>
           orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id) ||
@@ -98,7 +91,7 @@ export default function DeliveryOrderListComponent() {
     }
 
     fetchBookings()
-  }, [staff])
+  }, [user])
 
   const handleTrackOrder = (order) => {
     setSelectedOrder(order)
@@ -107,15 +100,7 @@ export default function DeliveryOrderListComponent() {
 
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/booking/update/${bookingId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      if (!response.ok) throw new Error("Failed to update booking status")
+      await api.put(`/api/booking/update/${bookingId}`, { status: newStatus })
 
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
@@ -146,20 +131,12 @@ export default function DeliveryOrderListComponent() {
       const booking = bookings.find((b) => b.id === bookingId)
       if (!booking) throw new Error("Booking not found")
 
-      const response = await fetch(`${API_BASE_URL}/fish-order/${bookingId}/${farmId}/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          status: newStatus,
-          delivery_address: booking.fishOrders.deliveryAddress,
-          arrived_date: new Date().toISOString(),
-          paymentStatus: "Deposited",
-        }),
+      await api.put(`/fish-order/${bookingId}/${farmId}/update`, {
+        status: newStatus,
+        delivery_address: booking.fishOrders.deliveryAddress,
+        arrived_date: new Date().toISOString(),
+        paymentStatus: "Deposited",
       })
-
-      if (!response.ok) throw new Error("Failed to update fish order status")
 
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
@@ -353,26 +330,6 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>{order.farmId}</TableCell>
                     <TableCell>
-                      {/* <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="outline" size="sm" className={getStatusColor(order.status)}>
-                            {order.status || "Select Status"}
-                            <ChevronDown className="ml-2 h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          {fishOrderStatuses.map((status) => (
-                            <DropdownMenuItem
-                              key={status}
-                              onSelect={() =>
-                                handleUpdateFishOrderStatus(booking.id, order.farmId, order.id, status)
-                              }>
-                              {status}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu> */}
-
                       <Badge variant={order.status === "Deposited" ? "success" : "warning"}>
                         {order.status}
                       </Badge>

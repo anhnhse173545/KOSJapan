@@ -9,12 +9,8 @@ import {
   LogOut,
   Bell,
   Package,
-  Truck,
-  MapPin,
-  ClipboardList,
-  Calendar,
-  Menu,
   Home,
+  Menu,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,7 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-
+import api from "@/config/api";
+ 
 export function DeliveryStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
   const [error, setError] = useState(null);
@@ -37,12 +34,8 @@ export function DeliveryStaffDashboard() {
 
   const fetchStaffDetails = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/accounts/${user.id}/detail`
-      );
-      if (!response.ok) throw new Error("Failed to fetch staff details");
-      const data = await response.json();
-      console.log("Staff details:", data);
+      const response = await api.get(`accounts/${user.id}/detail`);
+      console.log("Staff details:", response.data);
       setIsLoading(false);
     } catch (error) {
       console.error("Failed to fetch staff details:", error);
@@ -67,21 +60,6 @@ export function DeliveryStaffDashboard() {
       name: "My Deliveries",
       icon: <Package className="h-5 w-5" />,
       path: "/ds-dashboard/my-deliveries",
-    },
-    {
-      name: "Delivery Map",
-      icon: <MapPin className="h-5 w-5" />,
-      path: "/delivery-staff/delivery-map",
-    },
-    {
-      name: "Order Details",
-      icon: <ClipboardList className="h-5 w-5" />,
-      path: "/delivery-staff/order-details",
-    },
-    {
-      name: "Schedule",
-      icon: <Calendar className="h-5 w-5" />,
-      path: "/delivery-staff/schedule",
     },
   ];
 
