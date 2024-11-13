@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './booking.scss'; // Import CSS file for styling
 import { useParams } from 'react-router-dom';
+import api from '@/config/api';
 
 function PaymentPage() {
   const navigate = useNavigate();
@@ -11,18 +12,13 @@ function PaymentPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams(); // Lấy customerId từ URL
-  
 
-  // Fetch data from API
+  // Fetch data from API using axios
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/booking/customer/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch payments');
-        }
-        const data = await response.json();
-        setPayments(data); // Set the fetched payments data
+        const response = await api.get(`/api/booking/customer/${id}`);
+        setPayments(response.data); // Set the fetched payments data
       } catch (error) {
         setError(error.message); // Handle any errors
       } finally {
@@ -41,7 +37,6 @@ function PaymentPage() {
   );
 
   return (
-    
     <div className="payment-page-container">
       {/* Sidebar */}
       <div className="profile-sidebar">
@@ -52,12 +47,12 @@ function PaymentPage() {
             </Link>
           </li>
           <li>
-          <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === `/payment}` ? 'active' : ''}`}> 
+            <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === `/payment/${id}` ? 'active' : ''}`}> 
               My Trip
             </Link>
           </li>
           <li>
-          <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === `/mykoi/${id}` ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === `/mykoi/${id}` ? 'active' : ''}`}>
               My Koi Fish
             </Link>
           </li>
@@ -71,21 +66,19 @@ function PaymentPage() {
       </div>
 
       {/* Status Tabs */}
-      
       <div className="payment-section">
-  <div className="status-tabs">
-    {['All', 'Requested', 'Approved Quote', 'Paid Booking', 'On-going', 'Order Prepare', 'Completed', 'Canceled'].map((status) => (
-      <button
-        key={status}
-        className={`tab ${selectedStatus === status ? 'active' : ''}`}
-        style={{ color: 'black' }} // Thêm style inline
-        onClick={() => setSelectedStatus(status)}
-      >
-        {status}
-      </button>
-    ))}
-  </div>
-
+        <div className="status-tabs">
+          {['All', 'Requested', 'Approved Quote', 'Paid Booking', 'On-going', 'Order Prepare', 'Completed', 'Canceled'].map((status) => (
+            <button
+              key={status}
+              className={`tab ${selectedStatus === status ? 'active' : ''}`}
+              style={{ color: 'black' }} // Thêm style inline
+              onClick={() => setSelectedStatus(status)}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
 
         {/* Payment List */}
         <div className="payment-list">
@@ -94,19 +87,18 @@ function PaymentPage() {
           {!loading && !error && filteredPayments.length === 0 && <p>No payments found.</p>} {/* No payments message */}
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
-              
               <div className="payment-details">
-                <h3>Booking Id :{koi.id}</h3>
+                <h3>Booking Id: {koi.id}</h3>
                 <p>{koi.startDate}</p>
                 <dd className="text-gray-900">Create At: {new Date(koi.createAt).toLocaleString('EN-EN', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit'
-                      })}</dd>
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric', 
+                  hour: '2-digit', 
+                  minute: '2-digit'
+                })}</dd>
                 <p className="status">Booking Status: {koi.status}</p>
-            
+                
                 <div className="button-group">
                   <button
                     className="details-button"

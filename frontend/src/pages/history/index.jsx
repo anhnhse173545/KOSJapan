@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/config/api';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,34 +10,36 @@ import { motion } from "framer-motion";
 
 export default function BookingHistoryPage() {
   const { id } = useParams(); // Lấy customerId từ URL
-  const [bookingHistory, setBookingHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [bookingHistory, setBookingHistory] = useState([]); // Lưu trữ lịch sử đặt chỗ
+  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [error, setError] = useState(null); // Trạng thái lỗi
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookingHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/booking/customer/${id}`);
+        // Gọi API đã cấu hình để lấy lịch sử đặt chỗ của khách hàng theo ID
+        const response = await api.get(`/api/booking/customer/${id}`);
         const filteredBookings = response.data.filter(booking =>
           booking.status === 'Completed' || booking.status === 'Canceled'
         );
-        setBookingHistory(filteredBookings);
+        setBookingHistory(filteredBookings); // Lưu trữ kết quả vào state
       } catch (err) {
-        setError('Lỗi khi tải lịch sử đặt chỗ.');
+        setError('Error when load history.'); // Xử lý lỗi
       } finally {
-        setLoading(false);
+        setLoading(false); // Đánh dấu trạng thái đã tải xong
       }
     };
 
-    if (id) { // Kiểm tra nếu customerId hợp lệ
+    if (id) { // Kiểm tra nếu ID hợp lệ
       fetchBookingHistory();
     } else {
       setError("Không tìm thấy ID khách hàng.");
       setLoading(false);
     }
-  }, [id]);
+  }, [id]); // Chạy lại khi ID thay đổi
 
+  // Nếu đang tải dữ liệu, hiển thị skeleton loading
   if (loading) {
     return (
       <div className="space-y-4 p-6">
@@ -51,16 +53,18 @@ export default function BookingHistoryPage() {
     );
   }
 
+  // Nếu có lỗi, hiển thị thông báo lỗi
   if (error) {
     return (
       <Alert variant="destructive" className="m-6">
         <AlertCircle className="h-5 w-5" />
-        <AlertTitle className="text-lg font-semibold">Lỗi</AlertTitle>
+        <AlertTitle className="text-lg font-semibold">ERROR</AlertTitle>
         <AlertDescription className="text-sm">{error}</AlertDescription>
       </Alert>
     );
   }
 
+  // Hiển thị dữ liệu lịch sử đặt chỗ nếu đã tải xong
   return (
     <div className="space-y-8 p-6 min-h-screen" style={{
       backgroundImage: 'url("https://img.freepik.com/free-photo/beautiful-exotic-colorful-fish_23-2150737625.jpg")',
@@ -82,9 +86,9 @@ export default function BookingHistoryPage() {
       {bookingHistory.length === 0 ? (
         <Alert className="bg-white/50 backdrop-blur-sm border-gray-200">
           <AlertCircle className="h-5 w-5 text-blue-500" />
-          <AlertTitle className="text-lg font-semibold text-gray-900">Thông báo</AlertTitle>
+          <AlertTitle className="text-lg font-semibold text-gray-900">Notification</AlertTitle>
           <AlertDescription className="text-gray-600">
-            Không có lịch sử đặt chỗ với trạng thái đã hoàn thành hoặc đã hủy.
+            no history
           </AlertDescription>
         </Alert>
       ) : (
@@ -107,9 +111,7 @@ export default function BookingHistoryPage() {
                     <span className="font-semibold text-gray-700">Booking Id: {booking.id}</span>
                     <Badge 
                       variant={booking.status === 'Completed' ? 'default' : 'destructive'}
-                      className={`px-2 py-1 text-xs font-medium ${
-                        booking.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
+                      className={`px-2 py-1 text-xs font-medium ${booking.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                       {booking.status === 'Completed' ? (
                         <CheckCircle2 className="mr-1 h-3 w-3" />
@@ -124,7 +126,7 @@ export default function BookingHistoryPage() {
                   <dl className="grid gap-3 text-sm">
                     <div className="flex items-center">
                       <User className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Tên khách hàng:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Customer name:</dt>
                       <dd className="text-gray-900">{booking.customer?.name || 'N/A'}</dd>
                     </div>
                     <div className="flex items-center">
@@ -134,17 +136,17 @@ export default function BookingHistoryPage() {
                     </div>
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Điện thoại:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Phone:</dt>
                       <dd className="text-gray-900">{booking.customer?.phone || 'N/A'}</dd>
                     </div>
                     <div className="flex items-start">
                       <FileText className="h-4 w-4 mr-2 text-gray-500 mt-1" />
-                      <dt className="font-medium text-gray-600 mr-2">Mô tả:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Description:</dt>
                       <dd className="text-gray-900">{booking.description}</dd>
                     </div>
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Ngày tạo:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Create at:</dt>
                       <dd className="text-gray-900">{new Date(booking.createAt).toLocaleString('vi-VN', { 
                         year: 'numeric', 
                         month: 'long', 
@@ -162,7 +164,7 @@ export default function BookingHistoryPage() {
       )}
       
       <button onClick={() => navigate(-1)} className="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow-lg hover:bg-blue-700 transition duration-300">
-        Trở về
+        back
       </button>
     </div>
   );

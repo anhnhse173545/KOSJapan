@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import './index.scss'; // Import file CSS để styling
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import api from '@/config/api';
+
 function KoiPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,11 +17,10 @@ function KoiPage() {
   useEffect(() => {
     const fetchKoiPayments = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/fish-order/customer/${id}`);
-        const data = await response.json();
-        console.log(data); // Log dữ liệu để kiểm tra
-        if (Array.isArray(data)) {
-          setKoiPayments(data);
+        const response = await api.get(`/fish-order/customer/${id}`);
+        console.log(response.data); // Log dữ liệu để kiểm tra
+        if (Array.isArray(response.data)) {
+          setKoiPayments(response.data); // Set the fetched koi payments data
         } else {
           throw new Error('Invalid data structure');
         }
@@ -29,9 +30,10 @@ function KoiPage() {
         setLoading(false);
       }
     };
-  
+
     fetchKoiPayments();
   }, [id]); // Thêm id vào dependencies của useEffect
+
   // Lọc các đơn hàng dựa theo trạng thái được chọn
   const filteredPayments = koiPayments.filter((koi) => {
     if (selectedStatus === 'All') return true;
@@ -95,32 +97,32 @@ function KoiPage() {
 
         {/* Phần hiển thị danh sách các payments dựa trên bộ lọc */}
         <div className="payment-list">
-        {filteredPayments.map((koi) => (
-  <div key={koi.id} className="payment-item">
-    <img
-      src={koi.img}
-      alt={koi.koi}
-      className="koi-image"
-    />
-    <div className="payment-details">
-      <h3>{koi.name}</h3>
-      <p>{koi.koi}</p>
-      {koi.quantity && <p>Quantity: {koi.quantity}</p>}
-      {koi.size && <p>Size: {koi.size} cm</p>}
-      <p className="Id Trip">Koi ID: {koi.id}</p>
-      <p className="Id Farm">Farm ID: {koi.farmId}</p>
-      <p className="Id Farm">Status: {koi.status}</p>
-      <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
-      <button
-        className="details-button"
-        onClick={() => navigate(`/mykoidetail/${id}`, { state: { koiId: koi.id } })}
-      >
-        See Details
-      </button>
-    </div>
-  </div>
-))}
-
+          {filteredPayments.length === 0 && <p>No payments found.</p>}
+          {filteredPayments.map((koi) => (
+            <div key={koi.id} className="payment-item">
+              <img
+                src={koi.img}
+                alt={koi.koi}
+                className="koi-image"
+              />
+              <div className="payment-details">
+                <h3>{koi.name}</h3>
+                <p>{koi.koi}</p>
+                {koi.quantity && <p>Quantity: {koi.quantity}</p>}
+                {koi.size && <p>Size: {koi.size} cm</p>}
+                <p className="Id Trip">Koi ID: {koi.id}</p>
+                <p className="Id Farm">Farm ID: {koi.farmId}</p>
+                <p className="Id Farm">Status: {koi.status}</p>
+                <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
+                <button
+                  className="details-button"
+                  onClick={() => navigate(`/mykoidetail/${id}`, { state: { koiId: koi.id } })}
+                >
+                  See Details
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

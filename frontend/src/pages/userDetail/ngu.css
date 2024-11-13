@@ -1,62 +1,76 @@
 /* Container */
 .user-detail-container {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 
 /* Header */
 .user-detail-container h1 {
   text-align: center;
-  font-size: 24px;
-  color: #555;
-  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 30px;
+  font-weight: 600;
 }
 
 /* Profile Image */
 .profile-image {
   display: block;
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   margin: 0 auto 20px;
-  border: 2px solid #ddd;
+  border: 3px solid #ddd;
+  object-fit: cover;
 }
 
 /* User Info */
 .user-info p {
-  font-size: 16px;
-  margin: 10px 0;
+  font-size: 18px;
+  margin: 12px 0;
+  color: #555;
 }
 
 .user-info input[type="text"],
 .user-info input[type="email"] {
-  width: calc(100% - 20px);
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   font-size: 16px;
+  background-color: #f7f7f7;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+.user-info input[type="text"]:focus,
+.user-info input[type="email"]:focus {
+  border-color: #007bff;
+  background-color: #fff;
+  outline: none;
 }
 
 /* Buttons */
 .button, .back-button {
   display: inline-block;
   width: 48%;
-  padding: 10px 0;
-  margin: 10px 1%;
+  padding: 14px 0;
+  margin: 15px 1%;
   font-size: 16px;
   font-weight: bold;
+  text-align: center;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .button {
@@ -69,8 +83,39 @@
 
 .button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
 .back-button:hover {
   background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Form Container */
+.form-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.form-container input[type="file"] {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Loading and Error States */
+.loading-spinner {
+  text-align: center;
+  font-size: 18px;
+  color: #007bff;
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
 }

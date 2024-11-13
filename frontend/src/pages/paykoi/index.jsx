@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import api from '@/config/api';
 
 const PaymentTripPage = () => {
   const { id } = useParams(); // lấy bookingid từ URL
@@ -11,7 +12,7 @@ const PaymentTripPage = () => {
     const createTripPayment = async () => {
       try {
         // Gửi yêu cầu POST tới API để tạo thanh toán
-        const response = await axios.post(`http://localhost:8080/${id}/payment/api/create-fishpayment`);
+        const response = await api.post(`/${id}/payment/api/create-fishpayment`);
         console.log(response.data); // Kiểm tra dữ liệu trả về từ API
 
         const approvalUrl = response.data.approvalUrl; // Lấy approval URL từ response
@@ -25,7 +26,7 @@ const PaymentTripPage = () => {
         }
       } catch (err) {
         console.error('Loading.......', err); 
-        setError('Loadingggggggg');
+        setError('Có lỗi trong quá trình tạo thanh toán.');
         setLoading(false); 
       }
     };
