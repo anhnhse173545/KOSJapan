@@ -135,7 +135,7 @@ public class PayPalController {
                 tripPaymentService.updateTripPaymentUsingPayPal(booking_Id);
 
                 if ("approved".equals(payment.getState())) {
-                    return new RedirectView("http://localhost:5173/payment"); // Change PORT if needed
+                    return new RedirectView("http://localhost:5173"); // Change PORT if needed
                 }
             } else {
                 log.error("Trip payment not found for bookingId: {}", booking_Id);
@@ -145,7 +145,7 @@ public class PayPalController {
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
-        return new RedirectView("http://localhost:5173/payment"); // Change PORT if needed
+        return new RedirectView("http://localhost:5173"); // Change PORT if needed
     }
 
     // Fish Payment
@@ -225,7 +225,7 @@ public class PayPalController {
                 fishPaymentRepository.save(fishPayment);
 
                 if ("approved".equals(payment.getState())) {
-                    return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
+                    return new RedirectView("http://localhost:5173"); // Change PORT if needed
                 }
             } else {
                 log.error("Trip payment not found for orderId: {}", order_id);
@@ -235,7 +235,7 @@ public class PayPalController {
         } catch (Exception e) {
             log.error("Unexpected error occurred: {}", e.getMessage());
         }
-        return new RedirectView("http://localhost:5173/mykoi"); // Change PORT if needed
+        return new RedirectView("http://localhost:5173"); // Change PORT if needed
     }
 
     @PostMapping("/{order_id}/api/refund")
