@@ -14,14 +14,13 @@ export default function KoiDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(''); // New state for notification
-
  
 
   useEffect(() => {
     const fetchKoi = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/AC0007`);
+        const response = await axios.get(`http://localhost:8080/fish-order/customer/${id}`);
         const order = response.data.find(order => order.id === id);
         if (order) {
           setKoi(order);
@@ -29,7 +28,7 @@ export default function KoiDetailPage() {
           setError('Koi order not found');
         }
       } catch (err) {
-        setError('Failed to load data');
+        setError('Koi order not found');
       } finally {
         setLoading(false);
       }

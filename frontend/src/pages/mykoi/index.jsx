@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './index.scss'; // Import file CSS để styling
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import { useParams } from 'react-router-dom';
 function KoiPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,6 +17,7 @@ function KoiPage() {
       try {
         const response = await fetch(`http://localhost:8080/fish-order/customer/${id}`);
         const data = await response.json();
+        console.log(data); // Log dữ liệu để kiểm tra
         if (Array.isArray(data)) {
           setKoiPayments(data);
         } else {
@@ -28,10 +29,9 @@ function KoiPage() {
         setLoading(false);
       }
     };
-
+  
     fetchKoiPayments();
-  }, []);
-
+  }, [id]); // Thêm id vào dependencies của useEffect
   // Lọc các đơn hàng dựa theo trạng thái được chọn
   const filteredPayments = koiPayments.filter((koi) => {
     if (selectedStatus === 'All') return true;
