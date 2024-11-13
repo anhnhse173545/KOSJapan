@@ -17,10 +17,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuth } from "@/contexts/AuthContext"
+ import { useAuth } from "@/contexts/AuthContext"
+import api from "@/config/api"
 
 const PAGE_SIZE = 10
-const API_BASE_URL = "http://localhost:8080/api"
 
 const tripStatusOptions = ["Pending", "Approved", "Completed", "On-going", "Redo"]
 const bookingStatusOptions = ["Requested", "Pending Quote", "Approved Quote"]
@@ -45,12 +45,10 @@ export default function CustomerRequestManagement() {
   const fetchBookings = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/booking/sale-staff/${user.id}?timestamp=${new Date().getTime()}`)
-      if (!response.ok) throw new Error("Network response was not ok")
-      const data = await response.json()
-      setBookings(data)
+      const response = await api.get(`api/booking/sale-staff/${user.id}`)
+      setBookings(response.data)
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An unknown error occurred")
+      setError(error.message || "An error occurred while fetching bookings")
     } finally {
       setLoading(false)
     }
@@ -72,15 +70,8 @@ export default function CustomerRequestManagement() {
   const handleTripStatusUpdate = async (bookingId, newStatus) => {
     try {
       const booking = bookings.find((b) => b.id === bookingId)
-      const response = await fetch(`${API_BASE_URL}/trip/update/${booking.trip.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      })
-
-      if (!response.ok) throw new Error("Trip status update failed")
-
-      const updatedTrip = await response.json()
+      const response = await api.put(`api/trip/update/${booking.trip.id}`, { status: newStatus })
+      const updatedTrip = response.data
       setBookings((prevBookings) =>
         prevBookings.map((b) =>
           b.id === bookingId ? { ...b, trip: { ...b.trip, status: updatedTrip.status } } : b
@@ -102,10 +93,8 @@ export default function CustomerRequestManagement() {
 
   const handleViewBooking = async (bookingId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/booking/get/${bookingId}`)
-      if (!response.ok) throw new Error("Failed to fetch booking details")
-      const bookingDetails = await response.json()
-      setSelectedBooking(bookingDetails)
+      const response = await api.get(`api/booking/get/${bookingId}`)
+      setSelectedBooking(response.data)
       setIsViewModalOpen(true)
     } catch (error) {
       console.error("Error fetching booking details:", error)
@@ -185,7 +174,6 @@ export default function CustomerRequestManagement() {
       <TableRow className="hover:bg-muted/50 transition-colors">
         <TableCell className="font-medium">{booking.id}</TableCell>
         <TableCell>{booking.customer.name}</TableCell>
-        {/* <TableCell>{booking.customer.email}</TableCell> */}
         <TableCell className="max-w-xs truncate">{booking.description}</TableCell>
         <TableCell>{new Date(booking.createAt).toLocaleDateString()}</TableCell>
         <TableCell>
@@ -346,10 +334,8 @@ export default function CustomerRequestManagement() {
 
     const fetchFarms = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/farm/list`)
-        if (!response.ok) throw new Error("Failed to fetch farms")
-        const data = await response.json()
-        setFarms(data)
+        const response = await api.get('api/farm/list')
+        setFarms(response.data)
       } catch (error) {
         console.error("Error fetching farms:", error)
         setError("Failed to fetch farms")
@@ -359,10 +345,8 @@ export default function CustomerRequestManagement() {
     const fetchTripDestinations = async (tripId) => {
       if (!tripId) return
       try {
-        const response = await fetch(`${API_BASE_URL}/trip-destination/${tripId}/list`)
-        if (!response.ok) throw new Error("Failed to fetch trip destinations")
-        const data = await response.json()
-        setDestinations(data)
+        const response = await api.get(`api/trip-destination/${tripId}/list`)
+        setDestinations(response.data)
       } catch (error) {
         console.error("Error fetching trip destinations:", error)
         setError("Failed to fetch trip destinations")
@@ -374,7 +358,7 @@ export default function CustomerRequestManagement() {
       if (!booking) return
 
       const today = new Date()
-      const  startDate = new Date(tripDetails.startDate)
+      const startDate = new Date(tripDetails.startDate)
       const endDate = new Date(tripDetails.endDate)
       const price = parseFloat(tripDetails.price)
 
@@ -406,28 +390,19 @@ export default function CustomerRequestManagement() {
           price: price,
         }
 
-        const url = booking.trip
-          ? `${API_BASE_URL}/trip/update/${booking.trip.id}`
-          : `${API_BASE_URL}/booking/${booking.id}/create-trip`
-        const method = booking.trip ? "PUT" : "POST"
-
-        const response = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formattedTripDetails),
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || "Failed to create/update trip")
+        let response
+        if (booking.trip) {
+          response = await api.put(`api/trip/update/${booking.trip.id}`, formattedTripDetails)
+        } else {
+          response = await api.post(`api/booking/${booking.id}/create-trip`, formattedTripDetails)
         }
 
-        const data = await response.json()
+        const data = response.data
         onTripCreated(data)
         setStep("destinations")
       } catch (error) {
         console.error("Error creating/updating trip:", error)
-        setError(error.message || "Failed to create/update trip")
+        setError(error.response?.data?.message || "Failed to create/update trip")
       } finally {
         setLoading(false)
       }
@@ -443,13 +418,8 @@ export default function CustomerRequestManagement() {
           ...newDestination,
           visitDate: formatDateForServer(newDestination.visitDate),
         }
-        const response = await fetch(`${API_BASE_URL}/trip-destination/${booking.trip.id}/create`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formattedDestination),
-        })
-        if (!response.ok) throw new Error("Failed to add destination")
-        const data = await response.json()
+        const response = await api.post(`api/trip-destination/${booking.trip.id}/create`, formattedDestination)
+        const data = response.data
         setDestinations([...destinations, data])
         setNewDestination({ farmId: "", visitDate: "", description: "" })
       } catch (error) {
@@ -702,10 +672,6 @@ export default function CustomerRequestManagement() {
                 className="pl-8 w-full md:w-[300px]"
               />
             </div>
-            {/* <Button onClick={() => navigate("/createBooking")} className="w-full md:w-auto">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create New Booking
-            </Button> */}
           </div>
           <div className="rounded-md border">
             <Table>
@@ -713,7 +679,6 @@ export default function CustomerRequestManagement() {
                 <TableRow>
                   <TableHead className="w-[100px]">ID</TableHead>
                   <TableHead>Customer Name</TableHead>
-                  {/* <TableHead>Email</TableHead> */}
                   <TableHead>Description</TableHead>
                   <TableHead>Created At</TableHead>
                   <TableHead>Booking Status</TableHead>
