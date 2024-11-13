@@ -60,7 +60,7 @@ public class AuthController {
         AccountDTO accountDTO = accountMapper.toDTO(account);
         return ResponseEntity.ok(accountDTO);
     }
-
+    
     @PostMapping("/update-password")
     public ResponseEntity<String> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         authService.updatePassword(updatePasswordDTO);
@@ -73,9 +73,9 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        authService.resetPassword(token, newPassword);
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+        authService.resetPassword(resetPasswordDTO.getResetToken(), resetPasswordDTO.getNewPassword());
         return ResponseEntity.ok("Password reset successfully");
     }
 }

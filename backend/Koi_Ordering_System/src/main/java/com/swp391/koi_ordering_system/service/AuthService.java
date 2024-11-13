@@ -96,22 +96,26 @@ public class AuthService {
         accountRepository.save(account);
     }
 
-    public String getPassword(@Valid ForgetPasswordDTO forgetPasswordDTO) {
-        Account account = accountRepository.findByPhone(forgetPasswordDTO.getPhone());
-        if (account == null) {
-            throw new EntityNotFoundException("Account not found");
-        }
-        account.setPassword(forgetPasswordDTO.getPassword());
-        accountRepository.save(account);
-        return account.getPassword();
-    }
+//    public String getPassword(@Valid ForgetPasswordDTO forgetPasswordDTO) {
+//        Account account = accountRepository.findByPhone(forgetPasswordDTO.getPhone());
+//        if (account == null) {
+//            throw new EntityNotFoundException("Account not found");
+//        }
+//        account.setPassword(forgetPasswordDTO.getPassword());
+//        accountRepository.save(account);
+//        return account.getPassword();
+//    }
 
     public void forgotPassword(ForgetPasswordDTO forgetPasswordDTO) {
-        Account account = accountRepository.findByPhone(forgetPasswordDTO.getPhone());
+        Account account = null;
+        if (forgetPasswordDTO.getPhone() != null) {
+            account = accountRepository.findByPhone(forgetPasswordDTO.getPhone());
+        } else {
+            account = accountRepository.findByEmail(forgetPasswordDTO.getEmail().toLowerCase());
+        }
         if (account == null) {
             throw new EntityNotFoundException("Account not found");
         }
-        String newPassword = forgetPasswordDTO.getPassword();
 
         String token = UUID.randomUUID().toString();
         LocalDateTime expiration = LocalDateTime.now().plusMinutes(30);
@@ -120,16 +124,16 @@ public class AuthService {
         account.setResetTokenExpiration(expiration);
         accountRepository.save(account);
 
-        sendResetPasswordEmail(account.getEmail(), token, newPassword);
+        sendResetPasswordEmail(account.getEmail(), token);
     }
 
-    private RedirectView sendResetPasswordEmail(String email, String token, String newPassword) {
+    private void sendResetPasswordEmail(String email, String token) {
         try {
-            String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token + "&newPassword=" + newPassword;
+            String resetLink = "http://localhost:8080/api/auth/reset-password?token=" + token;
             String htmlContent = "<html>" +
                     "<head>" +
                     "<style>" +
-                    "body { font-family: Arial, sans-serif; background-color: #fafafa; margin: 0; padding: 0; }" + 
+                    "body { font-family: Arial, sans-serif; background-color: #fafafa; margin: 0; padding: 0; }" +
                     ".container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }" + // Added border
                     ".header { background-color: #4A90E2; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }" +
                     ".header h2 { margin: 0; }" +
@@ -163,12 +167,9 @@ public class AuthService {
             helper.setText(htmlContent, true);
 
             javaMailSender.send(message);
-
-            return new RedirectView("http://localhost:5173/mykoi");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return new RedirectView("http://localhost:5173/mykoi");
     }
 
     public void resetPassword(String token, String newPassword) {

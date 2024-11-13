@@ -10,12 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ForgetPasswordDTO {
-    @NotBlank
-    @NotNull
-    @Pattern(regexp = "^\\d{10}$", message = "phone number is invalid")
     private String phone;
-
-    @NotEmpty(message = "Password must not be empty")
-    @Pattern(regexp = "^\\S*$", message = "Password cannot contain spaces")
-    private String password;
+    private String email;
 }
