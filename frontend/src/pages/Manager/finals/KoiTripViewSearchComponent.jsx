@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, Search, Calendar, Plane, DollarSign, MapPin } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import api from '@/config/api'
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/trip'
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080/api/trip'
+// })
 
 export function KoiTripViewSearchComponent() {
   const [trips, setTrips] = useState([])
@@ -37,7 +38,7 @@ export function KoiTripViewSearchComponent() {
     setLoading(true)
     setError('')
     try {
-      const response = await api.get('/list')
+      const response = await api.get('api/trip/list')
       setTrips(response.data)
       setFilteredTrips(response.data)
       updateAvailableFilters(response.data)

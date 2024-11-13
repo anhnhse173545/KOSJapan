@@ -1,4 +1,4 @@
-import axios from '@/config/api'
+import api from '@/config/api'
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,19 +28,14 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async (token) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/me', {
+      const response = await api.get('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-      if (response.ok) {
-        const userData = await response.json()
-        setUser(userData)
-      } else {
-        throw new Error('Failed to fetch user data')
-      }
+      setUser(response.data)
     } catch (error) {
-      console.error('Error fetching user data:', error)
+      console.error('Error fetching user data:', error.response?.data || error.message)
       throw error
     }
   }
@@ -48,23 +43,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (phone, password) => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Login failed')
-      }
-
-      const data = await response.json()
-      localStorage.setItem('accessToken', data.accessToken)
-      localStorage.setItem('refreshToken', data.refreshToken)
-      await fetchUser(data.accessToken)
+      const response = await api.post('/api/auth/login', { phone, password })
+      const { accessToken, refreshToken, role } = response.data
       
-      switch (data.role) {
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
+      await fetchUser(accessToken)
+      
+      switch (role) {
         case 'Customer':
           navigate('/')
           break
@@ -84,7 +70,7 @@ export const AuthProvider = ({ children }) => {
           throw new Error('Invalid user role')
       }
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Login error:', error.response?.data || error.message)
       throw error
     } finally {
       setLoading(false)
@@ -105,32 +91,23 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = api.get('/api/auth/refresh-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Token refresh failed')
-      }
-
-      const data = await response.json()
-      localStorage.setItem('accessToken', data.accessToken)
-      localStorage.setItem('refreshToken', data.refreshToken)
-      return data.accessToken
+      const response = await api.post('/api/auth/refresh-token', { refreshToken })
+      const { accessToken, refreshToken: newRefreshToken } = response.data
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', newRefreshToken)
+      return accessToken
     } catch (error) {
-      console.error('Error refreshing token:', error)
+      console.error('Error refreshing token:', error.response?.data || error.message)
       logout()
       throw error
     }
   }
 
   return (
-    (<AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
-    </AuthContext.Provider>)
-  );
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => {
