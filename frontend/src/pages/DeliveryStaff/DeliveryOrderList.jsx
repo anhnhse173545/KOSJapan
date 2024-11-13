@@ -153,7 +153,7 @@ export default function DeliveryOrderListComponent() {
         },
         body: JSON.stringify({
           status: newStatus,
-          delivery_address: booking.deliveryAddress,
+          delivery_address: booking.fishOrders.deliveryAddress,
           arrived_date: new Date().toISOString(),
           paymentStatus: "Deposited",
         }),
