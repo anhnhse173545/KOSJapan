@@ -394,7 +394,7 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                           variant="outline"
                           size="sm"
                         >
-                          Delivering
+                          Order Delivering
                         </Button>
                         <Button 
                           onClick={() =>
@@ -403,7 +403,7 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                           variant="outline"
                           size="sm"
                         >
-                          In Transit
+                          Order In Transit
                         </Button>
                         <Button 
                           onClick={() => {
@@ -413,7 +413,7 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                           variant="outline"
                           size="sm"
                         >
-                          Completed
+                          Order Completed
                         </Button>
                       </div>
                     </TableCell>
