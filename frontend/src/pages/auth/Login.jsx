@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
@@ -18,58 +16,24 @@ export function LoginComponent() {
   const navigate = useNavigate()
   const { login } = useAuth()
 
-  const validateForm = () => {
-    if (phone.length !== 10 || !/^\d+$/.test(phone)) {
-      setError('Phone number must be exactly 10 digits.')
-      return false
-    }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long.')
-      return false
-    }
-    return true
-  }
-
-  const handleSubmit = async ( ) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
-
-    if (!validateForm()) {
-      return
-    }
-
     setLoading(true)
+    setError('')
 
     try {
       await login(phone, password)
       // The login function in AuthContext now handles redirection
     } catch (err) {
-      handleLoginError(err)
+      if (err instanceof Error) {
+        setError(
+          err.message || 'Failed to log in. Please check your credentials and try again.'
+        )
+      } else {
+        setError('An unexpected error occurred. Please try again.')
+      }
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleLoginError = ( ) => {
-    if (err instanceof Error) {
-      switch (err.message) {
-        case 'BAD_CREDENTIALS':
-          setError('Invalid phone number or password. Please try again.')
-          break
-        case 'ACCOUNT_DISABLED':
-          setError('Your account has been disabled. Please contact support.')
-          break
-        case 'ACCOUNT_LOCKED':
-          setError('Your account has been locked due to multiple failed attempts. Please try again later or reset your password.')
-          break
-        case 'NETWORK_ERROR':
-          setError('Network error. Please check your internet connection and try again.')
-          break
-        default:
-          setError('An unexpected error occurred. Please try again later.')
-      }
-    } else {
-      setError('An unexpected error occurred. Please try again later.')
     }
   }
 
@@ -96,13 +60,12 @@ export function LoginComponent() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="Enter your 10-digit phone number"
+                  placeholder="Enter your phone number"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  onChange={(e) => setPhone(e.target.value)}
                   required
                   disabled={loading}
                   className="pl-10"
-                  maxLength={10}
                 />
               </div>
             </div>
@@ -113,13 +76,12 @@ export function LoginComponent() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password (min 8 characters)"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loading}
                   className="pl-10"
-                  minLength={8}
                 />
               </div>
             </div>
