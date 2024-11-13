@@ -1,5 +1,6 @@
+'use client'
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Bar,
@@ -16,20 +17,29 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import "../../styles/Delivery/DeliveryStaffHome.css";
+import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2 } from 'lucide-react';
 
-const DeliveryStaffHome = () => {
+export default function DeliveryStaffHome() {
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [paymentStatusData, setPaymentStatusData] = useState([]);
   const [totalPriceData, setTotalPriceData] = useState([]);
   const [priceByFarmData, setPriceByFarmData] = useState([]);
-  const { deliveryStaffId } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user || user.role !== 'Delivery Staff') {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.get(
-          `http://localhost:8080/fish-order/delivery-staff/${deliveryStaffId}`
+          `http://localhost:8080/fish-order/delivery-staff/${user.id}`
         );
         const data = response.data;
 
@@ -78,24 +88,52 @@ const DeliveryStaffHome = () => {
             total,
           }))
         );
+
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch data. Please try again later.");
+        setIsLoading(false);
       }
     };
 
-    if (deliveryStaffId) {
-      fetchData();
-    }
-  }, [deliveryStaffId]);
+    fetchData();
+  }, [user]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (!user || user.role !== 'Delivery Staff') {
+    return (
+      <Alert>
+        <AlertTitle>Access Denied</AlertTitle>
+        <AlertDescription>You must be logged in as a delivery staff member to view this dashboard.</AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
-    <div className="dashboard-container">
-      <h1 className="dashboard-title">Delivery Staff Dashboard</h1>
-      <div className="chart-row">
-        <div className="chart-container">
-          <h3>Order Status Distribution</h3>
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold">Delivery Staff Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Order Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={orderStatusData}>
               <XAxis dataKey="status" />
@@ -108,8 +146,8 @@ const DeliveryStaffHome = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-container">
-          <h3>Payment Status Distribution</h3>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Payment Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -134,11 +172,9 @@ const DeliveryStaffHome = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
 
-      <div className="chart-row">
-        <div className="chart-container">
-          <h3>Total Price Over Time</h3>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Total Price Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={totalPriceData}>
               <XAxis dataKey="bookingId" />
@@ -151,8 +187,8 @@ const DeliveryStaffHome = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-container">
-          <h3>Total Price by Farm</h3>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-xl font-semibold mb-4">Total Price by Farm</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={priceByFarmData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -167,6 +203,4 @@ const DeliveryStaffHome = () => {
       </div>
     </div>
   );
-};
-
-export default DeliveryStaffHome;
+}

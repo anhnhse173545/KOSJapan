@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function KoiDetailPage() {
   const { id } = useParams();
@@ -14,13 +15,14 @@ export default function KoiDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(''); // New state for notification
+  const [user] = useAuth;
  
 
   useEffect(() => {
     const fetchKoi = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/${id}`);
+        const response = await axios.get(`http://localhost:8080/fish-order/customer/${user.id}`);
         const order = response.data.find(order => order.id === id);
         if (order) {
           setKoi(order);
@@ -28,7 +30,7 @@ export default function KoiDetailPage() {
           setError('Koi order not found');
         }
       } catch (err) {
-        setError('Koi order not found');
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -197,13 +199,12 @@ export default function KoiDetailPage() {
   )}
 
   {/* Back to My Koi link */}
-  <Link to="/mykoi" className="block text-center">
-    <Button  >
-      <ChevronLeft className="w-4 h-4 mr-2 " />
-      
-      Back to My Koi
-    </Button>
-  </Link>
+  <Link to={`/`} className="block text-center">
+  <Button>
+    <ChevronLeft className="w-4 h-4 mr-2" />
+    Back to My Koi
+  </Button>
+</Link>
 </div>
          
         </div>
