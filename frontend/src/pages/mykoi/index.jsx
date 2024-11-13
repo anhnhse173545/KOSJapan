@@ -65,7 +65,7 @@ function KoiPage() {
             </Link>
           </li>
           <li>
-            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === `/mykoi/${id}` ? 'active' : ''}`}>
               My Koi
             </Link>
           </li>
@@ -113,7 +113,7 @@ function KoiPage() {
       <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
       <button
         className="details-button"
-        onClick={() => navigate(`/mykoi/${koi.id}`)}
+        onClick={() => navigate(`/mykoidetail/${koi.id}`)}
       >
         See Details
       </button>
