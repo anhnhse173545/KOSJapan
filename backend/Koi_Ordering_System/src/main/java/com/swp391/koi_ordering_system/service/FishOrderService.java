@@ -125,10 +125,17 @@ public class FishOrderService {
         }
         FishOrder updateOrder = findOrder.get();
 
-        updateOrder.setStatus(dto.getStatus());
-        updateOrder.setPaymentStatus(dto.getPaymentStatus());
-        updateOrder.setDeliveryAddress(dto.getDelivery_address());
-        updateOrder.setArrivedDate(dto.getArrived_date());
+        if (dto.getStatus() != null) {
+            updateOrder.setStatus(dto.getStatus());
+        }
+        if (dto.getPaymentStatus() != null) {
+            updateOrder.setPaymentStatus(dto.getPaymentStatus());
+        }
+        if (dto.getDelivery_address() != null) {
+            updateOrder.setDeliveryAddress(dto.getDelivery_address());
+        }
+        if (dto.getArrived_date() != null)
+            updateOrder.setArrivedDate(dto.getArrived_date());
 
         return OrderRepository.save(updateOrder);
     }
