@@ -113,7 +113,7 @@ function KoiPage() {
       <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
       <button
         className="details-button"
-        onClick={() => navigate(`/mykoidetail/${koi.id}`)}
+        onClick={() => navigate(`/mykoidetail/${id}`, { state: { koiId: koi.id } })}
       >
         See Details
       </button>

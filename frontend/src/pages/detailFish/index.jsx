@@ -3,10 +3,10 @@ import axios from 'axios';
 import { ChevronLeft, Loader2, CreditCard } from 'lucide-react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
+import { useLocation} from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from '@/contexts/AuthContext';
+
 
 export default function KoiDetailPage() {
   const { id } = useParams();
@@ -15,29 +15,34 @@ export default function KoiDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(''); // New state for notification
-  const [user] = useAuth;
+  const location = useLocation();
+  const koiId = location.state?.koiId;
  
 
   useEffect(() => {
     const fetchKoi = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/fish-order/customer/${user.id}`);
-        const order = response.data.find(order => order.id === id);
+        const response = await axios.get(`http://localhost:8080/fish-order/customer/${id}`);
+        
+        // Giả sử API trả về một đối tượng đơn hàng thay vì mảng, chỉ cần gán trực tiếp
+        const order = response.data.find(order => order.id === koiId);
+        
         if (order) {
-          setKoi(order);
+          setKoi(order); // Đặt đơn hàng nếu có
         } else {
-          setError('Koi order not found');
+          setError('Koi order not found'); // Nếu không có đơn hàng
         }
       } catch (err) {
-        setError('Failed to load data');
+        setError('Failed to load data'); // Xử lý lỗi nếu có
       } finally {
-        setLoading(false);
+        setLoading(false); // Đảm bảo luôn tắt loading
       }
     };
-
+  
     fetchKoi();
   }, [id]);
+  
 
   const handleReject = async () => {
     try {
