@@ -10,37 +10,31 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Button, Layout, Menu, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
 const ConsultingStaff = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [userName, setUserName] = useState("Loading..."); // State to hold fetched user name
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-  const navigate = useNavigate(); // Use navigate hook
+  const [userName, setUserName] = useState("Loading...");
+  const { userId } = useParams(); // Capture userId from URL
 
   useEffect(() => {
-    // Fetch user details from the API when the component mounts
     const fetchUserName = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/accounts/AC0004/detail"
+          `http://localhost:8080/accounts/${userId}/detail`
         );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
-        setUserName(data.name); // Assuming the API response has a `name` field
+        setUserName(data.name);
       } catch (error) {
         console.error("Failed to fetch user details:", error);
         setUserName("Error fetching name");
       }
     };
+    if (userId) fetchUserName();
+  }, [userId]);
 
-    fetchUserName();
-  }, []);
   const handleLogout = () => {
     navigate("/login"); // Redirect to the login page
   };

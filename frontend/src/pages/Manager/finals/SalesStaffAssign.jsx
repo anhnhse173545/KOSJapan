@@ -194,6 +194,7 @@ export function SalesStaffManagementComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Booking Id</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Request Summary</TableHead>
                     <TableHead>Date</TableHead>
@@ -205,6 +206,7 @@ export function SalesStaffManagementComponent() {
                 <TableBody>
                   {filteredBookings.map((booking) => (
                     <TableRow key={booking.id}>
+                      <TableCell className="font-medium">{booking.id}</TableCell>
                       <TableCell className="font-medium">{booking.customer.name}</TableCell>
                       <TableCell>
                         <div className="flex items-center">

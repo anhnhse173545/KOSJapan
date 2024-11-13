@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, message, Select, Space } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Consulting/TourList.css";
 
@@ -10,16 +10,17 @@ const TourList = () => {
   const [tourData, setTourData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { consultingStaffId } = useParams(); // Get the consultingStaffId from URL params
 
   useEffect(() => {
     fetchTourData();
-  }, []);
+  }, [consultingStaffId]); // Add consultingStaffId as a dependency
 
   const fetchTourData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/api/booking/consulting-staff/AC0004"
+        `http://localhost:8080/api/booking/consulting-staff/${consultingStaffId}`
       );
       const formattedData = response.data.map((item, index) => ({
         key: index + 1,
@@ -101,13 +102,13 @@ const TourList = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      sorter: (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      sorter: (a, b) => new Date(a.endDate) - new Date(b.endDate),
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
     },
     {
       title: "Booking Status",

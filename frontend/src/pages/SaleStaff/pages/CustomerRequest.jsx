@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useAuth } from "@/contexts/AuthContext"
 
 const PAGE_SIZE = 10
 const API_BASE_URL = "http://localhost:8080/api"
@@ -25,6 +26,7 @@ const tripStatusOptions = ["Pending", "Approved", "Completed", "On-going", "Redo
 const bookingStatusOptions = ["Requested", "Pending Quote", "Approved Quote"]
 
 export default function CustomerRequestManagement() {
+  const { user } = useAuth() // Get user from auth context
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -43,7 +45,7 @@ export default function CustomerRequestManagement() {
   const fetchBookings = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/booking/sale-staff/AC0002?timestamp=${new Date().getTime()}`)
+      const response = await fetch(`${API_BASE_URL}/booking/sale-staff/${user.id}?timestamp=${new Date().getTime()}`)
       if (!response.ok) throw new Error("Network response was not ok")
       const data = await response.json()
       setBookings(data)

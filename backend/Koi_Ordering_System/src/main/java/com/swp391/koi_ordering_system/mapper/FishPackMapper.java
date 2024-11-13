@@ -14,9 +14,10 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface FishPackMapper {
 
-    @Mapping(source = "medias", target = "mediaUrls", qualifiedByName = "mediaToUrls")
+    @Mapping(source = "image.url", target = "mediaUrl")
     FishPackDTO toDTO(FishPack fishPack);
 
+    @Mapping(source = "mediaUrl", target = "image.url")
     FishPack toEntity(FishPackDTO fishPackDTO);
 
     @Named("mediaToUrls")

@@ -44,13 +44,8 @@ public class Fish {
 //    @JoinColumn(name = "fish_pack_id", nullable = true)
 //    private FishPack fishPack;
 
-    @JsonManagedReference(value = "fish-media")
-    @ManyToMany
-    @JoinTable(
-            name = "fish_medias",
-            joinColumns = @JoinColumn(name = "fish_id"),
-            inverseJoinColumns = @JoinColumn(name = "media_id")
-    )
-    private Set<Media> medias;
+    @ManyToOne
+    @JoinColumn(name = "media_id")
+    private Media image;
 
 }

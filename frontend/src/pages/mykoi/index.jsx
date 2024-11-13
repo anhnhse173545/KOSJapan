@@ -9,12 +9,13 @@ function KoiPage() {
   const [koiPayments, setKoiPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id } = useParams(); // Lấy customerId từ URL
 
   // Gọi API để lấy dữ liệu koi payments
   useEffect(() => {
     const fetchKoiPayments = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/fish-order/customer/AC0007`);
+        const response = await fetch(`http://localhost:8080/fish-order/customer/${id}`);
         const data = await response.json();
         if (Array.isArray(data)) {
           setKoiPayments(data);
@@ -54,23 +55,23 @@ function KoiPage() {
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
+            <Link to={`/userDetail/${id}`} className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>
           <li>
-            <Link to="/payment" className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
+            <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
               My Trip
             </Link>
           </li>
           <li>
-            <Link to="/mykoi" className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
               My Koi
             </Link>
           </li>
 
           <li>
-            <Link to="/history" className={`sidebar-link ${location.pathname === '/history' ? 'active' : ''}`}>
+            <Link to={`/history/${id}`} className={`sidebar-link ${location.pathname === `/history` ? 'active' : ''}`}>
               Order history
             </Link>
           </li>
@@ -80,7 +81,7 @@ function KoiPage() {
       {/* Phần hiển thị thanh tabs để lọc */}
       <div className="payment-section">
         <div className="status-tabs">
-          {['All', 'Pending', 'Deposited', 'In Transit', 'Delivering', 'Paid Full', 'Rejected'].map((status) => (
+          {['All', 'Pending', 'Deposited', 'In Transit', 'Delivering', 'Paid Full', 'Canceled'].map((status) => (
             <button
               key={status}
               className={`tab ${selectedStatus === status ? 'active' : ''}`}
@@ -97,7 +98,7 @@ function KoiPage() {
           {filteredPayments.map((koi) => (
             <div key={koi.id} className="payment-item">
               <img
-                src={koi.img || 'https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg'}
+                src={koi.img}
                 alt={koi.koi}
                 className="koi-image"
               />
@@ -108,13 +109,10 @@ function KoiPage() {
                 {koi.size && <p>Size: {koi.size} cm</p>}
                 <p className="Id Trip">Koi ID: {koi.id}</p>
                 <p className="Id Farm">Farm ID: {koi.farmId}</p>
+                <p className="Id Farm">Status: {koi.status}</p>
+                <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
 
-                {/* Hiển thị paymentStatus nếu là "Deposited" hoặc "Paid Full", nếu không thì hiển thị status */}
-                <p className="status">
-                  Status: {koi.paymentStatus === 'Deposited' || koi.paymentStatus === 'Paid Full'
-                    ? koi.paymentStatus
-                    : koi.status}
-                </p>
+             
 
                 <button
                   className="details-button"

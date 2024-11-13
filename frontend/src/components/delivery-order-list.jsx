@@ -33,6 +33,7 @@ export function DeliveryOrderList() {
   const [error, setError] = useState(null);
   const [showTrackingCard, setShowTrackingCard] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStaffDetails = async () => {
@@ -178,6 +179,7 @@ export function DeliveryOrderList() {
   }
 
   return (
+    
     (<div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">
         Order List for {staff?.name}
@@ -185,7 +187,9 @@ export function DeliveryOrderList() {
       {bookings.length === 0 ? (
         <p>No bookings found for this delivery staff.</p>
       ) : (
+        
         <div className="space-y-8">
+           
           {bookings.map((booking) => (
             <div key={booking.id} className="bg-white shadow rounded-lg p-6">
               <div className="flex justify-between items-center mb-4">
@@ -231,9 +235,11 @@ export function DeliveryOrderList() {
                   {booking.customer.address || "Not provided"}
                 </p>
                 <p>
+                  {/** 
                   <strong>Trip:</strong> {booking.trip.departureAirport} (
                   {new Date(booking.trip.startDate).toLocaleDateString()} -{" "}
                   {new Date(booking.trip.endDate).toLocaleDateString()})
+                  */}
                 </p>
               </div>
               <div className="overflow-x-auto">
@@ -245,7 +251,9 @@ export function DeliveryOrderList() {
                       <TableHead>Fish Order Status</TableHead>
                       <TableHead>Payment Status</TableHead>
                       <TableHead>Total</TableHead>
+                     
                     </TableRow>
+                    
                   </TableHeader>
                   <TableBody>
                     {booking.fishOrders.map((order) => (
@@ -286,6 +294,8 @@ export function DeliveryOrderList() {
                           </Badge>
                         </TableCell>
                         <TableCell>{formatTotal(order.total)}</TableCell>
+                       
+                        
                       </TableRow>
                     ))}
                   </TableBody>
@@ -303,6 +313,7 @@ export function DeliveryOrderList() {
           <OrderTrackingCard order={selectedOrder} onClose={() => setShowTrackingCard(false)} />
         </div>
       )}
+      
     </div>)
   );
 }

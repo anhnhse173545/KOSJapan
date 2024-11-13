@@ -1,37 +1,42 @@
-'use client'
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, CheckCircle2, XCircle, Calendar, User, Phone, Mail, FileText } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { motion } from "framer-motion";
 
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AlertCircle, CheckCircle2, XCircle, Calendar, User, Phone, Mail, FileText } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { motion } from "framer-motion"
-import { useNavigate } from 'react-router-dom'
+export default function BookingHistoryPage() {
+  const { id } = useParams(); // Lấy customerId từ URL
+  const [bookingHistory, setBookingHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-export default function BookingHistoryPage({ customerId = 'AC0007' }) {
-  const [bookingHistory, setBookingHistory] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const navigate = useNavigate(); // For navigation
   useEffect(() => {
     const fetchBookingHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/booking/customer/AC0007`)
+        const response = await axios.get(`http://localhost:8080/api/booking/customer/${id}`);
         const filteredBookings = response.data.filter(booking =>
           booking.status === 'Completed' || booking.status === 'Canceled'
-        )
-        setBookingHistory(filteredBookings)
+        );
+        setBookingHistory(filteredBookings);
       } catch (err) {
-        setError('Lỗi khi tải lịch sử đặt chỗ.')
+        setError('Lỗi khi tải lịch sử đặt chỗ.');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchBookingHistory()
-  }, [customerId])
+    if (id) { // Kiểm tra nếu customerId hợp lệ
+      fetchBookingHistory();
+    } else {
+      setError("Không tìm thấy ID khách hàng.");
+      setLoading(false);
+    }
+  }, [id]);
 
   if (loading) {
     return (
@@ -43,7 +48,7 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -53,30 +58,38 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
         <AlertTitle className="text-lg font-semibold">Lỗi</AlertTitle>
         <AlertDescription className="text-sm">{error}</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
-    <div className="space-y-8 p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="space-y-8 p-6 min-h-screen" style={{
+      backgroundImage: 'url("https://img.freepik.com/free-photo/beautiful-exotic-colorful-fish_23-2150737625.jpg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
       <motion.h1 
-        className="text-4xl font-bold tracking-tight text-gray-900"
+        className="text-4xl font-bold tracking-tight text-white"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Customer booking history
+        Customer Booking History
       </motion.h1>
+      
       {bookingHistory.length === 0 ? (
         <Alert className="bg-white/50 backdrop-blur-sm border-gray-200">
           <AlertCircle className="h-5 w-5 text-blue-500" />
-          <AlertTitle className="text-lg font-semibold text-gray-900">Notification</AlertTitle>
+          <AlertTitle className="text-lg font-semibold text-gray-900">Thông báo</AlertTitle>
           <AlertDescription className="text-gray-600">
-          There is no booking history with status completed or canceled.
+            Không có lịch sử đặt chỗ với trạng thái đã hoàn thành hoặc đã hủy.
           </AlertDescription>
         </Alert>
       ) : (
         <motion.div 
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full max-w-5xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, staggerChildren: 0.1 }}
@@ -88,7 +101,7 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="overflow-hidden bg-white/70 backdrop-blur-sm border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="overflow-hidden bg-white/70 backdrop-blur-lg border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="bg-gray-50 border-b border-gray-200">
                   <CardTitle className="flex items-center justify-between text-lg">
                     <span className="font-semibold text-gray-700">Booking Id: {booking.id}</span>
@@ -111,27 +124,27 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
                   <dl className="grid gap-3 text-sm">
                     <div className="flex items-center">
                       <User className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Customer's Name:</dt>
-                      <dd className="text-gray-900">{booking.customer.name}</dd>
+                      <dt className="font-medium text-gray-600 mr-2">Tên khách hàng:</dt>
+                      <dd className="text-gray-900">{booking.customer?.name || 'N/A'}</dd>
                     </div>
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-2 text-gray-500" />
                       <dt className="font-medium text-gray-600 mr-2">Email:</dt>
-                      <dd className="text-gray-900">{booking.customer.email}</dd>
+                      <dd className="text-gray-900">{booking.customer?.email || 'N/A'}</dd>
                     </div>
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Phone:</dt>
-                      <dd className="text-gray-900">{booking.customer.phone}</dd>
+                      <dt className="font-medium text-gray-600 mr-2">Điện thoại:</dt>
+                      <dd className="text-gray-900">{booking.customer?.phone || 'N/A'}</dd>
                     </div>
                     <div className="flex items-start">
                       <FileText className="h-4 w-4 mr-2 text-gray-500 mt-1" />
-                      <dt className="font-medium text-gray-600 mr-2">Description:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Mô tả:</dt>
                       <dd className="text-gray-900">{booking.description}</dd>
                     </div>
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      <dt className="font-medium text-gray-600 mr-2">Created At:</dt>
+                      <dt className="font-medium text-gray-600 mr-2">Ngày tạo:</dt>
                       <dd className="text-gray-900">{new Date(booking.createAt).toLocaleString('vi-VN', { 
                         year: 'numeric', 
                         month: 'long', 
@@ -147,7 +160,10 @@ export default function BookingHistoryPage({ customerId = 'AC0007' }) {
           ))}
         </motion.div>
       )}
-      <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+      
+      <button onClick={() => navigate(-1)} className="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow-lg hover:bg-blue-700 transition duration-300">
+        Trở về
+      </button>
     </div>
-  )
+  );
 }

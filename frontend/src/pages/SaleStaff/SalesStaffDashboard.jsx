@@ -24,24 +24,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function SalesStaffDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true)
-  const [staff, setStaff] = useState(null)
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   const toggleNav = () => setIsNavExpanded(!isNavExpanded)
 
   const fetchStaffDetails = async () => {
     try {
-      // Assuming the sales staff has a different account ID, adjust as needed
-      const response = await fetch("http://localhost:8080/accounts/AC0002/detail")
+      const response = await fetch(`http://localhost:8080/accounts/${user.id}/detail`)
       if (!response.ok) throw new Error('Failed to fetch staff details')
       const data = await response.json()
       console.log("Staff details:", data)
-      setStaff(data)
       setIsLoading(false)
     } catch (error) {
       console.error("Failed to fetch staff details:", error)
@@ -51,24 +50,28 @@ export default function SalesStaffDashboard() {
   }
 
   useEffect(() => {
-    fetchStaffDetails()
-  }, [])
+    if (user) {
+      fetchStaffDetails()
+    }
+  }, [user])
 
   const navItems = [
     { name: 'Customer Request', icon: <BarChart className="h-5 w-5" />, path: '/ss-dashboard/customer-request' },
-    { name: 'Create Trip', icon: <FileText className="h-5 w-5" />, path: '/ss-dashboard/create-trip/:bookingId' },
-    { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans/:bookingId' },
-    
-    { name: 'Quotes', icon: <FileText className="h-5 w-5" />, path: '/sales-staff/quotes' },
-    { name: 'Orders', icon: <Briefcase className="h-5 w-5" />, path: '/sales-staff/orders' },
-    { name: 'Commission', icon: <DollarSign className="h-5 w-5" />, path: '/sales-staff/commission' },
-    { name: 'Schedule', icon: <Calendar className="h-5 w-5" />, path: '/sales-staff/schedule' },
+    // { name: 'Create Trip', icon: <FileText className="h-5 w-5" />, path: '/ss-dashboard/create-trip/:bookingId' },
+    // { name: 'Customer List', icon: <Users className="h-5 w-5" />, path: '/ss-dashboard/view-tripplans/:bookingId' },
+    // { name: 'Quotes', icon: <FileText className="h-5 w-5" />, path: '/sales-staff/quotes' },
+    // { name: 'Orders', icon: <Briefcase className="h-5 w-5" />, path: '/sales-staff/orders' },
+    // { name: 'Commission', icon: <DollarSign className="h-5 w-5" />, path: '/sales-staff/commission' },
+    // { name: 'Schedule', icon: <Calendar className="h-5 w-5" />, path: '/sales-staff/schedule' },
   ]
 
-  const handleLogout = () => {
-    // Implement logout logic here
-    console.log("Logging out...")
-    navigate('/login') // Redirect to login page after logout
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error("Logout failed:", error)
+    }
   }
 
   return (
@@ -114,16 +117,16 @@ export default function SalesStaffDashboard() {
             <div className="flex items-center justify-center">
               <span className="text-sm text-red-500 dark:text-red-400">{error}</span>
             </div>
-          ) : staff ? (
+          ) : user ? (
             isNavExpanded ? (
               <div className="flex items-center space-x-3">
                 <Avatar>
-                  <AvatarImage src={staff.avatar || "/placeholder.svg?height=32&width=32"} alt={staff.name} />
-                  <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  <AvatarImage src={user.mediaUrl || "/placeholder.svg?height=32&width=32"} alt={user.name} />
+                  <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{staff.name}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{staff.role}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user.name}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{user.role}</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={handleLogout} className="ml-auto">
                   <LogOut className="h-5 w-5" />
@@ -135,15 +138,15 @@ export default function SalesStaffDashboard() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="w-full h-auto py-2">
                     <Avatar>
-                      <AvatarImage src={staff.avatar || "/placeholder.svg?height=32&width=32"} alt={staff.name} />
-                      <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      <AvatarImage src={user.mediaUrl || "/placeholder.svg?height=32&width=32"} alt={user.name} />
+                      <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Open user menu</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{staff.name}</DropdownMenuLabel>
-                  <DropdownMenuItem>{staff.role}</DropdownMenuItem>
+                  <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                  <DropdownMenuItem>{user.role}</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

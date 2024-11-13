@@ -17,5 +17,5 @@ public class FishDTO {
     private Double length;
     private Double weight;
     private String description;
-    private List<String> mediaUrls;
+    private String mediaUrl;
 }

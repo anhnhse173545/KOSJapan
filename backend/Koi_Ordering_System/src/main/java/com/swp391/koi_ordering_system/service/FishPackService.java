@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.model.FishPack;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.FishPackRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class FishPackService {
         return mapToDTO(fishPack);
     }
 
-    public FishPack createFishPack(CreateFishPackDTO fishPackDTO) {
+    public FishPack createFishPack(@Valid CreateFishPackDTO fishPackDTO) {
             FishPack fishPack = new FishPack();
             Optional<Variety> findVar = varietyRepository.findById(fishPackDTO.getVarietyId());
             if (findVar.isEmpty()) {
@@ -56,7 +57,7 @@ public class FishPackService {
             return fishPackRepository.save(fishPack);
     }
 
-    public FishPack updateFishPack(String fishPackId, CreateFishPackDTO fishPackDTO){
+    public FishPack updateFishPack(String fishPackId, @Valid CreateFishPackDTO fishPackDTO){
         Optional<FishPack> fishPack = fishPackRepository.findById(fishPackId);
         if(fishPack.isEmpty()){
             throw new RuntimeException("Fish Pack not found");

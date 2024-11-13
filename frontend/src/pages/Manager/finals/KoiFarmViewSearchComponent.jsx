@@ -5,12 +5,21 @@ import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Search, Phone, MapPin } from "lucide-react"
+import { Loader2, Search, Phone, MapPin, Fish, Filter, X } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api/farm'
@@ -26,6 +35,7 @@ export function KoiFarmViewSearchComponent() {
   const [sortOrder, setSortOrder] = useState('asc')
   const [selectedVarieties, setSelectedVarieties] = useState([])
   const [allVarieties, setAllVarieties] = useState([])
+  const [selectedFarm, setSelectedFarm] = useState(null)
 
   useEffect(() => {
     fetchFarms()
@@ -52,7 +62,6 @@ export function KoiFarmViewSearchComponent() {
     try {
       let result = [...farms];
   
-      // Apply search filter
       if (searchTerm) {
         result = result.filter((farm) =>
           (farm.name && farm.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -61,14 +70,12 @@ export function KoiFarmViewSearchComponent() {
         );
       }
   
-      // Apply variety filter
       if (selectedVarieties.length > 0) {
         result = result.filter((farm) =>
           farm.varieties.some((variety) => selectedVarieties.includes(variety.name))
         );
       }
   
-      // Apply sorting
       result.sort((a, b) => {
         if (a[sortBy] < b[sortBy]) return sortOrder === 'asc' ? -1 : 1;
         if (a[sortBy] > b[sortBy]) return sortOrder === 'asc' ? 1 : -1;
@@ -100,141 +107,206 @@ export function KoiFarmViewSearchComponent() {
   }, [searchTerm, sortBy, sortOrder, selectedVarieties])
 
   return (
-    <div className="container mx-auto p-4 flex flex-col md:flex-row gap-6">
-      {/* Left sidebar for filters */}
-      <div className="w-full md:w-1/4 space-y-6">
-        <Card>
+    <div className="container mx-auto p-4 space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <h1 className="text-3xl font-bold">Koi Farms</h1>
+        <form onSubmit={handleSearch} className="flex w-full md:w-auto">
+          <Input
+            type="search"
+            placeholder="Search farms..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="rounded-r-none"
+          />
+          <Button type="submit" className="rounded-l-none">
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
+        </form>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left sidebar for filters */}
+        <Card className="w-full lg:w-1/4">
           <CardHeader>
-            <CardTitle>Filters</CardTitle>
+            <CardTitle className="flex items-center">
+              <Filter className="mr-2" />
+              Filters
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSearch} className="space-y-4">
+            <form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="search">Search</Label>
-                <Input
-                  id="search"
-                  type="search"
-                  placeholder="Search farms..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <Label htmlFor="sort">Sort by</Label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger id="sort">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="address">Address</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-             <div className="space-y-2">
-  <Label htmlFor="sort" className="text-black !important">Sort by</Label>
-  <Select value={sortBy} onValueChange={setSortBy}>
-    <SelectTrigger id="sort" className="text-black !important">
-      <SelectValue placeholder="Sort by" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="name" className="text-black !important">Name</SelectItem>
-      <SelectItem value="address" className="text-black !important">Address</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
-
-<div className="space-y-2">
-  <Label htmlFor="order" className="text-black !important">Sort order</Label>
-  <Select value={sortOrder} onValueChange={setSortOrder}>
-    <SelectTrigger id="order" className="text-black !important">
-      <SelectValue placeholder="Sort order" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="asc" className="text-black !important">Ascending</SelectItem>
-      <SelectItem value="desc" className="text-black !important">Descending</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+              <div className="space-y-2">
+                <Label htmlFor="order">Sort order</Label>
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger id="order">
+                    <SelectValue placeholder="Sort order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                    <SelectItem value="desc">Descending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>Koi Varieties</Label>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {allVarieties.map((variety) => (
-                    <div key={variety} className="flex items-center">
-                      <Checkbox
-                        id={variety}
-                        checked={selectedVarieties.includes(variety)}
-                        onCheckedChange={(checked) => {
-                          setSelectedVarieties(
-                            checked
-                              ? [...selectedVarieties, variety]
-                              : selectedVarieties.filter((v) => v !== variety)
-                          )
-                        }}
-                      />
-                      <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none">
-                        {variety}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                  <div className="space-y-2">
+                    {allVarieties.map((variety) => (
+                      <div key={variety} className="flex items-center">
+                        <Checkbox
+                          id={variety}
+                          checked={selectedVarieties.includes(variety)}
+                          onCheckedChange={(checked) => {
+                            setSelectedVarieties(
+                              checked
+                                ? [...selectedVarieties, variety]
+                                : selectedVarieties.filter((v) => v !== variety)
+                            )
+                          }}
+                        />
+                        <label htmlFor={variety} className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          {variety}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
-              <Button type="submit" className="w-full">
-                <Search className="h-4 w-4 mr-2" />
-                Apply Filters
-              </Button>
-              <Button style={{ color: 'black' }} type="button" variant="outline" onClick={resetFilters} className="w-full">
+              <Button onClick={resetFilters} variant="outline" className="w-full">
                 Reset Filters
               </Button>
             </form>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Main content area */}
-      <div className="w-full md:w-3/4 space-y-6">
-        <h1 className="text-3xl font-bold">Koi Farms</h1>
-        {error && (
-          <Alert variant="destructive">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        ) : filteredFarms.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredFarms.map((farm) => (
-              <Card key={farm.id} className="flex flex-col">
-                <CardHeader>
-                  <CardTitle className="text-lg">{farm.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p className="text-sm text-muted-foreground mb-2">{farm.description}</p>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <p>{farm.address}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <p>{farm.phoneNumber}</p>
-                    </div>
+        {/* Main content area */}
+        <div className="w-full lg:w-3/4 space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {loading ? (
+            <Card>
+              <CardContent className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </CardContent>
+            </Card>
+          ) : filteredFarms.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredFarms.map((farm) => (
+                <Card key={farm.id} className="overflow-hidden">
+                  <div className="aspect-video relative">
+                    {farm.mediaUrl ? (
+                      <img
+                        src={farm.mediaUrl}
+                        alt={`${farm.name} farm`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-500 text-lg font-semibold">
+                        <Fish className="w-12 h-12 mr-2" />
+                        {farm.name}
+                      </div>
+                    )}
                   </div>
-                  <div className="mt-4">
-                    <p className="text-sm font-semibold mb-2">Koi Varieties:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {farm.varieties.slice(0, 3).map((variety) => (
-                        <Badge key={variety.id} variant="secondary">
-                          {variety.name}
-                        </Badge>
-                      ))}
-                      {farm.varieties.length > 3 && (
-                        <Badge variant="outline">+{farm.varieties.length - 3} more</Badge>
-                      )}
+                  <CardHeader>
+                    <CardTitle>{farm.name}</CardTitle>
+                    <CardDescription>{farm.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <p>{farm.address}</p>
+                      </div>
+                      <div className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <p>{farm.phoneNumber}</p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="text-center py-6">
-              <p className="text-muted-foreground">No farms found.</p>
-            </CardContent>
-          </Card>
-        )}
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold mb-2">Koi Varieties:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {farm.varieties.slice(0, 3).map((variety) => (
+                          <Badge key={variety.id} variant="secondary">
+                            {variety.name}
+                          </Badge>
+                        ))}
+                        {farm.varieties.length > 3 && (
+                          <Badge variant="outline">+{farm.varieties.length - 3} more</Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button onClick={() => setSelectedFarm(farm)} className="w-full">View Details</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>{selectedFarm?.name}</DialogTitle>
+                          <DialogDescription>{selectedFarm?.description}</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="address" className="text-right">
+                              Address
+                            </Label>
+                            <div id="address" className="col-span-3">
+                              {selectedFarm?.address}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="phone" className="text-right">
+                              Phone
+                            </Label>
+                            <div id="phone" className="col-span-3">
+                              {selectedFarm?.phoneNumber}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="varieties" className="text-right">
+                              Varieties
+                            </Label>
+                            <div id="varieties" className="col-span-3">
+                              {selectedFarm?.varieties.map((variety) => (
+                                <Badge key={variety.id} variant="secondary" className="mr-1 mb-1">
+                                  {variety.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-6">
+                <p className="text-muted-foreground">No farms found.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   )

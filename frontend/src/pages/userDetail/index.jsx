@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ngu.css'; // Import CSS file
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const UserDetailPage = ({ accountId }) => {
+const UserDetailPage = () => {
+  const { id } = useParams(); // Lấy accountId từ URL
   const [userDetails, setUserDetails] = useState(null); // Store fetched user details
   const [formData, setFormData] = useState({}); // Store form data for editing
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error message state
   const [isEditing, setIsEditing] = useState(false); // Edit mode toggle
+  const [selectedImage, setSelectedImage] = useState(null); // Store selected image for upload
   const navigate = useNavigate(); // For navigation
 
   // Fetch user details from API
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/accounts/AC0007/detail`);
+        const response = await axios.get(`http://localhost:8080/accounts/${id}/detail`);
         setUserDetails(response.data);
         setFormData(response.data); // Initialize formData with fetched data
       } catch (err) {
@@ -26,7 +28,7 @@ const UserDetailPage = ({ accountId }) => {
     };
 
     fetchUserDetails();
-  }, [accountId]);
+  }, [id]);
 
   // Handle form input change
   const handleInputChange = (e) => {
@@ -42,22 +44,47 @@ const UserDetailPage = ({ accountId }) => {
   // Save changes and update user details
   const handleSaveChanges = async () => {
     try {
-        // Giả sử bạn không cần phải gửi các trường như password, phone, role
-        const { password, phone, role, ...dataToUpdate } = formData; 
-        const response = await axios.put(`http://localhost:8080/accounts/AC0007/update`, dataToUpdate);
+      const { password, phone, role, ...dataToUpdate } = formData;
+      const response = await axios.put(`http://localhost:8080/accounts/${id}/update`, dataToUpdate);
 
-        // Kiểm tra phản hồi từ server
-        if (response.status === 200) {
-            // Cập nhật userDetails và tắt chế độ chỉnh sửa
-            setUserDetails(formData);
-            setIsEditing(false);
-        }
+      if (response.status === 200) {
+        setUserDetails(formData);
+        setIsEditing(false);
+      }
     } catch (err) {
-        setError('Error updating user details.'); // Hiển thị lỗi nếu có
-        console.error(err); // Ghi lại lỗi để kiểm tra
+      setError('Error updating user details.');
+      console.error(err);
     }
-};
+  };
 
+  // Handle image selection
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+  };
+
+  // Handle image upload
+  const handleImageUpload = async () => {
+    if (!selectedImage) return;
+
+    const formData = new FormData();
+    formData.append('image', selectedImage);
+
+    try {
+      const response = await axios.post(`http://localhost:8080/media/accounts/${id}/upload/image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        setUserDetails({ ...userDetails, profile_image: response.data.imageUrl });
+        setSelectedImage(null);
+      }
+    } catch (err) {
+      setError('Error uploading image.');
+      console.error(err);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -107,6 +134,12 @@ const UserDetailPage = ({ accountId }) => {
               </div>
             )}
           </div>
+          {isEditing && (
+            <div>
+              <input type="file" onChange={handleImageChange} />
+              <button onClick={handleImageUpload}>Upload Image</button>
+            </div>
+          )}
           <button className="back-button" onClick={() => navigate(-1)}>Back</button>
           <button className="back-button" onClick={handleEditToggle}>Edit Profile</button>
         </div>

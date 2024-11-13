@@ -168,6 +168,7 @@ export function DeliveryStaffAssignment() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Booking Id</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Trip Summary</TableHead>
                     <TableHead>Date</TableHead>
@@ -179,6 +180,7 @@ export function DeliveryStaffAssignment() {
                 <TableBody>
                   {filteredBookings.map((booking) => (
                     <TableRow key={booking.id}>
+                      <TableCell>{booking.id}</TableCell>
                       <TableCell className="font-medium">{booking.customer?.name || 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex items-center">

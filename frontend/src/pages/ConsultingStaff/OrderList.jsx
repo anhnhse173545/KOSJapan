@@ -11,7 +11,7 @@ import {
   Modal,
   Select,
 } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../../styles/Consulting/OrderList.css";
@@ -25,13 +25,16 @@ const OrderList = () => {
   const [bookingId, setBookingId] = useState(""); // Selected booking ID
   const [farmId, setFarmId] = useState(""); // Selected farm ID
   const [deliveryAddress, setDeliveryAddress] = useState(""); // Delivery address
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const navigate = useNavigate();
+  const { consultingStaffId } = useParams();
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/fish-order/consulting-staff/AC0004"
+        `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
       );
       setData(response.data);
       setLoading(false);
@@ -42,6 +45,18 @@ const OrderList = () => {
     }
   };
 
+  // Fetch bookings
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/booking/consulting-staff/${consultingStaffId}`
+      );
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching booking list:", error);
+      message.error("Failed to load booking data.");
+    }
+  };
   const fetchFarms = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/farm/list");
@@ -52,26 +67,13 @@ const OrderList = () => {
     }
   };
 
-  // Fetch bookings
-  const fetchBookings = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/api/booking/consulting-staff/AC0004"
-      );
-      setBookings(response.data);
-    } catch (error) {
-      console.error("Error fetching booking list:", error);
-      message.error("Failed to load booking data.");
-    }
-  };
-
   // Fetch data on component mount
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost:8080/fish-order/consulting-staff/AC0004"
+          `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
         );
         console.log("Response data:", response.data); // Add this line to inspect the data
         setData(response.data);
@@ -84,8 +86,8 @@ const OrderList = () => {
     };
     fetchOrders();
     fetchFarms();
-    fetchBookings(); // Fetch bookings when component loads
-  }, []);
+    fetchBookings();
+  }, [consultingStaffId]);
 
   const calculateTotalPrice = (record) => {
     const fishTotal =
@@ -100,7 +102,9 @@ const OrderList = () => {
   };
 
   const handleAddKoi = (orderId, farmId) => {
-    navigate("add-koi", { state: { orderId, farmId } });
+    navigate(`add-koi`, {
+      state: { orderId, farmId },
+    });
   };
 
   const handleDeleteOrder = async (record) => {
@@ -222,6 +226,15 @@ const OrderList = () => {
       message.error("Failed to update payment status.");
     }
   };
+  const handleImageClick = (url) => {
+    setSelectedImage(url);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedImage(null);
+  };
 
   const columns = [
     {
@@ -281,17 +294,17 @@ const OrderList = () => {
             type="primary"
             onClick={() => handleAddKoi(record.id, record.farmId)}
             style={{ marginRight: 8 }}
-            disabled={record.paymentStatus === "Deposited"}
+            disabled={record.paymentStatus !== "Pending"} // Disable if not "Pending"
           >
             Add Koi
           </Button>
           <Button
             type="default"
             onClick={() => handleUpdatePaymentStatus(record)}
-            disabled={record.paymentStatus === "Deposited"}
+            disabled={record.paymentStatus !== "Pending"} // Disable if not "Pending"
             style={{ marginRight: 8 }}
           >
-            Update Payment Status
+            Update Cash Payment Status
           </Button>
           <Button
             type="danger"
@@ -303,6 +316,36 @@ const OrderList = () => {
     },
   ];
 
+  const handleImageUpload = async (entity, id, file) => {
+    if (!file) {
+      message.error("No file selected for upload.");
+      return;
+    }
+
+    // Check entity type and handle accordingly
+    if (!["fish", "fish_pack"].includes(entity)) {
+      message.error("Unsupported entity type for image upload.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      await axios.post(
+        `http://localhost:8080/media/${entity}/${id}/upload/image`,
+        formData
+      );
+      message.success(`Image uploaded successfully for ${entity}.`);
+      fetchOrders(); // Refresh data to reflect the uploaded image
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      message.error(
+        error.response?.data?.message || `Failed to upload image for ${entity}.`
+      );
+    }
+  };
+
   const fishColumns = [
     {
       title: "Fish Order Detail ID",
@@ -311,12 +354,50 @@ const OrderList = () => {
     },
     {
       title: "Fish ID",
-      dataIndex: ["fish", "fish_id"], // Corrected field for Fish ID
+      dataIndex: ["fish", "fish_id"],
       key: "fishId",
     },
     {
+      title: "Image",
+      dataIndex: ["fish", "mediaUrl"],
+      key: "image",
+      render: (mediaUrl, fishOrderDetail) => (
+        <div style={{ position: "relative" }}>
+          {mediaUrl ? (
+            <img
+              src={mediaUrl}
+              alt="Fish"
+              style={{ width: "50px", cursor: "pointer" }}
+              onClick={() => handleImageClick(mediaUrl)}
+            />
+          ) : (
+            "No image"
+          )}
+
+          <input
+            type="file"
+            style={{ display: "none" }}
+            onChange={(e) =>
+              handleImageUpload(
+                "fish",
+                fishOrderDetail.fish.fish_id,
+                e.target.files[0]
+              )
+            }
+          />
+          <Button
+            size="small"
+            onClick={(e) => e.currentTarget.previousSibling.click()}
+            style={{ marginTop: 5 }}
+          >
+            Upload Image
+          </Button>
+        </div>
+      ),
+    },
+    {
       title: "Variety",
-      dataIndex: ["fish", "fish_variety_name"], // Corrected field for Variety name
+      dataIndex: ["fish", "fish_variety_name"],
       key: "variety",
     },
     {
@@ -359,83 +440,122 @@ const OrderList = () => {
     },
   ];
 
-  const expandedRowRender = (record) => {
-    return (
-      <div>
-        <h4>Fish Order Details</h4>
-        <Table
-          columns={fishColumns}
-          dataSource={record.fishOrderDetails.map((detail) => ({
-            ...detail,
-            orderId: record.id,
-          }))}
-          pagination={false}
-          rowKey={(row) => row.id}
-        />
-        <h4>Fish Pack Order Details</h4>
-        <Table
-          columns={[
-            {
-              title: "Fish Pack Order ID",
-              dataIndex: "id",
-              key: "id",
-            },
-            {
-              title: "Variety",
-              dataIndex: ["fishPack", "variety", "name"],
-              key: "variety",
-            },
-            {
-              title: "Length",
-              dataIndex: ["fishPack", "length"],
-              key: "length",
-            },
-            {
-              title: "Weight",
-              dataIndex: ["fishPack", "weight"],
-              key: "weight",
-            },
-            {
-              title: "Quantity",
-              dataIndex: ["fishPack", "quantity"],
-              key: "quantity",
-            },
-            {
-              title: "Description",
-              dataIndex: ["fishPack", "description"],
-              key: "description",
-            },
-            {
-              title: "Price",
-              dataIndex: "price",
-              key: "price",
-            },
-            {
-              title: "Action",
-              key: "action",
-              render: (_, fishPackOrderDetail) => (
-                <Button
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={() =>
-                    handleDeleteFishPackOrderDetail(
-                      record.id,
-                      fishPackOrderDetail.id
+  const expandedRowRender = (record) => (
+    <div>
+      <h4>Fish Order Details</h4>
+      <Table
+        columns={fishColumns}
+        dataSource={record.fishOrderDetails.map((detail) => ({
+          ...detail,
+          orderId: record.id,
+        }))}
+        pagination={false}
+        rowKey={(row) => row.id}
+      />
+      <h4>Fish Pack Order Details</h4>
+      <Table
+        columns={[
+          {
+            title: "Fish Pack Order ID",
+            dataIndex: "id",
+            key: "id",
+          },
+          {
+            title: "Fish Pack ID",
+            dataIndex: ["fishPack", "id"], // New column for Fish Pack ID
+            key: "fishPackId",
+          },
+          {
+            title: "Image",
+            dataIndex: ["fishPack", "mediaUrl"],
+            key: "image",
+            render: (mediaUrl, fishPackOrderDetail) => (
+              <div style={{ position: "relative" }}>
+                {mediaUrl ? (
+                  <img
+                    src={mediaUrl}
+                    alt="Fish Pack"
+                    style={{ width: "50px", cursor: "pointer" }}
+                    onClick={() => handleImageClick(mediaUrl)}
+                  />
+                ) : (
+                  "No image"
+                )}
+                <input
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) =>
+                    handleImageUpload(
+                      "fish_pack",
+                      fishPackOrderDetail.fishPack.id,
+                      e.target.files[0]
                     )
                   }
+                />
+                <Button
+                  size="small"
+                  onClick={(e) => e.currentTarget.previousSibling.click()}
+                  style={{ marginTop: 5 }}
                 >
-                  Delete
+                  Upload Image
                 </Button>
-              ),
-            },
-          ]}
-          dataSource={record.fishPackOrderDetails}
-          pagination={false}
-          rowKey={(row) => row.id}
-        />
-      </div>
-    );
-  };
+              </div>
+            ),
+          },
+
+          {
+            title: "Length",
+            dataIndex: ["fishPack", "length"],
+            key: "length",
+          },
+          {
+            title: "Weight",
+            dataIndex: ["fishPack", "weight"],
+            key: "weight",
+          },
+          {
+            title: "Quantity",
+            dataIndex: ["fishPack", "quantity"],
+            key: "quantity",
+          },
+          {
+            title: "Price",
+            dataIndex: "price",
+            key: "price",
+          },
+          {
+            title: "Description",
+            dataIndex: ["fishPack", "description"],
+            key: "description",
+          },
+          {
+            title: "Action",
+            key: "action",
+            render: (_, fishPackOrderDetail) => (
+              <Button
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={() =>
+                  handleDeleteFishPackOrderDetail(
+                    record.id,
+                    fishPackOrderDetail.id
+                  )
+                }
+              >
+                Delete
+              </Button>
+            ),
+          },
+        ]}
+        dataSource={record.fishPackOrderDetails.map((detail) => ({
+          ...detail,
+          orderId: record.id,
+        }))}
+        pagination={false}
+        rowKey={(row) => row.id}
+      />
+    </div>
+  );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -503,6 +623,9 @@ const OrderList = () => {
         pagination={{ pageSize: 10 }}
         style={{ background: "#fff" }}
       />
+      <Modal visible={isModalVisible} footer={null} onCancel={handleModalClose}>
+        <img src={selectedImage} alt="Fish" style={{ width: "100%" }} />
+      </Modal>
     </div>
   );
 };

@@ -14,18 +14,25 @@ import {
   CreditCard,
   Menu,
 } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function ManagerDashboard() {
   const [isNavExpanded, setIsNavExpanded] = useState(true)
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   const toggleNav = () => setIsNavExpanded(!isNavExpanded)
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Logout failed', error)
+    }
+  }
+
   const navItems = [
-    // { name: 'Dashboard Overview', icon: <BarChart className="h-5 w-5" />, path: '/manager-dashboard/dashboard' },
-    // { name: 'Staff Manager', icon: <Users className="h-5 w-5" />, path: '/manager-dashboard/staff-manager' },
-    // { name: 'Booking Manager', icon: <MapPin className="h-5 w-5" />, path: '/manager-dashboard/booking-manager' },
-    // { name: 'Payment Status', icon: <CreditCard className="h-5 w-5" />, path: '/manager-dashboard/payment-status' },
     { name: 'All Booking List', icon: <BarChart className="h-5 w-5" />, path: '/manager-dashboard/all-booking' },
     { name: 'Sales Staff Assignment', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/sales-staff-assignment' },
     { name: 'Quotes Review', icon: <FlaskConical className="h-5 w-5" />, path: '/manager-dashboard/quotes-review' },
@@ -38,7 +45,7 @@ export default function ManagerDashboard() {
   ]
 
   return (
-    (<div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Navigation Sidebar */}
       <nav
         className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out ${
@@ -82,11 +89,14 @@ export default function ManagerDashboard() {
               <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
                 <Bell className="h-5 w-5" />
               </Button>
-              <Avatar>
-                <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-2">
+                <Avatar>
+                  <AvatarImage src={user?.mediaUrl || "/placeholder.svg?height=32&width=32"} alt={user?.name || "User"} />
+                  <AvatarFallback>{user?.name ? user.name.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</span>
+              </div>
+              <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400" onClick={handleLogout}>
                 <LogOut className="h-5 w-5" />
               </Button>
             </div>
@@ -101,6 +111,6 @@ export default function ManagerDashboard() {
           </div>
         </main>
       </div>
-    </div>)
-  );
+    </div>
+  )
 }

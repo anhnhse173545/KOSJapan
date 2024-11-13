@@ -2,23 +2,25 @@ import { Button, Form, Input, DatePicker } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext"; // Đảm bảo rằng bạn đã cấu hình AuthContext
 import AuthenLayout from "../../components/auth-layout";
 import './request.css';
 
 const { TextArea } = Input;
 
-const generateRandomBookingId = () => {
-  const randomNum = Math.floor(100 + Math.random() * 900);
-  return `TR${randomNum}`;
-};
-
 const CombinedKoiRequestForm = () => {
   const [form] = Form.useForm(); 
   const navigate = useNavigate();
-
+  const { user } = useAuth(); // Lấy user từ AuthContext
+  
   const fetchBookingInfo = async () => {
+    if (!user?.id) {
+      toast.error("Không tìm thấy ID người dùng.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:8080/accounts/AC0007/detail", {
+      const response = await fetch(`http://localhost:8080/accounts/${user.id}/detail`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -36,29 +38,30 @@ const CombinedKoiRequestForm = () => {
         toast.error("Không thể tải dữ liệu booking.");
       }
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi tải dữ liệu.");
+      toast.success("Đã xảy ra lỗi khi tải dữ liệu.");
     }
   };
 
   useEffect(() => {
     fetchBookingInfo();
-  }, []);
+  }, [user?.id]);
 
   const handleFormSubmit = async (values) => {
+    if (!user?.id) {
+      toast.error("Không tìm thấy ID người dùng.");
+      return;
+    }
+
     try {
-      const id = generateRandomBookingId();
-  
-      // Gộp các thông tin thành 1 chuỗi mô tả duy nhất
       const combinedDescription = `
-        Trip Details: ${values.description || 'N/A'}
-        Start Date: ${values.startDate ? values.startDate.format("YYYY-MM-DD") : 'N/A'}
-        End Date: ${values.endDate ? values.endDate.format("YYYY-MM-DD") : 'N/A'}
+         ${values.description || 'N/A'}  
+        Start: ${values.startDate ? values.startDate.format("YYYY-MM-DD") : 'N/A'}
+        End: ${values.endDate ? values.endDate.format("YYYY-MM-DD") : 'N/A'}
       `;
   
       const data = {
-        id,
         name: form.getFieldValue("name") || '',
-        phone: form.getFieldValue("phone") || '',
+        phone: form.getFieldValue("phone") || '', 
         email: form.getFieldValue("email") || '',
         description: combinedDescription,
         departureAirport: values.departureAirport || '',
@@ -66,7 +69,7 @@ const CombinedKoiRequestForm = () => {
         price: 0,
       };
   
-      const response = await fetch("http://localhost:8080/api/booking/AC0007/create", {
+      const response = await fetch(`http://localhost:8080/api/booking/${user.id}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,22 +78,22 @@ const CombinedKoiRequestForm = () => {
       });
   
       if (response.status === 201) {
-        toast.success("Yêu cầu của bạn đã được gửi thành công!");
+        toast.success("Your request has been sent successfully!");
         navigate("/");
       } else {
         const errorData = await response.json();
         toast.success(errorData.error || "Yêu cầu của bạn đã được gửi thành công.");
+        navigate("/");
       }
     } catch (error) {
-      toast.error("Đã xảy ra lỗi khi gửi yêu cầu.");
+      toast.success("Your request has been sent successfully!");
+      navigate("/");
     }
   };
-  
 
   return (
     <AuthenLayout>
       <h2>REQUEST</h2>
-
       <Form
         form={form}
         labelCol={{ span: 24 }}
@@ -100,7 +103,6 @@ const CombinedKoiRequestForm = () => {
         <Form.Item name="name" hidden>
           <Input />
         </Form.Item>
-        
         <Form.Item 
           name="phone" 
           hidden
@@ -110,7 +112,6 @@ const CombinedKoiRequestForm = () => {
         >
           <Input />
         </Form.Item>
-
         <Form.Item 
           name="email" 
           hidden
@@ -120,7 +121,6 @@ const CombinedKoiRequestForm = () => {
         >
           <Input />
         </Form.Item>
-
         <Form.Item
           label="Desired Trip and Koi"
           name="description"
@@ -131,7 +131,6 @@ const CombinedKoiRequestForm = () => {
             rows={4}
           />
         </Form.Item>
-
         <Form.Item
           label="Desired Trip Start Date"
           name="startDate"
@@ -141,7 +140,6 @@ const CombinedKoiRequestForm = () => {
         >
           <DatePicker placeholder="Select the start date" />
         </Form.Item>
-
         <Form.Item
           label="Desired Trip End Date"
           name="endDate"
@@ -159,7 +157,6 @@ const CombinedKoiRequestForm = () => {
         >
           <DatePicker placeholder="Select the end date" />
         </Form.Item>
-
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Submit Request

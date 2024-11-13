@@ -5,6 +5,7 @@ import com.swp391.koi_ordering_system.dto.response.VarietyDTO;
 import com.swp391.koi_ordering_system.mapper.VarietyMapper;
 import com.swp391.koi_ordering_system.model.Variety;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class VarietyService {
     @Autowired
     private VarietyMapper varietyMapper;
 
-    public VarietyDTO createVariety(CreateVarietyDTO createVarietyDTO) {
+    public VarietyDTO createVariety(@Valid CreateVarietyDTO createVarietyDTO) {
         Variety variety = varietyMapper.toEntity(createVarietyDTO);
         variety.setId(generateVarietyId());
         return varietyMapper.toDTO(varietyRepository.save(variety));

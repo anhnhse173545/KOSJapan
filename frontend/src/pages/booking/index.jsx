@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './booking.scss'; // Import CSS file for styling
+import { useParams } from 'react-router-dom';
 
 function PaymentPage() {
   const navigate = useNavigate();
@@ -9,12 +10,14 @@ function PaymentPage() {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id } = useParams(); // Lấy customerId từ URL
+  
 
   // Fetch data from API
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/booking/customer/AC0007'); // Sử dụng bookingId cố định
+        const response = await fetch(`http://localhost:8080/api/booking/customer/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch payments');
         }
@@ -27,8 +30,10 @@ function PaymentPage() {
       }
     };
 
-    fetchPayments();
-  }, []);
+    if (id) {
+      fetchPayments();
+    }
+  }, [id]);
 
   // Filter payments based on selected status
   const filteredPayments = payments.filter((payment) =>
@@ -36,28 +41,29 @@ function PaymentPage() {
   );
 
   return (
+    
     <div className="payment-page-container">
       {/* Sidebar */}
       <div className="profile-sidebar">
         <ul>
           <li>
-            <Link to="/userDetail" className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
+            <Link to={`/userDetail/${id}`} className={`sidebar-link ${location.pathname === '/userDetail' ? 'active' : ''}`}>
               My Profile
             </Link>
           </li>
           <li>
-            <Link to="/payment" className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
+            <Link to={`/payment/${id}`} className={`sidebar-link ${location.pathname === '/payment' ? 'active' : ''}`}>
               My Trip
             </Link>
           </li>
           <li>
-            <Link to="/mykoi" className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
               My Koi Fish
             </Link>
           </li>
 
           <li>
-            <Link to="/history" className={`sidebar-link ${location.pathname === '/history' ? 'active' : ''}`}>
+            <Link to={`/history/${id}`} className={`sidebar-link ${location.pathname === `/history` ? 'active' : ''}`}>
               Order history
             </Link>
           </li>
@@ -65,6 +71,7 @@ function PaymentPage() {
       </div>
 
       {/* Status Tabs */}
+      
       <div className="payment-section">
   <div className="status-tabs">
     {['All', 'Requested', 'Approved Quote', 'Paid Booking', 'On-going', 'Order Prepare', 'Completed', 'Canceled'].map((status) => (
@@ -91,10 +98,15 @@ function PaymentPage() {
               <div className="payment-details">
                 <h3>Booking Id :{koi.id}</h3>
                 <p>{koi.startDate}</p>
-                <p>Create At : {koi.createAt}</p>
-                <p className="status">{koi.status}</p>
-                <img src={"https://a1.cdn.japantravel.com/photo/12865-215185/1440x960!/tokyo-tokyo-prefecture-215185.jpg"} alt="Koi Image" style={{ width: "200px", height: "auto" }} />
-
+                <dd className="text-gray-900">Create At: {new Date(koi.createAt).toLocaleString('EN-EN', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}</dd>
+                <p className="status">Booking Status: {koi.status}</p>
+            
                 <div className="button-group">
                   <button
                     className="details-button"

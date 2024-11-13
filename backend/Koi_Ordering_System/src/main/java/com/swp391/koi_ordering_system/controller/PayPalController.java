@@ -4,9 +4,11 @@ import com.paypal.api.payments.DetailedRefund;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.model.FishPayment;
 import com.swp391.koi_ordering_system.model.TripPayment;
 import com.swp391.koi_ordering_system.repository.FishPaymentRepository;
+import com.swp391.koi_ordering_system.repository.OrderRepository;
 import com.swp391.koi_ordering_system.repository.TripPaymentRepository;
 import com.swp391.koi_ordering_system.service.FishPaymentService;
 import com.swp391.koi_ordering_system.service.PayPalService;
@@ -41,6 +43,9 @@ public class PayPalController {
 
     @Autowired
     private FishPaymentRepository fishPaymentRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     private static final Logger log = LoggerFactory.getLogger(PayPalController.class);
     private final PayPalService payPalService;
@@ -234,9 +239,10 @@ public class PayPalController {
     }
 
     @PostMapping("/{order_id}/api/refund")
-    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) {
+    public ResponseEntity<?> refundAPIFishPayment(@PathVariable String order_id) { // RedirectView ?
         // Retrieve the trip payment details to get the sale ID
         FishPayment fishPayment = fishPaymentRepository.findFishPaymentByFishOrderId(order_id);
+        FishOrder fishOrder = orderRepository.findById(order_id).get();
         if (fishPayment == null) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Fish payment not found for order ID: " + order_id));
         }
@@ -249,11 +255,12 @@ public class PayPalController {
             DetailedRefund detailedRefund = payPalService.refundPayment(saleId, amount);
 
             // Check if the refund was successful
-            if ("completed".equals(detailedRefund.getState())) {
-                // Update the trip payment status if needed
+            if (detailedRefund.getState().equals("completed")) {
+                // Update the fish payment status
                 fishPayment.setStatus("Refunded");
+                fishOrder.setPaymentStatus("Refunded");
                 fishPaymentRepository.save(fishPayment);
-
+                orderRepository.save(fishOrder);
                 return ResponseEntity.ok(Collections.singletonMap("message", "Refund successful"));
             } else {
                 return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Refund not completed: " + detailedRefund.getState()));

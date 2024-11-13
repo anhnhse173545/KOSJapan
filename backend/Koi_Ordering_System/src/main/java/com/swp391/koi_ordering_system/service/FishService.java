@@ -8,6 +8,7 @@ import com.swp391.koi_ordering_system.repository.FishOrderDetailRepository;
 import com.swp391.koi_ordering_system.repository.FishRepository;
 import com.swp391.koi_ordering_system.repository.VarietyRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class FishService {
                 .collect(Collectors.toList());
     }
 
-    public Fish createFish(CreateFishDTO fish, String varietyId){
+    public Fish createFish(@Valid CreateFishDTO fish, String varietyId){
         Fish newFish = new Fish();
         newFish.setId(generateFishId());
         Variety variety = varietyRepository.findById(varietyId).get();
