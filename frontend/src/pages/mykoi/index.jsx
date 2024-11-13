@@ -65,7 +65,7 @@ function KoiPage() {
             </Link>
           </li>
           <li>
-            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === '/mykoi' ? 'active' : ''}`}>
+            <Link to={`/mykoi/${id}`} className={`sidebar-link ${location.pathname === `/mykoi/${id}` ? 'active' : ''}`}>
               My Koi
             </Link>
           </li>
@@ -95,34 +95,32 @@ function KoiPage() {
 
         {/* Phần hiển thị danh sách các payments dựa trên bộ lọc */}
         <div className="payment-list">
-          {filteredPayments.map((koi) => (
-            <div key={koi.id} className="payment-item">
-              <img
-                src={koi.img}
-                alt={koi.koi}
-                className="koi-image"
-              />
-              <div className="payment-details">
-                <h3>{koi.name}</h3>
-                <p>{koi.koi}</p>
-                {koi.quantity && <p>Quantity: {koi.quantity}</p>}
-                {koi.size && <p>Size: {koi.size} cm</p>}
-                <p className="Id Trip">Koi ID: {koi.id}</p>
-                <p className="Id Farm">Farm ID: {koi.farmId}</p>
-                <p className="Id Farm">Status: {koi.status}</p>
-                <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
+        {filteredPayments.map((koi) => (
+  <div key={koi.id} className="payment-item">
+    <img
+      src={koi.img}
+      alt={koi.koi}
+      className="koi-image"
+    />
+    <div className="payment-details">
+      <h3>{koi.name}</h3>
+      <p>{koi.koi}</p>
+      {koi.quantity && <p>Quantity: {koi.quantity}</p>}
+      {koi.size && <p>Size: {koi.size} cm</p>}
+      <p className="Id Trip">Koi ID: {koi.id}</p>
+      <p className="Id Farm">Farm ID: {koi.farmId}</p>
+      <p className="Id Farm">Status: {koi.status}</p>
+      <p className="Id Farm">Payment Status: {koi.paymentStatus}</p>
+      <button
+        className="details-button"
+        onClick={() => navigate(`/mykoidetail/${koi.id}`)}
+      >
+        See Details
+      </button>
+    </div>
+  </div>
+))}
 
-             
-
-                <button
-                  className="details-button"
-                  onClick={() => navigate(`/mykoi/${koi.id}`)}
-                >
-                  See Details
-                </button>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

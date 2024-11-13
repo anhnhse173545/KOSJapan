@@ -87,8 +87,8 @@ function App() {
           <Route path="request/:id" element={<PaymentDetailsPage />} />
           <Route path="quota/:id" element={<QuotaDetailsPage />} />
           <Route path="onGoing/:id" element={<OnGoingPage />} />
-          <Route path="mykoi" element={<KoiPage />} />
-          <Route path="mykoi/:id" element={<KoiDetailPage />} />
+          <Route path="mykoi/:id" element={<KoiPage />} />
+          <Route path="mykoidetail/:id" element={<KoiDetailPage />} />
           <Route path="paidbooking/:id" element={<PaidBooking />} />
           <Route path="koifarmpage" element={<KoiFarmViewSearchComponent />} />
           <Route path="koi-trip" element={<KoiTripViewSearchComponent />} />
