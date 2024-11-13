@@ -207,7 +207,7 @@ export default function KoiDetailPage() {
   <Link to={`/`} className="block text-center">
   <Button>
     <ChevronLeft className="w-4 h-4 mr-2" />
-    Back to My Koi
+    Back
   </Button>
 </Link>
 </div>
