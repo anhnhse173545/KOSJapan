@@ -38,7 +38,7 @@ export function KoiTripViewSearchComponent() {
     setLoading(true)
     setError('')
     try {
-      const response = await api.get('/list')
+      const response = await api.get('api/trip/list')
       setTrips(response.data)
       setFilteredTrips(response.data)
       updateAvailableFilters(response.data)
