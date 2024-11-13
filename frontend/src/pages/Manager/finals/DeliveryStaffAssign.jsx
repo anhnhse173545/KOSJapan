@@ -12,11 +12,12 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, UserPlus, Calendar, MapPin, Eye, ArrowLeft, User, Phone, Mail, Briefcase, Truck } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
+import api from '@/config/api';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 5000,
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080',
+//   timeout: 5000,
+// })
 
 export function DeliveryStaffAssignment() {
   const [bookings, setBookings] = useState([])
