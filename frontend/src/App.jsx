@@ -134,7 +134,7 @@ function App() {
       {/* Delivery Staff routes */}
       <Route element={<RequireAuth allowedRoles={["Delivery Staff"]} />}>
         <Route path="ds-dashboard" element={<DeliveryStaffDashboard />}>
-          <Route index element={<DeliveryStaffHome />} />
+          <Route path=":deliveryStaffId" element={<DeliveryStaffHome />} />
           <Route
             path="my-deliveries"
             element={<DeliveryOrderListComponent />}
