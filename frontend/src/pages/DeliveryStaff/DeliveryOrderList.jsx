@@ -333,7 +333,7 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Address</p>
-                <p className="font-medium">{booking.deliveryAddress || "Not provided"}</p>
+                <p className="font-medium">{booking.fishOrders.deliveryAddress || "Not provided"}</p>
               </div>
             </div>
             <Table>
