@@ -68,13 +68,14 @@ public class FishOrderDetailService {
         if(foundFishOrder.isPresent()){
             FishOrder fishOrder = foundFishOrder.get();
             fishOrderDetail.setFishOrder(fishOrder);
+            fishOrder.getFishOrderDetails().add(fishOrderDetail);
             fishOrder.setTotal(fishOrder.getTotal() + fishOrderDetail.getPrice());
 
             fishOrderDetailRepository.save(fishOrderDetail);
             orderRepository.save(fishOrder);
         }
 
-        return fishOrderDetail;
+        return fishOrderDetailRepository.save(fishOrderDetail);
     }
 
     public void deleteFishOrderDetail(String fishOrderDetailId){

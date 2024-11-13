@@ -4,6 +4,7 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Consulting/AddKoi.css";
+import api from "@/config/api";
 const { Option } = Select;
 
 const AddKoi = () => {
@@ -18,9 +19,7 @@ const AddKoi = () => {
   useEffect(() => {
     const fetchVarieties = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/variety/list"
-        );
+        const response = await api.get("/api/variety/list"); // Use api instance
         setVarieties(response.data);
       } catch (error) {
         console.error("Error fetching variety list:", error);
@@ -43,7 +42,6 @@ const AddKoi = () => {
     }
 
     setLoading(true);
-
     try {
       for (const fishOrderDetail of values.fishOrderDetails || []) {
         const payload = {
@@ -55,10 +53,7 @@ const AddKoi = () => {
           price: fishOrderDetail.price,
         };
 
-        await axios.post(
-          "http://localhost:8080/order-detail/create-fish-and-order-detail",
-          payload
-        );
+        await api.post("/order-detail/create-fish-and-order-detail", payload); // Use api instance
       }
 
       for (const fishPackOrderDetail of values.fishPackOrderDetails || []) {
@@ -72,10 +67,10 @@ const AddKoi = () => {
           packOrderDetailPrice: fishPackOrderDetail.packOrderDetailPrice,
         };
 
-        await axios.post(
-          "http://localhost:8080/Koi-pack-Order-detail/create-fish-pack-and-fish-pack-order-detail",
+        await api.post(
+          "/Koi-pack-Order-detail/create-fish-pack-and-fish-pack-order-detail",
           payload
-        );
+        ); // Use api instance
       }
 
       message.success(

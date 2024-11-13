@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, message, Select, Space } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+
 import "../../styles/Consulting/TourList.css";
+import api from "@/config/api";
 
 const { Option } = Select;
 
@@ -19,8 +20,8 @@ const TourList = () => {
   const fetchTourData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8080/api/booking/consulting-staff/${consultingStaffId}`
+      const response = await api.get(
+        `/api/booking/consulting-staff/${consultingStaffId}`
       );
       const formattedData = response.data.map((item, index) => ({
         key: index + 1,
@@ -58,20 +59,18 @@ const TourList = () => {
     setTourData(updatedData);
 
     try {
-      // Update the booking status
-      await axios.put(`http://localhost:8080/api/booking/update/${bookingId}`, {
+      // Update the booking status using the custom API instance
+      await api.put(`/api/booking/update/${bookingId}`, {
         status: newBookingStatus,
       });
 
-      // Update the trip status
-      await axios.put(
-        `http://localhost:8080/api/trip/update/${
-          updatedData.find((tour) => tour.bookingId === bookingId).tripId
-        }`,
-        {
-          status: newTripStatus,
-        }
-      );
+      // Update the trip status using the custom API instance
+      const tripId = updatedData.find(
+        (tour) => tour.bookingId === bookingId
+      ).tripId;
+      await api.put(`/api/trip/update/${tripId}`, {
+        status: newTripStatus,
+      });
 
       message.success("Status updated successfully");
     } catch (error) {
@@ -80,7 +79,6 @@ const TourList = () => {
       fetchTourData(); // Refetch data to restore original state
     }
   };
-
   const handleViewDetails = (bookingId) => {
     navigate(`tour-details/${bookingId}`);
   };

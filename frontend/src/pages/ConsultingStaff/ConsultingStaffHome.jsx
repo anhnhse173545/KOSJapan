@@ -15,6 +15,7 @@ import {
 } from "chart.js";
 import { useParams } from "react-router-dom";
 import "../../styles/Consulting/ConsultingHome.css";
+import api from "@/config/api";
 
 ChartJS.register(
   CategoryScale,
@@ -37,12 +38,8 @@ const ConsultingStaffHome = () => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/accounts/${consultingStaffId}/detail`
-        );
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data = await response.json();
-        setUserName(data.name);
+        const response = await api.get(`/accounts/${consultingStaffId}/detail`);
+        setUserName(response.data.name);
       } catch (error) {
         console.error("Failed to fetch user details:", error);
         setUserName("Error fetching name");
@@ -51,12 +48,10 @@ const ConsultingStaffHome = () => {
 
     const fetchFishOrders = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/fish-order/consulting-staff/${consultingStaffId}`
+        const response = await api.get(
+          `/fish-order/consulting-staff/${consultingStaffId}`
         );
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data = await response.json();
-        setFishOrders(data);
+        setFishOrders(response.data);
       } catch (error) {
         console.error("Failed to fetch fish orders:", error);
       }
