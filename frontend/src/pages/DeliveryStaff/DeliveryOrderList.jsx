@@ -67,21 +67,25 @@ export default function DeliveryOrderListComponent() {
 
       setLoading(true)
       try {
-        const [staffBookingsResponse, orderPrepareResponse, completedResponse] = await Promise.all([
-          api.get(`/api/booking/delivery-staff/${user.id}`),
-          api.get('/api/booking/status/Order%20Prepare'),
-          api.get('/api/booking/status/Completed')
-        ])
+        // const [staffBookingsResponse, orderPrepareResponse, completedResponse] = await Promise.all([
+        //   api.get(`/api/booking/delivery-staff/${user.id}`),
+        //   api.get('/api/booking/status/Order%20Prepare'),
+        //   api.get('/api/booking/status/Completed')
+        // ])
 
-        const staffBookings = staffBookingsResponse.data
-        const orderPrepareBookings = orderPrepareResponse.data
-        const completedBookings = completedResponse.data
+        // const staffBookings = staffBookingsResponse.data
+        // const orderPrepareBookings = orderPrepareResponse.data
+        // const completedBookings = completedResponse.data
 
-        const combinedBookings = staffBookings.filter(booking =>
-          orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id) ||
-          completedBookings.some(completedBooking => completedBooking.id === booking.id))
+        // const combinedBookings = staffBookings.filter(booking =>
+        //   orderPrepareBookings.some(prepareBooking => prepareBooking.id === booking.id) ||
+        //   completedBookings.some(completedBooking => completedBooking.id === booking.id))
 
-        setBookings(combinedBookings)
+        // setBookings(combinedBookings)
+        const updatedBookings = await api.get(`/api/booking/delivery-staff/${user.id}`)
+        setBookings(updatedBookings.data)
+
+        
       } catch (error) {
         console.error("Failed to fetch bookings:", error)
         setError("Failed to load bookings. Please try again later.")
@@ -133,7 +137,7 @@ export default function DeliveryOrderListComponent() {
 
       await api.put(`/fish-order/${bookingId}/${farmId}/update`, {
         status: newStatus,
-        delivery_address: booking.fishOrders.deliveryAddress,
+        delivery_address: booking.deliveryAddress,
         arrived_date: new Date().toISOString(),
         paymentStatus: "Deposited",
       })
@@ -308,16 +312,17 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                 <p className="text-sm text-muted-foreground">Customer</p>
                 <p className="font-medium">{booking.customer.name}</p>
               </div>
-              <div>
+              {/* <div>
                 <p className="text-sm text-muted-foreground">Address</p>
-                <p className="font-medium">{booking.fishOrders.deliveryAddress || "Not provided"}</p>
-              </div>
+                <p className="font-medium">{booking.deliveryAddress || "Not provided"}</p>
+              </div> */}
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Order ID</TableHead>
                   <TableHead>Farm ID</TableHead>
+                  <TableHead>Delivery Address</TableHead>
                   <TableHead>Fish Order Status</TableHead>
                   <TableHead>Payment Status</TableHead>
                   <TableHead>Total</TableHead>
@@ -329,11 +334,13 @@ function BookingList({ bookings, handleUpdateBookingStatus, handleUpdateFishOrde
                   <TableRow key={order.id}>
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>{order.farmId}</TableCell>
+                    <TableCell>{order.deliveryAddress}</TableCell>
                     <TableCell>
                       <Badge variant={order.status === "Deposited" ? "success" : "warning"}>
                         {order.status}
                       </Badge>
                     </TableCell>
+                    
                     <TableCell>
                       <Badge variant={order.paymentStatus === "Deposited" ? "success" : "warning"}>
                         {order.paymentStatus}
