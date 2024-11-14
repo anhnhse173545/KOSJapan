@@ -7,6 +7,7 @@ import com.swp391.koi_ordering_system.service.FishPackService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,18 +19,21 @@ public class FishPackController {
     @Autowired
     private FishPackService fishPackService;
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/all")
     public ResponseEntity<List<FishPackDTO>> getAllKoiFishPacks() {
         List<FishPackDTO> packs = fishPackService.getAllFishPacks();
         return ResponseEntity.ok(packs);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{fish_pack_id}/detail")
     public ResponseEntity<FishPackDTO> getFishPackDetail(@PathVariable String fish_pack_id) {
         FishPackDTO fishPackDTO = fishPackService.getFishPackById(fish_pack_id);
         return ResponseEntity.ok(fishPackDTO);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("/{fish_pack_id}/update")
     public ResponseEntity<FishPackDTO> updateFishPack( @PathVariable String fish_pack_id,
                                                        @Valid @RequestBody CreateFishPackDTO fishPackDTO) {
@@ -37,6 +41,7 @@ public class FishPackController {
         return ResponseEntity.ok(fishPackService.mapToDTO(fishPack));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("{fish_pack_id}/delete")
     public ResponseEntity<String> deleteFishPack(@PathVariable String fish_pack_id) {
         fishPackService.deleteFishPack(fish_pack_id);

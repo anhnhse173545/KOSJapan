@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.service.VarietyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,19 +18,21 @@ public class VarietyController {
     @Autowired
     private VarietyService varietyService;
 
+    @PreAuthorize("hasAnyRole('Manager')")
     @PostMapping("/create")
     public ResponseEntity<VarietyDTO> createVariety(@Valid @RequestBody CreateVarietyDTO varietyDTO) {
         VarietyDTO createdVariety = varietyService.createVariety(varietyDTO);
         return ResponseEntity.ok(createdVariety);
     }
 
-
+    @PreAuthorize("hasAnyRole('Manager')")
     @GetMapping("/list")
     public ResponseEntity<List<VarietyDTO>> getAllVarieties() {
         List<VarietyDTO> varieties = varietyService.getAllVarieties();
         return ResponseEntity.ok(varieties);
     }
 
+    @PreAuthorize("hasAnyRole('Manager')")
     @GetMapping("get/{id}")
     public ResponseEntity<VarietyDTO> getVarietyById(@PathVariable String id) {
         Optional<VarietyDTO> variety = varietyService.getVarietyById(id);
@@ -37,12 +40,14 @@ public class VarietyController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasAnyRole('Manager')")
     @PutMapping("update/{id}")
     public ResponseEntity<VarietyDTO> updateVariety(@PathVariable String id, @RequestBody VarietyDTO varietyDTO) {
         VarietyDTO updatedVariety = varietyService.updateVariety(id, varietyDTO);
         return ResponseEntity.ok(updatedVariety);
     }
 
+    @PreAuthorize("hasAnyRole('Manager')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteVariety(@PathVariable String id) {
         varietyService.deleteVariety(id);

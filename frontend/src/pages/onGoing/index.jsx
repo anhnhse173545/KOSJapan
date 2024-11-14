@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { User, Mail, Phone, Calendar, MapPin, DollarSign, Tag, Briefcase, Plane, Fish, ArrowLeft } from 'lucide-react';
-import api from '@/config/api';
 
 export default function CompleteTripPage() {
   const { id } = useParams();
@@ -9,12 +8,19 @@ export default function CompleteTripPage() {
   const [tripData, setTripData] = useState(null);
   const [loadingTrip, setLoadingTrip] = useState(true);
   const [errorTrip, setErrorTrip] = useState(null);
+  const [errorReject, setErrorReject] = useState(null);
+  const [errorPay, setErrorPay] = useState(null);
 
   useEffect(() => {
-    // Using axios to fetch data from API
-    api.get(`/api/booking/get/${id}`)
+    fetch(`http://localhost:8080/api/booking/get/${id}`)
       .then((response) => {
-        setTripData(response.data);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTripData(data);
         setLoadingTrip(false);
       })
       .catch((error) => {

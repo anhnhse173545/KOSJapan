@@ -12,6 +12,7 @@ import com.swp391.koi_ordering_system.service.TripDestinationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class TripDestinationController  {
     @Autowired
     private TripDestinationMapper tripDestinationMapper;
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PostMapping("{tripId}/create")
     public ResponseEntity<TripDestinationDTO> createTripDestination(@Valid @PathVariable String tripId, @RequestBody AddTripDestinationDTO addTripDestinationDTO) {
         TripDestination tripDestination = tripDestinationService.createTripDestination(tripId, addTripDestinationDTO);
@@ -35,6 +37,7 @@ public class TripDestinationController  {
         return ResponseEntity.ok(tripDestinationDTO);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("{tripDestinationId}/update")
     public ResponseEntity<TripDestinationDTO> updateTripDestination(@PathVariable String tripDestinationId, @RequestBody UpdateTripDestinationDTO updateTripDestinationDTO) {
         TripDestination updatedTripDestination = tripDestinationService.updateTripDestination(tripDestinationId, updateTripDestinationDTO);
@@ -42,18 +45,21 @@ public class TripDestinationController  {
         return ResponseEntity.ok(tripDestinationDTO);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("{tripDestinationId}/delete")
     public ResponseEntity<Void> deleteTripDestination(@PathVariable String tripDestinationId) {
         tripDestinationService.deleteTripDestination(tripDestinationId);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("{tripId}/list")
     public ResponseEntity<List<TripDestinationDTO>> getAllTripDestinationsByTripId(@PathVariable String tripId) {
         List<TripDestinationDTO> tripDestinations = tripDestinationService.getAllTripDestinationsByTripId(tripId);
         return ResponseEntity.ok(tripDestinations);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getTripDestinationId(@PathVariable String id) {
         Optional<TripDestinationDTO> tripDestination = tripDestinationService.getTripDestinationById(id);

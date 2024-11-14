@@ -8,6 +8,7 @@ import com.swp391.koi_ordering_system.service.FishPackOrderDetailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,29 +19,34 @@ public class FishPackOrderDetailController {
     @Autowired
     private FishPackOrderDetailService service;
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/all")
     public ResponseEntity<List<FishPackOrderDetailDTO>> getAll() {
         return ResponseEntity.ok(service.getAllFishPackOrderDetails());
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{koi_pack_order_detail_id}")
     public ResponseEntity<FishPackOrderDetailDTO> getFishPackOrderDetail(@PathVariable String koi_pack_order_detail_id) {
         FishPackOrderDetail foundFPOD = service.getFishPackOrderDetailById(koi_pack_order_detail_id);
         return ResponseEntity.ok(service.mapToDTO(foundFPOD));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{fish_order_id}/all")
     public ResponseEntity<List<FishPackOrderDetailDTO>> findAllFishPackOrderDetailByOrderId(@PathVariable String fish_order_id) {
         return ResponseEntity.ok(service.getAllFishPackOrderDetailsByOrderId(fish_order_id));
     }
 
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PostMapping("/create-fish-pack-and-fish-pack-order-detail")
     public ResponseEntity<FishPackOrderDetailDTO> createFishPackOrderDetail(@Valid @RequestBody CreateFishPackDTO createFishPackDTO) {
         FishPackOrderDetail newFPOD = service.createFishPackAndFishPackOrderDetail(createFishPackDTO);
         return ResponseEntity.ok(service.mapToDTO(newFPOD));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("/{fish_pack_order_id}/update-pack-in-Order-Detail/{pack_id}")
     public ResponseEntity<FishPackOrderDetailDTO> updatePackInOrderDetail( @PathVariable String fish_pack_order_id,
                                                                           @PathVariable String pack_id,
@@ -49,6 +55,7 @@ public class FishPackOrderDetailController {
         return ResponseEntity.ok(service.mapToDTO(updateFPOD));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("/{fish_order_id}/delete")
     public ResponseEntity<String> deleteFishPackOrderDetail(@PathVariable String fish_order_id) {
         service.deleteFishPackOrderDetail(fish_order_id);
