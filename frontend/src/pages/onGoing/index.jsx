@@ -210,5 +210,3 @@ export default function CompleteTripPage() {
     </div>
   );
 }
-
-làm lại với api như trên
