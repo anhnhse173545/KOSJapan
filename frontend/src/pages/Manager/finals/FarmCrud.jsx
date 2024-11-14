@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
+ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -15,9 +17,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import api from '@/config/api'
+ 
+// This component manages CRUD operations for farms, including listing, creating, updating, and deleting farms,
+// as well as managing associated varieties and farm images.
 
-const API_BASE_URL = 'http://localhost:8080';
-
+// Main component for farm management
 export default function FarmCrud() {
   const [farms, setFarms] = useState([])
   const [varieties, setVarieties] = useState([])
@@ -36,18 +41,19 @@ export default function FarmCrud() {
   const [imageFile, setImageFile] = useState(null)
   const [selectedFarm, setSelectedFarm] = useState(null)
 
+  // State variables for managing farms, varieties, form data, and UI state
+
   useEffect(() => {
     fetchFarms()
     fetchVarieties()
   }, [])
 
+  // Fetch all farms from the API
   const fetchFarms = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/farm/list`)
-      if (!response.ok) throw new Error('Failed to fetch farms')
-      const data = await response.json()
-      setFarms(data)
+      const response = await api.get('/api/farm/list')
+      setFarms(response.data)
     } catch (error) {
       toast({
         title: "Error",
@@ -59,12 +65,11 @@ export default function FarmCrud() {
     }
   }
 
+  // Fetch all varieties from the API
   const fetchVarieties = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/variety/list`)
-      if (!response.ok) throw new Error('Failed to fetch varieties')
-      const data = await response.json()
-      setVarieties(data)
+      const response = await api.get('/api/variety/list')
+      setVarieties(response.data)
     } catch (error) {
       toast({
         title: "Error",
@@ -74,11 +79,13 @@ export default function FarmCrud() {
     }
   }
 
+  // Handle changes in form input fields
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setCurrentFarm(prev => ({ ...prev, [name]: value }))
   }
 
+  // Add a selected variety to the current farm
   const handleAddVariety = () => {
     if (selectedVarietyId && !currentFarm.varieties.some(v => v.id === selectedVarietyId)) {
       const varietyToAdd = varieties.find(v => v.id === selectedVarietyId)
@@ -90,6 +97,7 @@ export default function FarmCrud() {
     }
   }
 
+  // Remove a variety from the current farm
   const handleRemoveVariety = (varietyId) => {
     setCurrentFarm(prev => ({
       ...prev,
@@ -97,12 +105,14 @@ export default function FarmCrud() {
     }))
   }
 
+  // Handle file input change for farm image
   const handleImageChange = (e) => {
     if (e.target.files) {
       setImageFile(e.target.files[0])
     }
   }
 
+  // Upload the selected image for a farm
   const uploadImage = async (farmId) => {
     if (!imageFile) return
 
@@ -110,12 +120,11 @@ export default function FarmCrud() {
     formData.append('file', imageFile)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/media/farm/${farmId}/upload/image`, {
-        method: 'POST',
-        body: formData,
+      await api.post(`/media/farm/${farmId}/upload/image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
-
-      if (!response.ok) throw new Error('Failed to upload image')
 
       toast({
         title: "Success",
@@ -130,24 +139,23 @@ export default function FarmCrud() {
     }
   }
 
+  // Handle form submission for creating or updating a farm
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     try {
-      const url = isEditing ? `${API_BASE_URL}/api/farm/update/${currentFarm.id}` : `${API_BASE_URL}/api/farm/create`
-      const method = isEditing ? 'PUT' : 'POST'
       const farmData = {
         ...currentFarm,
         varietyIds: currentFarm.varieties.map(v => v.id)
       }
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(farmData)
-      })
-      if (!response.ok) throw new Error('Failed to save farm')
+      let response
+      if (isEditing) {
+        response = await api.put(`/api/farm/update/${currentFarm.id}`, farmData)
+      } else {
+        response = await api.post('/api/farm/create', farmData)
+      }
       
-      const savedFarm = await response.json()
+      const savedFarm = response.data
       
       if (imageFile) {
         await uploadImage(savedFarm.id)
@@ -175,18 +183,19 @@ export default function FarmCrud() {
     }
   }
 
+  // Set up the form for editing an existing farm
   const handleEdit = (farm) => {
     setCurrentFarm(farm)
     setIsEditing(true)
     setImageFile(null)
   }
 
+  // Delete a farm
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this farm?')) return
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/farm/delete/${id}`, { method: 'DELETE' })
-      if (!response.ok) throw new Error('Failed to delete farm')
+      await api.delete(`/api/farm/delete/${id}`)
       await fetchFarms()
       toast({
         title: "Success",
@@ -203,12 +212,15 @@ export default function FarmCrud() {
     }
   }
 
+  // Set the selected farm for viewing details
   const handleViewDetails = (farm) => {
     setSelectedFarm(farm)
   }
 
+  // Render the farm management interface
   return (
     <div className="container mx-auto p-4">
+      {/* Form for adding or editing a farm */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>{isEditing ? 'Edit Farm' : 'Add New Farm'}</CardTitle>
@@ -278,6 +290,7 @@ export default function FarmCrud() {
           </form>
         </CardContent>
       </Card>
+      {/* Table displaying the list of farms */}
       <Card>
         <CardHeader>
           <CardTitle>Farm List</CardTitle>
@@ -372,5 +385,5 @@ export default function FarmCrud() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

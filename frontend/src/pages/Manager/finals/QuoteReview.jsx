@@ -17,11 +17,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { toast } from "@/components/ui/use-toast"
+import api from '@/config/api'
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 5000,
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080',
+//   timeout: 5000,
+// })
 
 export function   ExtendedQuoteReviewComponent() {
   const [quotes, setQuotes] = useState([])

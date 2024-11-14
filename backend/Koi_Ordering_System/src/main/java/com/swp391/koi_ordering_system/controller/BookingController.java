@@ -32,15 +32,15 @@ public class BookingController {
 
 
     @PreAuthorize("hasRole('Customer')")
-    @PostMapping("/{customer_id}/create")
+    @PostMapping("/{customerId}/create")
     public ResponseEntity<BookingDTO> createBooking(@Valid @RequestBody CreateBookingDTO createBookingDTO,
-                                                    @PathVariable String customer_id) {
-        Booking booking = bookingService.createBooking(customer_id, createBookingDTO);
+                                                    @PathVariable String customerId) {
+        Booking booking = bookingService.createBooking(customerId, createBookingDTO);
         return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
 
-    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
+    @PreAuthorize("hasRole('Manager') or hasRole('Sales_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
     @GetMapping("/list")
     public ResponseEntity<List<BookingDTO>> getAllBooking() {
         return ResponseEntity.ok(bookingService.getAllBooking());
@@ -86,7 +86,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
+    @PreAuthorize("hasRole('Manager') or hasRole('Sales_Staff') or hasRole('Consulting_Staff') or hasRole('Delivery_Staff')")
     @PutMapping("/update/{id}")
     public ResponseEntity<BookingDTO> updateBooking(@PathVariable String id, @Valid @RequestBody UpdateBookingDTO updateBookingDTO) {
         BookingDTO updatedBookingDTO = bookingService.updateBooking(id, updateBookingDTO);
@@ -102,7 +102,7 @@ public class BookingController {
         return ResponseEntity.ok("Booking deleted successfully");
     }
 
-    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff')")
+    @PreAuthorize("hasRole('Manager') or hasRole('Sales_Staff')")
     @PostMapping("/{bookingId}/create-trip")
     public ResponseEntity<TripDTO> createTripForBooking(@PathVariable String bookingId, @Valid @RequestBody CreateTripDTO createTripDTO) {
         TripDTO createdTrip = bookingService.createTripForBooking(bookingId, createTripDTO);
@@ -131,7 +131,7 @@ public class BookingController {
 //        }
 //    }
 
-    @PreAuthorize("hasRole('Sale_Staff') or hasRole('Manager')")
+    @PreAuthorize("hasRole('Sales_Staff') or hasRole('Manager')")
     @GetMapping("/sale-staff/{saleStaffId}")
     public ResponseEntity<?> getBookingsBySaleStaffId(@PathVariable String saleStaffId) {
         List<BookingDTO> bookings = bookingService.getBookingsBySaleStaffId(saleStaffId);

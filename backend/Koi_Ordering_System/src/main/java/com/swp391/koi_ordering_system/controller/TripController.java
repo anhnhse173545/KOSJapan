@@ -31,7 +31,7 @@ public class TripController {
     @Autowired
     private TripMapper tripMapper;
 
-    @PreAuthorize("hasRole('Manager') or hasRole('Sale_Staff')")
+    @PreAuthorize("hasRole('Manager') or hasRole('Sales_Staff')")
     @PostMapping("/create")
     public ResponseEntity<TripDTO> createTrip(@Valid @RequestBody CreateTripDTO createTripDTO) {
         Trip trip = tripMapper.toEntity(createTripDTO);
@@ -43,6 +43,7 @@ public class TripController {
         return ResponseEntity.ok(tripService.getAllTrips());
     }
 
+
     @GetMapping("/get/{id}")
     public ResponseEntity<Optional<TripDTO>> getTripById(@PathVariable String id) {
         Optional<TripDTO> trip = tripService.getTripById(id);
@@ -52,6 +53,7 @@ public class TripController {
         return ResponseEntity.ok(trip);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/status/{status}")
     public ResponseEntity<?> getTripsByStatus(@PathVariable String status) {
         List<TripDTO> trips = tripService.getTripsByStatus(status);
@@ -62,6 +64,7 @@ public class TripController {
         return ResponseEntity.ok(trips);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/get/{id}/customer-sale")
     public ResponseEntity<Optional<TripWithCustomerAndSaleStaffDTO>> getTripByIdCustomerAndSale(@PathVariable String id) {
         Optional<TripWithCustomerAndSaleStaffDTO> trip = tripService.getTripByIdCustomerAndSale(id);
@@ -71,6 +74,7 @@ public class TripController {
         return ResponseEntity.ok(trip);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("{customer_id}/get-all-trips-of-customer")
     public ResponseEntity<List<TripDTO>> getAllTripsOfCustomer(@PathVariable String customer_id) {
         List<Trip> list = tripService.findTripsByCustomerId(customer_id);
@@ -82,6 +86,7 @@ public class TripController {
         return ResponseEntity.ok(showList);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("/update/{id}")
     public ResponseEntity<TripDTO> updateTrip(@PathVariable String id, @Valid @RequestBody UpdateTripDTO updateTripDTO) {
         TripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
@@ -91,6 +96,7 @@ public class TripController {
         return ResponseEntity.ok(updatedTrip);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTrip(@PathVariable String id) {
         tripService.deleteTrip(id);
@@ -112,6 +118,7 @@ public class TripController {
 //        return ResponseEntity.noContent().build();
 //    }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("/{tripId}")
     public ResponseEntity<Void> removeTripById(@PathVariable String tripId) {
         tripService.removeTripById(tripId);

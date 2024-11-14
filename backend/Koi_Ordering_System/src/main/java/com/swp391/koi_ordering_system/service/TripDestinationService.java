@@ -11,6 +11,7 @@ import com.swp391.koi_ordering_system.repository.FarmRepository;
 import com.swp391.koi_ordering_system.repository.TripDestinationRepository;
 import com.swp391.koi_ordering_system.repository.TripRepository;
 import jakarta.validation.Valid;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +39,9 @@ public class TripDestinationService {
 
     public TripDestination createTripDestination(String tripId, @Valid AddTripDestinationDTO addTripDestinationDTO) {
         Trip trip = tripRepository.findByIdAndIsDeletedFalse(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Trip not found"));
         Farm farm = farmRepository.findById(addTripDestinationDTO.getFarmId())
-                .orElseThrow(() -> new RuntimeException("Farm not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Farm not found"));
         TripDestination tripDestination = tripDestinationMapper.toEntity(addTripDestinationDTO);
         tripDestination.setId(generateTripDestinationId());
         tripDestination.setTrip(trip);
@@ -63,10 +64,10 @@ public class TripDestinationService {
 
     public TripDestination updateTripDestination(String tripDestinationId, UpdateTripDestinationDTO updateTripDestinationDTO) {
         TripDestination tripDestination = tripDestinationRepository.findById(tripDestinationId)
-                .orElseThrow(() -> new RuntimeException("TripDestination not found"));
+                .orElseThrow(() -> new EntityNotFoundException("TripDestination not found"));
         if (updateTripDestinationDTO.getFarmId() != null) {
             Farm farm = farmRepository.findById(updateTripDestinationDTO.getFarmId())
-                    .orElseThrow(() -> new RuntimeException("Farm not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Farm not found"));
             tripDestination.setFarm(farm);
         }
         if (updateTripDestinationDTO.getVisitDate() != null) {

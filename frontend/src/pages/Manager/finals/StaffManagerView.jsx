@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserPlus, UserCircle, Briefcase, Truck, Star } from 'lucide-react'
 import { toast } from "@/components/ui/use-toast"
+import api from '@/config/api'
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  timeout: 5000,
-})
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080',
+//   timeout: 5000,
+// })
 
 export default function StaffManagerView() {
   const [staffList, setStaffList] = useState([])

@@ -26,7 +26,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
-
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{account_id}/detail")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable String account_id) {
         return ResponseEntity.ok(accountService.getAccountById(account_id));
@@ -45,6 +45,7 @@ public class AccountController {
 //    }
 
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("/{account_id}/update")
     public ResponseEntity<AccountDTO> updateAccount(@Valid @PathVariable String account_id,
                                                     @RequestBody CreateAccountDTO accountDTO) {
@@ -52,6 +53,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.mapToDTO(updatedAccount));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("/{account_id}/delete")
     public ResponseEntity<String> deleteAccount(@PathVariable String account_id) {
         accountService.deleteAccount(account_id);

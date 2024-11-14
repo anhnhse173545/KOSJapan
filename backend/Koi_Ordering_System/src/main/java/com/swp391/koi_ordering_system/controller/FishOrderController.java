@@ -6,6 +6,7 @@ import com.swp391.koi_ordering_system.model.FishOrder;
 import com.swp391.koi_ordering_system.service.FishOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,22 +20,26 @@ public class FishOrderController {
     @Autowired
     private FishOrderService fishOrderService;
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/all")
     public ResponseEntity<List<FishOrderDTO>> getAllFishOrders() {
          return ResponseEntity.ok(orderService.getAllFishOrder());
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{booking_id}/all")
     public ResponseEntity<List<FishOrderDTO>> getAllFishOrdersByBookingId(@PathVariable String booking_id) {
         return ResponseEntity.ok(orderService.getAllByBookingId(booking_id));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/{booking_id}/{farm_id}/detail")
     public ResponseEntity<List<FishOrderDTO>> getFishOrderDetail(@PathVariable String booking_id,
                                                              @PathVariable String farm_id) {
         return ResponseEntity.ok(orderService.getFishOrderByBookingIdAndFarmId(booking_id, farm_id));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PostMapping("/{booking_id}/{farm_id}/create")
     public ResponseEntity<FishOrderDTO> createFishOrder(@PathVariable String booking_id,
                                                     @PathVariable String farm_id,
@@ -43,6 +48,7 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(newOrder));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PutMapping("/{booking_id}/{farm_id}/update")
     public ResponseEntity<FishOrderDTO> updateFishOrder(@PathVariable String booking_id,
                                                     @PathVariable String farm_id,
@@ -51,6 +57,7 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(updateOrder));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PostMapping("/{order_id}/remove-fish-order-detail-from-order/{fish_order_detail_id}")
     public ResponseEntity<FishOrderDTO> removeFishOrderDetailFromOrder(@PathVariable String order_id,
                                                                    @PathVariable String fish_order_detail_id){
@@ -58,6 +65,7 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @PostMapping("/{order_id}/remove-pack-order-detail-from-order/{fish_pack_order_detail_id}")
     public ResponseEntity<FishOrderDTO> removeFishPackOrderDetailFromOrder(@PathVariable String order_id,
                                                                        @PathVariable String fish_pack_order_detail_id){
@@ -65,6 +73,7 @@ public class FishOrderController {
         return ResponseEntity.ok(orderService.mapToDTO2(removedOrder));
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @DeleteMapping("{booking_id}/{farm_id}/delete")
     public ResponseEntity<String> deleteFishOrder(@PathVariable String booking_id,
                                                   @PathVariable String farm_id) {
@@ -72,6 +81,7 @@ public class FishOrderController {
         return ResponseEntity.ok("Deleted Fish Order: ");
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/delivery-staff/{deliveryId}")
     public ResponseEntity<?> getFishOrderByDeliveryId(@PathVariable String deliveryId) {
         List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByDeliveryStaffId(deliveryId);
@@ -82,6 +92,7 @@ public class FishOrderController {
         return ResponseEntity.ok(fishOrder);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/consulting-staff/{consultingId}")
     public ResponseEntity<?> getFishOrderByConsultingId(@PathVariable String consultingId) {
         List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByConsultingStaffId(consultingId);
@@ -92,6 +103,7 @@ public class FishOrderController {
         return ResponseEntity.ok(fishOrder);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/delivery-staff/{deliveryId}/{status}")
     public ResponseEntity<?> getFishOrderByDeliveryIdAndStatus(@PathVariable String deliveryId,
                                                                @PathVariable String status) {
@@ -102,6 +114,7 @@ public class FishOrderController {
         return ResponseEntity.ok(list);
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Sales_Staff', 'Consulting_Staff', 'Delivery_Staff' , 'Customer')")
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getFishOrderByCustomerId(@PathVariable String customerId) {
         List<FishOrderDTO> fishOrder = fishOrderService.getFishOrdersByCustomerId(customerId);
