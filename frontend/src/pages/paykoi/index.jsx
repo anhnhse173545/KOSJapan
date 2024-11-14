@@ -26,7 +26,7 @@ const PaymentTripPage = () => {
         }
       } catch (err) {
         console.error('Loading.......', err); 
-        setError('Có lỗi trong quá trình tạo thanh toán.');
+        setError('Loading.......');
         setLoading(false); 
       }
     };
